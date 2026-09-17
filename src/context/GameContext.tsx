@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { 
   MatchState, 
   MatchSettings, 
   Team, 
   Business, 
-  GameTransaction 
+  GameTransaction,
+  RollAnimationEvent 
 } from '../types/game';
 import { 
   getInitialState, 
@@ -27,6 +28,14 @@ import {
   cloneStateData
 } from '../engine/gameEngine';
 import { soundFX } from '../utils/audio';
+import { 
+  fetchRemoteMatchState, 
+  saveRemoteMatchState, 
+  logRemoteMatchEvent, 
+  subscribeToMatchSync, 
+  broadcastStateUpdate, 
+  broadcastRollAnimation 
+} from '../services/supabase';
 
 interface AuthSession {
   role: 'none' | 'admin' | 'player';
@@ -107,12 +116,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(THEME_KEY);
       if (saved === 'light' || saved === 'dark') return saved;
     } catch (e) {}
-    return 'light'; // Default to bright, vivid, readable Light Theme for outdoor play!
+    return 'dark'; // High-contrast Equinox Dark Theme
   });
 
   const [soundMuted, setSoundMuted] = useState<boolean>(() => soundFX.getMuted());
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [isSimulator, setIsSimulator] = useState<boolean>(false);
+  const isBroadcastingRef = useRef<boolean>(false);
 
   // Sync theme class to document body
   useEffect(() => {
@@ -139,8 +149,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // BroadcastChannel for instant cross-tab realtime sync
-  const channel = useMemo(() => {
+  // BroadcastChannel for instant local cross-tab realtime sync
+  const localChannel = useMemo(() => {
     try {
       return new BroadcastChannel(BROADCAST_CHANNEL);
     } catch (e) {
@@ -148,29 +158,88 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Broadcast state updates to all other tabs
+  // Broadcast state updates to Local Storage, BroadcastChannel, and Supabase Database + Realtime
   const broadcastState = useCallback((nextState: MatchState) => {
     setState(nextState);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
-      channel?.postMessage({ type: 'STATE_UPDATE', payload: nextState });
+      localChannel?.postMessage({ type: 'STATE_UPDATE', payload: nextState });
     } catch (e) {
-      console.error('Failed to persist state', e);
+      console.error('Failed to persist local state', e);
     }
-  }, [channel]);
 
-  // Listen for realtime broadcasts from other windows/tabs
+    // Sync to Supabase in the background
+    isBroadcastingRef.current = true;
+    saveRemoteMatchState(nextState);
+    broadcastStateUpdate(nextState.matchCode, nextState);
+    
+    if (nextState.latestRollAnimation) {
+      broadcastRollAnimation(nextState.matchCode, nextState.latestRollAnimation);
+    }
+
+    // Log the latest transaction if available
+    const latestTx = nextState.transactions[nextState.transactions.length - 1];
+    if (latestTx) {
+      logRemoteMatchEvent(nextState.matchCode, latestTx);
+    }
+
+    setTimeout(() => {
+      isBroadcastingRef.current = false;
+    }, 100);
+  }, [localChannel]);
+
+  // Subscribe to Supabase Realtime channel for live synchronization across player phones
   useEffect(() => {
-    if (!channel) return;
+    const matchCode = state.matchCode || 'EQX-4821';
+
+    // Fetch initial remote state from Supabase if available
+    fetchRemoteMatchState(matchCode).then((remoteState) => {
+      if (remoteState) {
+        setState(remoteState);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteState));
+        } catch (e) {}
+      }
+    });
+
+    // Subscribe to realtime updates
+    const unsubscribe = subscribeToMatchSync(matchCode, {
+      onStateSync: (remoteState) => {
+        if (!isBroadcastingRef.current) {
+          setState(remoteState);
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteState));
+          } catch (e) {}
+        }
+      },
+      onRollAnimation: (anim) => {
+        setState(prev => ({
+          ...prev,
+          latestRollAnimation: anim,
+        }));
+      },
+      onConnectionChange: (connected) => {
+        setIsConnected(connected);
+      },
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [state.matchCode]);
+
+  // Listen for local BroadcastChannel messages
+  useEffect(() => {
+    if (!localChannel) return;
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'STATE_UPDATE' && event.data?.payload) {
         setState(event.data.payload);
         setIsConnected(true);
       }
     };
-    channel.addEventListener('message', handleMessage);
-    return () => channel.removeEventListener('message', handleMessage);
-  }, [channel]);
+    localChannel.addEventListener('message', handleMessage);
+    return () => localChannel.removeEventListener('message', handleMessage);
+  }, [localChannel]);
 
   // Save auth session
   useEffect(() => {
@@ -188,12 +257,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!prev.timerRunning || prev.secondsRemaining <= 0) {
           if (prev.secondsRemaining <= 0 && prev.status === 'live') {
             soundFX.playStageClear();
-            return {
+            const finishedState: MatchState = {
               ...prev,
               timerRunning: false,
               status: 'finished',
               secondsRemaining: 0,
             };
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(finishedState));
+            } catch (e) {}
+            saveRemoteMatchState(finishedState);
+            broadcastStateUpdate(finishedState.matchCode, finishedState);
+            return finishedState;
           }
           return prev;
         }
@@ -208,15 +283,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
-          channel?.postMessage({ type: 'STATE_UPDATE', payload: nextState });
+          localChannel?.postMessage({ type: 'STATE_UPDATE', payload: nextState });
         } catch (e) {}
+
+        // Periodically sync timer to Supabase every 5 seconds to minimize network bandwidth
+        if (nextSeconds % 5 === 0) {
+          saveRemoteMatchState(nextState);
+        }
 
         return nextState;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [state.timerRunning, state.status, channel]);
+  }, [state.timerRunning, state.status, localChannel]);
 
   // Derive active application view
   const activeView = useMemo(() => {
