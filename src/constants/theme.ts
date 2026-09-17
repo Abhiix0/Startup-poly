@@ -1,28 +1,37 @@
 import { Team } from '../types/game';
 
-export interface MarioCharacterMeta {
-  characterName: string;
-  icon: string;
+export interface TeamMeta {
+  number: number;
+  name: string;
   color: string;
-  darkColor: string;
-  powerUp: string;
+  badgeBg: string;
+  borderColor: string;
 }
 
-export const MARIO_CHARACTERS: Record<number, MarioCharacterMeta> = {
-  1: { characterName: 'Mario', icon: '🍄', color: '#E52521', darkColor: '#9B110E', powerUp: 'Super Mushroom' },
-  2: { characterName: 'Luigi', icon: '🟢', color: '#43B047', darkColor: '#007000', powerUp: '1-Up Mushroom' },
-  3: { characterName: 'Wario', icon: '⭐', color: '#FBD000', darkColor: '#C69200', powerUp: 'Super Star' },
-  4: { characterName: 'Peach', icon: '👑', color: '#FF77A8', darkColor: '#B82660', powerUp: 'Super Crown' },
-  5: { characterName: 'Bowser', icon: '🔥', color: '#9437FF', darkColor: '#580FA0', powerUp: 'Fire Flower' },
-  6: { characterName: 'Yoshi', icon: '🥚', color: '#00D2BE', darkColor: '#007D72', powerUp: 'Yoshi Egg' },
+export const TEAM_COLORS: Record<number, string> = {
+  1: '#7484FE', // Equinox Blue
+  2: '#33FF67', // Signal Green
+  3: '#FFBD59', // Amber / Gold
+  4: '#FF5C7A', // Coral / Rose
+  5: '#B987FF', // Purple / Violet
+  6: '#58D6E8', // Cyan
+};
+
+export const TEAM_METAS: Record<number, TeamMeta> = {
+  1: { number: 1, name: 'Team 01', color: '#7484FE', badgeBg: 'rgba(116, 132, 254, 0.15)', borderColor: '#7484FE' },
+  2: { number: 2, name: 'Team 02', color: '#33FF67', badgeBg: 'rgba(51, 255, 103, 0.15)', borderColor: '#33FF67' },
+  3: { number: 3, name: 'Team 03', color: '#FFBD59', badgeBg: 'rgba(255, 189, 89, 0.15)', borderColor: '#FFBD59' },
+  4: { number: 4, name: 'Team 04', color: '#FF5C7A', badgeBg: 'rgba(255, 92, 122, 0.15)', borderColor: '#FF5C7A' },
+  5: { number: 5, name: 'Team 05', color: '#B987FF', badgeBg: 'rgba(185, 135, 255, 0.15)', borderColor: '#B987FF' },
+  6: { number: 6, name: 'Team 06', color: '#58D6E8', badgeBg: 'rgba(88, 214, 232, 0.15)', borderColor: '#58D6E8' },
 };
 
 export const INITIAL_TEAMS: Team[] = [
   {
     id: 'team-1',
     number: 1,
-    name: 'Team 01 (Mario)',
-    color: '#E52521',
+    name: 'Team 01',
+    color: '#7484FE',
     pin: '1101',
     cash: 1000,
     cv: 0,
@@ -35,8 +44,8 @@ export const INITIAL_TEAMS: Team[] = [
   {
     id: 'team-2',
     number: 2,
-    name: 'Team 02 (Luigi)',
-    color: '#43B047',
+    name: 'Team 02',
+    color: '#33FF67',
     pin: '2202',
     cash: 1000,
     cv: 0,
@@ -49,8 +58,8 @@ export const INITIAL_TEAMS: Team[] = [
   {
     id: 'team-3',
     number: 3,
-    name: 'Team 03 (Wario)',
-    color: '#FBD000',
+    name: 'Team 03',
+    color: '#FFBD59',
     pin: '3303',
     cash: 1000,
     cv: 0,
@@ -63,8 +72,8 @@ export const INITIAL_TEAMS: Team[] = [
   {
     id: 'team-4',
     number: 4,
-    name: 'Team 04 (Peach)',
-    color: '#FF77A8',
+    name: 'Team 04',
+    color: '#FF5C7A',
     pin: '4404',
     cash: 1000,
     cv: 0,
@@ -77,8 +86,8 @@ export const INITIAL_TEAMS: Team[] = [
   {
     id: 'team-5',
     number: 5,
-    name: 'Team 05 (Bowser)',
-    color: '#9437FF',
+    name: 'Team 05',
+    color: '#B987FF',
     pin: '5505',
     cash: 1000,
     cv: 0,
@@ -91,8 +100,8 @@ export const INITIAL_TEAMS: Team[] = [
   {
     id: 'team-6',
     number: 6,
-    name: 'Team 06 (Yoshi)',
-    color: '#00D2BE',
+    name: 'Team 06',
+    color: '#58D6E8',
     pin: '6606',
     cash: 1000,
     cv: 0,
@@ -109,16 +118,6 @@ export function formatCurrency(amount: number): string {
   return `₹${safeVal.toLocaleString('en-IN')}`;
 }
 
-export function formatCoins(amount: number): string {
-  const safeVal = Math.max(0, amount);
-  return `🪙 ₹${safeVal.toLocaleString('en-IN')}`;
-}
-
-export function formatStars(amount: number): string {
-  const safeVal = Math.max(0, amount);
-  return `⭐ ${safeVal.toLocaleString('en-IN')} CV`;
-}
-
 export function formatNumber(val: number): string {
   return Math.max(0, val).toLocaleString('en-IN');
 }
@@ -128,4 +127,5 @@ export function formatTimer(seconds: number): string {
   const s = (seconds % 60).toString().padStart(2, '0');
   return `${m}:${s}`;
 }
+
 

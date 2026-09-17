@@ -71,6 +71,7 @@ interface GameContextType {
   applyWildcardAction: (completed: boolean, notes?: string) => void;
   undoAction: () => void;
   manualAdjust: (teamIdx: number, cashDelta: number, cvDelta: number, reason: string) => void;
+  dismissRollAnimation: () => void;
   updateSettings: (settings: Partial<MatchSettings>) => void;
   setSelectedTeamIndex: (idx: number) => void;
 }
@@ -491,6 +492,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     broadcastState(next);
   };
 
+  const dismissRollAnimation = () => {
+    setState(prev => ({ ...prev, latestRollAnimation: null }));
+  };
+
   const setSelectedTeamIndex = (idx: number) => {
     setState(prev => ({ ...prev, selectedTeamIndex: idx }));
   };
@@ -530,6 +535,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         applyWildcardAction,
         undoAction,
         manualAdjust,
+        dismissRollAnimation,
         updateSettings,
         setSelectedTeamIndex,
       }}

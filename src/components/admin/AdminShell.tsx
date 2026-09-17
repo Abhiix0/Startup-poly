@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { formatTimer, formatCurrency, formatCoins } from '../../constants/theme';
+import { formatTimer, formatCurrency, formatNumber } from '../../constants/theme';
 import { AdminWaitingRoom } from './AdminWaitingRoom';
 import { AdminTurnController } from './AdminTurnController';
 import { AdminResolutionPanel } from './AdminResolutionPanel';
@@ -10,6 +10,7 @@ import { AdminBoardMap } from './AdminBoardMap';
 import { AdminActivityLog } from './AdminActivityLog';
 import { AdminSettingsModal } from './AdminSettingsModal';
 import { AdminResultsModal } from './AdminResultsModal';
+import { LiveRollBoardModal } from '../common/LiveRollBoardModal';
 import { 
   Play, 
   Pause, 
@@ -22,15 +23,12 @@ import {
   RotateCcw,
   ArrowLeft,
   X,
-  ChevronRight,
-  Sun,
-  Moon,
-  Volume2,
-  VolumeX
+  Radio,
+  Clock
 } from 'lucide-react';
 
 export const AdminShell: React.FC = () => {
-  const { state, toggleTimer, endMatch, logout, undoAction, themeMode, toggleThemeMode, soundMuted, toggleSound } = useGame();
+  const { state, toggleTimer, endMatch, logout, undoAction } = useGame();
   const [activeTab, setActiveTab] = useState<'game' | 'teams' | 'board' | 'activity'>('game');
   const [selectedTeamIdx, setSelectedTeamIdx] = useState<number | null>(null);
   const [showActivityDrawer, setShowActivityDrawer] = useState<boolean>(false);
@@ -40,32 +38,30 @@ export const AdminShell: React.FC = () => {
   const [showExitConfirm, setShowExitConfirm] = useState<boolean>(false);
   const [showUndoConfirm, setShowUndoConfirm] = useState<boolean>(false);
 
-  const isLight = themeMode === 'light';
   const activeTeam = state.teams[state.activeTeamIndex];
   const recentTransactions = state.transactions.slice(-3).reverse();
   const lastTxToUndo = state.transactions.slice().reverse().find(t => t.snapshotBefore);
 
   return (
-    <div className={`w-screen min-h-[100dvh] flex select-none overflow-x-hidden transition-colors ${
-      isLight ? 'bg-sky-400/20 text-slate-900' : 'bg-[#101014] text-[#F7F2F6]'
-    }`}>
+    <div className="w-screen min-h-[100dvh] bg-[#0D0D0F] text-[#F7F2F6] flex select-none overflow-x-hidden">
+      {/* Realtime Synchronized Roll Board Animation Overlay for GM */}
+      <LiveRollBoardModal />
+
       {/* 1. Left Icon Sidebar (Desktop >= 1024px) */}
-      <aside className={`hidden lg:flex w-20 border-r-4 border-black flex-col items-center justify-between py-5 z-30 flex-shrink-0 shadow-[4px_0px_0px_#000] ${
-        isLight ? 'bg-white' : 'bg-[#181820]'
-      }`}>
+      <aside className="hidden lg:flex w-20 bg-[#141416] border-r border-white/10 flex-col items-center justify-between py-6 z-30 flex-shrink-0">
         <div className="flex flex-col items-center gap-6">
-          {/* Retro Mario Logo Mark */}
-          <div className="w-12 h-12 nes-box bg-[#E52521] border-2 border-black flex items-center justify-center font-pixel text-white text-base shadow-[2px_2px_0px_#000]">
-            M
+          {/* Logo Mark */}
+          <div className="w-10 h-10 rounded-2xl bg-[#7484FE] flex items-center justify-center font-bold text-white text-sm shadow-lg shadow-[#7484FE]/25">
+            S
           </div>
 
           {/* Nav Icons */}
-          <nav className="flex flex-col gap-3">
+          <nav className="flex flex-col gap-2.5">
             {[
-              { id: 'game', label: 'Game', icon: Dices, badge: '🎮' },
-              { id: 'teams', label: 'Teams', icon: Users, badge: '🍄' },
-              { id: 'board', label: 'Board', icon: Map, badge: '🗺️' },
-              { id: 'activity', label: 'Activity', icon: History, badge: '📜' },
+              { id: 'game', label: 'Game Deck', icon: Dices },
+              { id: 'teams', label: 'Teams', icon: Users },
+              { id: 'board', label: 'Track Map', icon: Map },
+              { id: 'activity', label: 'Activity', icon: History },
             ].map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -73,12 +69,10 @@ export const AdminShell: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className={`w-12 h-12 nes-box flex flex-col items-center justify-center transition ${
+                  className={`w-12 h-12 rounded-2xl flex flex-col items-center justify-center transition cursor-pointer ${
                     isActive
-                      ? 'bg-[#FBD000] text-black border-2 border-black shadow-[2px_2px_0px_#000]'
-                      : isLight
-                      ? 'bg-slate-100 text-slate-600 hover:text-black hover:bg-slate-200 border-2 border-black'
-                      : 'bg-[#22222E] text-gray-400 hover:text-white hover:bg-[#2D2D3D] border-2 border-black'
+                      ? 'bg-[#7484FE] text-white shadow-lg shadow-[#7484FE]/30'
+                      : 'bg-[#19191C] text-white/50 hover:text-white hover:bg-[#202024] border border-white/5'
                   }`}
                   title={item.label}
                 >
@@ -93,15 +87,13 @@ export const AdminShell: React.FC = () => {
         <div className="flex flex-col items-center gap-3">
           <button
             onClick={() => setShowSettings(true)}
-            className={`w-10 h-10 nes-box flex items-center justify-center border-2 border-black transition ${
-              isLight ? 'bg-slate-100 text-slate-700 hover:text-black' : 'bg-[#22222E] text-gray-400 hover:text-[#FBD000]'
-            }`}
+            className="w-10 h-10 rounded-xl bg-[#19191C] hover:bg-[#202024] text-white/50 hover:text-white border border-white/5 flex items-center justify-center transition cursor-pointer"
             title="Rules & Settings"
           >
-            <Shield className="w-5 h-5" />
+            <Shield className="w-4 h-4" />
           </button>
 
-          <span className="text-[9px] font-pixel text-[#E52521] tracking-tighter font-bold">
+          <span className="text-[10px] font-mono text-white/40 font-semibold tracking-tight">
             {state.matchCode}
           </span>
         </div>
@@ -109,119 +101,92 @@ export const AdminShell: React.FC = () => {
 
       {/* 2. Main Content Body */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Retro Mario World HUD Top Bar */}
-        <header className={`h-16 border-b-4 border-black px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20 safe-top shadow-[0px_4px_0px_#000] ${
-          isLight ? 'bg-white/95 backdrop-blur-md' : 'bg-[#181820]'
-        }`}>
-          {/* Left info & Exit button */}
+        {/* Top Header Bar */}
+        <header className="h-16 bg-[#141416]/90 backdrop-blur-md border-b border-white/10 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20 safe-top">
+          {/* Left: Info & Exit Button */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowExitConfirm(true)}
-              className={`p-2 nes-box hover:bg-[#E52521] hover:text-white border-2 border-black transition ${
-                isLight ? 'bg-slate-100 text-slate-700' : 'bg-[#22222E] text-gray-400'
-              }`}
-              title="Exit Castle"
+              className="p-2 rounded-xl bg-[#19191C] hover:bg-[#202024] text-white/60 hover:text-white border border-white/10 transition cursor-pointer"
+              title="Exit Console"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div className="flex items-center gap-2">
-              <span className={`font-pixel text-xs tracking-wide ${isLight ? 'text-slate-900' : 'text-[#FBD000]'}`}>
+              <span className="font-bold text-sm tracking-wider text-white">
                 STARTUPOLY
               </span>
-              <span className="text-[10px] font-pixel text-white px-2 py-0.5 nes-box bg-[#E52521] border border-black shadow-[1px_1px_0px_#000]">
+              <span className="text-[10px] font-mono text-white/70 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10">
                 {state.matchCode}
               </span>
             </div>
           </div>
 
           {/* Center Status HUD */}
-          <div className="hidden sm:flex items-center gap-3 font-pixel text-[10px]">
-            <span className={`w-2.5 h-2.5 nes-box ${state.timerRunning ? 'bg-[#22C55E] animate-pulse' : 'bg-[#FBD000]'}`} />
-            <span className={state.timerRunning ? 'text-[#22C55E]' : 'text-[#EAB308]'}>
-              {state.timerRunning ? `WORLD 1-1 · ${activeTeam?.name?.toUpperCase()}'S TURN` : 'PAUSED'}
+          <div className="hidden sm:flex items-center gap-2.5 text-xs">
+            <span className={`w-2 h-2 rounded-full ${state.timerRunning ? 'bg-[#33FF67] animate-pulse' : 'bg-[#FFBD59]'}`} />
+            <span className={state.timerRunning ? 'text-[#33FF67] font-semibold' : 'text-[#FFBD59] font-medium'}>
+              {state.timerRunning ? `LIVE MATCH · ${activeTeam?.name?.toUpperCase()}'S TURN` : 'MATCH PAUSED'}
             </span>
           </div>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Sound Toggle */}
-            <button
-              onClick={toggleSound}
-              className={`p-2 nes-box border-2 border-black text-xs ${
-                soundMuted ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-700'
-              }`}
-              title={soundMuted ? 'Unmute Audio' : 'Mute Audio'}
-            >
-              {soundMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-            </button>
-
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleThemeMode}
-              className={`p-2 nes-box border-2 border-black text-xs ${
-                isLight ? 'bg-amber-100 text-amber-700' : 'bg-indigo-950 text-amber-300'
-              }`}
-              title={isLight ? 'Switch to Castle Dark Theme' : 'Switch to Overworld Light Theme'}
-            >
-              {isLight ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-            </button>
-
             {/* Timer Badge */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 nes-box bg-[#101014] border-2 border-black font-pixel text-[10px] text-[#FBD000] shadow-[2px_2px_0px_#000]">
-              ⏱️ {formatTimer(state.secondsRemaining)}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#19191C] border border-white/10 font-mono text-xs text-white font-bold">
+              <Clock className="w-3.5 h-3.5 text-[#7484FE]" />
+              <span>{formatTimer(state.secondsRemaining)}</span>
             </div>
 
-            {/* Pause / Resume button */}
+            {/* Pause / Resume Button */}
             <button
               onClick={toggleTimer}
-              className={`px-3 py-1.5 nes-box border-2 border-black font-pixel text-[9px] uppercase tracking-wider transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition cursor-pointer border ${
                 state.timerRunning
-                  ? isLight
-                    ? 'bg-slate-200 text-slate-800'
-                    : 'bg-[#22222E] hover:bg-[#333344] text-[#FBD000] shadow-[2px_2px_0px_#000]'
-                  : 'mario-btn-green text-black shadow-[2px_2px_0px_#000]'
+                  ? 'bg-[#19191C] hover:bg-[#202024] text-white/80 border-white/10'
+                  : 'btn-eqx-green text-black'
               }`}
             >
-              {state.timerRunning ? <><Pause className="w-3 h-3 inline mr-1" /> PAUSE</> : <><Play className="w-3 h-3 inline mr-1 fill-current" /> RESUME</>}
+              {state.timerRunning ? (
+                <><Pause className="w-3.5 h-3.5 inline mr-1" /> PAUSE</>
+              ) : (
+                <><Play className="w-3.5 h-3.5 inline mr-1 fill-current" /> RESUME</>
+              )}
             </button>
 
-            {/* Overflow Control Menu */}
+            {/* Overflow Menu */}
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className={`p-2 nes-box hover:text-[#E52521] border-2 border-black transition ${
-                  isLight ? 'bg-slate-100 text-slate-700' : 'bg-[#22222E] text-gray-400'
-                }`}
+                className="p-2 rounded-xl bg-[#19191C] hover:bg-[#202024] text-white/60 hover:text-white border border-white/10 transition cursor-pointer"
               >
                 <MoreHorizontal className="w-4 h-4" />
               </button>
 
               {showMenu && (
-                <div className={`absolute right-0 mt-2 w-56 nes-box border-4 border-black p-2 shadow-[4px_4px_0px_#000] z-50 text-xs font-arcade space-y-1 animate-in fade-in zoom-in-95 ${
-                  isLight ? 'bg-white text-slate-900' : 'bg-[#181820] text-white'
-                }`}>
+                <div className="absolute right-0 mt-2 w-56 eqx-card-elevated p-2 shadow-2xl z-50 text-xs space-y-1 animate-in fade-in zoom-in-95">
                   <button
                     onClick={() => { setShowSettings(true); setShowMenu(false); }}
-                    className="w-full text-left px-3 py-2 nes-box bg-slate-100 dark:bg-[#22222E] hover:bg-[#3B82F6] hover:text-white flex items-center gap-2 border border-black"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 flex items-center gap-2 text-white/80 hover:text-white transition"
                   >
-                    <Shield className="w-4 h-4 text-[#EAB308]" /> Rules & Settings
+                    <Shield className="w-4 h-4 text-[#7484FE]" /> Rules & Settings
                   </button>
                   <button
                     onClick={() => { setShowActivityDrawer(true); setShowMenu(false); }}
-                    className="w-full text-left px-3 py-2 nes-box bg-slate-100 dark:bg-[#22222E] hover:bg-[#3B82F6] hover:text-white flex items-center gap-2 border border-black"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 flex items-center gap-2 text-white/80 hover:text-white transition"
                   >
-                    <History className="w-4 h-4 text-[#EAB308]" /> Full Activity Log
+                    <History className="w-4 h-4 text-[#7484FE]" /> Full Activity Log
                   </button>
-                  <div className="my-1 border-t-2 border-black" />
+                  <div className="my-1 border-t border-white/10" />
                   <button
                     onClick={() => { endMatch(); setShowMenu(false); }}
-                    className="w-full text-left px-3 py-2 nes-box bg-[#E52521] hover:bg-[#FF3333] text-white font-pixel text-[9px] border border-black"
+                    className="w-full text-left px-3 py-2 rounded-xl bg-[#FF5C7A]/15 hover:bg-[#FF5C7A]/25 text-[#FF5C7A] font-semibold"
                   >
-                    END MATCH (STAGE CLEAR)
+                    CONCLUDE MATCH (FINAL RESULTS)
                   </button>
                   <button
                     onClick={() => { setShowExitConfirm(true); setShowMenu(false); }}
-                    className="w-full text-left px-3 py-2 nes-box bg-slate-100 dark:bg-[#22222E] hover:bg-slate-200 border border-black"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition"
                   >
                     Exit Control Room
                   </button>
@@ -245,20 +210,20 @@ export const AdminShell: React.FC = () => {
                   {/* Contextual Landing Resolution Panel */}
                   <AdminResolutionPanel />
 
-                  {/* Clean Teams Strip */}
+                  {/* Clean Teams Grid Strip */}
                   <AdminTeamsGrid onSelectTeam={setSelectedTeamIdx} />
 
-                  {/* Recent Activity Strip with ↶ Undo */}
-                  <div className="p-4 nes-box bg-[#181820] border-4 border-black space-y-2.5 shadow-[4px_4px_0px_#000]">
+                  {/* Recent Activity Strip with Undo */}
+                  <div className="p-5 rounded-3xl eqx-card space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-pixel uppercase tracking-wider text-[#FBD000]">
-                          📜 QUEST RECAP
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-white/50">
+                          RECENT MATCH EVENTS
                         </span>
                         {lastTxToUndo && (
                           <button
                             onClick={() => setShowUndoConfirm(true)}
-                            className="px-2.5 py-1 nes-box bg-[#E52521] hover:bg-[#FF3333] text-white text-[9px] font-pixel flex items-center gap-1 border border-black shadow-[2px_2px_0px_#000] transition"
+                            className="px-3 py-1 rounded-xl bg-[#FF5C7A]/15 hover:bg-[#FF5C7A]/25 text-[#FF5C7A] text-[11px] font-semibold flex items-center gap-1 border border-[#FF5C7A]/30 transition cursor-pointer"
                             title="Undo last recorded action"
                           >
                             <RotateCcw className="w-3 h-3" /> UNDO LAST
@@ -267,23 +232,23 @@ export const AdminShell: React.FC = () => {
                       </div>
                       <button
                         onClick={() => setShowActivityDrawer(true)}
-                        className="text-[10px] font-pixel text-[#5C94FC] hover:text-[#7484FE] flex items-center gap-0.5 transition"
+                        className="text-xs font-semibold text-[#7484FE] hover:text-[#8594FE] flex items-center gap-0.5 transition cursor-pointer"
                       >
-                        VIEW ALL →
+                        VIEW FULL LOG →
                       </button>
                     </div>
 
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       {recentTransactions.map(tx => (
-                        <div key={tx.id} className="flex items-center justify-between text-xs py-1.5 px-2 bg-[#22222E] border border-black rounded">
-                          <div className="flex items-center gap-2 truncate">
-                            <span className="font-pixel text-[8px] text-[#8E8E93]">{tx.timeFormatted}</span>
-                            <span className="font-arcade font-bold text-[#FBD000]">{tx.teamName}</span>
-                            <span className="text-gray-300 font-arcade truncate">{tx.description}</span>
+                        <div key={tx.id} className="flex items-center justify-between text-xs py-2 px-3 bg-[#141416] border border-white/5 rounded-xl">
+                          <div className="flex items-center gap-2.5 truncate">
+                            <span className="font-mono text-[10px] text-white/40">{tx.timeFormatted}</span>
+                            <span className="font-bold text-white">{tx.teamName}</span>
+                            <span className="text-white/60 truncate">{tx.description}</span>
                           </div>
                           {tx.cashDelta !== undefined && (
-                            <span className={`font-pixel text-[9px] flex-shrink-0 ${tx.cashDelta >= 0 ? 'text-[#43B047]' : 'text-[#E52521]'}`}>
-                              {tx.cashDelta >= 0 ? '+' : ''}{formatCoins(tx.cashDelta)}
+                            <span className={`font-mono text-xs font-bold flex-shrink-0 ${tx.cashDelta >= 0 ? 'text-[#33FF67]' : 'text-[#FF5C7A]'}`}>
+                              {tx.cashDelta >= 0 ? '+' : ''}{formatCurrency(tx.cashDelta)}
                             </span>
                           )}
                         </div>
@@ -306,7 +271,7 @@ export const AdminShell: React.FC = () => {
               )}
 
               {activeTab === 'activity' && (
-                <div className="p-6 nes-box bg-[#181820] border-4 border-black shadow-[4px_4px_0px_#000]">
+                <div className="p-6 rounded-3xl eqx-card">
                   <AdminActivityLog />
                 </div>
               )}
@@ -317,7 +282,7 @@ export const AdminShell: React.FC = () => {
 
       {/* Mobile Bottom Navigation (Visible on screen < 1024px) */}
       <nav className="lg:hidden fixed bottom-3 inset-x-0 flex justify-center z-40 px-4 pointer-events-none">
-        <div className="w-full max-w-[370px] h-[64px] bg-[#181820] border-4 border-black rounded-2xl px-3 py-1 shadow-[4px_4px_0px_#000] flex items-center justify-around pointer-events-auto">
+        <div className="w-full max-w-[390px] h-[64px] bg-[#141416]/95 backdrop-blur-xl border border-white/10 rounded-2xl px-3 py-1 shadow-2xl flex items-center justify-around pointer-events-auto">
           {[
             { id: 'game', label: 'Game', icon: Dices },
             { id: 'teams', label: 'Teams', icon: Users },
@@ -330,14 +295,14 @@ export const AdminShell: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as any)}
-                className={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-all ${
+                className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition ${
                   isActive 
-                    ? 'bg-[#FBD000] text-black font-pixel shadow-[2px_2px_0px_#000]' 
-                    : 'text-[#8E8E93] hover:text-[#F7F2F6] font-arcade'
+                    ? 'text-[#7484FE] font-bold' 
+                    : 'text-white/40 hover:text-white'
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-[9px] tracking-tight mt-0.5">
+                <span className="text-[10px] tracking-tight mt-0.5">
                   {item.label}
                 </span>
               </button>
@@ -374,26 +339,26 @@ export const AdminShell: React.FC = () => {
 
       {/* Exit Castle Confirmation Modal */}
       {showExitConfirm && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-sm nes-box bg-[#181820] border-4 border-black p-6 space-y-4 shadow-[6px_6px_0px_#000] animate-in zoom-in-95">
-            <h3 className="text-sm font-pixel text-[#E52521]">
-              ⚠️ EXIT CASTLE?
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-sm eqx-card-elevated p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
+            <h3 className="text-base font-bold text-white">
+              Exit Control Console?
             </h3>
-            <p className="text-xs font-arcade text-gray-300 leading-relaxed">
-              The match will continue running in real time. You can re-enter this room anytime with the Game Master passcode.
+            <p className="text-xs text-white/60 leading-relaxed">
+              The live match will continue running in real time. You can re-enter this console room at any time with the Game Master passcode.
             </p>
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-2 gap-3 pt-2">
               <button
                 onClick={() => setShowExitConfirm(false)}
-                className="py-2.5 mario-btn-dark text-white font-pixel text-[9px]"
+                className="btn-eqx-secondary py-2.5 text-xs font-semibold"
               >
                 CANCEL
               </button>
               <button
                 onClick={() => { setShowExitConfirm(false); logout(); }}
-                className="py-2.5 mario-btn-red text-white font-pixel text-[9px]"
+                className="btn-eqx-danger py-2.5 text-xs font-semibold"
               >
-                EXIT CASTLE
+                EXIT CONSOLE
               </button>
             </div>
           </div>
@@ -402,24 +367,24 @@ export const AdminShell: React.FC = () => {
 
       {/* Undo Action Confirmation Modal */}
       {showUndoConfirm && lastTxToUndo && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-sm nes-box bg-[#181820] border-4 border-black p-6 space-y-4 shadow-[6px_6px_0px_#000] animate-in zoom-in-95">
-            <h3 className="text-sm font-pixel text-[#FBD000]">
-              ↶ UNDO LAST MOVE?
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-sm eqx-card-elevated p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
+            <h3 className="text-base font-bold text-white">
+              Revert Last Match Move?
             </h3>
-            <p className="text-xs font-arcade text-gray-300 leading-relaxed">
-              Revert quest action: <strong className="text-white">"{lastTxToUndo.description}"</strong>? Previous board positions, coins, and power-ups will be restored.
+            <p className="text-xs text-white/60 leading-relaxed">
+              Revert action: <strong className="text-white">"{lastTxToUndo.description}"</strong>? Previous board positions, cash balances, and enterprise levels will be restored.
             </p>
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-2 gap-3 pt-2">
               <button
                 onClick={() => setShowUndoConfirm(false)}
-                className="py-2.5 mario-btn-dark text-white font-pixel text-[9px]"
+                className="btn-eqx-secondary py-2.5 text-xs font-semibold"
               >
                 CANCEL
               </button>
               <button
                 onClick={() => { undoAction(); setShowUndoConfirm(false); }}
-                className="py-2.5 mario-btn-red text-white font-pixel text-[9px]"
+                className="btn-eqx-danger py-2.5 text-xs font-semibold"
               >
                 CONFIRM UNDO
               </button>

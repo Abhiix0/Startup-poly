@@ -2,6 +2,7 @@ import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { Team } from '../../types/game';
 import { formatCurrency } from '../../constants/theme';
+import { AlertTriangle, ShieldAlert } from 'lucide-react';
 
 interface PlayerForcedSaleModalProps {
   team: Team;
@@ -17,56 +18,56 @@ export const PlayerForcedSaleModal: React.FC<PlayerForcedSaleModalProps> = ({ te
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-3xl bg-[#1B1718] border-3 border-[#E52521] p-5 text-center shadow-[8px_8px_0px_#000] space-y-4 animate-in fade-in zoom-in duration-200">
-        <div className="text-4xl animate-bounce">
-          🔥
+      <div className="w-full max-w-sm rounded-3xl bg-[#19191C] border-2 border-[#FF5C7A] p-6 text-center shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
+        <div className="w-12 h-12 mx-auto rounded-2xl bg-[#FF5C7A]/15 border border-[#FF5C7A]/30 flex items-center justify-center text-[#FF5C7A]">
+          <ShieldAlert className="w-6 h-6" />
         </div>
 
         <div>
-          <span className="font-pixel text-[8px] uppercase tracking-wider text-[#E52521] bg-[#E52521]/20 px-2.5 py-1 rounded-full border border-[#E52521]">
-            BOWSER DEBT HAZARD
+          <span className="text-[10px] uppercase tracking-wider text-[#FF5C7A] bg-[#FF5C7A]/10 px-3 py-1 rounded-full border border-[#FF5C7A]/30 font-bold">
+            DEBT SETTLEMENT REQUIRED
           </span>
-          <h2 className="font-pixel text-sm text-[#FDF6E2] tracking-wide mt-2">
-            PIPE FORCED SALE!
+          <h2 className="text-base font-bold text-white tracking-tight mt-2">
+            Emergency Venture Liquidation
           </h2>
-          <p className="font-arcade text-xs text-[#A89F91] mt-1">
+          <p className="text-xs text-white/60 mt-1">
             {pendingSale.reason}
           </p>
         </div>
 
         {/* Debt Breakdown */}
-        <div className="p-3.5 rounded-xl bg-[#101014] border-2 border-[#E52521]/40 text-left space-y-2 text-xs">
+        <div className="p-3.5 rounded-xl bg-[#141416] border border-white/5 text-left space-y-2 text-xs">
           <div className="flex justify-between">
-            <span className="font-pixel text-[8px] text-[#A89F91]">TOTAL DUE</span>
-            <span className="font-pixel text-xs text-[#FDF6E2]">{formatCurrency(pendingSale.requiredAmount)}</span>
+            <span className="text-white/40">Total Amount Due</span>
+            <span className="font-bold text-white font-mono">{formatCurrency(pendingSale.requiredAmount)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="font-pixel text-[8px] text-[#A89F91]">COINS APPLIED</span>
-            <span className="font-pixel text-xs text-[#43B047]">−{formatCurrency(pendingSale.cashApplied)}</span>
+            <span className="text-white/40">Cash Applied</span>
+            <span className="font-bold text-[#33FF67] font-mono">−{formatCurrency(pendingSale.cashApplied)}</span>
           </div>
-          <div className="flex justify-between pt-1.5 border-t border-[#3D3234]">
-            <span className="font-pixel text-[8px] text-[#E52521]">REMAINING DEBT</span>
-            <span className="font-pixel text-xs text-[#E52521]">{formatCurrency(pendingSale.remainingDue)}</span>
+          <div className="flex justify-between pt-1.5 border-t border-white/5">
+            <span className="text-[#FF5C7A] font-semibold">Remaining Debt</span>
+            <span className="font-bold text-[#FF5C7A] font-mono">{formatCurrency(pendingSale.remainingDue)}</span>
           </div>
         </div>
 
-        <div className="p-3 rounded-xl bg-[#262022] border border-[#3D3234] text-left">
-          <p className="font-arcade text-xs text-[#A89F91] leading-relaxed">
-            The Game Master is currently processing the liquidation of one of your active pipes at its original cost.
+        <div className="p-3 rounded-xl bg-[#202024] border border-white/5 text-left">
+          <p className="text-xs text-white/70 leading-relaxed">
+            The Game Master is currently processing the liquidation of one of your active enterprises at original valuation to satisfy debt.
           </p>
         </div>
 
         <div className="space-y-2 text-left">
-          <span className="font-pixel text-[8px] uppercase text-[#A89F91] block px-1">
-            PIPES AVAILABLE FOR LIQUIDATION ({myBusinesses.length})
+          <span className="text-[10px] uppercase font-bold tracking-wider text-white/40 block px-1">
+            VENTURES ELIGIBLE FOR LIQUIDATION ({myBusinesses.length})
           </span>
           {myBusinesses.map(biz => (
-            <div key={biz.id} className="p-2.5 rounded-xl bg-[#101014] border border-[#3D3234] flex items-center justify-between text-xs">
+            <div key={biz.id} className="p-2.5 rounded-xl bg-[#141416] border border-white/5 flex items-center justify-between text-xs">
               <div>
-                <strong className="font-pixel text-[9px] text-[#FDF6E2] block">{biz.name}</strong>
-                <span className="font-arcade text-[10px] text-[#A89F91]">Level {biz.level}</span>
+                <strong className="text-white font-semibold block">{biz.name}</strong>
+                <span className="text-[11px] text-white/50">Level {biz.level}</span>
               </div>
-              <span className="font-pixel text-xs text-[#43B047]">
+              <span className="font-mono font-bold text-[#33FF67]">
                 +{formatCurrency(biz.cost)}
               </span>
             </div>
@@ -76,4 +77,3 @@ export const PlayerForcedSaleModal: React.FC<PlayerForcedSaleModalProps> = ({ te
     </div>
   );
 };
-

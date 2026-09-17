@@ -2,45 +2,30 @@
 
 @layer base {
   :root {
-    --mario-red: #E52521;
-    --mario-dark-red: #9B110E;
-    --luigi-green: #43B047;
-    --luigi-dark-green: #007000;
-    --coin-gold: #FBD000;
-    --coin-dark-gold: #C69200;
-    --star-yellow: #FFE600;
-    --sky-blue: #3B82F6;
-    --brick-brown: #C84C0C;
-    --brick-dark-brown: #782000;
-    --pipe-green: #00A800;
-    --pipe-dark-green: #005800;
-    --castle-dark: #101014;
-    --castle-surface: #181820;
-    --castle-elevated: #22222E;
-    --castle-border: #3D3234;
-    --mario-white: #FFF8E7;
-    --mario-muted: #A89F91;
+    --bg-base: #0D0D0F;
+    --bg-surface: #19191C;
+    --bg-elevated: #202024;
+    --border-subtle: rgba(247, 242, 246, 0.08);
+    --border-strong: rgba(247, 242, 246, 0.16);
+    --text-primary: #F7F2F6;
+    --text-secondary: rgba(247, 242, 246, 0.65);
+    --text-muted: rgba(247, 242, 246, 0.40);
+    --equinox-blue: #7484FE;
+    --signal-green: #33FF67;
+    --accent-amber: #FFBD59;
+    --accent-red: #FF5C7A;
+    --accent-purple: #B987FF;
+    --accent-cyan: #58D6E8;
   }
 
   body {
-    background-color: #3B82F6;
-    background-image: 
-      radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.45) 0%, transparent 8%),
-      radial-gradient(circle at 88% 25%, rgba(255, 255, 255, 0.4) 0%, transparent 10%),
-      radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.35) 0%, transparent 12%);
-    color: #0F172A;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0D0D0F;
+    color: #F7F2F6;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
     overflow-x: hidden;
-  }
-
-  /* Castle Dark Mode */
-  body.theme-dark {
-    background-color: #101014;
-    background-image: none;
-    color: #FDF6E2;
   }
 
   .safe-bottom {
@@ -51,304 +36,135 @@
   }
 }
 
-/* Typography Utility Classes */
-.font-pixel {
-  font-family: 'Press Start 2P', monospace, cursive;
-}
-
-.font-arcade {
-  font-family: 'Silkscreen', monospace;
-}
-
-.font-retro {
-  font-family: 'VT323', monospace;
-}
-
-/* 1. Parchment / Super Mario Overworld Cards (From Mockup) */
-.mario-card {
-  background-color: #FFF8E7;
-  border: 2.5px solid #000000;
+/* Equinox UI Card Systems */
+.eqx-card {
+  background-color: #19191C;
+  border: 1px solid rgba(247, 242, 246, 0.08);
   border-radius: 20px;
-  box-shadow: 0 4px 0px #000000;
 }
 
-.theme-dark .mario-card {
-  background-color: #181820;
-  border: 2.5px solid #000000;
-  color: #FDF6E2;
-  box-shadow: 0 4px 0px #000000;
+.eqx-card-elevated {
+  background-color: #202024;
+  border: 1px solid rgba(247, 242, 246, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.mario-card-white {
-  background-color: #FFFFFF;
-  border: 2px solid #000000;
-  border-radius: 18px;
-  box-shadow: 0 3px 0px rgba(0, 0, 0, 0.15);
+.eqx-glass {
+  background-color: rgba(25, 25, 28, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(247, 242, 246, 0.10);
 }
 
-.theme-dark .mario-card-white {
-  background-color: #22222E;
-  border: 2px solid #000000;
-  color: #FFFFFF;
-  box-shadow: 0 3px 0px #000000;
+.eqx-glass-elevated {
+  background-color: rgba(32, 32, 36, 0.90);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(247, 242, 246, 0.14);
 }
 
-/* Retro Pixel Borders & NES Dialogue Boxes */
-.nes-box {
-  background-color: #FFFFFF;
-  border: 3px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
+/* Touch Targets & Modern Buttons */
+.btn-eqx-primary {
+  background-color: #7484FE;
+  color: #0D0D0F;
+  font-weight: 700;
+  border-radius: 14px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(116, 132, 254, 0.35);
 }
-
-.theme-dark .nes-box {
-  background-color: #181820;
-  border: 3px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
+.btn-eqx-primary:hover:not(:disabled) {
+  background-color: #8A98FF;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(116, 132, 254, 0.45);
 }
-
-.nes-box-red {
-  background-color: #FFF1F2;
-  border: 3px solid #E52521;
-  box-shadow: 3px 3px 0px #000000;
-}
-.theme-dark .nes-box-red {
-  background-color: #181820;
-  border: 3px solid #E52521;
-  box-shadow: 3px 3px 0px #9B110E;
-}
-
-.nes-box-gold {
-  background-color: #FEFCE8;
-  border: 3px solid #EAB308;
-  box-shadow: 3px 3px 0px #000000;
-}
-.theme-dark .nes-box-gold {
-  background-color: #181820;
-  border: 3px solid #FBD000;
-  box-shadow: 3px 3px 0px #C69200;
-}
-
-.nes-box-green {
-  background-color: #F0FDF4;
-  border: 3px solid #22C55E;
-  box-shadow: 3px 3px 0px #000000;
-}
-.theme-dark .nes-box-green {
-  background-color: #181820;
-  border: 3px solid #43B047;
-  box-shadow: 3px 3px 0px #007000;
-}
-
-.nes-box-blue {
-  background-color: #EFF6FF;
-  border: 3px solid #3B82F6;
-  box-shadow: 3px 3px 0px #000000;
-}
-.theme-dark .nes-box-blue {
-  background-color: #181820;
-  border: 3px solid #5C94FC;
-  box-shadow: 3px 3px 0px #1A4EB8;
-}
-
-/* 2. Overworld Scenery: Pixel Brick Terrain Footer */
-.mario-ground-footer {
-  position: relative;
-  background-color: #C84C0C;
-  background-image: 
-    repeating-linear-gradient(0deg, #782000, #782000 2px, transparent 2px, transparent 16px),
-    repeating-linear-gradient(90deg, #782000, #782000 2px, transparent 2px, transparent 32px);
-  border-top: 6px solid #43B047;
-  box-shadow: inset 0 3px 0px #A3F7A6;
-}
-
-/* 3. Wooden Signboard (Waiting Room in Mockup) */
-.mario-wooden-sign {
-  background: linear-gradient(180deg, #A75D28 0%, #7E3E11 100%);
-  border: 3px solid #3D1E08;
-  border-radius: 12px;
-  box-shadow: 0 4px 0px #2A1303, inset 0 2px 0px #D88E52;
-  color: #FFF8E7;
-  text-shadow: 1px 1px 0px #000000;
-}
-
-/* 4. Question Mark Block Texture & Bounce */
-.question-block {
-  background: linear-gradient(135deg, #FBD000 0%, #E56B00 100%);
-  border: 3px solid #000000;
-  box-shadow: inset 3px 3px 0px #FFF399, inset -3px -3px 0px #8B3A00, 3px 3px 0px #000000;
-  position: relative;
-}
-
-.pipe-block {
-  background: linear-gradient(90deg, #43B047 0%, #00A800 40%, #007000 100%);
-  border: 3px solid #000000;
-  box-shadow: inset 2px 2px 0px #A3F7A6, inset -2px -2px 0px #004500, 3px 3px 0px #000000;
-}
-
-/* 5. 3D Mario Arcade Button Press Animations (Exact to Mockup) */
-.btn-mario-green {
-  background-color: #34D399;
-  color: #000000;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 13px;
-  font-weight: 900;
-  border: 2.5px solid #000000;
-  border-radius: 12px;
-  box-shadow: 0 4px 0px #059669, 0 6px 0px #000000;
+.btn-eqx-primary:active:not(:disabled) {
   transform: translateY(0);
-  transition: all 0.08s ease;
-  cursor: pointer;
-}
-.btn-mario-green:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0px 0px #059669, 0 2px 0px #000000;
 }
 
-.btn-mario-yellow {
-  background-color: #FBBF24;
-  color: #000000;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 13px;
-  font-weight: 900;
-  border: 2.5px solid #000000;
-  border-radius: 12px;
-  box-shadow: 0 4px 0px #D97706, 0 6px 0px #000000;
+.btn-eqx-green {
+  background-color: #33FF67;
+  color: #0D0D0F;
+  font-weight: 700;
+  border-radius: 14px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(51, 255, 103, 0.35);
+}
+.btn-eqx-green:hover:not(:disabled) {
+  background-color: #4DFF7C;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(51, 255, 103, 0.45);
+}
+.btn-eqx-green:active:not(:disabled) {
   transform: translateY(0);
-  transition: all 0.08s ease;
-  cursor: pointer;
-}
-.btn-mario-yellow:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0px 0px #D97706, 0 2px 0px #000000;
 }
 
-.btn-mario-blue {
-  background-color: #3B82F6;
-  color: #FFFFFF;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 11px;
-  font-weight: bold;
-  border: 2px solid #000000;
-  border-radius: 10px;
-  box-shadow: 0 3px 0px #1D4ED8, 0 5px 0px #000000;
-  transform: translateY(0);
-  transition: all 0.08s ease;
-  cursor: pointer;
+.btn-eqx-secondary {
+  background-color: #202024;
+  color: #F7F2F6;
+  border: 1px solid rgba(247, 242, 246, 0.12);
+  font-weight: 600;
+  border-radius: 14px;
+  transition: all 0.15s ease;
 }
-.btn-mario-blue:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 0px 0px #1D4ED8, 0 2px 0px #000000;
+.btn-eqx-secondary:hover:not(:disabled) {
+  background-color: #28282D;
+  border-color: rgba(247, 242, 246, 0.2);
 }
 
-.btn-mario-brick {
-  background: linear-gradient(180deg, #C84C0C 0%, #9A3412 100%);
-  color: #FFFFFF;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 13px;
-  font-weight: 900;
-  border: 2.5px solid #000000;
-  border-radius: 12px;
-  box-shadow: 0 4px 0px #782000, 0 6px 0px #000000;
-  transform: translateY(0);
-  transition: all 0.08s ease;
-  cursor: pointer;
+.btn-eqx-danger {
+  background-color: rgba(255, 92, 122, 0.15);
+  color: #FF5C7A;
+  border: 1px solid rgba(255, 92, 122, 0.3);
+  font-weight: 700;
+  border-radius: 14px;
+  transition: all 0.15s ease;
 }
-.btn-mario-brick:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0px 0px #782000, 0 2px 0px #000000;
+.btn-eqx-danger:hover:not(:disabled) {
+  background-color: rgba(255, 92, 122, 0.25);
+  border-color: rgba(255, 92, 122, 0.5);
 }
 
-.mario-btn-red {
-  background-color: #E52521;
-  color: #FFFFFF;
-  border: 2px solid #000000;
-  box-shadow: 0 4px 0px #9B110E, 0 6px 0px #000000;
-  transform: translateY(0);
-  transition: all 0.08s ease;
+/* Animations & Smooth GPU Transitions */
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
 }
-.mario-btn-red:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0px 0px #9B110E, 0 2px 0px #000000;
+.animate-pulse-subtle {
+  animation: pulse-subtle 1.8s infinite ease-in-out;
 }
 
-.mario-btn-green {
-  background-color: #43B047;
-  color: #FFFFFF;
-  border: 2px solid #000000;
-  box-shadow: 0 4px 0px #007000, 0 6px 0px #000000;
-  transform: translateY(0);
-  transition: all 0.08s ease;
+@keyframes glow-blue {
+  0%, 100% { box-shadow: 0 0 15px rgba(116, 132, 254, 0.35); }
+  50% { box-shadow: 0 0 25px rgba(116, 132, 254, 0.65); }
 }
-.mario-btn-green:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0px 0px #007000, 0 2px 0px #000000;
+.animate-glow-blue {
+  animation: glow-blue 2s infinite ease-in-out;
 }
 
-.mario-btn-gold {
-  background-color: #FBD000;
-  color: #000000;
-  border: 2px solid #000000;
-  box-shadow: 0 4px 0px #C69200, 0 6px 0px #000000;
-  transform: translateY(0);
-  transition: all 0.08s ease;
+@keyframes glow-green {
+  0%, 100% { box-shadow: 0 0 15px rgba(51, 255, 103, 0.35); }
+  50% { box-shadow: 0 0 25px rgba(51, 255, 103, 0.65); }
 }
-.mario-btn-gold:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0px 0px #C69200, 0 2px 0px #000000;
+.animate-glow-green {
+  animation: glow-green 2s infinite ease-in-out;
 }
 
-.mario-btn-dark {
-  background-color: #22222E;
-  color: #FDF6E2;
-  border: 2px solid #000000;
-  box-shadow: 0 4px 0px #141011, 0 6px 0px #000000;
-  transform: translateY(0);
-  transition: all 0.08s ease;
-}
-.mario-btn-dark:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0px 0px #141011, 0 2px 0px #000000;
-}
-
-/* Animations */
-@keyframes coin-spin {
-  0% { transform: scaleX(1); }
-  25% { transform: scaleX(0.2); }
-  50% { transform: scaleX(1); }
-  75% { transform: scaleX(0.2); }
-  100% { transform: scaleX(1); }
-}
-.animate-coin-spin {
-  animation: coin-spin 1.2s infinite ease-in-out;
-}
-
-@keyframes star-pulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #FBD000); }
-  50% { transform: scale(1.15); filter: drop-shadow(0 0 14px #FFE600); }
-}
-.animate-star-pulse {
-  animation: star-pulse 1.5s infinite ease-in-out;
-}
-
-@keyframes block-jump {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-.animate-block-jump {
-  animation: block-jump 2s infinite ease-in-out;
-}
-
-/* Custom Scrollbar */
+/* Custom Minimal Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #3B82F6;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #FBBF24;
-  border: 1px solid #000;
+  background: rgba(247, 242, 246, 0.15);
+  border-radius: 4px;
 }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(247, 242, 246, 0.25);
+}
+
 
 

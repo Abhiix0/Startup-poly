@@ -195,6 +195,17 @@ export function processRoll(state: MatchState, rollValue: number): MatchState {
 
   currentTeam.position = newPos;
 
+  // Set latest roll animation event for realtime board popup on all devices
+  newState.latestRollAnimation = {
+    id: 'anim_' + Date.now(),
+    teamIndex: newState.activeTeamIndex,
+    roll: rollValue,
+    fromSpace: prevPos,
+    toSpace: newPos,
+    passedStart,
+    timestamp: Date.now(),
+  };
+
   // Set pending landing
   newState.pendingLanding = {
     teamIndex: newState.activeTeamIndex,

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
 import { Team } from '../../types/game';
-import { formatCurrency, formatNumber, MARIO_CHARACTERS } from '../../constants/theme';
-import { Trophy, ArrowLeft } from 'lucide-react';
+import { formatCurrency, formatNumber, TEAM_METAS } from '../../constants/theme';
+import { Trophy, ArrowLeft, Sparkles, Award } from 'lucide-react';
 
 interface PlayerWinnerScreenProps {
   team: Team;
@@ -14,59 +14,66 @@ export const PlayerWinnerScreen: React.FC<PlayerWinnerScreenProps> = ({ team, on
   const myRank = rankedTeams.findIndex(t => t.number === team.number) + 1;
   const winner = rankedTeams[0];
   const isWinner = winner?.number === team.number;
-  const char = MARIO_CHARACTERS[team.number] || MARIO_CHARACTERS[1];
+  const teamMeta = TEAM_METAS[team.number] || TEAM_METAS[1];
 
   return (
-    <div className="min-h-[85vh] flex flex-col justify-between py-4 px-1 select-none">
+    <div className="min-h-[85vh] flex flex-col justify-between py-4 px-1 select-none max-w-[420px] mx-auto">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         {onOpenExitConfirm && (
           <button
             onClick={onOpenExitConfirm}
-            className="p-1.5 -ml-1 rounded-lg bg-[#262022] text-[#A89F91] hover:text-[#FDF6E2] border border-[#3D3234] shadow-[2px_2px_0px_#000] transition cursor-pointer"
+            className="p-2 rounded-xl bg-[#19191C] text-white/70 hover:text-white border border-white/10 transition cursor-pointer"
             title="Exit Game"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
         )}
-        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FBD000]/20 border-2 border-[#FBD000] font-pixel text-[9px] text-[#FBD000]">
-          <Trophy className="w-3.5 h-3.5" /> STAGE CLEAR!
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFBD59]/10 border border-[#FFBD59]/30 text-xs font-semibold text-[#FFBD59]">
+          <Trophy className="w-3.5 h-3.5" /> MATCH CONCLUDED
         </span>
-        <div className="w-6" />
+        <div className="w-8" />
       </div>
 
       {/* Main Team Performance Card */}
       <div className="my-auto py-3">
-        <div className={`p-6 rounded-3xl bg-[#1B1718] border-3 text-center relative overflow-hidden ${
-          isWinner ? 'border-[#FBD000] shadow-[8px_8px_0px_#C69200]' : 'border-[#FDF6E2] shadow-[6px_6px_0px_#000]'
+        <div className={`p-6 rounded-3xl eqx-card-elevated text-center relative overflow-hidden ${
+          isWinner ? 'border-[#FFBD59] shadow-[0_0_30px_rgba(255,189,89,0.2)]' : 'border-white/10'
         }`}>
           {isWinner && (
-            <div className="absolute top-0 inset-x-0 bg-[#FBD000] py-1 text-black font-pixel text-[9px] uppercase tracking-wider shadow-sm">
-              👑 WORLD CHAMPION 👑
+            <div className="absolute top-0 inset-x-0 bg-[#FFBD59] py-1 text-black text-xs font-bold uppercase tracking-wider">
+              👑 TOURNAMENT CHAMPION 👑
             </div>
           )}
 
-          <div className="text-5xl my-3 animate-bounce">
-            {isWinner ? '👑' : char.icon}
+          <div 
+            className="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-2xl font-bold my-4 border"
+            style={{ 
+              backgroundColor: teamMeta.badgeBg, 
+              color: teamMeta.color,
+              borderColor: `${teamMeta.color}40`
+            }}
+          >
+            T0{team.number}
           </div>
 
-          <h2 className="font-pixel text-base text-[#FDF6E2] tracking-wide">
-            {char.characterName.toUpperCase()}
+          <h2 className="text-xl font-bold text-white tracking-tight">
+            {team.name ? team.name.toUpperCase() : `TEAM 0${team.number}`}
           </h2>
 
-          <p className="font-pixel text-[10px] text-[#FBD000] mt-1.5">
-            RANK #{myRank} OF {rankedTeams.length} PLAYERS
+          <p className="text-sm font-semibold text-[#FFBD59] mt-1">
+            RANK #{myRank} OF {rankedTeams.length} TEAMS
           </p>
 
           {/* Performance Stats */}
-          <div className="grid grid-cols-2 gap-2 mt-5 pt-4 border-t-2 border-[#3D3234] text-left">
-            <div className="p-3 rounded-xl bg-[#101014] border border-[#3D3234]">
-              <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">FINAL STARS</span>
-              <span className="font-pixel text-sm text-[#5C94FC]">{formatNumber(team.cv)} CV</span>
+          <div className="grid grid-cols-2 gap-2 mt-5 pt-4 border-t border-white/5 text-left">
+            <div className="p-3 rounded-xl bg-[#141416] border border-white/5">
+              <span className="text-[10px] uppercase text-white/40 block mb-0.5">FINAL VALUATION</span>
+              <span className="text-base font-bold text-[#7484FE]">{formatNumber(team.cv)} CV</span>
             </div>
-            <div className="p-3 rounded-xl bg-[#101014] border border-[#3D3234]">
-              <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">FINAL COINS</span>
-              <span className="font-pixel text-sm text-[#FBD000]">{formatCurrency(team.cash)}</span>
+            <div className="p-3 rounded-xl bg-[#141416] border border-white/5">
+              <span className="text-[10px] uppercase text-white/40 block mb-0.5">FINAL CASH</span>
+              <span className="text-base font-bold text-[#33FF67]">{formatCurrency(team.cash)}</span>
             </div>
           </div>
         </div>
@@ -74,27 +81,30 @@ export const PlayerWinnerScreen: React.FC<PlayerWinnerScreenProps> = ({ team, on
 
       {/* Leaderboard Standings */}
       <div className="space-y-2">
-        <span className="font-pixel text-[9px] uppercase text-[#A89F91] block px-1">
-          CASTLE STANDINGS
+        <span className="text-[10px] uppercase font-bold tracking-wider text-white/40 block px-1">
+          OFFICIAL TOURNAMENT PODIUM
         </span>
         <div className="space-y-1.5">
           {rankedTeams.slice(0, 3).map((t, idx) => {
-            const teamChar = MARIO_CHARACTERS[t.number] || MARIO_CHARACTERS[1];
+            const meta = TEAM_METAS[t.number] || TEAM_METAS[1];
             return (
               <div 
                 key={t.id}
-                className={`p-3 rounded-xl border-2 flex items-center justify-between text-xs ${
+                className={`p-3 rounded-xl border flex items-center justify-between text-xs transition ${
                   t.number === team.number 
-                    ? 'bg-[#262022] border-[#FBD000] text-[#FDF6E2]' 
-                    : 'bg-[#1B1718] border-[#3D3234] text-[#A89F91]'
+                    ? 'bg-[#202024] border-[#7484FE] text-white' 
+                    : 'bg-[#19191C] border-white/5 text-white/70'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <span className="font-pixel text-[10px] text-[#FBD000]">#{idx + 1}</span>
-                  <span className="text-base">{teamChar.icon}</span>
-                  <span className="font-pixel text-[9px] text-[#FDF6E2]">{teamChar.characterName}</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xs font-bold text-[#FFBD59]">#{idx + 1}</span>
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: meta.color }} />
+                  <span className="font-semibold text-white">{t.name}</span>
                 </div>
-                <span className="font-pixel text-[10px] text-[#5C94FC]">{formatNumber(t.cv)} CV</span>
+                <div className="text-right font-mono">
+                  <span className="text-xs font-bold text-[#7484FE]">{formatNumber(t.cv)} CV</span>
+                  <span className="text-[11px] text-white/40 ml-2">{formatCurrency(t.cash)}</span>
+                </div>
               </div>
             );
           })}
@@ -103,4 +113,3 @@ export const PlayerWinnerScreen: React.FC<PlayerWinnerScreenProps> = ({ team, on
     </div>
   );
 };
-

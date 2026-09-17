@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { formatCurrency, formatNumber, MARIO_CHARACTERS } from '../../constants/theme';
-import { X } from 'lucide-react';
+import { formatCurrency, formatNumber, TEAM_METAS } from '../../constants/theme';
+import { X, Sliders, Building2, Coins, ArrowUpRight } from 'lucide-react';
 
 interface AdminTeamDrawerProps {
   teamIndex: number | null;
@@ -18,7 +18,7 @@ export const AdminTeamDrawer: React.FC<AdminTeamDrawerProps> = ({ teamIndex, onC
   const team = state.teams[teamIndex];
   if (!team) return null;
 
-  const char = MARIO_CHARACTERS[team.number] || MARIO_CHARACTERS[1];
+  const meta = TEAM_METAS[team.number] || TEAM_METAS[1];
   const myBusinesses = state.businesses.filter(b => b.owner === teamIndex);
 
   const applyAdjustment = (cashDelta: number, cvDelta: number, customReason?: string) => {
@@ -37,25 +37,34 @@ export const AdminTeamDrawer: React.FC<AdminTeamDrawerProps> = ({ teamIndex, onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex justify-end select-none">
-      <div className="w-full max-w-[420px] bg-[#1B1718] border-l-3 border-[#FDF6E2] h-full overflow-y-auto p-6 space-y-5 shadow-2xl animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-end select-none">
+      <div className="w-full max-w-[420px] bg-[#19191C] border-l border-white/10 h-full overflow-y-auto p-6 space-y-5 shadow-2xl animate-in slide-in-from-right duration-200">
         {/* Drawer Header */}
-        <div className="flex items-center justify-between pb-3 border-b-2 border-[#3D3234]">
-          <div className="flex items-center gap-2.5">
-            <span className="text-2xl">{char.icon}</span>
+        <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-sm border"
+              style={{ 
+                backgroundColor: meta.badgeBg, 
+                color: meta.color,
+                borderColor: `${meta.color}40`
+              }}
+            >
+              T0{team.number}
+            </div>
             <div>
-              <h2 className="font-pixel text-xs text-[#FDF6E2]">
-                {char.characterName.toUpperCase()} (T0{team.number})
+              <h2 className="text-base font-bold text-white">
+                {team.name}
               </h2>
-              <span className="font-arcade text-xs text-[#A89F91]">
-                Game Master Overrides
+              <span className="text-xs text-white/50">
+                Game Master Override Controls
               </span>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1 rounded-lg bg-[#262022] hover:bg-[#332A2D] text-[#A89F91] hover:text-[#FDF6E2] border border-[#3D3234] cursor-pointer"
+            className="p-1.5 rounded-lg bg-[#202024] hover:bg-[#28282E] text-white/50 hover:text-white border border-white/10 cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -63,30 +72,30 @@ export const AdminTeamDrawer: React.FC<AdminTeamDrawerProps> = ({ teamIndex, onC
 
         {/* Current Stats */}
         <div className="grid grid-cols-2 gap-2.5">
-          <div className="p-3.5 rounded-xl bg-[#101014] border-2 border-[#FBD000]/40">
-            <span className="font-pixel text-[8px] text-[#A89F91] block mb-1">COINS</span>
-            <span className="font-pixel text-sm text-[#FBD000]">{formatCurrency(team.cash)}</span>
+          <div className="p-3.5 rounded-xl bg-[#141416] border border-white/5 font-mono">
+            <span className="text-[10px] uppercase font-bold text-white/40 block mb-0.5">CASH BALANCE</span>
+            <span className="text-base font-bold text-[#33FF67]">{formatCurrency(team.cash)}</span>
           </div>
-          <div className="p-3.5 rounded-xl bg-[#101014] border-2 border-[#5C94FC]/40">
-            <span className="font-pixel text-[8px] text-[#A89F91] block mb-1">STAR POINTS</span>
-            <span className="font-pixel text-sm text-[#5C94FC]">{formatNumber(team.cv)} CV</span>
+          <div className="p-3.5 rounded-xl bg-[#141416] border border-white/5 font-mono">
+            <span className="text-[10px] uppercase font-bold text-white/40 block mb-0.5">VALUATION</span>
+            <span className="text-base font-bold text-[#7484FE]">{formatNumber(team.cv)} CV</span>
           </div>
         </div>
 
         {/* Quick Cash Adjustments */}
         <div className="space-y-2">
-          <span className="font-pixel text-[9px] uppercase tracking-wider text-[#FBD000] block">
-            🪙 ADJUST COINS
+          <span className="text-[10px] uppercase font-bold tracking-wider text-white/50 block">
+            QUICK CASH ADJUSTMENT (₹)
           </span>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-4 gap-1.5 font-mono">
             {[+100, +200, -100, -200].map(val => (
               <button
                 key={val}
-                onClick={() => applyAdjustment(val, 0, `Manual coins ${val > 0 ? '+' : ''}${val}`)}
-                className={`py-2 rounded-lg font-pixel text-[9px] transition cursor-pointer shadow-[2px_2px_0px_#000] ${
+                onClick={() => applyAdjustment(val, 0, `Manual cash ${val > 0 ? '+' : ''}${val}`)}
+                className={`py-2 rounded-xl text-xs font-bold transition cursor-pointer border ${
                   val > 0 
-                    ? 'bg-[#43B047]/20 border border-[#43B047] text-[#43B047] hover:bg-[#43B047]/30' 
-                    : 'bg-[#E52521]/20 border border-[#E52521] text-[#E52521] hover:bg-[#E52521]/30'
+                    ? 'bg-[#33FF67]/10 border-[#33FF67]/30 text-[#33FF67] hover:bg-[#33FF67]/20' 
+                    : 'bg-[#FF5C7A]/10 border-[#FF5C7A]/30 text-[#FF5C7A] hover:bg-[#FF5C7A]/20'
                 }`}
               >
                 {val > 0 ? `+₹${val}` : `−₹${Math.abs(val)}`}
@@ -97,18 +106,18 @@ export const AdminTeamDrawer: React.FC<AdminTeamDrawerProps> = ({ teamIndex, onC
 
         {/* Quick CV Adjustments */}
         <div className="space-y-2">
-          <span className="font-pixel text-[9px] uppercase tracking-wider text-[#5C94FC] block">
-            ⭐ ADJUST STAR POWER
+          <span className="text-[10px] uppercase font-bold tracking-wider text-white/50 block">
+            QUICK VALUATION ADJUSTMENT (CV)
           </span>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-4 gap-1.5 font-mono">
             {[+100, +200, -100, -200].map(val => (
               <button
                 key={val}
-                onClick={() => applyAdjustment(0, val, `Manual stars ${val > 0 ? '+' : ''}${val}`)}
-                className={`py-2 rounded-lg font-pixel text-[9px] transition cursor-pointer shadow-[2px_2px_0px_#000] ${
+                onClick={() => applyAdjustment(0, val, `Manual CV ${val > 0 ? '+' : ''}${val}`)}
+                className={`py-2 rounded-xl text-xs font-bold transition cursor-pointer border ${
                   val > 0 
-                    ? 'bg-[#5C94FC]/20 border border-[#5C94FC] text-[#5C94FC] hover:bg-[#5C94FC]/30' 
-                    : 'bg-[#E52521]/20 border border-[#E52521] text-[#E52521] hover:bg-[#E52521]/30'
+                    ? 'bg-[#7484FE]/10 border-[#7484FE]/30 text-[#7484FE] hover:bg-[#7484FE]/20' 
+                    : 'bg-[#FF5C7A]/10 border-[#FF5C7A]/30 text-[#FF5C7A] hover:bg-[#FF5C7A]/20'
                 }`}
               >
                 {val > 0 ? `+${val}` : `−${Math.abs(val)}`}
@@ -118,55 +127,54 @@ export const AdminTeamDrawer: React.FC<AdminTeamDrawerProps> = ({ teamIndex, onC
         </div>
 
         {/* Custom Input */}
-        <form onSubmit={handleCustomSubmit} className="p-3.5 rounded-xl bg-[#101014] border border-[#3D3234] space-y-2.5 text-xs">
-          <span className="font-pixel text-[9px] text-[#FDF6E2] block">CUSTOM VALUE TWEAK</span>
+        <form onSubmit={handleCustomSubmit} className="p-4 rounded-2xl bg-[#141416] border border-white/5 space-y-3 text-xs">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-white/60 block">CUSTOM OVERRIDE ENTRY</span>
           <div className="grid grid-cols-2 gap-2">
             <input
               type="number"
-              placeholder="Coins (+/-)"
+              placeholder="Cash (+/-)"
               value={customCash}
               onChange={(e) => setCustomCash(e.target.value)}
-              className="px-3 py-2 rounded-lg bg-[#1B1718] border border-[#3D3234] font-arcade text-xs text-[#FDF6E2]"
+              className="px-3 py-2 rounded-xl bg-[#19191C] border border-white/10 text-xs text-white placeholder:text-white/30 font-mono"
             />
             <input
               type="number"
-              placeholder="Stars (+/-)"
+              placeholder="CV (+/-)"
               value={customCv}
               onChange={(e) => setCustomCv(e.target.value)}
-              className="px-3 py-2 rounded-lg bg-[#1B1718] border border-[#3D3234] font-arcade text-xs text-[#FDF6E2]"
+              className="px-3 py-2 rounded-xl bg-[#19191C] border border-white/10 text-xs text-white placeholder:text-white/30 font-mono"
             />
           </div>
           <button
             type="submit"
-            className="w-full py-2.5 rounded-lg mario-btn-gold font-pixel text-[9px] cursor-pointer"
+            className="w-full btn-eqx-primary py-2.5 text-xs font-semibold cursor-pointer"
           >
-            APPLY OVERRIDE
+            EXECUTE OVERRIDE
           </button>
         </form>
 
-        {/* Pipes */}
+        {/* Ventures List */}
         <div className="space-y-2">
-          <span className="font-pixel text-[9px] uppercase tracking-wider text-[#A89F91] block">
-            OWNED WARP PIPES ({myBusinesses.length} / 3)
+          <span className="text-[10px] uppercase font-bold tracking-wider text-white/50 block">
+            OWNED ENTERPRISES ({myBusinesses.length} / 3)
           </span>
           {myBusinesses.length > 0 ? (
             myBusinesses.map(biz => (
-              <div key={biz.id} className="p-3 rounded-xl bg-[#101014] border border-[#3D3234] flex items-center justify-between text-xs">
+              <div key={biz.id} className="p-3 rounded-xl bg-[#141416] border border-white/5 flex items-center justify-between text-xs">
                 <div>
-                  <strong className="font-pixel text-[9px] text-[#FDF6E2] block">{biz.name}</strong>
-                  <span className="font-arcade text-xs text-[#A89F91]">Level {biz.level} · {formatCurrency(biz.cost)}</span>
+                  <strong className="text-white font-semibold block">{biz.name}</strong>
+                  <span className="text-[11px] text-white/50">Level {biz.level} · {formatCurrency(biz.cost)}</span>
                 </div>
-                <span className="px-2 py-0.5 rounded-md bg-[#5C94FC]/20 text-[#5C94FC] font-pixel text-[8px]">
-                  {biz.level === 0 ? '★' : `★${biz.level + 1}`}
+                <span className="px-2 py-0.5 rounded-md bg-[#7484FE]/15 text-[#7484FE] border border-[#7484FE]/30 font-mono text-[10px]">
+                  TIER {biz.level + 1}
                 </span>
               </div>
             ))
           ) : (
-            <p className="font-arcade text-xs text-[#A89F91]">No warp pipes acquired yet.</p>
+            <p className="text-xs text-white/40 italic">No enterprises acquired yet.</p>
           )}
         </div>
       </div>
     </div>
   );
 };
-

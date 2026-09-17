@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { MARIO_CHARACTERS } from '../../constants/theme';
-import { Shield, Sparkles, Gamepad2, ArrowRight } from 'lucide-react';
+import { TEAM_METAS } from '../../constants/theme';
+import { Shield, ArrowRight, Gamepad2, Radio } from 'lucide-react';
 
 interface PlayerJoinViewProps {
   onGoToAdminLogin?: () => void;
@@ -31,28 +31,23 @@ export const PlayerJoinView: React.FC<PlayerJoinViewProps> = ({ onGoToAdminLogin
     }
   };
 
-  const selectedChar = MARIO_CHARACTERS[teamNumber] || MARIO_CHARACTERS[1];
-
   return (
-    <div className="w-screen min-h-[100dvh] bg-[#3B82F6] text-black flex flex-col items-center justify-between p-4 sm:p-6 select-none relative overflow-hidden">
-      {/* Background Pixel Dots & Mario Accents */}
-      <div className="absolute top-6 left-8 bg-white/90 rounded-full w-24 h-8 shadow-[3px_3px_0px_rgba(0,0,0,0.15)] pointer-events-none" />
-      <div className="absolute top-12 right-10 bg-white/90 rounded-full w-32 h-10 shadow-[3px_3px_0px_rgba(0,0,0,0.15)] pointer-events-none" />
-      <div className="absolute top-28 left-4 text-3xl opacity-80 pointer-events-none animate-block-jump">❓</div>
-      <div className="absolute top-20 right-6 text-3xl opacity-80 pointer-events-none animate-star-pulse">⭐</div>
+    <div className="w-screen min-h-[100dvh] bg-[#0D0D0F] text-[#F7F2F6] flex flex-col items-center justify-between p-4 sm:p-6 select-none relative overflow-hidden">
+      {/* Background Subtle Gradient Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#7484FE]/10 blur-[120px] pointer-events-none" />
 
       {/* Top Header */}
-      <header className="w-full max-w-[390px] flex items-center justify-between py-2 z-10">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#E52521] border-2 border-black flex items-center justify-center font-pixel text-sm text-white shadow-[2px_2px_0px_#000]">
-            M
+      <header className="w-full max-w-[420px] flex items-center justify-between py-2 z-10">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-[#7484FE] flex items-center justify-center font-bold text-xs text-white shadow-lg shadow-[#7484FE]/30">
+            S
           </div>
           <div>
-            <span className="font-pixel text-[11px] tracking-wider text-[#FBD000] drop-shadow-[2px_2px_0px_#000] block leading-none">
+            <span className="font-bold text-sm tracking-wider text-white block leading-none">
               STARTUPOLY
             </span>
-            <span className="font-arcade text-[10px] text-white tracking-widest uppercase font-bold drop-shadow-[1px_1px_0px_#000]">
-              WORLD 1-1 · 2K26
+            <span className="text-[10px] text-white/50 tracking-widest uppercase font-mono">
+              THE EQUINOX 2K26
             </span>
           </div>
         </div>
@@ -60,37 +55,38 @@ export const PlayerJoinView: React.FC<PlayerJoinViewProps> = ({ onGoToAdminLogin
         {onGoToAdminLogin && (
           <button
             onClick={onGoToAdminLogin}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border-2 border-black text-[9px] font-pixel text-black hover:bg-slate-100 shadow-[2px_2px_0px_#000] transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#19191C] border border-white/10 text-xs font-medium text-white/70 hover:text-white hover:bg-[#202024] transition cursor-pointer"
           >
-            <Shield className="w-3 h-3 text-[#22C55E]" /> GM LOGIN
+            <Shield className="w-3.5 h-3.5 text-[#7484FE]" />
+            <span>GM LOGIN</span>
           </button>
         )}
       </header>
 
-      {/* Main 390px Mobile Box */}
-      <main className="w-full max-w-[390px] my-auto space-y-4 z-10">
-        {/* Title Badge */}
-        <div className="text-center space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border-2 border-black text-[9px] font-pixel text-black shadow-[2px_2px_0px_#000]">
-            <Gamepad2 className="w-3.5 h-3.5 text-[#3B82F6]" /> PLAYER SELECT
+      {/* Main Form Box */}
+      <main className="w-full max-w-[420px] my-auto space-y-4 z-10">
+        <div className="text-center space-y-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#19191C] border border-white/10 text-xs text-white/80">
+            <Radio className="w-3 h-3 text-[#33FF67] animate-pulse" />
+            <span>LIVE MATCH TERMINAL</span>
           </div>
-          <h1 className="text-2xl font-pixel tracking-wider text-[#FBD000] drop-shadow-[3px_3px_0px_#000000]">
-            JOIN MATCH
+          <h1 className="text-2xl font-bold text-white tracking-tight pt-1">
+            Join Startup Match
           </h1>
-          <p className="font-arcade text-xs text-white font-bold drop-shadow-[1px_1px_0px_#000]">
-            Choose your character & enter team PIN
+          <p className="text-xs text-white/50">
+            Select your squad number and enter your team PIN
           </p>
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-rose-100 border-2 border-black text-xs font-arcade text-rose-700 font-bold text-center shadow-[3px_3px_0px_#000]">
-            ⚠️ {errorMsg}
+          <div className="p-3 rounded-xl bg-[#FF5C7A]/15 border border-[#FF5C7A]/30 text-xs text-[#FF5C7A] font-medium text-center">
+            {errorMsg}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mario-card p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="eqx-card-elevated p-6 space-y-4">
           <div>
-            <label className="font-pixel text-[8px] text-slate-700 block mb-1.5 uppercase">
+            <label className="text-[10px] uppercase font-bold tracking-wider text-white/50 block mb-1.5">
               ROOM CODE
             </label>
             <input
@@ -99,33 +95,35 @@ export const PlayerJoinView: React.FC<PlayerJoinViewProps> = ({ onGoToAdminLogin
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
               placeholder="EQX-4821"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white border-2 border-black font-pixel text-xs text-[#3B82F6] focus:outline-none shadow-[2px_2px_0px_#000]"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#141416] border border-white/10 font-mono text-sm text-white focus:outline-none focus:border-[#7484FE]"
             />
           </div>
 
           <div>
-            <label className="font-pixel text-[8px] text-slate-700 block mb-1.5 uppercase flex items-center justify-between">
-              <span>SELECT CHARACTER</span>
-              <span className="text-[9px] text-slate-500 font-arcade">{selectedChar.powerUp}</span>
+            <label className="text-[10px] uppercase font-bold tracking-wider text-white/50 block mb-1.5">
+              SELECT YOUR TEAM
             </label>
             <div className="grid grid-cols-3 gap-2">
               {state.teams.slice(0, state.settings.teamCount).map(t => {
-                const char = MARIO_CHARACTERS[t.number] || MARIO_CHARACTERS[1];
+                const meta = TEAM_METAS[t.number] || TEAM_METAS[1];
                 const isSelected = teamNumber === t.number;
                 return (
                   <button
                     key={t.id}
                     type="button"
                     onClick={() => handleSelectTeam(t.number)}
-                    className={`py-2 px-1.5 rounded-xl border-2 border-black text-center transition flex flex-col items-center justify-center gap-0.5 cursor-pointer ${
+                    className={`p-2.5 rounded-xl border text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
                       isSelected
-                        ? 'bg-[#FBD000] text-black shadow-[2px_2px_0px_#000]'
-                        : 'bg-white text-slate-700 hover:bg-slate-100'
+                        ? 'bg-[#202024] border-[#7484FE] shadow-md shadow-[#7484FE]/20'
+                        : 'bg-[#141416] border-white/5 text-white/60 hover:border-white/20'
                     }`}
                   >
-                    <span className="text-xl leading-none">{char.icon}</span>
-                    <span className="font-pixel text-[7px] text-black">{char.characterName}</span>
-                    <span className="text-[8px] font-arcade text-slate-500 font-bold">T{t.number}</span>
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: meta.color }} 
+                    />
+                    <span className="text-xs font-bold text-white">Team 0{t.number}</span>
+                    <span className="text-[10px] text-white/40 font-mono">PIN: {t.pin}</span>
                   </button>
                 );
               })}
@@ -133,37 +131,36 @@ export const PlayerJoinView: React.FC<PlayerJoinViewProps> = ({ onGoToAdminLogin
           </div>
 
           <div>
-            <label className="font-pixel text-[8px] text-slate-700 block mb-1.5 uppercase">
-              TEAM PIN
+            <label className="text-[10px] uppercase font-bold tracking-wider text-white/50 block mb-1.5">
+              TEAM 4-DIGIT PIN
             </label>
             <input
-              type="text"
+              type="password"
               required
+              maxLength={4}
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              placeholder="4-digit PIN"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white border-2 border-black font-pixel text-xs text-black focus:outline-none shadow-[2px_2px_0px_#000]"
+              placeholder="••••"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#141416] border border-white/10 font-mono text-sm text-white focus:outline-none focus:border-[#7484FE]"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full btn-mario-yellow text-xs flex items-center justify-center gap-2 cursor-pointer mt-2"
+            className="w-full btn-eqx-primary text-xs flex items-center justify-center gap-2 cursor-pointer mt-2"
           >
-            <span>PRESS START</span>
+            <span>ENTER TEAM CONSOLE</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
       </main>
 
       {/* Footer */}
-      <footer className="w-full mario-ground-footer flex items-center justify-center z-10">
-        <span className="font-pixel text-[8px] text-white tracking-wider drop-shadow-[1px_1px_0px_#000]">
-          THE EQUINOX E-SUMMIT 2K26 · SUPER MARIO CONSOLE
+      <footer className="w-full text-center py-2 z-10">
+        <span className="text-[10px] font-mono uppercase tracking-widest text-white/30">
+          THE EQUINOX E-SUMMIT 2K26 · STARTUPOLY PHYSICAL SIMULATION
         </span>
       </footer>
     </div>
   );
 };
-
-

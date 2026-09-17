@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { Play, Copy, Check, ArrowLeft, Gamepad2 } from 'lucide-react';
+import { Play, Copy, Check, ArrowLeft, Radio, Users } from 'lucide-react';
+import { TEAM_METAS } from '../../constants/theme';
 
 interface AdminWaitingRoomProps {
   onOpenExitConfirm?: () => void;
@@ -21,102 +22,109 @@ export const AdminWaitingRoom: React.FC<AdminWaitingRoomProps> = ({ onOpenExitCo
   return (
     <div className="max-w-4xl w-full mx-auto py-4 space-y-6 select-none">
       {/* Header Banner */}
-      <div className="p-6 nes-box bg-[#181820] border-4 border-black flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[4px_4px_0px_#000]">
+      <div className="p-6 rounded-3xl eqx-card-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           {onOpenExitConfirm && (
             <button
               onClick={onOpenExitConfirm}
-              className="p-2.5 nes-box bg-[#22222E] hover:bg-[#E52521] text-[#8E8E93] hover:text-white border-2 border-black transition"
-              title="Exit Castle"
+              className="p-2.5 rounded-xl bg-[#141416] hover:bg-[#202024] text-white/60 hover:text-white border border-white/10 transition"
+              title="Exit Console"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
           )}
           <div>
-            <span className="text-[10px] font-pixel uppercase tracking-wider text-[#FBD000] block mb-1">
-              🏰 GAME MASTER CASTLE · WORLD SETUP
-            </span>
-            <h1 className="text-xl sm:text-2xl font-pixel text-white">
-              STAGE 1-1 LOBBY
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2 h-2 rounded-full bg-[#33FF67] animate-ping" />
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#7484FE]">
+                GAME MASTER CONTROL ROOM · MATCH SETUP
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Stage 1-1 Lobby
             </h1>
-            <p className="text-xs font-arcade text-gray-300 mt-1">
-              Official 50-minute match. Have players choose characters and connect with Room Code & PIN.
+            <p className="text-xs text-white/50 mt-1">
+              Official 50-minute simulation. Teams connect on mobile devices with Room Code & PIN.
             </p>
           </div>
         </div>
 
         {/* Room Code Pill */}
-        <div className="flex items-center gap-3 p-3 nes-box bg-[#101014] border-2 border-[#FBD000]">
+        <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#141416] border border-white/10">
           <div>
-            <span className="text-[9px] uppercase font-pixel text-gray-400 block">WARP CODE</span>
-            <span className="font-pixel text-xl font-bold text-[#FBD000]">{state.matchCode}</span>
+            <span className="text-[10px] uppercase font-bold text-white/40 block">ROOM CODE</span>
+            <span className="font-mono text-xl font-bold text-white tracking-wider">{state.matchCode}</span>
           </div>
           <button
             onClick={copyCode}
-            className="p-2.5 mario-btn-gold text-black transition"
+            className="p-2.5 rounded-xl bg-[#7484FE] hover:bg-[#8594FE] text-white transition cursor-pointer"
             title="Copy Room Code"
           >
-            {copied ? <Check className="w-4 h-4 text-black" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
       {/* Teams Readiness Strip */}
-      <div className="p-6 nes-box bg-[#181820] border-4 border-black space-y-4 shadow-[4px_4px_0px_#000]">
+      <div className="p-6 rounded-3xl eqx-card-elevated space-y-4">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-pixel text-white flex items-center gap-2">
-            <span>🍄</span> PLAYERS READY ({readyCount} / {state.settings.teamCount})
-          </span>
+          <div className="flex items-center gap-2 text-white font-bold text-sm">
+            <Users className="w-4 h-4 text-[#7484FE]" />
+            <span>TEAMS READY ({readyCount} / {state.settings.teamCount})</span>
+          </div>
 
           <div className="flex items-center gap-2">
             {[5, 6].map(count => (
               <button
                 key={count}
                 onClick={() => updateSettings({ teamCount: count })}
-                className={`px-3 py-1.5 nes-box border-2 border-black font-pixel text-[9px] transition ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition border ${
                   state.settings.teamCount === count
-                    ? 'bg-[#FBD000] text-black shadow-[2px_2px_0px_#000]'
-                    : 'bg-[#22222E] text-gray-400 hover:text-white'
+                    ? 'bg-[#7484FE] text-white border-[#7484FE]'
+                    : 'bg-[#141416] text-white/50 border-white/5 hover:text-white'
                 }`}
               >
-                {count} PLAYERS
+                {count} TEAMS
               </button>
             ))}
           </div>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {state.teams.slice(0, state.settings.teamCount).map(team => (
-            <div 
-              key={team.id}
-              className="p-3 nes-box bg-[#101014] border-2 border-black flex items-center justify-between text-xs"
-            >
-              <div className="flex items-center gap-2.5">
-                <span 
-                  className="w-4 h-4 nes-box border border-black flex-shrink-0"
-                  style={{ backgroundColor: team.color }}
-                />
-                <div className="truncate">
-                  <strong className="text-white block font-arcade font-bold text-sm truncate">{team.name}</strong>
-                  <span className="text-[10px] font-pixel text-gray-400">PIN: {team.pin}</span>
+          {state.teams.slice(0, state.settings.teamCount).map(team => {
+            const meta = TEAM_METAS[team.number] || TEAM_METAS[1];
+            return (
+              <div 
+                key={team.id}
+                className="p-3.5 rounded-2xl bg-[#141416] border border-white/5 flex items-center justify-between text-xs"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <div 
+                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: meta.color }}
+                  />
+                  <div className="truncate">
+                    <strong className="text-white block font-bold text-sm truncate">{team.name}</strong>
+                    <span className="text-[11px] font-mono text-white/40">PIN: {team.pin}</span>
+                  </div>
                 </div>
-              </div>
 
-              <span className="text-[9px] font-pixel text-[#43B047] bg-[#43B047]/20 border border-[#43B047]/40 px-2 py-0.5 rounded">
-                READY
-              </span>
-            </div>
-          ))}
+                <span className="text-[10px] font-bold text-[#33FF67] bg-[#33FF67]/15 border border-[#33FF67]/30 px-2 py-0.5 rounded-full">
+                  READY
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Start Button */}
       <button
         onClick={startMatch}
-        className="w-full py-4 mario-btn-green text-black font-pixel text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition"
+        className="w-full py-4 btn-eqx-green text-black font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer"
       >
-        <Play className="w-4 h-4 fill-current" />
-        PRESS START ▶ (START 50-MIN MATCH)
+        <Play className="w-5 h-5 fill-current" />
+        START MATCH (START 50-MIN COUNTDOWN)
       </button>
     </div>
   );

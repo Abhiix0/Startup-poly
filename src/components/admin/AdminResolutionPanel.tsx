@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
 import { BOARD_SPACES } from '../../constants/board';
 import { BONUS_CARDS, CRISIS_CARDS } from '../../constants/cards';
-import { formatCurrency, formatNumber, MARIO_CHARACTERS } from '../../constants/theme';
+import { formatCurrency, formatNumber, TEAM_METAS } from '../../constants/theme';
 import { calculateRentAndOwnerCv, getUpgradeCost, getUpgradeCvReward } from '../../engine/gameEngine';
 import { 
   Building2, 
-  ArrowUpCircle, 
-  Receipt, 
+  ArrowUpRight, 
+  Coins, 
   Sparkles, 
   AlertTriangle, 
   Mic2, 
   UserMinus, 
   Users, 
-  AlertOctagon, 
+  ShieldAlert, 
   CheckCircle2, 
-  XCircle 
+  XCircle,
+  Flag
 } from 'lucide-react';
 
 export const AdminResolutionPanel: React.FC = () => {
@@ -45,43 +46,43 @@ export const AdminResolutionPanel: React.FC = () => {
   if (pendingSale) {
     const team = state.teams[pendingSale.teamIndex];
     const myBusinesses = state.businesses.filter(b => b.owner === pendingSale.teamIndex);
-    const char = MARIO_CHARACTERS[team.number] || MARIO_CHARACTERS[1];
+    const meta = TEAM_METAS[team.number] || TEAM_METAS[1];
 
     return (
-      <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#E52521] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
-        <div className="flex items-center gap-2 text-[#E52521]">
-          <span className="text-2xl">🔥</span>
-          <h3 className="font-pixel text-xs uppercase tracking-wider">
-            BOWSER DEBT HAZARD · FORCED SALE
+      <div className="p-6 rounded-3xl bg-[#19191C] border-2 border-[#FF5C7A] shadow-2xl space-y-4 animate-in fade-in">
+        <div className="flex items-center gap-2.5 text-[#FF5C7A]">
+          <ShieldAlert className="w-5 h-5" />
+          <h3 className="text-xs uppercase tracking-wider font-bold">
+            DEBT SETTLEMENT · EMERGENCY VENTURE LIQUIDATION
           </h3>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-[#101014] border-2 border-[#E52521]/40 space-y-1 text-xs font-arcade">
-          <p className="font-bold text-[#FDF6E2]">
-            {team.name} ({char.characterName}) has <span className="text-[#FBD000]">{formatCurrency(team.cash)}</span> and owes <span className="text-[#E52521]">{formatCurrency(pendingSale.requiredAmount)}</span>.
+        <div className="p-4 rounded-xl bg-[#141416] border border-white/5 space-y-1 text-xs">
+          <p className="font-semibold text-white">
+            {team.name} has <span className="text-[#33FF67] font-mono">{formatCurrency(team.cash)}</span> and owes <span className="text-[#FF5C7A] font-mono">{formatCurrency(pendingSale.requiredAmount)}</span>.
           </p>
-          <p className="text-[#A89F91]">
-            Coins applied: {formatCurrency(pendingSale.cashApplied)} · Remaining debt: <strong className="text-[#E52521]">{formatCurrency(pendingSale.remainingDue)}</strong>
+          <p className="text-white/60">
+            Cash applied: {formatCurrency(pendingSale.cashApplied)} · Remaining debt: <strong className="text-[#FF5C7A] font-mono">{formatCurrency(pendingSale.remainingDue)}</strong>
           </p>
         </div>
 
         <div className="space-y-2">
-          <label className="font-pixel text-[9px] uppercase tracking-wider text-[#FBD000] block">
-            SELECT PIPE TO LIQUIDATE (ORIGINAL COST):
+          <label className="text-[10px] uppercase font-bold tracking-wider text-white/50 block">
+            SELECT VENTURE TO LIQUIDATE (ORIGINAL VALUE):
           </label>
           {myBusinesses.map(biz => (
             <button
               key={biz.id}
               onClick={() => sellBusinessForDebt(biz.id)}
-              className="w-full p-3 rounded-xl bg-[#262022] hover:bg-[#E52521]/20 border-2 border-[#E52521] flex items-center justify-between text-xs transition cursor-pointer shadow-[2px_2px_0px_#000]"
+              className="w-full p-3.5 rounded-xl bg-[#202024] hover:bg-[#28282E] border border-white/10 flex items-center justify-between text-xs transition cursor-pointer"
             >
               <div className="text-left">
-                <strong className="font-pixel text-[10px] text-[#FDF6E2] block">{biz.name}</strong>
-                <span className="font-arcade text-xs text-[#A89F91]">Level {biz.level} (Earned CV points preserved)</span>
+                <strong className="text-white font-bold block">{biz.name}</strong>
+                <span className="text-white/50 text-[11px]">Level {biz.level} · CV points preserved</span>
               </div>
               <div className="text-right">
-                <span className="font-pixel text-xs text-[#43B047]">+{formatCurrency(biz.cost)}</span>
-                <span className="font-pixel text-[8px] uppercase text-[#E52521] block">SELL PIPE</span>
+                <span className="font-mono font-bold text-[#33FF67]">+{formatCurrency(biz.cost)}</span>
+                <span className="text-[10px] uppercase font-bold text-[#FF5C7A] block">LIQUIDATE</span>
               </div>
             </button>
           ))}
@@ -90,7 +91,7 @@ export const AdminResolutionPanel: React.FC = () => {
     );
   }
 
-  // If no pending landing, return null (NO permanent empty placeholder box!)
+  // If no pending landing, return null
   if (!pendingLanding) {
     return null;
   }
@@ -98,7 +99,7 @@ export const AdminResolutionPanel: React.FC = () => {
   const landingTeam = state.teams[pendingLanding.teamIndex];
   const space = BOARD_SPACES[pendingLanding.spaceIndex];
   const roll = pendingLanding.roll;
-  const landingChar = MARIO_CHARACTERS[landingTeam.number] || MARIO_CHARACTERS[1];
+  const landingMeta = TEAM_METAS[landingTeam.number] || TEAM_METAS[1];
 
   // 2. Business Space Resolution
   if (space.type === 'business' && space.businessId !== undefined) {
@@ -113,39 +114,40 @@ export const AdminResolutionPanel: React.FC = () => {
       const portfolioFull = landingTeam.businesses.length >= state.settings.maxBusinesses;
 
       return (
-        <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#FBD000] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
+        <div className="p-6 rounded-3xl eqx-card-elevated border-[#7484FE]/40 space-y-4 animate-in fade-in">
           <div className="flex items-center justify-between">
-            <span className="font-pixel text-[9px] uppercase tracking-wider text-[#FBD000] flex items-center gap-1.5">
-              <span>🏗️</span> UNOWNED WARP PIPE LANDED
+            <span className="text-xs uppercase font-bold tracking-wider text-[#7484FE] flex items-center gap-1.5">
+              <Building2 className="w-4 h-4" />
+              <span>UNOWNED VENTURE OPPORTUNITY</span>
             </span>
-            <span className="font-pixel text-[8px] text-[#A89F91]">
-              SPACE {space.index + 1}
+            <span className="text-[11px] font-mono text-white/50">
+              SPACE #{space.index + 1}
             </span>
           </div>
 
           <div>
-            <h3 className="font-pixel text-base text-[#FDF6E2]">
+            <h3 className="text-lg font-bold text-white">
               {business.name}
             </h3>
-            <p className="font-arcade text-xs text-[#A89F91] mt-0.5">
-              Sector: {business.category}
+            <p className="text-xs text-white/50 mt-0.5">
+              Sector: {business.category} · Landed by {landingTeam.name}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5 p-3 rounded-xl bg-[#101014] border border-[#3D3234] text-xs">
+          <div className="grid grid-cols-2 gap-2.5 p-3.5 rounded-xl bg-[#141416] border border-white/5 text-xs">
             <div>
-              <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">ACQUIRE COST</span>
-              <span className="font-pixel text-xs text-[#FBD000]">{formatCurrency(business.cost)}</span>
+              <span className="text-[10px] uppercase text-white/40 block mb-0.5">ACQUISITION COST</span>
+              <span className="text-sm font-bold text-white font-mono">{formatCurrency(business.cost)}</span>
             </div>
             <div>
-              <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">STAR VALUE</span>
-              <span className="font-pixel text-xs text-[#5C94FC]">+{business.baseCv} CV</span>
+              <span className="text-[10px] uppercase text-white/40 block mb-0.5">VALUATION REWARD</span>
+              <span className="text-sm font-bold text-[#7484FE] font-mono">+{business.baseCv} CV</span>
             </div>
           </div>
 
           {portfolioFull && (
-            <div className="p-2.5 rounded-xl bg-[#E52521]/20 border border-[#E52521] font-pixel text-[9px] text-[#E52521] text-center">
-              ⚠️ Portfolio limit reached (Max 3 Pipes). Must pass.
+            <div className="p-2.5 rounded-xl bg-[#FF5C7A]/15 border border-[#FF5C7A]/30 text-xs text-[#FF5C7A] text-center font-medium">
+              Portfolio limit reached (Max 3 Enterprises). Must pass.
             </div>
           )}
 
@@ -153,15 +155,15 @@ export const AdminResolutionPanel: React.FC = () => {
             <button
               disabled={!canAfford || portfolioFull}
               onClick={() => buyCurrentBusiness(business.id)}
-              className="py-3.5 px-4 rounded-xl mario-btn-green font-pixel text-[10px] uppercase tracking-wider disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+              className="btn-eqx-primary py-3.5 text-xs font-semibold uppercase tracking-wider disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
             >
               ACQUIRE ({formatCurrency(business.cost)})
             </button>
             <button
               onClick={passCurrentBusiness}
-              className="py-3.5 px-4 rounded-xl mario-btn-dark font-pixel text-[10px] uppercase tracking-wider cursor-pointer"
+              className="btn-eqx-secondary py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer"
             >
-              PASS
+              PASS (NO PURCHASE)
             </button>
           </div>
         </div>
@@ -176,35 +178,36 @@ export const AdminResolutionPanel: React.FC = () => {
       const canAfford = landingTeam.cash >= upgradeCost;
 
       return (
-        <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#5C94FC] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
+        <div className="p-6 rounded-3xl eqx-card-elevated border-[#33FF67]/40 space-y-4 animate-in fade-in">
           <div className="flex items-center justify-between">
-            <span className="font-pixel text-[9px] uppercase tracking-wider text-[#5C94FC] flex items-center gap-1.5">
-              <span>★</span> OWN PIPE POWER-UP UPGRADE
+            <span className="text-xs uppercase font-bold tracking-wider text-[#33FF67] flex items-center gap-1.5">
+              <ArrowUpRight className="w-4 h-4" />
+              <span>OWNED VENTURE · UPGRADE AVAILABLE</span>
             </span>
-            <span className="font-pixel text-[8px] uppercase px-2 py-1 rounded-md bg-[#5C94FC]/20 text-[#5C94FC] border border-[#5C94FC]">
-              ★ LEVEL {business.level}
+            <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full bg-[#33FF67]/15 text-[#33FF67] border border-[#33FF67]/30">
+              CURRENT TIER {business.level + 1}
             </span>
           </div>
 
           <div>
-            <h3 className="font-pixel text-base text-[#FDF6E2]">
+            <h3 className="text-lg font-bold text-white">
               {business.name}
             </h3>
-            <p className="font-arcade text-xs text-[#A89F91] mt-0.5">
-              Owned by {landingTeam.name} ({landingChar.characterName})
+            <p className="text-xs text-white/50 mt-0.5">
+              Owned by {landingTeam.name}
             </p>
           </div>
 
           {!isMaxed ? (
             <>
-              <div className="grid grid-cols-2 gap-2.5 p-3 rounded-xl bg-[#101014] border border-[#3D3234] text-xs">
+              <div className="grid grid-cols-2 gap-2.5 p-3.5 rounded-xl bg-[#141416] border border-white/5 text-xs">
                 <div>
-                  <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">UPGRADE COST</span>
-                  <span className="font-pixel text-xs text-[#FBD000]">{formatCurrency(upgradeCost)}</span>
+                  <span className="text-[10px] uppercase text-white/40 block mb-0.5">UPGRADE COST</span>
+                  <span className="text-sm font-bold text-white font-mono">{formatCurrency(upgradeCost)}</span>
                 </div>
                 <div>
-                  <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">STAR REWARD</span>
-                  <span className="font-pixel text-xs text-[#5C94FC]">+{cvGain} CV</span>
+                  <span className="text-[10px] uppercase text-white/40 block mb-0.5">VALUATION GAIN</span>
+                  <span className="text-sm font-bold text-[#7484FE] font-mono">+{cvGain} CV</span>
                 </div>
               </div>
 
@@ -212,26 +215,26 @@ export const AdminResolutionPanel: React.FC = () => {
                 <button
                   disabled={!canAfford}
                   onClick={() => upgradeOwnedBusiness(business.id)}
-                  className="py-3.5 px-4 rounded-xl mario-btn-blue font-pixel text-[10px] uppercase tracking-wider disabled:opacity-30 cursor-pointer"
+                  className="btn-eqx-green py-3.5 text-xs font-semibold uppercase tracking-wider disabled:opacity-30 cursor-pointer"
                 >
-                  POWER-UP TO ★{business.level + 2}
+                  UPGRADE TO TIER {business.level + 2}
                 </button>
                 <button
                   onClick={passCurrentBusiness}
-                  className="py-3.5 px-4 rounded-xl mario-btn-dark font-pixel text-[10px] uppercase tracking-wider cursor-pointer"
+                  className="btn-eqx-secondary py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer"
                 >
-                  SKIP
+                  SKIP UPGRADE
                 </button>
               </div>
             </>
           ) : (
-            <div className="p-3.5 rounded-xl bg-[#43B047]/20 border-2 border-[#43B047] font-pixel text-[9px] text-[#43B047] text-center">
-              ✨ MAX FIRE POWER (LEVEL 2) ACTIVE! Maximum toll rate engaged.
+            <div className="p-3.5 rounded-xl bg-[#33FF67]/10 border border-[#33FF67]/30 text-xs text-[#33FF67] text-center font-medium">
+              Maximum Tier 3 reached! Full rent toll capacity enabled.
               <button
                 onClick={passCurrentBusiness}
-                className="mt-3 w-full py-3 rounded-xl mario-btn-dark font-pixel text-[9px] cursor-pointer"
+                className="mt-3 w-full btn-eqx-secondary py-2.5 text-xs cursor-pointer"
               >
-                CONTINUE →
+                CONTINUE MATCH →
               </button>
             </div>
           )}
@@ -242,45 +245,45 @@ export const AdminResolutionPanel: React.FC = () => {
     // Case C: Opponent Business -> Rent Settlement
     if (isOpponentBusiness) {
       const ownerTeam = state.teams[business.owner!];
-      const ownerChar = MARIO_CHARACTERS[ownerTeam?.number || 1] || MARIO_CHARACTERS[1];
       const { rent, ownerCvGain } = calculateRentAndOwnerCv(business);
 
       return (
-        <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#E52521] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
+        <div className="p-6 rounded-3xl eqx-card-elevated border-[#FF5C7A]/40 space-y-4 animate-in fade-in">
           <div className="flex items-center justify-between">
-            <span className="font-pixel text-[9px] uppercase tracking-wider text-[#E52521] flex items-center gap-1.5">
-              <span>🪙</span> TOLL SETTLEMENT DUE
+            <span className="text-xs uppercase font-bold tracking-wider text-[#FF5C7A] flex items-center gap-1.5">
+              <Coins className="w-4 h-4" />
+              <span>RENT TOLL SETTLEMENT DUE</span>
             </span>
-            <span className="font-pixel text-[8px] uppercase px-2 py-1 rounded-md bg-[#E52521]/20 text-[#E52521] border border-[#E52521]">
-              LEVEL {business.level}
+            <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full bg-[#FF5C7A]/15 text-[#FF5C7A] border border-[#FF5C7A]/30">
+              TIER {business.level + 1}
             </span>
           </div>
 
           <div>
-            <h3 className="font-pixel text-base text-[#FDF6E2]">
+            <h3 className="text-lg font-bold text-white">
               {business.name}
             </h3>
-            <p className="font-arcade text-xs text-[#A89F91] mt-0.5">
-              Owned by <strong className="text-[#FDF6E2]">{ownerTeam?.name} ({ownerChar.characterName})</strong>
+            <p className="text-xs text-white/50 mt-0.5">
+              Owned by <strong className="text-white">{ownerTeam?.name}</strong>
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5 p-3 rounded-xl bg-[#101014] border border-[#3D3234] text-xs">
+          <div className="grid grid-cols-2 gap-2.5 p-3.5 rounded-xl bg-[#141416] border border-white/5 text-xs">
             <div>
-              <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">TOLL DUE</span>
-              <span className="font-pixel text-xs text-[#E52521]">{formatCurrency(rent)}</span>
+              <span className="text-[10px] uppercase text-white/40 block mb-0.5">TOLL AMOUNT</span>
+              <span className="text-sm font-bold text-[#FF5C7A] font-mono">{formatCurrency(rent)}</span>
             </div>
             <div>
-              <span className="font-pixel text-[8px] uppercase text-[#A89F91] block mb-1">OWNER STAR YIELD</span>
-              <span className="font-pixel text-xs text-[#5C94FC]">+{ownerCvGain} CV</span>
+              <span className="text-[10px] uppercase text-white/40 block mb-0.5">OWNER CV REWARD</span>
+              <span className="text-sm font-bold text-[#7484FE] font-mono">+{ownerCvGain} CV</span>
             </div>
           </div>
 
           <button
             onClick={() => payCurrentRent(business.id)}
-            className="w-full py-4 rounded-xl mario-btn-red font-pixel text-xs uppercase tracking-wider cursor-pointer"
+            className="w-full btn-eqx-danger py-4 text-xs font-bold uppercase tracking-wider cursor-pointer"
           >
-            PROCESS TOLL ({formatCurrency(rent)}) →
+            PROCESS TOLL PAYMENT ({formatCurrency(rent)}) →
           </button>
         </div>
       );
@@ -292,43 +295,44 @@ export const AdminResolutionPanel: React.FC = () => {
     const card = BONUS_CARDS[roll - 1] || BONUS_CARDS[0];
 
     return (
-      <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#43B047] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
+      <div className="p-6 rounded-3xl eqx-card-elevated border-[#33FF67]/40 space-y-4 animate-in fade-in">
         <div className="flex items-center justify-between">
-          <span className="font-pixel text-[9px] uppercase tracking-wider text-[#43B047] flex items-center gap-1.5">
-            <span>🍄</span> LUCKY BONUS CARD #{card.number}
+          <span className="text-xs uppercase font-bold tracking-wider text-[#33FF67] flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4" />
+            <span>BONUS ADVANTAGE CARD #{card.number}</span>
           </span>
-          <span className="font-pixel text-[8px] text-[#A89F91]">
+          <span className="text-[11px] font-mono text-white/50">
             ROLL {roll}
           </span>
         </div>
 
         <div>
-          <h3 className="font-pixel text-sm text-[#FDF6E2]">
+          <h3 className="text-base font-bold text-white">
             {card.name}
           </h3>
-          <p className="font-arcade text-xs text-[#A89F91] mt-1">
+          <p className="text-xs text-white/60 mt-1">
             {card.description}
           </p>
         </div>
 
-        <div className="p-3 rounded-xl bg-[#101014] border-2 border-[#43B047] font-arcade text-xs text-[#43B047] font-bold">
+        <div className="p-3.5 rounded-xl bg-[#141416] border border-[#33FF67]/30 text-xs font-semibold text-[#33FF67]">
           {card.effectText}
         </div>
 
         {card.number === 6 && (
-          <div className="p-3 rounded-xl bg-[#101014] border border-[#3D3234] space-y-2">
-            <label className="font-pixel text-[8px] text-[#FBD000] block">
-              LUCKY BREAK REWARD ROLL:
+          <div className="p-3.5 rounded-xl bg-[#141416] border border-white/5 space-y-2">
+            <label className="text-[10px] uppercase font-bold text-white/50 block">
+              BONUS REWARD MULTIPLIER ROLL:
             </label>
-            <div className="grid grid-cols-6 gap-1">
+            <div className="grid grid-cols-6 gap-1.5">
               {[1, 2, 3, 4, 5, 6].map(r => (
                 <button
                   key={r}
                   onClick={() => setLuckyRoll(r)}
-                  className={`py-2 rounded-lg font-pixel text-xs border-2 transition ${
+                  className={`py-2 rounded-lg font-mono text-xs font-bold border transition ${
                     luckyRoll === r
-                      ? 'bg-[#43B047] text-white border-[#43B047]'
-                      : 'bg-[#262022] text-[#A89F91] border-transparent'
+                      ? 'bg-[#33FF67] text-black border-[#33FF67]'
+                      : 'bg-[#202024] text-white/70 border-white/10'
                   }`}
                 >
                   {r}
@@ -340,9 +344,9 @@ export const AdminResolutionPanel: React.FC = () => {
 
         <button
           onClick={() => applyBonusCard(card.number, card.number === 6 ? luckyRoll : undefined)}
-          className="w-full py-4 rounded-xl mario-btn-green font-pixel text-xs uppercase tracking-wider cursor-pointer"
+          className="w-full btn-eqx-green py-4 text-xs font-bold uppercase tracking-wider cursor-pointer"
         >
-          APPLY {card.name.toUpperCase()} →
+          APPLY {card.name.toUpperCase()} REWARD →
         </button>
       </div>
     );
@@ -353,32 +357,33 @@ export const AdminResolutionPanel: React.FC = () => {
     const card = CRISIS_CARDS[roll - 1] || CRISIS_CARDS[0];
 
     return (
-      <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#E52521] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
+      <div className="p-6 rounded-3xl eqx-card-elevated border-[#FF5C7A]/40 space-y-4 animate-in fade-in">
         <div className="flex items-center justify-between">
-          <span className="font-pixel text-[9px] uppercase tracking-wider text-[#E52521] flex items-center gap-1.5">
-            <span>💣</span> BOWSER CRISIS CARD #{card.number}
+          <span className="text-xs uppercase font-bold tracking-wider text-[#FF5C7A] flex items-center gap-1.5">
+            <AlertTriangle className="w-4 h-4" />
+            <span>CRISIS RISK CARD #{card.number}</span>
           </span>
-          <span className="font-pixel text-[8px] text-[#A89F91]">
+          <span className="text-[11px] font-mono text-white/50">
             ROLL {roll}
           </span>
         </div>
 
         <div>
-          <h3 className="font-pixel text-sm text-[#FDF6E2]">
+          <h3 className="text-base font-bold text-white">
             {card.name}
           </h3>
-          <p className="font-arcade text-xs text-[#A89F91] mt-1">
+          <p className="text-xs text-white/60 mt-1">
             {card.description}
           </p>
         </div>
 
-        <div className="p-3 rounded-xl bg-[#101014] border-2 border-[#E52521] font-arcade text-xs text-[#E52521] font-bold">
+        <div className="p-3.5 rounded-xl bg-[#141416] border border-[#FF5C7A]/30 text-xs font-semibold text-[#FF5C7A]">
           {card.effectText}
         </div>
 
         <button
           onClick={() => applyCrisisCard(card.number)}
-          className="w-full py-4 rounded-xl mario-btn-red font-pixel text-xs uppercase tracking-wider cursor-pointer"
+          className="w-full btn-eqx-danger py-4 text-xs font-bold uppercase tracking-wider cursor-pointer"
         >
           APPLY {card.name.toUpperCase()} PENALTY →
         </button>
@@ -391,15 +396,16 @@ export const AdminResolutionPanel: React.FC = () => {
     const hasVentures = landingTeam.businesses.length > 0;
 
     return (
-      <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#FBD000] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
-        <span className="font-pixel text-[9px] uppercase tracking-wider text-[#FBD000] flex items-center gap-1.5">
-          <span>🎤</span> ACTION B: KOOPA STADIUM PITCH
+      <div className="p-6 rounded-3xl eqx-card-elevated border-[#FFBD59]/40 space-y-4 animate-in fade-in">
+        <span className="text-xs uppercase font-bold tracking-wider text-[#FFBD59] flex items-center gap-1.5">
+          <Mic2 className="w-4 h-4" />
+          <span>ACTION B: PITCH TO INVESTORS</span>
         </span>
 
-        <p className="font-arcade text-xs text-[#A89F91]">
+        <p className="text-xs text-white/70">
           {hasVentures 
-            ? `${landingTeam.name} (${landingChar.characterName}) delivers pitch to the Game Master referee.` 
-            : `${landingTeam.name} owns 0 pipes. Auto-passed.`
+            ? `${landingTeam.name} delivers a 30-second live pitch to the Game Master referee.` 
+            : `${landingTeam.name} owns 0 ventures. Auto-passed.`
           }
         </p>
 
@@ -407,21 +413,21 @@ export const AdminResolutionPanel: React.FC = () => {
           <div className="grid grid-cols-2 gap-3 pt-1">
             <button
               onClick={() => applyPitchAction(true)}
-              className="py-3.5 rounded-xl mario-btn-green font-pixel text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
+              className="btn-eqx-green py-3.5 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <CheckCircle2 className="w-4 h-4" /> PASSED ✓
+              <CheckCircle2 className="w-4 h-4" /> PITCH PASSED ✓
             </button>
             <button
               onClick={() => applyPitchAction(false)}
-              className="py-3.5 rounded-xl mario-btn-red font-pixel text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
+              className="btn-eqx-secondary py-3.5 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <XCircle className="w-4 h-4" /> FAILED (SKIP)
+              <XCircle className="w-4 h-4" /> FAILED (NO REWARD)
             </button>
           </div>
         ) : (
           <button
             onClick={() => applyPitchAction(true)}
-            className="w-full py-3.5 rounded-xl mario-btn-dark font-pixel text-xs cursor-pointer"
+            className="w-full btn-eqx-secondary py-3.5 text-xs cursor-pointer"
           >
             CONFIRM AUTO-PASS →
           </button>
@@ -433,18 +439,19 @@ export const AdminResolutionPanel: React.FC = () => {
   // 6. Action C: Lose the Feature (-200 CV)
   if (space.type === 'action_c') {
     return (
-      <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#E52521] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
-        <span className="font-pixel text-[9px] uppercase tracking-wider text-[#E52521] flex items-center gap-1.5">
-          <span>🐢</span> ACTION C: SPINY SHELL HIT
+      <div className="p-6 rounded-3xl eqx-card-elevated border-[#FF5C7A]/40 space-y-4 animate-in fade-in">
+        <span className="text-xs uppercase font-bold tracking-wider text-[#FF5C7A] flex items-center gap-1.5">
+          <AlertTriangle className="w-4 h-4" />
+          <span>ACTION C: PRODUCT BUG PENALTY</span>
         </span>
 
-        <p className="font-arcade text-xs text-[#A89F91]">
-          Product bug setback: <strong className="text-[#E52521]">−200 Star Power (CV)</strong> (floored at 0).
+        <p className="text-xs text-white/70">
+          Critical architecture defect setback: <strong className="text-[#FF5C7A]">−200 Company Valuation (CV)</strong> (floored at 0).
         </p>
 
         <button
           onClick={applyLoseFeature}
-          className="w-full py-4 rounded-xl mario-btn-red font-pixel text-xs uppercase tracking-wider cursor-pointer"
+          className="w-full btn-eqx-danger py-4 text-xs font-bold uppercase tracking-wider cursor-pointer"
         >
           APPLY −200 CV PENALTY →
         </button>
@@ -457,30 +464,34 @@ export const AdminResolutionPanel: React.FC = () => {
     const opponentTeams = state.teams.filter(t => t.number !== landingTeam.number && !t.isBankrupt);
 
     return (
-      <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#5C94FC] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
-        <span className="font-pixel text-[9px] uppercase tracking-wider text-[#5C94FC] flex items-center gap-1.5">
-          <span>👻</span> ACTION D: BOO TALENT HEIST
+      <div className="p-6 rounded-3xl eqx-card-elevated border-[#7484FE]/40 space-y-4 animate-in fade-in">
+        <span className="text-xs uppercase font-bold tracking-wider text-[#7484FE] flex items-center gap-1.5">
+          <UserMinus className="w-4 h-4" />
+          <span>ACTION D: TALENT ACQUISITION</span>
         </span>
 
-        <p className="font-arcade text-xs text-[#A89F91]">
-          Poach up to ₹100 coins from an opponent player:
+        <p className="text-xs text-white/70">
+          Poach up to ₹100 cash from an opponent team:
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {opponentTeams.map(t => {
-            const oppChar = MARIO_CHARACTERS[t.number] || MARIO_CHARACTERS[1];
+            const oppMeta = TEAM_METAS[t.number] || TEAM_METAS[1];
             return (
               <button
                 key={t.id}
                 onClick={() => setStealTarget(t.number - 1)}
-                className={`p-2.5 rounded-xl border-2 font-pixel text-[9px] transition flex items-center justify-between cursor-pointer ${
+                className={`p-3 rounded-xl border text-xs font-medium transition flex items-center justify-between cursor-pointer ${
                   stealTarget === t.number - 1
-                    ? 'bg-[#5C94FC] text-black border-[#5C94FC] shadow-[2px_2px_0px_#000]'
-                    : 'bg-[#101014] text-[#FDF6E2] border-[#3D3234]'
+                    ? 'bg-[#202024] border-[#7484FE] text-white shadow-md'
+                    : 'bg-[#141416] text-white/70 border-white/5 hover:border-white/20'
                 }`}
               >
-                <span>{oppChar.icon} {oppChar.characterName}</span>
-                <span className="font-arcade text-xs">{formatCurrency(t.cash)}</span>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: oppMeta.color }} />
+                  <span>{t.name}</span>
+                </div>
+                <span className="font-mono text-white/50">{formatCurrency(t.cash)}</span>
               </button>
             );
           })}
@@ -488,9 +499,9 @@ export const AdminResolutionPanel: React.FC = () => {
 
         <button
           onClick={() => applyStealTalent(stealTarget)}
-          className="w-full py-4 rounded-xl mario-btn-blue font-pixel text-xs uppercase tracking-wider cursor-pointer"
+          className="w-full btn-eqx-primary py-4 text-xs font-bold uppercase tracking-wider cursor-pointer"
         >
-          TRANSFER COINS FROM {state.teams[stealTarget]?.name.toUpperCase()} →
+          TRANSFER ₹100 FROM {state.teams[stealTarget]?.name.toUpperCase()} →
         </button>
       </div>
     );
@@ -501,33 +512,34 @@ export const AdminResolutionPanel: React.FC = () => {
     const defaultChallenge = state.settings.wildcardChallenges[0] || "Physical & social summit challenge.";
 
     return (
-      <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#FBD000] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
-        <span className="font-pixel text-[9px] uppercase tracking-wider text-[#FBD000] flex items-center gap-1.5">
-          <span>❓</span> MYSTERY WILDCARD CHALLENGE
+      <div className="p-6 rounded-3xl eqx-card-elevated border-[#B987FF]/40 space-y-4 animate-in fade-in">
+        <span className="text-xs uppercase font-bold tracking-wider text-[#B987FF] flex items-center gap-1.5">
+          <Sparkles className="w-4 h-4" />
+          <span>WILDCARD ARENA CHALLENGE</span>
         </span>
 
-        <div className="p-3.5 rounded-xl bg-[#101014] border-2 border-[#FBD000] font-arcade text-xs font-bold text-[#FBD000]">
+        <div className="p-3.5 rounded-xl bg-[#141416] border border-[#B987FF]/30 text-xs font-semibold text-white">
           "{defaultChallenge}"
         </div>
 
         <input
           type="text"
-          placeholder="Optional notes…"
+          placeholder="Optional referee notes…"
           value={wildcardNotes}
           onChange={(e) => setWildcardNotes(e.target.value)}
-          className="w-full px-3 py-2 rounded-xl bg-[#101014] border border-[#3D3234] font-arcade text-xs text-[#FDF6E2]"
+          className="w-full px-3 py-2 rounded-xl bg-[#141416] border border-white/10 text-xs text-white"
         />
 
         <div className="grid grid-cols-2 gap-3 pt-1">
           <button
             onClick={() => applyWildcardAction(true, wildcardNotes)}
-            className="py-3.5 rounded-xl mario-btn-green font-pixel text-[10px] uppercase tracking-wider cursor-pointer"
+            className="btn-eqx-green py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer"
           >
-            COMPLETED ✓
+            CHALLENGE COMPLETED ✓
           </button>
           <button
             onClick={() => applyWildcardAction(false, wildcardNotes)}
-            className="py-3.5 rounded-xl mario-btn-dark font-pixel text-[10px] uppercase tracking-wider cursor-pointer"
+            className="btn-eqx-secondary py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer"
           >
             FAILED / PASS
           </button>
@@ -538,22 +550,22 @@ export const AdminResolutionPanel: React.FC = () => {
 
   // 9. START space
   return (
-    <div className="p-6 rounded-3xl bg-[#1B1718] border-3 border-[#43B047] shadow-[6px_6px_0px_#000] space-y-4 animate-in fade-in">
-      <span className="font-pixel text-[9px] uppercase tracking-wider text-[#43B047] flex items-center gap-1.5">
-        <span>🏁</span> FLAGPOLE / LAP COMPLETE
+    <div className="p-6 rounded-3xl eqx-card-elevated border-[#33FF67]/40 space-y-4 animate-in fade-in">
+      <span className="text-xs uppercase font-bold tracking-wider text-[#33FF67] flex items-center gap-1.5">
+        <Flag className="w-4 h-4" />
+        <span>START SPACE / LAP COMPLETED</span>
       </span>
 
-      <p className="font-arcade text-xs text-[#A89F91]">
-        {landingTeam.name} ({landingChar.characterName}) collected <strong className="text-[#FBD000]">+₹200 Coins</strong> and portfolio growth rewards.
+      <p className="text-xs text-white/70">
+        {landingTeam.name} collected <strong className="text-[#33FF67]">+₹200 Cash</strong> and portfolio growth reward.
       </p>
 
       <button
         onClick={passCurrentBusiness}
-        className="w-full py-4 rounded-xl mario-btn-green font-pixel text-xs uppercase tracking-wider cursor-pointer"
+        className="w-full btn-eqx-green py-4 text-xs font-bold uppercase tracking-wider cursor-pointer"
       >
-        CONFIRM & FINISH TURN →
+        CONFIRM & COMPLETE TURN →
       </button>
     </div>
   );
 };
-

@@ -142,6 +142,16 @@ export interface MatchSettings {
   rulesLocked: boolean;
 }
 
+export interface RollAnimationEvent {
+  id: string;
+  teamIndex: number;
+  roll: number;
+  fromSpace: number;
+  toSpace: number;
+  passedStart: boolean;
+  timestamp: number;
+}
+
 export interface MatchState {
   matchId: string;
   matchCode: string;
@@ -157,6 +167,7 @@ export interface MatchState {
   turnStartSnapshot: TurnSnapshot | null;
   pendingLanding: PendingLanding | null;
   pendingSale: PendingSale | null;
+  latestRollAnimation?: RollAnimationEvent | null;
   transactions: GameTransaction[];
   settings: MatchSettings;
   archivedMatches?: {
@@ -167,3 +178,4 @@ export interface MatchState {
     rankings: Team[];
   }[];
 }
+
