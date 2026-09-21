@@ -2135,7 +2135,7 @@ AS $$
 DECLARE
   v_user_id uuid := auth.uid();
   v_code text := upper(trim(coalesce(code, '')));
-  v_pin text := trim(coalesce(pin, '')));
+  v_pin text := trim(coalesce(pin, ''));
   v_fail_count int;
   v_room_id uuid;
   v_status public.room_status;
