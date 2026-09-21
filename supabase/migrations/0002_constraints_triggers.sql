@@ -95,6 +95,7 @@ BEGIN
       (OLD.status = 'CREATED' AND NEW.status = 'LOBBY') OR
       (OLD.status = 'LOBBY' AND NEW.status = 'ACTIVE') OR
       (OLD.status = 'ACTIVE' AND NEW.status = 'TIME_EXPIRED') OR
+      (OLD.status = 'ACTIVE' AND NEW.status = 'LOBBY') OR
       (OLD.status = 'TIME_EXPIRED' AND NEW.status = 'FINALIZED')
     ) THEN
       RAISE EXCEPTION 'INVALID_TRANSITION';

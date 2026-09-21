@@ -29,7 +29,7 @@ BEGIN
     WHERE t.room_id = p_room_id
     GROUP BY t.id
   ),
-  ranked_base AS (
+  base AS (
     SELECT
       t.id AS tid,
       t.slot,
@@ -40,32 +40,47 @@ BEGIN
       tbz.b_count AS business_count,
       t.tiebreak_order,
       count(*) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS tie_group_size,
-      count(t.tiebreak_order) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS count_with_order,
-      count(DISTINCT t.tiebreak_order) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS distinct_orders
+      count(t.tiebreak_order) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS count_with_order
     FROM public.teams t
     JOIN team_biz tbz ON t.id = tbz.tid
     WHERE t.room_id = p_room_id
+  ),
+  -- Compute distinct tiebreak_order count per tie-group using a plain GROUP BY
+  tie_distinct AS (
+    SELECT
+      b.is_bankrupt AS td_bankrupt,
+      b.cv          AS td_cv,
+      b.cash        AS td_cash,
+      b.business_count AS td_biz,
+      count(DISTINCT b.tiebreak_order) AS distinct_orders
+    FROM base b
+    GROUP BY b.is_bankrupt, b.cv, b.cash, b.business_count
   )
   SELECT
-    rb.tid AS team_id,
-    rb.slot,
-    rb.name,
+    b.tid AS team_id,
+    b.slot,
+    b.name,
     row_number() OVER (
       ORDER BY
-        rb.is_bankrupt ASC,
-        rb.cv DESC,
-        rb.cash DESC,
-        rb.business_count DESC,
-        rb.tiebreak_order ASC NULLS LAST,
-        rb.slot ASC
+        b.is_bankrupt ASC,
+        b.cv DESC,
+        b.cash DESC,
+        b.business_count DESC,
+        b.tiebreak_order ASC NULLS LAST,
+        b.slot ASC
     )::int AS rank,
-    rb.is_bankrupt,
-    rb.cv,
-    rb.cash,
-    rb.business_count,
-    rb.tiebreak_order,
-    (rb.tie_group_size > 1 AND (rb.count_with_order < rb.tie_group_size OR rb.distinct_orders < rb.tie_group_size)) AS tie_unresolved
-  FROM ranked_base rb
+    b.is_bankrupt,
+    b.cv,
+    b.cash,
+    b.business_count,
+    b.tiebreak_order,
+    (b.tie_group_size > 1 AND (b.count_with_order < b.tie_group_size OR td.distinct_orders < b.tie_group_size)) AS tie_unresolved
+  FROM base b
+  JOIN tie_distinct td
+    ON b.is_bankrupt = td.td_bankrupt
+   AND b.cv = td.td_cv
+   AND b.cash = td.td_cash
+   AND b.business_count = td.td_biz
   ORDER BY rank ASC;
 END;
 $$;

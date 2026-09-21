@@ -9,7 +9,7 @@ import { EditBusinessDialog } from './EditBusinessDialog';
 import { RemoveBusinessDialog } from './RemoveBusinessDialog';
 import { BankruptDialog } from './BankruptDialog';
 import { ConflictDialog } from './ConflictDialog';
-import { useToast } from '../../../ui';
+import { useToast, Modal, PixelButton } from '../../../ui';
 import { ConnectionStatus } from '../../../ui/ConnectionPill';
 import {
   AdminRoomSnapshot,
@@ -19,6 +19,7 @@ import {
   rpcAdminSetBusinessLevel,
   rpcAdminRemoveBusiness,
   rpcAdminSetBankrupt,
+  rpcAdminAbortGame,
 } from '../../../data/rpc';
 import {
   QuickActionsBar,
@@ -90,9 +91,14 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const { successToast, errorToast } = useToast();
 
   const isTimeExpired = snapshot.room.status === 'TIME_EXPIRED';
+  const isActive = snapshot.room.status === 'ACTIVE';
   const isOffline = connection === 'OFFLINE';
   const isStaleData = isStale || staleAgeSeconds > 30;
   const isEditDisabled = isOffline || isStaleData;
+
+  // Abort Game state
+  const [showAbortModal, setShowAbortModal] = useState<boolean>(false);
+  const [isAborting, setIsAborting] = useState<boolean>(false);
 
   // Ensure selectedTeamId is always valid even if teams change
   useEffect(() => {
@@ -498,6 +504,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         lastUpdated={lastUpdated}
         onRefetch={handleManualRefetch}
         isRefetching={isRefetching}
+        onAbortGame={isActive ? () => setShowAbortModal(true) : undefined}
       />
 
       {/* Responsive width notice for small devices (< 1024px) */}
@@ -764,6 +771,57 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         onSellBusiness={handleForcedSaleBusiness}
         onDeclareBankrupt={handleDeclareBankrupt}
       />
+
+      {/* Abort Game Confirmation Modal */}
+      <Modal
+        isOpen={showAbortModal}
+        onClose={() => setShowAbortModal(false)}
+        title="ABORT GAME — RETURN TO LOBBY"
+        footer={
+          <>
+            <PixelButton
+              variant="ghost"
+              size="md"
+              onClick={() => setShowAbortModal(false)}
+              disabled={isAborting}
+            >
+              CANCEL
+            </PixelButton>
+            <PixelButton
+              variant="danger"
+              size="md"
+              onClick={async () => {
+                try {
+                  setIsAborting(true);
+                  await rpcAdminAbortGame(snapshot.room.id, 'Game aborted — accidental start');
+                  successToast('Game aborted. Room returned to LOBBY.');
+                  setShowAbortModal(false);
+                  await onRefetch();
+                } catch (err: any) {
+                  errorToast(err?.message || 'Failed to abort game.');
+                } finally {
+                  setIsAborting(false);
+                }
+              }}
+              isLoading={isAborting}
+            >
+              CONFIRM ABORT
+            </PixelButton>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <p className="font-mono text-sm leading-relaxed text-[#102040]">
+            This will <strong>reset the match back to LOBBY</strong> and stop the countdown timer.
+          </p>
+          <div className="bg-[#FEF2F2] border-2 border-[#102040] p-3 text-xs text-[#991B1B] font-mono">
+            ⚠ All team phones will return to the waiting screen. Cash, CV, and businesses will be <strong>preserved</strong> — only the timer and ACTIVE status are reverted.
+          </div>
+          <p className="font-mono text-xs text-[#64748B]">
+            Use this if the match was started by mistake. You can start again from the lobby.
+          </p>
+        </div>
+      </Modal>
 
       {/* 5. NES Ground Pattern */}
       <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />

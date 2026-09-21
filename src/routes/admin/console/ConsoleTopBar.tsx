@@ -12,6 +12,7 @@ export interface ConsoleTopBarProps {
   lastUpdated: string;
   onRefetch?: () => void;
   isRefetching?: boolean;
+  onAbortGame?: () => void;
 }
 
 export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
@@ -23,6 +24,7 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
   lastUpdated,
   onRefetch,
   isRefetching = false,
+  onAbortGame,
 }) => {
   return (
     <header className="bg-[#102040] text-white border-b-4 border-[#102040] px-4 py-3 flex flex-wrap items-center justify-between gap-4 shadow-[0_4px_0px_#102040]">
@@ -38,6 +40,17 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
           <span className="font-pixel text-xs text-white">ROOM {roomCode}</span>
           <StatusPill status={status} size="sm" />
         </div>
+        {onAbortGame && (
+          <div className="border-l-2 border-white/20 pl-3">
+            <button
+              onClick={onAbortGame}
+              className="font-pixel text-[10px] bg-[#D32F2F] text-white px-3 py-1.5 border-2 border-white/30 hover:bg-[#B71C1C] active:translate-y-0.5 transition-colors cursor-pointer uppercase tracking-wider"
+              title="Abort game and return to lobby"
+            >
+              ✕ ABORT GAME
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Center section: Authoritative Server-Clock Countdown */}
@@ -72,3 +85,4 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
     </header>
   );
 };
+

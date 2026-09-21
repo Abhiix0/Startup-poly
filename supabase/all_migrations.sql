@@ -176,7 +176,8 @@ CREATE TABLE public.activity_events (
     'BANKRUPTCY_SET',
     'TIEBREAK_SET',
     'TIME_EXPIRED',
-    'GAME_FINALIZED'
+    'GAME_FINALIZED',
+    'GAME_ABORTED'
   )),
   business_key text,
   prev jsonb,
@@ -304,6 +305,7 @@ BEGIN
       (OLD.status = 'CREATED' AND NEW.status = 'LOBBY') OR
       (OLD.status = 'LOBBY' AND NEW.status = 'ACTIVE') OR
       (OLD.status = 'ACTIVE' AND NEW.status = 'TIME_EXPIRED') OR
+      (OLD.status = 'ACTIVE' AND NEW.status = 'LOBBY') OR
       (OLD.status = 'TIME_EXPIRED' AND NEW.status = 'FINALIZED')
     ) THEN
       RAISE EXCEPTION 'INVALID_TRANSITION';
@@ -2384,7 +2386,7 @@ BEGIN
     WHERE t.room_id = p_room_id
     GROUP BY t.id
   ),
-  ranked_base AS (
+  base AS (
     SELECT
       t.id AS tid,
       t.slot,
@@ -2395,32 +2397,47 @@ BEGIN
       tbz.b_count AS business_count,
       t.tiebreak_order,
       count(*) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS tie_group_size,
-      count(t.tiebreak_order) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS count_with_order,
-      count(DISTINCT t.tiebreak_order) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS distinct_orders
+      count(t.tiebreak_order) OVER (PARTITION BY t.is_bankrupt, t.cv, t.cash, tbz.b_count) AS count_with_order
     FROM public.teams t
     JOIN team_biz tbz ON t.id = tbz.tid
     WHERE t.room_id = p_room_id
+  ),
+  -- Compute distinct tiebreak_order count per tie-group using a plain GROUP BY
+  tie_distinct AS (
+    SELECT
+      b.is_bankrupt AS td_bankrupt,
+      b.cv          AS td_cv,
+      b.cash        AS td_cash,
+      b.business_count AS td_biz,
+      count(DISTINCT b.tiebreak_order) AS distinct_orders
+    FROM base b
+    GROUP BY b.is_bankrupt, b.cv, b.cash, b.business_count
   )
   SELECT
-    rb.tid AS team_id,
-    rb.slot,
-    rb.name,
+    b.tid AS team_id,
+    b.slot,
+    b.name,
     row_number() OVER (
       ORDER BY
-        rb.is_bankrupt ASC,
-        rb.cv DESC,
-        rb.cash DESC,
-        rb.business_count DESC,
-        rb.tiebreak_order ASC NULLS LAST,
-        rb.slot ASC
+        b.is_bankrupt ASC,
+        b.cv DESC,
+        b.cash DESC,
+        b.business_count DESC,
+        b.tiebreak_order ASC NULLS LAST,
+        b.slot ASC
     )::int AS rank,
-    rb.is_bankrupt,
-    rb.cv,
-    rb.cash,
-    rb.business_count,
-    rb.tiebreak_order,
-    (rb.tie_group_size > 1 AND (rb.count_with_order < rb.tie_group_size OR rb.distinct_orders < rb.tie_group_size)) AS tie_unresolved
-  FROM ranked_base rb
+    b.is_bankrupt,
+    b.cv,
+    b.cash,
+    b.business_count,
+    b.tiebreak_order,
+    (b.tie_group_size > 1 AND (b.count_with_order < b.tie_group_size OR td.distinct_orders < b.tie_group_size)) AS tie_unresolved
+  FROM base b
+  JOIN tie_distinct td
+    ON b.is_bankrupt = td.td_bankrupt
+   AND b.cv = td.td_cv
+   AND b.cash = td.td_cash
+   AND b.business_count = td.td_biz
   ORDER BY rank ASC;
 END;
 $$;
@@ -2582,3 +2599,66 @@ CREATE INDEX IF NOT EXISTS idx_final_results_room_id ON public.final_results(roo
 -- - team_businesses: room_id (idx_team_businesses_room_id), team_id (idx_team_businesses_team_id)
 -- - activity_events: room_id + id DESC (idx_activity_events_room_id_id)
 -- - team_claims: user_id + team_id (PK), team_id (idx_team_claims_team_id)
+-- Migration 0012: Admin Abort Game Function
+-- STARTUPOLY Live Scoreboard & Game Management System
+-- Allows admin to revert an accidentally started match back to LOBBY
+
+CREATE OR REPLACE FUNCTION public.admin_abort_game(
+  room_id uuid,
+  note text DEFAULT 'Game aborted by admin'
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_status public.room_status;
+  v_room jsonb;
+BEGIN
+  IF NOT public.is_admin() THEN
+    PERFORM public.raise_error('NOT_ADMIN');
+  END IF;
+
+  SELECT status INTO v_status
+  FROM public.rooms
+  WHERE id = room_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    PERFORM public.raise_error('ROOM_NOT_FOUND');
+  END IF;
+
+  IF v_status <> 'ACTIVE' THEN
+    PERFORM public.raise_error('INVALID_TRANSITION', jsonb_build_object('from', v_status, 'to', 'LOBBY'));
+  END IF;
+
+  -- Reset room back to LOBBY
+  UPDATE public.rooms
+  SET status = 'LOBBY',
+      started_at = NULL,
+      ends_at = NULL
+  WHERE id = room_id;
+
+  -- Log the abort event
+  INSERT INTO public.activity_events (
+    room_id,
+    type,
+    note,
+    actor_id,
+    created_at
+  ) VALUES (
+    room_id,
+    'GAME_ABORTED',
+    coalesce(note, 'Game aborted by admin'),
+    auth.uid(),
+    public.app_now()
+  );
+
+  SELECT to_jsonb(r.*) INTO v_room FROM public.rooms r WHERE r.id = room_id;
+  RETURN v_room;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.admin_abort_game(uuid, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.admin_abort_game(uuid, text) TO authenticated;

@@ -176,7 +176,8 @@ CREATE TABLE public.activity_events (
     'BANKRUPTCY_SET',
     'TIEBREAK_SET',
     'TIME_EXPIRED',
-    'GAME_FINALIZED'
+    'GAME_FINALIZED',
+    'GAME_ABORTED'
   )),
   business_key text,
   prev jsonb,

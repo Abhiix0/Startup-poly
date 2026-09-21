@@ -24,7 +24,8 @@ export type ActivityEventType =
   | 'BANKRUPTCY_SET'
   | 'TIEBREAK_SET'
   | 'TIME_EXPIRED'
-  | 'GAME_FINALIZED';
+  | 'GAME_FINALIZED'
+  | 'GAME_ABORTED';
 
 export interface Database {
   public: {
@@ -563,6 +564,10 @@ export interface Database {
       };
       admin_finalize: {
         Args: { p_room_id: string };
+        Returns: Json;
+      };
+      admin_abort_game: {
+        Args: { room_id: string; note?: string | null };
         Returns: Json;
       };
     };
