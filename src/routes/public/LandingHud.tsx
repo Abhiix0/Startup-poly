@@ -39,25 +39,25 @@ export const LandingHud: React.FC<{ className?: string }> = ({ className = '' })
   ];
 
   return (
-    <div className={`w-full max-w-3xl mx-auto px-2 ${className}`}>
+    <div className={`w-full max-w-2xl mx-auto px-2 ${className}`}>
       <ul
         aria-label="Match facts"
-        className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full list-none p-0 m-0"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2.5 w-full list-none p-0 m-0"
       >
         {chips.map((chip) => (
           <li
             key={chip.id}
             aria-label={chip.fullText}
-            className="bg-[#102040] border-2 border-[#FFCC00] shadow-[2px_2px_0px_#102040] px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center justify-center gap-2 sm:gap-2.5 rounded-sm select-none min-h-[44px] max-h-[56px]"
+            className="bg-[#102040] border-2 border-[#FFCC00] shadow-[2px_2px_0px_#102040] px-2 sm:px-2.5 py-1 sm:py-1.5 flex items-center justify-center gap-1.5 sm:gap-2 rounded-sm select-none min-h-[36px] max-h-[46px]"
           >
             <span className="shrink-0 flex items-center justify-center" aria-hidden="true">
               {chip.icon}
             </span>
             <div className="flex flex-col items-start leading-none">
-              <span className="font-pixel text-[11px] sm:text-xs text-white font-bold tracking-tight">
+              <span className="font-pixel text-[10px] sm:text-[11px] text-white font-bold tracking-tight">
                 {chip.value}
               </span>
-              <span className="font-mono text-[9px] sm:text-[10px] text-[#FFFBEB]/80 font-medium mt-0.5 tracking-wider uppercase">
+              <span className="font-mono text-[8px] sm:text-[9px] text-[#FFFBEB]/80 font-medium mt-0.5 tracking-wider uppercase">
                 {chip.label}
               </span>
             </div>
