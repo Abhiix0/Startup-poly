@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
 import { supabase } from '../../data/client';
-import { PixelButton, PixelBrickTile } from '../../ui';
+import { PixelButton, PixelBrickTile, Modal } from '../../ui';
 import { CreateRoomView } from './CreateRoomView';
 
 export const AdminDashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
   const [checkingActiveRoom, setCheckingActiveRoom] = useState(true);
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -42,15 +43,15 @@ export const AdminDashboardPage: React.FC = () => {
 
   if (checkingActiveRoom) {
     return (
-      <div className="min-h-screen bg-[#5C94FC] flex items-center justify-center p-4">
-        <div className="bg-[#FAF8F5] border-4 border-[#102040] shadow-[6px_6px_0px_#102040] p-8 text-center max-w-sm w-full">
-          <div className="w-12 h-12 bg-[#FFCC00] border-3 border-[#102040] mx-auto mb-4 flex items-center justify-center font-pixel text-lg animate-spin">
+      <div className="min-h-screen bg-nes-sky flex items-center justify-center p-4">
+        <div className="bg-nes-card border-4 border-nes-navy shadow-pixel-lg p-8 text-center max-w-sm w-full">
+          <div className="w-12 h-12 bg-nes-gold border-3 border-nes-navy mx-auto mb-4 flex items-center justify-center font-pixel text-lg animate-spin">
             ★
           </div>
-          <h2 className="font-pixel text-xs uppercase tracking-wider text-[#102040] mb-2">
+          <h2 className="font-pixel text-xs uppercase tracking-wider text-nes-navy mb-2">
             CHECKING MATCH STATE...
           </h2>
-          <p className="font-mono text-xs text-[#64748B]">Locating any active room in progress</p>
+          <p className="font-mono text-xs text-nes-muted">Locating any active room in progress</p>
         </div>
       </div>
     );
@@ -62,12 +63,12 @@ export const AdminDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between">
+    <div className="min-h-screen bg-nes-sky flex flex-col justify-between">
       {/* Admin Top Navigation */}
-      <header className="bg-[#102040] text-white border-b-4 border-[#102040] px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_#102040]">
+      <header className="bg-nes-navy text-white border-b-4 border-nes-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_#102040]">
         <div className="flex items-center gap-3">
-          <span className="font-pixel text-sm text-[#FFCC00]">STARTUPOLY</span>
-          <span className="hidden sm:inline font-mono text-xs text-[#E2E8F0] border-l-2 border-white/20 pl-3">
+          <span className="font-pixel text-sm text-nes-gold">STARTUPOLY</span>
+          <span className="hidden sm:inline font-mono text-xs text-nes-gray border-l-2 border-white/20 pl-3">
             ADMIN CONSOLE
           </span>
         </div>
@@ -81,14 +82,14 @@ export const AdminDashboardPage: React.FC = () => {
               HISTORY
             </PixelButton>
           </Link>
-          <PixelButton variant="danger" size="sm" onClick={() => logout()}>
+          <PixelButton variant="danger" size="sm" onClick={() => setLogoutConfirmOpen(true)}>
             LOGOUT
           </PixelButton>
         </div>
       </header>
 
       {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-[#FFCC00] text-[#102040] px-4 py-2 text-center border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+      <div className="lg:hidden bg-nes-gold text-nes-navy px-4 py-2 text-center border-b-4 border-nes-navy shadow-[0_2px_0px_#102040]">
         <p className="font-pixel text-[11px] leading-relaxed">
           💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
         </p>
@@ -101,6 +102,35 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* Brick Ground Base */}
       <PixelBrickTile hasGrass={true} className="h-8" />
+
+      {/* Logout confirm — requires explicit confirmation before calling logout() */}
+      <Modal
+        isOpen={logoutConfirmOpen}
+        onClose={() => setLogoutConfirmOpen(false)}
+        title="CONFIRM LOGOUT"
+        maxWidth="sm"
+        footer={
+          <>
+            <PixelButton variant="ghost" size="sm" onClick={() => setLogoutConfirmOpen(false)}>
+              CANCEL
+            </PixelButton>
+            <PixelButton
+              variant="danger"
+              size="sm"
+              onClick={async () => {
+                setLogoutConfirmOpen(false);
+                await logout();
+              }}
+            >
+              LOG OUT
+            </PixelButton>
+          </>
+        }
+      >
+        <p className="font-mono text-sm text-nes-navy">
+          Are you sure you want to log out of the admin console?
+        </p>
+      </Modal>
     </div>
   );
 };

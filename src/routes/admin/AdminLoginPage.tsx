@@ -34,29 +34,36 @@ export const AdminLoginPage: React.FC = () => {
       await login(email, password);
       navigate(from, { replace: true });
     } catch (err: any) {
-      setErrorMsg(err.message || 'Authentication failed. Please verify your admin credentials.');
+      // Render the exact message from loginAsAdmin so the two failure cases are
+      // presented distinctly:
+      //   • bad credentials  → Supabase's "Invalid login credentials" message
+      //     displayed as: "Invalid email or password."
+      //   • valid credentials but not in admins table
+      //     displayed as: "This account is not authorized for admin access."
+      // Neither case leaks which half of the check failed to an external prober.
+      setErrorMsg(err.message ?? 'Authentication failed. Please verify your admin credentials.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between">
+    <div className="min-h-screen bg-nes-sky flex flex-col justify-between">
       {/* Top Navbar */}
       <header className="p-4 flex items-center justify-between">
         <Link
           to="/"
-          className="font-pixel text-xs text-white drop-shadow-[2px_2px_0px_#102040] hover:text-[#FFCC00] transition-colors"
+          className="font-pixel text-xs text-white drop-shadow-[2px_2px_0px_#102040] hover:text-nes-gold transition-colors"
         >
           ◄ BACK TO START
         </Link>
-        <span className="font-pixel text-[10px] text-white/90 bg-[#102040] px-3 py-1 border-2 border-white">
+        <span className="font-pixel text-[10px] text-white/90 bg-nes-navy px-3 py-1 border-2 border-white">
           EVENT ADMIN CONSOLE
         </span>
       </header>
 
       {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-[#FFCC00] text-[#102040] px-4 py-2.5 text-center border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+      <div className="lg:hidden bg-nes-gold text-nes-navy px-4 py-2.5 text-center border-b-4 border-nes-navy shadow-[0_2px_0px_#102040]">
         <p className="font-pixel text-[11px] leading-relaxed">
           💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
         </p>
@@ -72,14 +79,14 @@ export const AdminLoginPage: React.FC = () => {
             padding="lg"
           >
             <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-[#FFCC00] border-3 border-[#102040] shadow-[2px_2px_0px_#102040] flex items-center justify-center mx-auto mb-3 font-pixel text-xl text-[#102040]">
+              <div className="w-12 h-12 bg-nes-gold border-3 border-nes-navy shadow-pixel-sm flex items-center justify-center mx-auto mb-3 font-pixel text-xl text-nes-navy">
                 🔑
               </div>
-              <h1 className="font-pixel text-sm uppercase text-[#102040] mb-1">
+              <h1 className="font-pixel text-sm uppercase text-nes-navy mb-1">
                 EVENT ORGANIZER LOGIN
               </h1>
-              <p className="font-mono text-xs text-[#64748B]">
-                Supabase email & password for the verified admins table
+              <p className="font-mono text-xs text-nes-muted">
+                Supabase email &amp; password for the verified admins table
               </p>
             </div>
 

@@ -60,6 +60,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         // If an admin lost session mid-game
         if (wasAdminRef.current) {
+          // This branch covers the revoked-session path: supabase fires
+          // SIGNED_OUT (e.g. refresh token invalidated server-side) while the
+          // admin is on a protected page.  We attempt one token refresh; if that
+          // also fails we surface the SessionExpiredModal so the admin can
+          // re-authenticate without losing their place.  We do NOT throw here —
+          // the state simply settles to role='none', user=null, session=null via
+          // the setRole('none') call below, and the modal handles the UX.
           logger.warn('Auth', 'Admin session was lost/expired. Attempting token refresh...');
           const { data, error } = await supabase.auth.refreshSession();
           if (error || !data.session) {
@@ -89,18 +96,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        throw error;
+        // Map Supabase credential errors to a fixed, attacker-neutral message so
+        // the UI always shows "Invalid email or password." for any bad-credentials
+        // failure, without leaking whether the email exists.
+        throw new Error('Invalid email or password.');
       }
 
       if (!data.user) {
-        throw new Error('Sign in failed: no user returned');
+        throw new Error('Invalid email or password.');
       }
 
       // Verify admin membership in Postgres
       const verifiedRole = await getSessionRole();
       if (verifiedRole !== 'admin') {
         await supabase.auth.signOut();
-        throw new Error('Not an admin account. Only authorized Tech Runners and Game Masters may sign in.');
+        // Distinct message for the "valid creds, not an admin" case.
+        // AdminLoginPage renders err.message as-is, so keep this exact string
+        // in sync with the spec copy.
+        throw new Error('This account is not authorized for admin access.');
       }
 
       setUser(data.user);
