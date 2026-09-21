@@ -92,4 +92,34 @@ describe('useServerClock', () => {
     expect(result.current.isExpired).toBe(true);
     expect(onExpire).toHaveBeenCalledTimes(1);
   });
+
+  it('correctly compensates for local phone clock skew', async () => {
+    // Local device is 15 minutes ahead of the server
+    const serverTimestampMs = 1700000000000;
+    const localDeviceSkewMs = 15 * 60 * 1000;
+    vi.setSystemTime(serverTimestampMs + localDeviceSkewMs);
+
+    // Server time function returns true server time
+    const fetchServerTimeMock = vi.fn(async () => new Date(serverTimestampMs).toISOString());
+
+    // Game ends 10 minutes into the future on the server
+    const endsAt = new Date(serverTimestampMs + 600 * 1000).toISOString();
+
+    const { result } = renderHook(() =>
+      useServerClock({
+        endsAt,
+        status: 'ACTIVE',
+        fetchTimeFn: fetchServerTimeMock,
+      })
+    );
+
+    // Let the async sync() finish
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    // Device remaining time must be 10:00, NOT negative or expired!
+    expect(result.current.formatted).toBe('10:00');
+    expect(result.current.offsetMs).toBeCloseTo(-localDeviceSkewMs, -2);
+  });
 });
