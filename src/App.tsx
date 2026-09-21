@@ -1,77 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import { GameProvider, useGame } from './context/GameContext';
-import { PlayerJoinView } from './components/player/PlayerJoinView';
-import { PlayerShell } from './components/player/PlayerShell';
-import { AdminLogin } from './components/admin/AdminLogin';
-import { AdminShell } from './components/admin/AdminShell';
-import { MultiViewSimulator } from './components/simulator/MultiViewSimulator';
+import React, { Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './data/auth';
+import { ToastProvider, ErrorBoundary, PixelLoader } from './ui';
 
-const AppContent: React.FC = () => {
-  const { session, activeView, setSimulatorMode } = useGame();
-  const [currentHash, setCurrentHash] = useState<string>(() => window.location.hash || window.location.pathname || '#/play');
+// Immediate static imports for Team & Public routes (instant mobile load)
+import { LandingPage } from './routes/public/LandingPage';
+import { NotFoundPage } from './routes/public/NotFoundPage';
+import { TeamJoinPage } from './routes/team/TeamJoinPage';
+import { TeamDashboardPage } from './routes/team/TeamDashboardPage';
+import { RequireAdmin } from './routes/admin/RequireAdmin';
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      const h = window.location.hash || window.location.pathname || '#/play';
-      setCurrentHash(h);
-      if (h.includes('simulator')) {
-        setSimulatorMode(true);
-      }
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('popstate', handleHashChange);
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('popstate', handleHashChange);
-    };
-  }, [setSimulatorMode]);
-
-  // Check if simulator is active via hash, pathname or state
-  if (activeView === 'simulator' || currentHash.includes('simulator')) {
-    return <MultiViewSimulator />;
-  }
-
-  // Admin Route
-  const isAdminRoute = currentHash.includes('admin');
-
-  if (session.role === 'admin') {
-    return <AdminShell />;
-  }
-
-  if (session.role === 'player') {
-    return <PlayerShell />;
-  }
-
-  // Not logged in: Route to Admin Login or Player Join based on URL
-  if (isAdminRoute) {
-    return (
-      <AdminLogin 
-        onBackToPlay={() => {
-          window.location.hash = '#/play';
-          setCurrentHash('#/play');
-        }} 
-      />
-    );
-  }
-
-  return (
-    <PlayerJoinView 
-      onGoToAdminLogin={() => {
-        window.location.hash = '#/admin/login';
-        setCurrentHash('#/admin/login');
-      }} 
-    />
-  );
-};
+// Route-level code-splitting for Admin pages to keep mobile bundle ultra-light
+const AdminLoginPage = React.lazy(() =>
+  import('./routes/admin/AdminLoginPage').then((m) => ({ default: m.AdminLoginPage }))
+);
+const AdminDashboardPage = React.lazy(() =>
+  import('./routes/admin/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage }))
+);
+const AdminRoomPage = React.lazy(() =>
+  import('./routes/admin/AdminRoomPage').then((m) => ({ default: m.AdminRoomPage }))
+);
+const AdminHistoryPage = React.lazy(() =>
+  import('./routes/admin/AdminHistoryPage').then((m) => ({ default: m.AdminHistoryPage }))
+);
+const AdminRoomHistoryPage = React.lazy(() =>
+  import('./routes/admin/AdminRoomHistoryPage').then((m) => ({ default: m.AdminRoomHistoryPage }))
+);
 
 export const App: React.FC = () => {
   return (
-    <GameProvider>
-      <AppContent />
-    </GameProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <Suspense fallback={<PixelLoader />}>
+              <Routes>
+                {/* Public Root */}
+                <Route path="/" element={<LandingPage />} />
+
+                {/* Team Routes (Mobile-first, instantly loaded) */}
+                <Route path="/join" element={<TeamJoinPage />} />
+                <Route path="/team" element={<TeamDashboardPage />} />
+
+                {/* Admin Auth */}
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+
+                {/* Protected Admin Routes */}
+                <Route path="/admin" element={<RequireAdmin />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="room/:roomId" element={<AdminRoomPage />} />
+                  <Route path="history" element={<AdminHistoryPage />} />
+                  <Route path="history/:roomId" element={<AdminRoomHistoryPage />} />
+                </Route>
+
+                {/* Catch-all Not Found */}
+                <Route path="/404" element={<NotFoundPage />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </ToastProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 };
 
 export default App;
-
