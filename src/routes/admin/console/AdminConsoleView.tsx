@@ -14,11 +14,21 @@ import { ConnectionStatus } from '../../../ui/ConnectionPill';
 import {
   AdminRoomSnapshot,
   rpcAdminSetTeamValues,
+  rpcAdminAdjust,
   rpcAdminAddBusiness,
   rpcAdminSetBusinessLevel,
   rpcAdminRemoveBusiness,
   rpcAdminSetBankrupt,
 } from '../../../data/rpc';
+import {
+  QuickActionsBar,
+  RentDialog,
+  StartLapDialog,
+  StealDialog,
+  CardDialog,
+  LoseFeatureDialog,
+  ForcedSaleDialog,
+} from './quick';
 
 export interface AdminConsoleViewProps {
   snapshot: AdminRoomSnapshot;
@@ -45,6 +55,17 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const [editBizKey, setEditBizKey] = useState<string | null>(null);
   const [removeBizKey, setRemoveBizKey] = useState<string | null>(null);
   const [bankruptMode, setBankruptMode] = useState<'declare' | 'undo' | null>(null);
+
+  // Quick actions modal state
+  const [isRentOpen, setIsRentOpen] = useState<boolean>(false);
+  const [isStartLapOpen, setIsStartLapOpen] = useState<boolean>(false);
+  const [isStealOpen, setIsStealOpen] = useState<boolean>(false);
+  const [isCardOpen, setIsCardOpen] = useState<boolean>(false);
+  const [cardMode, setCardMode] = useState<'BONUS' | 'CRISIS'>('BONUS');
+  const [isLoseFeatureOpen, setIsLoseFeatureOpen] = useState<boolean>(false);
+  const [isForcedSaleOpen, setIsForcedSaleOpen] = useState<boolean>(false);
+  const [forcedSaleTeamId, setForcedSaleTeamId] = useState<string>('');
+  const [forcedSaleShortfall, setForcedSaleShortfall] = useState<number | undefined>(undefined);
 
   // Conflict & Insufficient Cash states
   const [conflictDetails, setConflictDetails] = useState<{
@@ -113,7 +134,135 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     errorToast(msg || 'An error occurred.');
   };
 
+  // --- KEYBOARD SHORTCUTS ---
+  // R = Rent, S = Start, B = Buy, U = Upgrade, Esc = Close dialogs
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      const isInput =
+        activeEl &&
+        (activeEl.tagName === 'INPUT' ||
+          activeEl.tagName === 'TEXTAREA' ||
+          activeEl.tagName === 'SELECT' ||
+          (activeEl as HTMLElement).isContentEditable);
+
+      if (e.key === 'Escape') {
+        setIsRentOpen(false);
+        setIsStartLapOpen(false);
+        setIsStealOpen(false);
+        setIsCardOpen(false);
+        setIsLoseFeatureOpen(false);
+        setIsForcedSaleOpen(false);
+        return;
+      }
+
+      if (isInput) return;
+
+      const key = e.key.toLowerCase();
+      if (key === 'r') {
+        e.preventDefault();
+        setIsRentOpen(true);
+      } else if (key === 's') {
+        e.preventDefault();
+        setIsStartLapOpen(true);
+      } else if (key === 'b') {
+        e.preventDefault();
+        setIsAddOpen(true);
+      } else if (key === 'u') {
+        e.preventDefault();
+        if (selectedTeam.businesses.length > 0) {
+          setUpgradeBizKey(selectedTeam.businesses[0].business_key);
+        } else {
+          errorToast(`${selectedTeam.name} has no businesses to upgrade.`);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedTeam, errorToast]);
+
   // --- MUTATION HANDLERS ---
+
+  const handleQuickAdjust = async (params: {
+    changes: Array<{
+      team_id: string;
+      cash_delta: number;
+      cv_delta: number;
+      expected_version: number;
+    }>;
+    label: string;
+    note?: string;
+    requestId: string;
+  }) => {
+    try {
+      await rpcAdminAdjust({
+        changes: params.changes,
+        label: params.label,
+        note: params.note,
+        request_id: params.requestId,
+      });
+      successToast(`Action ${params.label} recorded.`);
+      params.changes.forEach((ch) => {
+        triggerFlash(ch.team_id, ch.cash_delta >= 0 ? 'up' : 'down');
+      });
+      setInsufficientCashShortfall(null);
+      await onRefetch();
+    } catch (err: any) {
+      handleError(err);
+      throw err;
+    }
+  };
+
+  const handleForcedSaleBusiness = async ({
+    teamId,
+    businessKey,
+    expectedVersion,
+    note,
+  }: {
+    teamId: string;
+    businessKey: string;
+    expectedVersion: number;
+    note?: string;
+  }) => {
+    try {
+      await rpcAdminRemoveBusiness({
+        team_id: teamId,
+        business_key: businessKey,
+        reason: 'FORCED_SALE',
+        credit_resale: true,
+        expected_version: expectedVersion,
+        request_id: crypto.randomUUID(),
+        note,
+      });
+      const t = snapshot.teams.find((tm) => tm.id === teamId);
+      successToast(`Sold ${businessKey} for ${t?.name || 'team'}.`);
+      triggerFlash(teamId, 'up');
+      setInsufficientCashShortfall(null);
+      await onRefetch();
+    } catch (err: any) {
+      handleError(err, expectedVersion);
+      throw err;
+    }
+  };
+
+  const handleDoForcedSale = (teamId: string, shortfall: number) => {
+    setIsRentOpen(false);
+    setIsCardOpen(false);
+    setIsStealOpen(false);
+    setForcedSaleTeamId(teamId);
+    setForcedSaleShortfall(shortfall);
+    setIsForcedSaleOpen(true);
+  };
+
+  const handleDeclareBankrupt = (teamId: string) => {
+    setIsRentOpen(false);
+    setIsCardOpen(false);
+    setIsStealOpen(false);
+    setIsForcedSaleOpen(false);
+    setSelectedTeamId(teamId);
+    setBankruptMode('declare');
+  };
 
   const handleUpdateCash = async (newCash: number, note?: string) => {
     if (!selectedTeam) return;
@@ -344,7 +493,11 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           {selectedTeam.businesses.length > 0 && (
             <button
               type="button"
-              onClick={() => setRemoveBizKey(selectedTeam.businesses[0].business_key)}
+              onClick={() => {
+                setForcedSaleTeamId(selectedTeam.id);
+                setForcedSaleShortfall(insufficientCashShortfall);
+                setIsForcedSaleOpen(true);
+              }}
               className="
                 font-pixel text-[11px] uppercase px-3 py-1 bg-[#D32F2F] text-white
                 border border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#B71C1C] cursor-pointer
@@ -368,6 +521,35 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               setInsufficientCashShortfall(null);
             }}
             flashes={flashes}
+          />
+
+          <QuickActionsBar
+            disabled={isOffline}
+            onOpenRent={() => setIsRentOpen(true)}
+            onOpenStartLap={() => setIsStartLapOpen(true)}
+            onOpenBuy={() => setIsAddOpen(true)}
+            onOpenUpgrade={() => {
+              if (selectedTeam.businesses.length > 0) {
+                setUpgradeBizKey(selectedTeam.businesses[0].business_key);
+              } else {
+                errorToast(`${selectedTeam.name} has no businesses to upgrade.`);
+              }
+            }}
+            onOpenForcedSale={() => {
+              setForcedSaleTeamId(selectedTeam.id);
+              setForcedSaleShortfall(undefined);
+              setIsForcedSaleOpen(true);
+            }}
+            onOpenSteal={() => setIsStealOpen(true)}
+            onOpenBonusCard={() => {
+              setCardMode('BONUS');
+              setIsCardOpen(true);
+            }}
+            onOpenCrisisCard={() => {
+              setCardMode('CRISIS');
+              setIsCardOpen(true);
+            }}
+            onOpenLoseFeature={() => setIsLoseFeatureOpen(true)}
           />
 
           <TeamEditor
@@ -440,6 +622,70 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         onClose={() => setConflictDetails(null)}
         onReload={handleManualRefetch}
         conflictDetails={conflictDetails}
+      />
+
+      {/* QUICK ACTIONS MODALS */}
+      <RentDialog
+        isOpen={isRentOpen}
+        onClose={() => setIsRentOpen(false)}
+        teams={snapshot.teams}
+        defaultPayerId={selectedTeam.id}
+        isTimeExpired={isTimeExpired}
+        onSubmit={handleQuickAdjust}
+        onDoForcedSale={handleDoForcedSale}
+        onDeclareBankrupt={handleDeclareBankrupt}
+      />
+
+      <StartLapDialog
+        isOpen={isStartLapOpen}
+        onClose={() => setIsStartLapOpen(false)}
+        teams={snapshot.teams}
+        defaultTeamId={selectedTeam.id}
+        isTimeExpired={isTimeExpired}
+        onSubmit={handleQuickAdjust}
+      />
+
+      <StealDialog
+        isOpen={isStealOpen}
+        onClose={() => setIsStealOpen(false)}
+        teams={snapshot.teams}
+        defaultThiefId={selectedTeam.id}
+        isTimeExpired={isTimeExpired}
+        onSubmit={handleQuickAdjust}
+        onDoForcedSale={handleDoForcedSale}
+        onDeclareBankrupt={handleDeclareBankrupt}
+      />
+
+      <CardDialog
+        isOpen={isCardOpen}
+        onClose={() => setIsCardOpen(false)}
+        teams={snapshot.teams}
+        defaultTeamId={selectedTeam.id}
+        defaultMode={cardMode}
+        isTimeExpired={isTimeExpired}
+        onSubmit={handleQuickAdjust}
+        onDoForcedSale={handleDoForcedSale}
+        onDeclareBankrupt={handleDeclareBankrupt}
+      />
+
+      <LoseFeatureDialog
+        isOpen={isLoseFeatureOpen}
+        onClose={() => setIsLoseFeatureOpen(false)}
+        teams={snapshot.teams}
+        defaultTeamId={selectedTeam.id}
+        isTimeExpired={isTimeExpired}
+        onSubmit={handleQuickAdjust}
+      />
+
+      <ForcedSaleDialog
+        isOpen={isForcedSaleOpen}
+        onClose={() => setIsForcedSaleOpen(false)}
+        teams={snapshot.teams}
+        defaultTeamId={forcedSaleTeamId || selectedTeam.id}
+        shortfallTarget={forcedSaleShortfall}
+        isTimeExpired={isTimeExpired}
+        onSellBusiness={handleForcedSaleBusiness}
+        onDeclareBankrupt={handleDeclareBankrupt}
       />
 
       {/* 5. NES Ground Pattern */}
