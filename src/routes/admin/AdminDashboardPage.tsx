@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
 import { supabase } from '../../data/client';
-import { PixelButton } from '../../ui';
+import { PixelButton, PixelBrickTile } from '../../ui';
 import { CreateRoomView } from './CreateRoomView';
 
 export const AdminDashboardPage: React.FC = () => {
@@ -87,13 +87,20 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       </header>
 
+      {/* Responsive width notice for small devices (< 1024px) */}
+      <div className="lg:hidden bg-[#FFCC00] text-[#102040] px-4 py-2 text-center border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+        <p className="font-pixel text-[11px] leading-relaxed">
+          💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
+        </p>
+      </div>
+
       {/* Main Container: Create Room View */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
         <CreateRoomView />
       </main>
 
       {/* Brick Ground Base */}
-      <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />
+      <PixelBrickTile hasGrass={true} className="h-8" />
     </div>
   );
 };

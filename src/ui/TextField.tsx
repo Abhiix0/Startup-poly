@@ -61,7 +61,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             <span>⚠</span> {error}
           </p>
         ) : helperText ? (
-          <p className="font-mono text-[11px] text-[#64748B]">{helperText}</p>
+          <p className="font-mono text-[11px] text-[#334155]">{helperText}</p>
         ) : null}
       </div>
     );

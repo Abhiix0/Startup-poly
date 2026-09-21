@@ -20,7 +20,7 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    primary: 'bg-[#22B14C] hover:bg-[#1fa145] text-white',
+    primary: 'bg-[#22B14C] hover:bg-[#1fa145] text-[#102040]',
     secondary: 'bg-[#FFCC00] hover:bg-[#ebd000] text-[#102040]',
     danger: 'bg-[#D32F2F] hover:bg-[#bf2626] text-white',
     ghost: 'bg-white hover:bg-[#F0EDE6] text-[#102040]',
@@ -39,7 +39,8 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
         inline-flex items-center justify-center gap-2 cursor-pointer font-bold select-none
         border-4 border-[#102040] shadow-[4px_4px_0px_#102040]
         active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#102040]
-        transition-all duration-75
+        focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FFCC00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#102040]
+        transition-all duration-75 motion-reduce:transition-none motion-reduce:transform-none
         disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-[4px_4px_0px_#102040]
         ${variantStyles[variant]}
         ${sizeStyles[size]}

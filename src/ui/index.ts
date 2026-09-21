@@ -12,3 +12,4 @@ export * from './ErrorBanner';
 export * from './Countdown';
 export * from './ErrorBoundary';
 export * from './Leaderboard';
+export * from './pixel';

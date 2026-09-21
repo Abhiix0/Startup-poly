@@ -1,19 +1,44 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './data/auth';
-import { ToastProvider, ErrorBoundary } from './ui';
+import { ToastProvider, ErrorBoundary, PixelCard } from './ui';
 
-// Routes
+// Immediate static imports for Team & Public routes (instant mobile load)
 import { LandingPage } from './routes/public/LandingPage';
 import { NotFoundPage } from './routes/public/NotFoundPage';
 import { TeamJoinPage } from './routes/team/TeamJoinPage';
 import { TeamDashboardPage } from './routes/team/TeamDashboardPage';
-import { AdminLoginPage } from './routes/admin/AdminLoginPage';
 import { RequireAdmin } from './routes/admin/RequireAdmin';
-import { AdminDashboardPage } from './routes/admin/AdminDashboardPage';
-import { AdminRoomPage } from './routes/admin/AdminRoomPage';
-import { AdminHistoryPage } from './routes/admin/AdminHistoryPage';
-import { AdminRoomHistoryPage } from './routes/admin/AdminRoomHistoryPage';
+
+// Route-level code-splitting for Admin pages to keep mobile bundle ultra-light
+const AdminLoginPage = React.lazy(() =>
+  import('./routes/admin/AdminLoginPage').then((m) => ({ default: m.AdminLoginPage }))
+);
+const AdminDashboardPage = React.lazy(() =>
+  import('./routes/admin/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage }))
+);
+const AdminRoomPage = React.lazy(() =>
+  import('./routes/admin/AdminRoomPage').then((m) => ({ default: m.AdminRoomPage }))
+);
+const AdminHistoryPage = React.lazy(() =>
+  import('./routes/admin/AdminHistoryPage').then((m) => ({ default: m.AdminHistoryPage }))
+);
+const AdminRoomHistoryPage = React.lazy(() =>
+  import('./routes/admin/AdminRoomHistoryPage').then((m) => ({ default: m.AdminRoomHistoryPage }))
+);
+
+const RouteLoadingFallback: React.FC = () => (
+  <div className="min-h-screen bg-[#5C94FC] flex items-center justify-center p-4">
+    <PixelCard className="max-w-xs w-full text-center py-6">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-4 border-[#102040] border-t-[#FFCC00] rounded-full animate-spin" />
+        <span className="font-pixel text-xs text-[#102040] tracking-wider uppercase">
+          Loading Module...
+        </span>
+      </div>
+    </PixelCard>
+  </div>
+);
 
 export const App: React.FC = () => {
   return (
@@ -21,29 +46,31 @@ export const App: React.FC = () => {
       <AuthProvider>
         <ToastProvider>
           <BrowserRouter>
-            <Routes>
-              {/* Public Root */}
-              <Route path="/" element={<LandingPage />} />
+            <Suspense fallback={<RouteLoadingFallback />}>
+              <Routes>
+                {/* Public Root */}
+                <Route path="/" element={<LandingPage />} />
 
-              {/* Team Routes (Mobile-first) */}
-              <Route path="/join" element={<TeamJoinPage />} />
-              <Route path="/team" element={<TeamDashboardPage />} />
+                {/* Team Routes (Mobile-first, instantly loaded) */}
+                <Route path="/join" element={<TeamJoinPage />} />
+                <Route path="/team" element={<TeamDashboardPage />} />
 
-              {/* Admin Auth */}
-              <Route path="/admin/login" element={<AdminLoginPage />} />
+                {/* Admin Auth */}
+                <Route path="/admin/login" element={<AdminLoginPage />} />
 
-              {/* Protected Admin Routes */}
-              <Route path="/admin" element={<RequireAdmin />}>
-                <Route index element={<AdminDashboardPage />} />
-                <Route path="room/:roomId" element={<AdminRoomPage />} />
-                <Route path="history" element={<AdminHistoryPage />} />
-                <Route path="history/:roomId" element={<AdminRoomHistoryPage />} />
-              </Route>
+                {/* Protected Admin Routes */}
+                <Route path="/admin" element={<RequireAdmin />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="room/:roomId" element={<AdminRoomPage />} />
+                  <Route path="history" element={<AdminHistoryPage />} />
+                  <Route path="history/:roomId" element={<AdminRoomHistoryPage />} />
+                </Route>
 
-              {/* Catch-all Not Found */}
-              <Route path="/404" element={<NotFoundPage />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
-            </Routes>
+                {/* Catch-all Not Found */}
+                <Route path="/404" element={<NotFoundPage />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </ToastProvider>
       </AuthProvider>

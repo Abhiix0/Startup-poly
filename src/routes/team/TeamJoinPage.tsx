@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { PixelButton, PixelCard, TextField, ErrorBanner, useToast, Skeleton } from '../../ui';
+import { PixelButton, PixelCard, TextField, ErrorBanner, useToast, Skeleton, PixelBrickTile } from '../../ui';
 import { PixelCloud } from '../../ui/pixel';
 import { rpcGetLobby, rpcJoinTeam } from '../../data/rpc';
 import { ensureAnonymousSession } from '../../data/client';
@@ -115,7 +115,7 @@ export const TeamJoinPage: React.FC = () => {
       <header className="p-4 flex items-center justify-between">
         <Link
           to="/"
-          className="font-pixel text-xs text-white drop-shadow-[2px_2px_0px_#102040] hover:text-[#FFCC00] transition-colors"
+          className="inline-flex items-center gap-1 font-pixel text-xs bg-[#102040] text-[#FFCC00] px-3 py-1.5 border-2 border-[#102040] shadow-[2px_2px_0px_#102040] hover:bg-[#22B14C] hover:text-white transition-colors"
         >
           ◄ BACK
         </Link>
@@ -152,7 +152,7 @@ export const TeamJoinPage: React.FC = () => {
               <h1 className="font-pixel text-xs sm:text-sm uppercase text-[#102040] mt-1">
                 JOIN LIVE SCOREBOARD
               </h1>
-              <p className="font-mono text-xs text-[#64748B] mt-0.5">
+              <p className="font-mono text-xs text-[#334155] mt-0.5 font-medium">
                 Look at the projector screen for your 6-character room code
               </p>
             </div>
@@ -279,7 +279,7 @@ export const TeamJoinPage: React.FC = () => {
       </main>
 
       {/* Brick Ground Base Strip */}
-      <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />
+      <PixelBrickTile hasGrass={true} className="h-8" />
     </div>
   );
 };

@@ -68,7 +68,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
         className="text-center"
       >
         <div className="flex flex-col items-center justify-center gap-2 py-4">
-          <span className="font-pixel text-xs sm:text-sm uppercase tracking-widest text-[#64748B]">
+          <span className="font-pixel text-xs sm:text-sm uppercase tracking-widest text-[#102040] font-bold">
             ROOM CODE TO JOIN ON PHONES
           </span>
 
@@ -146,7 +146,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
               {/* PIN and Release Action */}
               <div className="bg-[#FAF8F5] border-2 border-[#102040] p-2.5 flex items-center justify-between">
                 <div>
-                  <span className="font-pixel text-[9px] text-[#64748B] block uppercase">
+                  <span className="font-pixel text-[9px] text-[#102040] font-bold block uppercase">
                     SECRET PIN:
                   </span>
                   <span className="font-mono font-extrabold text-xl text-[#102040] tracking-widest">
@@ -159,7 +159,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
                     variant="danger"
                     size="sm"
                     onClick={() => setReleasingTeam(team)}
-                    className="text-[10px] min-h-[36px] py-1 px-2.5"
+                    className="text-[10px] min-h-[44px] py-1 px-3"
                     title="Disconnect this team's device"
                   >
                     RELEASE

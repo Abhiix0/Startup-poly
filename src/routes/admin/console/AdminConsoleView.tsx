@@ -500,6 +500,13 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         isRefetching={isRefetching}
       />
 
+      {/* Responsive width notice for small devices (< 1024px) */}
+      <div className="lg:hidden bg-[#FFCC00] text-[#102040] px-4 py-2.5 text-center border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+        <p className="font-pixel text-[11px] leading-relaxed">
+          💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
+        </p>
+      </div>
+
       {/* 2. FULL-WIDTH SYSTEM ALERTS */}
       {isOffline && (
         <div className="bg-[#D32F2F] text-white px-4 py-2 text-center font-pixel text-xs border-b-2 border-[#102040]">

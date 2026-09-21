@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
-import { PixelButton, PixelCard, TextField, ErrorBanner } from '../../ui';
+import { PixelButton, PixelCard, TextField, ErrorBanner, PixelBrickTile } from '../../ui';
 
 export const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -54,6 +54,13 @@ export const AdminLoginPage: React.FC = () => {
           EVENT ADMIN CONSOLE
         </span>
       </header>
+
+      {/* Responsive width notice for small devices (< 1024px) */}
+      <div className="lg:hidden bg-[#FFCC00] text-[#102040] px-4 py-2.5 text-center border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+        <p className="font-pixel text-[11px] leading-relaxed">
+          💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
+        </p>
+      </div>
 
       {/* Main Login Card */}
       <main className="flex-1 flex items-center justify-center p-4">
@@ -121,7 +128,7 @@ export const AdminLoginPage: React.FC = () => {
       </main>
 
       {/* Brick Ground Base */}
-      <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />
+      <PixelBrickTile hasGrass={true} className="h-8" />
     </div>
   );
 };

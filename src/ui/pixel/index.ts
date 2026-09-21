@@ -3,3 +3,8 @@ export * from './PixelCloud';
 export * from './PixelPipe';
 export * from './PixelTrophy';
 export * from './PixelLevelPips';
+export * from './PixelStar';
+export * from './PixelBrickTile';
+export * from './PixelMascot';
+export * from './PixelLogo';
+export * from './PixelBusinessIcon';

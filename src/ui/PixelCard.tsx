@@ -31,7 +31,7 @@ export const PixelCard: React.FC<PixelCardProps> = ({
     navy: 'bg-[#102040] text-white border-b-4 border-[#102040]',
     brick: 'bg-[#B84418] text-white border-b-4 border-[#102040]',
     gold: 'bg-[#FFCC00] text-[#102040] border-b-4 border-[#102040]',
-    green: 'bg-[#22B14C] text-white border-b-4 border-[#102040]',
+    green: 'bg-[#22B14C] text-[#102040] border-b-4 border-[#102040]',
   };
 
   const paddingStyles = {
