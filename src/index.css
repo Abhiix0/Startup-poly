@@ -14,11 +14,19 @@
 
   --font-pixel: "Press Start 2P", monospace;
   --font-mono: "JetBrains Mono", monospace;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --shadow-pixel-sm: 2px 2px 0px #102040;
   --shadow-pixel: 4px 4px 0px #102040;
   --shadow-pixel-lg: 6px 6px 0px #102040;
+
+  /* Arcade Motion Tokens */
+  --ease-arcade: steps(1, end);
+  --duration-entrance: 700ms;
+  --duration-press: 60ms;
+  --duration-cloud-far: 110s;
+  --duration-cloud-mid: 70s;
+  --duration-cloud-near: 45s;
 }
 
 @layer base {
@@ -125,4 +133,185 @@
 }
 ::-webkit-scrollbar-thumb {
   background: #102040;
+}
+
+/* ========================================================================= */
+/* Shared Arcade Motion System                                               */
+/* ========================================================================= */
+
+@keyframes cloud-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes sprite-idle {
+  0%, 80% {
+    transform: translateX(0%);
+  }
+  85%, 95% {
+    transform: translateX(-14.2857%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes sprite-walk {
+  0% {
+    transform: translateX(-28.5714%);
+  }
+  33.33% {
+    transform: translateX(-42.8571%);
+  }
+  66.66% {
+    transform: translateX(-57.1428%);
+  }
+  100% {
+    transform: translateX(-28.5714%);
+  }
+}
+
+@keyframes walk-in {
+  from {
+    transform: translate3d(-60px, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes bubble-life {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  90% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes block-bump {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes coin-shimmer {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.25);
+  }
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% {
+    transform: scale(0.5);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Motion Classes */
+.anim-poly-idle {
+  animation: sprite-idle 3.5s steps(1) infinite;
+}
+
+.anim-poly-walk {
+  animation: sprite-walk 0.6s steps(1) infinite;
+}
+
+.anim-blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+.anim-sparkle {
+  animation: sparkle-twinkle 1.8s ease-in-out infinite;
+}
+
+.anim-block-bump {
+  animation: block-bump 0.25s ease-out;
+}
+
+.anim-coin-shimmer {
+  animation: coin-shimmer 2s ease-in-out infinite;
+}
+
+.anim-bubble {
+  animation: bubble-life 4s ease-out forwards;
+}
+
+.anim-walk-in {
+  animation: walk-in var(--duration-entrance, 700ms) steps(6) forwards;
+}
+
+.motion-loop {
+  animation-iteration-count: infinite;
+}
+
+.paused-anim {
+  animation-play-state: paused !important;
+}
+
+[data-paused="true"] * {
+  animation-play-state: paused !important;
+}
+
+/* Hardware Acceleration Hygiene: clean up will-change when not animating */
+*:not([data-animating="true"]):not(.is-animating) {
+  will-change: auto;
+}
+
+/* Global Prefers Reduced Motion Rule */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .entrance-anim,
+  [data-entrance] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

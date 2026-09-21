@@ -12,12 +12,17 @@ import {
   PixelTerminalIcon,
   PixelHill,
   PixelQuestionBlock,
-  PixelGoomba,
-  PixelCharacter,
+  PixelPoly,
+  PixelBug,
+  PixelGrassTuft,
   PixelSparkle,
 } from '../../ui/pixel';
+import { usePageVisibility } from '../../lib/usePageVisibility';
 
 export const LandingPage: React.FC = () => {
+  // Synchronize document pause state with tab visibility
+  usePageVisibility();
+
   return (
     <div className="min-h-screen nes-sky-gradient flex flex-col justify-between overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040]">
       {/* NES Sky & Clouds Header */}
@@ -159,12 +164,12 @@ export const LandingPage: React.FC = () => {
             <PixelPipe />
           </div>
 
-          {/* Left Question Block + Goomba on Brick Platform */}
+          {/* Left Question Block + Original PixelBug on Brick Platform */}
           <div className="hidden lg:block absolute bottom-16 left-48 pointer-events-none select-none">
             <PixelQuestionBlock size={24} />
           </div>
           <div className="hidden lg:flex absolute bottom-0 left-52 pointer-events-none select-none flex-col items-center">
-            <PixelGoomba size={22} className="mb-0.5" />
+            <PixelBug size={20} className="mb-0.5" />
             <div className="flex">
               <div className="w-6 h-6 bg-[#B84418] border-2 border-[#102040]" />
               <div className="w-6 h-6 bg-[#B84418] border-2 border-[#102040]" />
@@ -189,17 +194,17 @@ export const LandingPage: React.FC = () => {
             <PixelQuestionBlock size={24} />
           </div>
 
-          {/* Right Goomba */}
+          {/* Right Grass Tuft */}
           <div className="hidden lg:block absolute bottom-0 right-48 pointer-events-none select-none">
-            <PixelGoomba size={20} />
+            <PixelGrassTuft size={18} variant={1} />
           </div>
 
-          {/* Builder Character with Speech Bubble on Right */}
+          {/* Founder Poly with Speech Bubble on Right */}
           <div className="hidden sm:flex absolute bottom-0 right-10 lg:right-20 pointer-events-none select-none items-end gap-2">
             <div className="font-pixel text-[10px] bg-white text-[#102040] px-2.5 py-1.5 border-2 border-[#102040] shadow-[2px_2px_0px_#102040] mb-4">
               Let's Build!
             </div>
-            <PixelCharacter size={36} />
+            <PixelPoly size={36} animation="static" />
           </div>
         </div>
 
