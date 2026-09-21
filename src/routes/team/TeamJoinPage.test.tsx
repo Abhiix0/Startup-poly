@@ -95,7 +95,7 @@ describe('TeamJoinPage', () => {
     fireEvent.change(pinInput, { target: { value: '9876' } });
 
     // 4. Submit
-    const connectBtn = screen.getByRole('button', { name: /CONNECT PHONE/i });
+    const connectBtn = screen.getByRole('button', { name: /ENTER WORLD|CONNECT PHONE/i });
     fireEvent.click(connectBtn);
 
     await waitFor(() => {
@@ -122,7 +122,7 @@ describe('TeamJoinPage', () => {
     const pinInput = screen.getByLabelText(/3\. 4-Digit Secret PIN/i);
     fireEvent.change(pinInput, { target: { value: '0000' } });
 
-    const connectBtn = screen.getByRole('button', { name: /CONNECT PHONE/i });
+    const connectBtn = screen.getByRole('button', { name: /ENTER WORLD|CONNECT PHONE/i });
     fireEvent.click(connectBtn);
 
     await waitFor(() => {
@@ -150,7 +150,7 @@ describe('TeamJoinPage', () => {
     const pinInput = screen.getByLabelText(/3\. 4-Digit Secret PIN/i);
     fireEvent.change(pinInput, { target: { value: '1111' } });
 
-    const connectBtn = screen.getByRole('button', { name: /CONNECT PHONE/i });
+    const connectBtn = screen.getByRole('button', { name: /ENTER WORLD|CONNECT PHONE/i });
     fireEvent.click(connectBtn);
 
     await waitFor(() => {

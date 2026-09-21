@@ -38,11 +38,11 @@ describe('AdminLoginPage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('EVENT ORGANIZER LOGIN')).toBeInTheDocument();
-    expect(screen.getByText('Authorized organisers only.')).toBeInTheDocument();
-    expect(screen.getByLabelText(/Admin Email/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/EVENT CASTLE/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('ADMIN ACCESS')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Admin Email|Operator/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ENTER CONSOLE/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ENTER CASTLE|ENTER CONSOLE/i })).toBeInTheDocument();
   });
 
   it('displays INVALID_CREDENTIALS error message on wrong password', async () => {
@@ -54,9 +54,9 @@ describe('AdminLoginPage', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Admin Email/i), { target: { value: 'admin@test.com' } });
+    fireEvent.change(screen.getByLabelText(/Admin Email|Operator/i), { target: { value: 'admin@test.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'wrongpass' } });
-    fireEvent.click(screen.getByRole('button', { name: /ENTER CONSOLE/i }));
+    fireEvent.click(screen.getByRole('button', { name: /ENTER CASTLE|ENTER CONSOLE/i }));
 
     await waitFor(() => {
       expect(screen.getByText('Invalid email or password.')).toBeInTheDocument();
@@ -72,9 +72,9 @@ describe('AdminLoginPage', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Admin Email/i), { target: { value: 'user@test.com' } });
+    fireEvent.change(screen.getByLabelText(/Admin Email|Operator/i), { target: { value: 'user@test.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'validpass12345' } });
-    fireEvent.click(screen.getByRole('button', { name: /ENTER CONSOLE/i }));
+    fireEvent.click(screen.getByRole('button', { name: /ENTER CASTLE|ENTER CONSOLE/i }));
 
     await waitFor(() => {
       expect(screen.getByText('This account is not authorized for admin access.')).toBeInTheDocument();
@@ -90,9 +90,9 @@ describe('AdminLoginPage', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Admin Email/i), { target: { value: 'admin@test.com' } });
+    fireEvent.change(screen.getByLabelText(/Admin Email|Operator/i), { target: { value: 'admin@test.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'pass12345678' } });
-    fireEvent.click(screen.getByRole('button', { name: /ENTER CONSOLE/i }));
+    fireEvent.click(screen.getByRole('button', { name: /ENTER CASTLE|ENTER CONSOLE/i }));
 
     await waitFor(() => {
       expect(screen.getByText('Too many attempts. Wait a minute and try again.')).toBeInTheDocument();
@@ -108,9 +108,9 @@ describe('AdminLoginPage', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Admin Email/i), { target: { value: 'admin@test.com' } });
+    fireEvent.change(screen.getByLabelText(/Admin Email|Operator/i), { target: { value: 'admin@test.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'pass12345678' } });
-    fireEvent.click(screen.getByRole('button', { name: /ENTER CONSOLE/i }));
+    fireEvent.click(screen.getByRole('button', { name: /ENTER CASTLE|ENTER CONSOLE/i }));
 
     await waitFor(() => {
       expect(screen.getByText("Can't reach the server. Check your connection.")).toBeInTheDocument();
