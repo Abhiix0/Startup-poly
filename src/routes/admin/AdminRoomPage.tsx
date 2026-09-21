@@ -14,7 +14,9 @@ export const AdminRoomPage: React.FC = () => {
   if (
     status === 'ready' &&
     snapshot &&
-    (snapshot.room.status === 'ACTIVE' || snapshot.room.status === 'TIME_EXPIRED')
+    (snapshot.room.status === 'ACTIVE' ||
+      snapshot.room.status === 'TIME_EXPIRED' ||
+      snapshot.room.status === 'FINALIZED')
   ) {
     return (
       <AdminConsoleView

@@ -13,3 +13,7 @@ export * from './BankruptDialog';
 export * from './ConflictDialog';
 export * from './ActivityRow';
 export * from './ActivityLog';
+export * from './FinalizePanel';
+export * from './StandingsTable';
+export * from './TieBreakOrder';
+export * from './ResultView';

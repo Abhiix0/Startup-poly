@@ -29,6 +29,8 @@ import {
   LoseFeatureDialog,
   ForcedSaleDialog,
 } from './quick';
+import { FinalizePanel } from './FinalizePanel';
+import { ResultView } from './ResultView';
 
 export interface AdminConsoleViewProps {
   snapshot: AdminRoomSnapshot;
@@ -453,6 +455,17 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     }
   };
 
+  if (snapshot.room.status === 'FINALIZED') {
+    return (
+      <ResultView
+        snapshot={snapshot}
+        connection={connection}
+        lastUpdated={lastUpdated}
+        onRefetch={onRefetch}
+      />
+    );
+  }
+
   if (!selectedTeam) return null;
 
   return (
@@ -513,6 +526,15 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       <main className="flex-1 w-full max-w-[1700px] mx-auto p-3 sm:p-4 lg:p-6 flex flex-col xl:flex-row gap-5">
         {/* Left & Center: Team Grid and Selected Team Editor */}
         <div className="flex-1 flex flex-col gap-5 min-w-0">
+          {isTimeExpired && (
+            <FinalizePanel
+              roomId={snapshot.room.id}
+              snapshot={snapshot}
+              onRefetch={onRefetch}
+              isOffline={isOffline}
+            />
+          )}
+
           <TeamGrid
             teams={snapshot.teams}
             selectedTeamId={selectedTeam.id}

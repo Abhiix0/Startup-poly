@@ -204,36 +204,85 @@ export interface AdminRoomSnapshot {
   }>;
 }
 
+export interface StandingsRow {
+  team_id: string;
+  slot: number;
+  name: string;
+  rank: number;
+  is_bankrupt: boolean;
+  cv: number;
+  cash: number;
+  business_count: number;
+  tiebreak_order: number | null;
+  tie_unresolved: boolean;
+}
+
+export interface StandingsResponse {
+  standings: StandingsRow[];
+  has_unresolved_tie: boolean;
+}
+
+export interface HistoryRoomSummary {
+  room_id: string;
+  code: string;
+  created_at: string;
+  finalized_at: string;
+  winner_name: string | null;
+  winner_color: string | null;
+  team_count: number;
+}
+
+export interface HistoryDetailResult {
+  team_id: string;
+  rank: number;
+  name: string;
+  color: string;
+  cv: number;
+  cash: number;
+  business_count: number;
+  is_bankrupt: boolean;
+}
+
+export interface HistoryDetailResponse {
+  room: {
+    id: string;
+    code: string;
+    status: string;
+    team_count: number;
+    started_at: string | null;
+    ends_at: string | null;
+    created_at: string;
+    finalized_at: string | null;
+    winner_team_id: string | null;
+    tiebreak_note?: string | null;
+  };
+  results: HistoryDetailResult[];
+  events: AdminRoomSnapshot['events'];
+}
+
 // 5. Admin Inspection, Standings & History
 export async function rpcGetAdminSnapshot(room_id: string): Promise<AdminRoomSnapshot> {
   return callRpc<AdminRoomSnapshot>('get_admin_snapshot', { room_id });
 }
 
-export async function rpcGetStandings(room_id: string) {
-  return callRpc<{
-    standings: any[];
-    has_unresolved_tie: boolean;
-  }>('get_standings', { p_room_id: room_id });
+export async function rpcGetStandings(room_id: string): Promise<StandingsResponse> {
+  return callRpc<StandingsResponse>('get_standings', { p_room_id: room_id });
 }
 
 export async function rpcAdminFinalize(room_id: string) {
   return callRpc<{
     room_id: string;
     winner_team_id: string | null;
-    standings: any[];
+    standings: StandingsRow[];
   }>('admin_finalize', { p_room_id: room_id });
 }
 
-export async function rpcListHistory() {
-  return callRpc<any[]>('list_history');
+export async function rpcListHistory(): Promise<HistoryRoomSummary[]> {
+  return callRpc<HistoryRoomSummary[]>('list_history');
 }
 
-export async function rpcGetHistoryDetail(room_id: string) {
-  return callRpc<{
-    room: any;
-    results: any[];
-    events: any[];
-  }>('get_history_detail', { room_id });
+export async function rpcGetHistoryDetail(room_id: string): Promise<HistoryDetailResponse> {
+  return callRpc<HistoryDetailResponse>('get_history_detail', { room_id });
 }
 
 // Aliases and Convenience Types

@@ -233,9 +233,9 @@ describe('TeamDashboardPage', () => {
 
     renderWithRouter();
 
-    expect(screen.getByText(/TOURNAMENT CHAMPIONS!/i)).toBeInTheDocument();
-    expect(screen.getByText('OFFICIAL TOURNAMENT STANDINGS')).toBeInTheDocument();
-    expect(screen.getByText(/Alpha Rockets \(YOU\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/STARTUPOLY CHAMPION/i)).toBeInTheDocument();
+    expect(screen.getByText('OFFICIAL FINAL STANDINGS')).toBeInTheDocument();
+    expect(screen.getByText('YOU')).toBeInTheDocument();
   });
 
   it('renders reconnecting warning bar when connection is stale (> 20s)', () => {
