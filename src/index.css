@@ -543,12 +543,100 @@
   }
 }
 
+@keyframes founder-ground-roam {
+  0%, 5% {
+    transform: translate3d(0, 0, 0);
+  }
+  24%, 44% {
+    transform: translate3d(-170px, 0, 0);
+  }
+  64%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes founder-turn-facing {
+  0%, 23.9% {
+    transform: scaleX(-1);
+  }
+  24%, 43.9% {
+    transform: scaleX(1);
+  }
+  44%, 63.9% {
+    transform: scaleX(1);
+  }
+  64%, 100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes founder-legs-patrol {
+  /* Walk Left 0% - 24% */
+  0%, 2.7%, 5.4%, 8.1%, 10.8%, 13.5%, 16.2%, 18.9%, 21.6% {
+    transform: translateX(-28.5714%);
+  }
+  0.9%, 3.6%, 6.3%, 9.0%, 11.7%, 14.4%, 17.1%, 19.8%, 22.5% {
+    transform: translateX(-42.8571%);
+  }
+  1.8%, 4.5%, 7.2%, 9.9%, 12.6%, 15.3%, 18.0%, 20.7%, 23.4% {
+    transform: translateX(-57.1428%);
+  }
+
+  /* Pause Left 24% - 44% */
+  24%, 33% {
+    transform: translateX(0%);
+  }
+  34%, 41% {
+    transform: translateX(-14.2857%);
+  }
+  42%, 43.9% {
+    transform: translateX(0%);
+  }
+
+  /* Walk Right 44% - 64% */
+  44%, 46.7%, 49.4%, 52.1%, 54.8%, 57.5%, 60.2%, 62.9% {
+    transform: translateX(-28.5714%);
+  }
+  44.9%, 47.6%, 50.3%, 53.0%, 55.7%, 58.4%, 61.1%, 63.8% {
+    transform: translateX(-42.8571%);
+  }
+  45.8%, 48.5%, 51.2%, 53.9%, 56.6%, 59.3%, 62.0% {
+    transform: translateX(-57.1428%);
+  }
+
+  /* Pause Home 64% - 100% */
+  64%, 78% {
+    transform: translateX(0%);
+  }
+  79%, 87% {
+    transform: translateX(-14.2857%);
+  }
+  88%, 93% {
+    transform: translateX(-85.714%);
+  }
+  94%, 100% {
+    transform: translateX(0%);
+  }
+}
+
 .anim-founder-walk-in {
   animation: founder-walk-in 1.2s linear forwards;
 }
 
 .anim-founder-idle-bob {
   animation: founder-bob 1.4s steps(2) infinite;
+}
+
+.anim-founder-roam {
+  animation: founder-ground-roam 16s ease-in-out infinite;
+}
+
+[data-phase="idle"] .founder-character-container {
+  animation: founder-turn-facing 16s steps(1) infinite;
+}
+
+[data-phase="idle"] .anim-founder-roam .poly-sprite-strip {
+  animation: founder-legs-patrol 16s steps(1) infinite !important;
 }
 
 .anim-poly-idle {
@@ -600,6 +688,17 @@
 }
 
 /* Founder CTA Reactions */
+[data-cta="join"] .anim-founder-roam,
+[data-cta="admin"] .anim-founder-roam {
+  animation-play-state: paused !important;
+}
+
+[data-cta="join"] .founder-character-container,
+[data-cta="admin"] .founder-character-container {
+  animation: none !important;
+  transform: scaleX(1) !important;
+}
+
 [data-cta="join"] .founder-motion-track {
   animation: poly-hop-jump 0.25s ease-out !important;
 }
