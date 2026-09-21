@@ -10,17 +10,25 @@ CREATE TYPE public.room_status AS ENUM (
   'FINALIZED'
 );
 
--- 2. Helper Functions
+-- 2. Admins Table (created before is_admin() function)
+CREATE TABLE public.admins (
+  user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE
+);
+ALTER TABLE public.admins ENABLE ROW LEVEL SECURITY;
+
+-- 3. Helper Functions
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS boolean
-LANGUAGE sql
+LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT EXISTS (
+BEGIN
+  RETURN EXISTS (
     SELECT 1 FROM public.admins WHERE user_id = auth.uid()
   );
+END;
 $$;
 
 CREATE OR REPLACE FUNCTION public.app_now()
@@ -43,13 +51,7 @@ BEGIN
 END;
 $$;
 
--- 3. Core Tables
-
--- Admins Table
-CREATE TABLE public.admins (
-  user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE
-);
-ALTER TABLE public.admins ENABLE ROW LEVEL SECURITY;
+-- 4. Core Tables
 
 -- Rooms Table
 CREATE TABLE public.rooms (
