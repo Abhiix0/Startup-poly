@@ -9,16 +9,24 @@ vi.mock('../../data/auth', () => ({
 }));
 
 describe('RequireAdmin', () => {
+  const baseAuthMock: authModule.AuthContextType = {
+    user: null,
+    session: null,
+    role: 'none',
+    loading: false,
+    isLoading: false,
+    isSessionExpired: false,
+    promptReAuth: vi.fn(),
+    loginAsAdmin: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+  };
+
   it('renders loading state when authentication is checking', () => {
     vi.mocked(authModule.useAuth).mockReturnValue({
-      user: null,
-      session: null,
-      role: 'none',
+      ...baseAuthMock,
       loading: true,
       isLoading: true,
-      loginAsAdmin: vi.fn(),
-      login: vi.fn(),
-      logout: vi.fn(),
     });
 
     render(
@@ -37,14 +45,7 @@ describe('RequireAdmin', () => {
 
   it('redirects to /admin/login when user role is not admin', () => {
     vi.mocked(authModule.useAuth).mockReturnValue({
-      user: null,
-      session: null,
-      role: 'none',
-      loading: false,
-      isLoading: false,
-      loginAsAdmin: vi.fn(),
-      login: vi.fn(),
-      logout: vi.fn(),
+      ...baseAuthMock,
     });
 
     render(
@@ -64,14 +65,10 @@ describe('RequireAdmin', () => {
 
   it('renders children when role is admin', () => {
     vi.mocked(authModule.useAuth).mockReturnValue({
+      ...baseAuthMock,
       user: { id: 'admin-1', email: 'admin@startupoly.com' } as any,
       session: {} as any,
       role: 'admin',
-      loading: false,
-      isLoading: false,
-      loginAsAdmin: vi.fn(),
-      login: vi.fn(),
-      logout: vi.fn(),
     });
 
     render(

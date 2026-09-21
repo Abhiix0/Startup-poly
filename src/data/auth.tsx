@@ -1,13 +1,17 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase, getSessionRole, UserRole } from './client';
+import { SessionExpiredModal } from '../routes/admin/SessionExpiredModal';
+import { logger } from '../lib/logger';
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: UserRole;
   loading: boolean;
   isLoading: boolean;
+  isSessionExpired: boolean;
+  promptReAuth: () => void;
   loginAsAdmin: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -20,6 +24,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<UserRole>('none');
   const [loading, setLoading] = useState<boolean>(true);
+  const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
+  const wasAdminRef = useRef<boolean>(false);
 
   useEffect(() => {
     // Initial session load
@@ -29,6 +35,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user) {
         const userRole = await getSessionRole();
         setRole(userRole);
+        if (userRole === 'admin') {
+          wasAdminRef.current = true;
+        }
       } else {
         setRole('none');
       }
@@ -36,13 +45,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      logger.debug('Auth', `onAuthStateChange: ${event}`);
       setSession(newSession);
       setUser(newSession?.user ?? null);
+
       if (newSession?.user) {
         const userRole = await getSessionRole();
         setRole(userRole);
+        if (userRole === 'admin') {
+          wasAdminRef.current = true;
+          setIsSessionExpired(false);
+        }
       } else {
+        // If an admin lost session mid-game
+        if (wasAdminRef.current) {
+          logger.warn('Auth', 'Admin session was lost/expired. Attempting token refresh...');
+          const { data, error } = await supabase.auth.refreshSession();
+          if (error || !data.session) {
+            setIsSessionExpired(true);
+          }
+        }
         setRole('none');
       }
       setLoading(false);
@@ -52,6 +75,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
+
+  const promptReAuth = () => {
+    setIsSessionExpired(true);
+  };
 
   const loginAsAdmin = async (email: string, password: string) => {
     setLoading(true);
@@ -79,6 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data.user);
       setSession(data.session);
       setRole('admin');
+      wasAdminRef.current = true;
+      setIsSessionExpired(false);
     } finally {
       setLoading(false);
     }
@@ -91,6 +120,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setSession(null);
       setRole('none');
+      wasAdminRef.current = false;
+      setIsSessionExpired(false);
     } finally {
       setLoading(false);
     }
@@ -104,12 +135,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role,
         loading,
         isLoading: loading,
+        isSessionExpired,
+        promptReAuth,
         loginAsAdmin,
         login: loginAsAdmin,
         logout,
       }}
     >
       {children}
+      <SessionExpiredModal
+        isOpen={isSessionExpired}
+        userEmail={user?.email || ''}
+        onSuccess={() => setIsSessionExpired(false)}
+      />
     </AuthContext.Provider>
   );
 }

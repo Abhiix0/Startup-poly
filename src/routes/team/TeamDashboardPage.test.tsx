@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { TeamDashboardPage } from './TeamDashboardPage';
 import * as teamHookModule from '../../data/useMyTeam';
 import { ToastProvider } from '../../ui';
@@ -17,9 +17,9 @@ describe('TeamDashboardPage', () => {
   const baseState = {
     room: {
       status: 'ACTIVE',
-      started_at: new Date().toISOString(),
-      ends_at: new Date(Date.now() + 3000 * 1000).toISOString(),
-      server_now: new Date().toISOString(),
+      started_at: '2026-09-20T10:00:00Z',
+      ends_at: '2026-09-20T10:50:00Z',
+      server_now: '2026-09-20T10:05:00Z',
     },
     team: {
       slot: 1,
@@ -31,15 +31,30 @@ describe('TeamDashboardPage', () => {
     },
     businesses: [
       {
-        business_key: 'b1',
+        business_key: 'hyperdrive',
         name: 'HyperDrive Labs',
         level: 1,
-        cost: 250,
-        initial_cv: 250,
+        cost: 500,
+        initial_cv: 750,
         cv_contribution: 750,
       },
     ],
     leaderboard: null,
+  };
+
+  const defaultMockResult: teamHookModule.UseMyTeamResult = {
+    state: null,
+    status: 'ready',
+    error: null,
+    refetch: vi.fn(),
+    connection: 'LIVE',
+    lastUpdatedAt: 'Just now',
+    isStale: false,
+    staleAgeSeconds: 0,
+    cashFlash: null,
+    cvFlash: null,
+    wasClaimReleased: false,
+    isSessionLost: false,
   };
 
   const renderWithRouter = (initialEntry = '/team') =>
@@ -56,17 +71,9 @@ describe('TeamDashboardPage', () => {
 
   it('redirects to /join if no team claim exists', () => {
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: null,
       status: 'ready',
-      error: null,
-      refetch: vi.fn(),
-      connection: 'LIVE',
-      lastUpdatedAt: 'Just now',
-      isStale: false,
-      staleAgeSeconds: 0,
-      cashFlash: null,
-      cvFlash: null,
-      wasClaimReleased: false,
     });
 
     renderWithRouter();
@@ -76,17 +83,23 @@ describe('TeamDashboardPage', () => {
 
   it('redirects to /join with notice if claim was revoked/released by admin', () => {
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: null,
       status: 'ready',
-      error: null,
-      refetch: vi.fn(),
-      connection: 'LIVE',
-      lastUpdatedAt: 'Just now',
-      isStale: false,
-      staleAgeSeconds: 0,
-      cashFlash: null,
-      cvFlash: null,
       wasClaimReleased: true,
+    });
+
+    renderWithRouter();
+
+    expect(screen.getByText('JOIN PAGE REDIRECT')).toBeInTheDocument();
+  });
+
+  it('redirects to /join if anonymous session was lost', () => {
+    vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
+      state: null,
+      status: 'error',
+      isSessionLost: true,
     });
 
     renderWithRouter();
@@ -96,17 +109,10 @@ describe('TeamDashboardPage', () => {
 
   it('renders loading skeleton when state is loading on start', () => {
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: null,
       status: 'loading',
-      error: null,
-      refetch: vi.fn(),
       connection: 'CONNECTING',
-      lastUpdatedAt: 'Just now',
-      isStale: false,
-      staleAgeSeconds: 0,
-      cashFlash: null,
-      cvFlash: null,
-      wasClaimReleased: false,
     });
 
     renderWithRouter();
@@ -117,17 +123,8 @@ describe('TeamDashboardPage', () => {
 
   it('renders ActiveDashboardView with cash, CV, and business list when ACTIVE', () => {
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: baseState as any,
-      status: 'ready',
-      error: null,
-      refetch: vi.fn(),
-      connection: 'LIVE',
-      lastUpdatedAt: 'Just now',
-      isStale: false,
-      staleAgeSeconds: 0,
-      cashFlash: null,
-      cvFlash: null,
-      wasClaimReleased: false,
     });
 
     renderWithRouter();
@@ -147,17 +144,8 @@ describe('TeamDashboardPage', () => {
     };
 
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: bankruptState as any,
-      status: 'ready',
-      error: null,
-      refetch: vi.fn(),
-      connection: 'LIVE',
-      lastUpdatedAt: 'Just now',
-      isStale: false,
-      staleAgeSeconds: 0,
-      cashFlash: null,
-      cvFlash: null,
-      wasClaimReleased: false,
     });
 
     renderWithRouter();
@@ -172,17 +160,8 @@ describe('TeamDashboardPage', () => {
     };
 
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: expiredState as any,
-      status: 'ready',
-      error: null,
-      refetch: vi.fn(),
-      connection: 'LIVE',
-      lastUpdatedAt: 'Just now',
-      isStale: false,
-      staleAgeSeconds: 0,
-      cashFlash: null,
-      cvFlash: null,
-      wasClaimReleased: false,
     });
 
     renderWithRouter();
@@ -218,17 +197,8 @@ describe('TeamDashboardPage', () => {
     };
 
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: finalizedState as any,
-      status: 'ready',
-      error: null,
-      refetch: vi.fn(),
-      connection: 'LIVE',
-      lastUpdatedAt: 'Just now',
-      isStale: false,
-      staleAgeSeconds: 0,
-      cashFlash: null,
-      cvFlash: null,
-      wasClaimReleased: false,
     });
 
     renderWithRouter();
@@ -240,17 +210,12 @@ describe('TeamDashboardPage', () => {
 
   it('renders reconnecting warning bar when connection is stale (> 20s)', () => {
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
       state: baseState as any,
-      status: 'ready',
-      error: null,
-      refetch: vi.fn(),
       connection: 'RECONNECTING',
       lastUpdatedAt: '24s ago',
       isStale: true,
       staleAgeSeconds: 24,
-      cashFlash: null,
-      cvFlash: null,
-      wasClaimReleased: false,
     });
 
     renderWithRouter();

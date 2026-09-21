@@ -74,4 +74,82 @@ describe('useAdminRoom', () => {
     expect(supabase.removeChannel).toHaveBeenCalledTimes(1);
     expect(supabase.removeChannel).toHaveBeenCalledWith(mockChannel);
   });
+
+  it('ignores older out-of-order response when a newer request finishes first', async () => {
+    let resolveFirst: (val: any) => void = () => {};
+    let resolveSecond: (val: any) => void = () => {};
+
+    const firstPromise = new Promise((resolve) => {
+      resolveFirst = resolve;
+    });
+    const secondPromise = new Promise((resolve) => {
+      resolveSecond = resolve;
+    });
+
+    vi.mocked(rpcModule.rpcGetAdminSnapshot)
+      .mockReturnValueOnce(firstPromise as any)
+      .mockReturnValueOnce(secondPromise as any);
+
+    const { result } = renderHook(() => useAdminRoom('room-1'));
+
+    // Trigger second fetch while first is in-flight
+    act(() => {
+      result.current.refetch();
+    });
+
+    // Second (newer) request resolves with new data
+    await act(async () => {
+      resolveSecond({
+        room: { id: 'room-1', code: 'NEWEST', status: 'ACTIVE' },
+        server_now: new Date().toISOString(),
+        teams: [],
+        events: [],
+      });
+    });
+
+    expect(result.current.snapshot?.room.code).toBe('NEWEST');
+
+    // First (older, slower) request resolves later with stale data
+    await act(async () => {
+      resolveFirst({
+        room: { id: 'room-1', code: 'OLDER_STALE', status: 'LOBBY' },
+        server_now: new Date().toISOString(),
+        teams: [],
+        events: [],
+      });
+    });
+
+    // Older response must NOT overwrite newer response!
+    expect(result.current.snapshot?.room.code).toBe('NEWEST');
+  });
+
+  it('preserves existing snapshot data on refetch error and sets isStale', async () => {
+    vi.mocked(rpcModule.rpcGetAdminSnapshot).mockResolvedValueOnce({
+      room: { id: 'room-1', code: 'INITIAL', status: 'ACTIVE' },
+      server_now: new Date().toISOString(),
+      teams: [],
+      events: [],
+    } as any);
+
+    const { result } = renderHook(() => useAdminRoom('room-1'));
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(result.current.snapshot?.room.code).toBe('INITIAL');
+    expect(result.current.isStale).toBe(false);
+
+    // Refetch fails with network error
+    vi.mocked(rpcModule.rpcGetAdminSnapshot).mockRejectedValueOnce(new Error('Network error'));
+
+    await act(async () => {
+      await result.current.refetch();
+    });
+
+    // Previous snapshot is preserved, NEVER blanked!
+    expect(result.current.snapshot?.room.code).toBe('INITIAL');
+    expect(result.current.isStale).toBe(true);
+    expect(result.current.error).toBeDefined();
+  });
 });

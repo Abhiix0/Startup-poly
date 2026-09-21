@@ -9,7 +9,7 @@ import { AdminConsoleView } from './console';
 
 export const AdminRoomPage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
-  const { snapshot, status, error, refetch, connection, lastUpdated } = useAdminRoom(roomId);
+  const { snapshot, status, error, refetch, connection, lastUpdated, isStale, staleAgeSeconds } = useAdminRoom(roomId);
 
   if (
     status === 'ready' &&
@@ -24,6 +24,8 @@ export const AdminRoomPage: React.FC = () => {
         onRefetch={refetch}
         connection={connection}
         lastUpdated={lastUpdated}
+        isStale={isStale}
+        staleAgeSeconds={staleAgeSeconds}
       />
     );
   }

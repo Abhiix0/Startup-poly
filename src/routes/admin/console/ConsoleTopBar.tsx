@@ -57,7 +57,7 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
         <span className="hidden lg:inline font-mono text-[11px] text-[#94A3B8]">
           Updated: {lastUpdated}
         </span>
-        <ConnectionPill status={connection} />
+        <ConnectionPill status={connection} lastUpdated={lastUpdated} />
         {onRefetch && (
           <button
             onClick={onRefetch}

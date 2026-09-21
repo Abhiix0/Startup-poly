@@ -4,12 +4,14 @@ export type ConnectionStatus = 'LIVE' | 'CONNECTING' | 'RECONNECTING' | 'OFFLINE
 
 export interface ConnectionPillProps {
   status: ConnectionStatus;
+  lastUpdated?: string;
   className?: string;
   showLabel?: boolean;
 }
 
 export const ConnectionPill: React.FC<ConnectionPillProps> = ({
   status,
+  lastUpdated,
   className = '',
   showLabel = true,
 }) => {
@@ -32,7 +34,7 @@ export const ConnectionPill: React.FC<ConnectionPillProps> = ({
       bg: 'bg-[#FFEDD5]',
       text: 'text-[#9A3412]',
       dot: 'bg-[#F97316]',
-      label: 'RETRYING',
+      label: 'RECONNECTING',
       pulse: true,
     },
     OFFLINE: {
@@ -48,7 +50,7 @@ export const ConnectionPill: React.FC<ConnectionPillProps> = ({
 
   return (
     <div
-      title={`Connection: ${current.label}`}
+      title={`Connection: ${current.label}${lastUpdated ? ` • Last updated ${lastUpdated}` : ''}`}
       className={`
         inline-flex items-center gap-1.5 px-2.5 py-1 select-none
         border-2 border-[#102040] shadow-[1px_1px_0px_#102040]
@@ -62,6 +64,11 @@ export const ConnectionPill: React.FC<ConnectionPillProps> = ({
         }`}
       />
       {showLabel && <span className="font-pixel text-[9px] tracking-wider">{current.label}</span>}
+      {lastUpdated && (
+        <span className="font-mono text-[10px] font-medium opacity-85 border-l border-current pl-1.5 ml-0.5">
+          {lastUpdated}
+        </span>
+      )}
     </div>
   );
 };

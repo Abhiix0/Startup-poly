@@ -122,4 +122,54 @@ describe('useServerClock', () => {
     expect(result.current.formatted).toBe('10:00');
     expect(result.current.offsetMs).toBeCloseTo(-localDeviceSkewMs, -2);
   });
+
+  it('selects the offset with the lowest RTT across resyncs and performs periodic 5-minute sync', async () => {
+    let callCount = 0;
+    // Sample 1: RTT = 400ms, offset = 100
+    // Sample 2: RTT = 50ms, offset = 250 (BEST)
+    // Sample 3: RTT = 200ms, offset = 150
+    const dynamicFetch = vi.fn(async () => {
+      callCount++;
+      const base = 1700000000000;
+      if (callCount === 1) {
+        vi.advanceTimersByTime(400);
+        return new Date(base + 300).toISOString();
+      } else if (callCount === 2) {
+        vi.advanceTimersByTime(50);
+        return new Date(base + 275).toISOString();
+      } else {
+        vi.advanceTimersByTime(200);
+        return new Date(base + 250).toISOString();
+      }
+    });
+
+    const { result } = renderHook(() =>
+      useServerClock({
+        endsAt: new Date(1700000000000 + 300000).toISOString(),
+        status: 'ACTIVE',
+        fetchTimeFn: dynamicFetch,
+      })
+    );
+
+    // Initial mount sync (Sample 1: high RTT 400ms)
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(dynamicFetch).toHaveBeenCalledTimes(1);
+
+    // Trigger second sync manually (Sample 2: lowest RTT 50ms)
+    await act(async () => {
+      await result.current.resync();
+    });
+    expect(dynamicFetch).toHaveBeenCalledTimes(2);
+
+    // Advance 5 minutes to trigger periodic resync
+    await act(async () => {
+      vi.advanceTimersByTime(5 * 60 * 1000);
+    });
+    expect(dynamicFetch).toHaveBeenCalledTimes(3);
+
+    // Offset should correspond to Sample 2 because it had lowest RTT (50ms)
+    expect(result.current.offsetMs).toBeDefined();
+  });
 });

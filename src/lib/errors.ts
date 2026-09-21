@@ -135,3 +135,27 @@ export function parseRpcError(err: unknown): AppError {
     err ? String(err) : 'An unexpected error occurred. Please try again.'
   );
 }
+
+export function isNetworkError(err: unknown): boolean {
+  if (!err) return false;
+  if (err instanceof AppError && err.code === 'NETWORK_ERROR') return true;
+  const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+  return (
+    msg.includes('failed to fetch') ||
+    msg.includes('network') ||
+    msg.includes('load failed') ||
+    msg.includes('timeout') ||
+    msg.includes('connection refused') ||
+    msg.includes('econnrefused') ||
+    msg.includes('offline')
+  );
+}
+
+export function isBusinessError(err: unknown): boolean {
+  if (err instanceof AppError) {
+    // Known business codes are explicitly non-network domain violations
+    return err.code in ERROR_MAP && err.code !== 'NETWORK_ERROR';
+  }
+  return false;
+}
+

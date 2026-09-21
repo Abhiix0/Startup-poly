@@ -353,4 +353,12 @@ describe('AdminConsoleView', () => {
     const updateButtons = screen.getAllByRole('button', { name: 'UPDATE' });
     expect(updateButtons[0]).toBeDisabled();
   });
+
+  it('disables edit buttons and displays warning banner when scoreboard is stale >30s', () => {
+    renderComponent({ isStale: true, staleAgeSeconds: 45 });
+
+    expect(screen.getByText(/SCOREBOARD DATA IS STALE \(45s old\)/i)).toBeInTheDocument();
+    const updateButtons = screen.getAllByRole('button', { name: 'UPDATE' });
+    expect(updateButtons[0]).toBeDisabled();
+  });
 });

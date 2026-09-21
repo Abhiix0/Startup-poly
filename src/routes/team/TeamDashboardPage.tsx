@@ -13,12 +13,25 @@ export const TeamDashboardPage: React.FC = () => {
     status,
     refetch,
     connection,
+    lastUpdatedAt,
     isStale,
     staleAgeSeconds,
     cashFlash,
     cvFlash,
     wasClaimReleased,
+    isSessionLost,
   } = useMyTeam();
+
+  // If anonymous session was lost, redirect to /join with notice
+  if (isSessionLost) {
+    return (
+      <Navigate
+        to="/join"
+        state={{ notice: 'Session expired. Please rejoin with your room code and PIN.' }}
+        replace
+      />
+    );
+  }
 
   // If claim was released by admin, redirect to /join with notice
   if (wasClaimReleased) {
@@ -89,7 +102,7 @@ export const TeamDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          <ConnectionPill status={connection} showLabel={false} />
+          <ConnectionPill status={connection} lastUpdated={lastUpdatedAt} showLabel={false} />
           <StatusPill status={room.status} size="sm" />
         </div>
       </header>

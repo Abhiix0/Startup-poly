@@ -1,19 +1,31 @@
 import { supabase } from './client';
-import { parseRpcError } from '../lib/errors';
+import { parseRpcError, isNetworkError, isBusinessError } from '../lib/errors';
 import { Database, Json } from './database.types';
+import { logger } from '../lib/logger';
 
 type FunctionName = keyof Database['public']['Functions'];
 
-async function callRpc<T>(fnName: FunctionName, args?: Record<string, unknown>): Promise<T> {
+async function callRpc<T>(fnName: FunctionName, args?: Record<string, unknown>, retryOnNetwork = true): Promise<T> {
   try {
-    // supabase.rpc types match the database definitions
     const { data, error } = await (supabase.rpc as any)(fnName, args);
     if (error) {
-      throw parseRpcError(error);
+      const parsed = parseRpcError(error);
+      if (retryOnNetwork && isNetworkError(error) && !isBusinessError(parsed)) {
+        logger.warn('RPC', `Network failure calling ${fnName}. Retrying once with identical request_id...`);
+        await new Promise((r) => setTimeout(r, 600));
+        return callRpc<T>(fnName, args, false);
+      }
+      throw parsed;
     }
     return data as T;
   } catch (err) {
-    throw parseRpcError(err);
+    const parsed = parseRpcError(err);
+    if (retryOnNetwork && isNetworkError(err) && !isBusinessError(parsed)) {
+      logger.warn('RPC', `Network error calling ${fnName}. Retrying once with identical request_id...`);
+      await new Promise((r) => setTimeout(r, 600));
+      return callRpc<T>(fnName, args, false);
+    }
+    throw parsed;
   }
 }
 

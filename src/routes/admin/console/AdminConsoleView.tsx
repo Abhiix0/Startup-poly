@@ -37,6 +37,8 @@ export interface AdminConsoleViewProps {
   onRefetch: () => Promise<void>;
   connection: ConnectionStatus;
   lastUpdated: string;
+  isStale?: boolean;
+  staleAgeSeconds?: number;
 }
 
 export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
@@ -44,12 +46,19 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   onRefetch,
   connection,
   lastUpdated,
+  isStale = false,
+  staleAgeSeconds = 0,
 }) => {
   const [selectedTeamId, setSelectedTeamId] = useState<string>(
     snapshot.teams[0]?.id || ''
   );
   const [isRefetching, setIsRefetching] = useState<boolean>(false);
   const [flashes, setFlashes] = useState<Record<string, 'up' | 'down' | null>>({});
+  const [lastFailedAction, setLastFailedAction] = useState<{
+    label: string;
+    retry: () => void;
+    error: string;
+  } | null>(null);
 
   // Modals state
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
@@ -82,6 +91,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
   const isTimeExpired = snapshot.room.status === 'TIME_EXPIRED';
   const isOffline = connection === 'OFFLINE';
+  const isStaleData = isStale || staleAgeSeconds > 30;
+  const isEditDisabled = isOffline || isStaleData;
 
   // Ensure selectedTeamId is always valid even if teams change
   useEffect(() => {
@@ -110,7 +121,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     }
   };
 
-  const handleError = (err: any, expectedVer?: number) => {
+  const handleError = (err: any, expectedVer?: number, actionName = 'Action', retryFn?: () => void) => {
     const code = err?.code || '';
     const msg = err?.message || '';
 
@@ -134,6 +145,13 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     }
 
     errorToast(msg || 'An error occurred.');
+    if (retryFn) {
+      setLastFailedAction({
+        label: actionName,
+        retry: retryFn,
+        error: msg || 'Failed to save changes.',
+      });
+    }
   };
 
   // --- KEYBOARD SHORTCUTS ---
@@ -489,6 +507,36 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         </div>
       )}
 
+      {!isOffline && isStaleData && (
+        <div className="bg-[#FEF9C3] text-[#854D0E] px-4 py-2 text-center font-pixel text-xs border-b-2 border-[#102040]">
+          ⚠ SCOREBOARD DATA IS STALE ({staleAgeSeconds}s old) — Edits disabled until connection is restored to prevent conflicts.
+        </div>
+      )}
+
+      {lastFailedAction && (
+        <div className="bg-[#FEE2E2] text-[#991B1B] border-b-2 border-[#102040] p-2.5 px-4 font-mono text-xs font-bold flex items-center justify-between shadow-[0_2px_0px_#102040]">
+          <div className="flex items-center gap-2">
+            <span>⚠ Not saved ({lastFailedAction.label}): {lastFailedAction.error}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={lastFailedAction.retry}
+              className="bg-[#D32F2F] text-white px-2.5 py-1 font-pixel text-[10px] uppercase border border-[#102040] hover:bg-[#B71C1C] cursor-pointer"
+            >
+              RETRY
+            </button>
+            <button
+              type="button"
+              onClick={() => setLastFailedAction(null)}
+              className="font-pixel text-[10px] text-[#102040] hover:underline cursor-pointer"
+            >
+              DISMISS
+            </button>
+          </div>
+        </div>
+      )}
+
       {isTimeExpired && (
         <div className="bg-[#FFCC00] text-[#102040] px-4 py-2 text-center font-pixel text-xs border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
           ⚠ GAME OVER — scores frozen. Post-match corrections require a mandatory note.
@@ -546,7 +594,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           />
 
           <QuickActionsBar
-            disabled={isOffline}
+            disabled={isEditDisabled}
             onOpenRent={() => setIsRentOpen(true)}
             onOpenStartLap={() => setIsStartLapOpen(true)}
             onOpenBuy={() => setIsAddOpen(true)}
@@ -577,7 +625,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           <TeamEditor
             team={selectedTeam}
             isTimeExpired={isTimeExpired}
-            disabled={isOffline}
+            disabled={isEditDisabled}
             onUpdateCash={handleUpdateCash}
             onUpdateCv={handleUpdateCv}
             onAddBusinessClick={() => setIsAddOpen(true)}
