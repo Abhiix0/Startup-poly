@@ -128,18 +128,12 @@ export const PixelWorld: React.FC = () => {
           }}
         >
           {/* Left Hill */}
-          <div className="hidden md:block absolute bottom-0 left-2 lg:left-6">
-            <PixelHill size={118} />
+          <div className="absolute bottom-0 -left-6 sm:left-2 lg:left-6">
+            <PixelHill size={100} />
           </div>
 
           {/* Left Sparkles with desynchronized low-duty twinkle */}
-          <div className="hidden md:block absolute bottom-18 left-14 lg:left-20 anim-sparkle-cycle">
-            <PixelSparkle size={16} />
-          </div>
-          <div
-            className="hidden md:block absolute bottom-12 left-2 anim-sparkle-cycle"
-            style={{ animationDelay: '-3s' }}
-          >
+          <div className="absolute bottom-12 sm:bottom-18 left-8 sm:left-14 lg:left-20 anim-sparkle-cycle">
             <PixelSparkle size={14} />
           </div>
 
@@ -150,14 +144,8 @@ export const PixelWorld: React.FC = () => {
 
           {/* Right Sparkles */}
           <div
-            className="hidden md:block absolute bottom-18 right-16 lg:right-22 anim-sparkle-cycle"
+            className="absolute bottom-12 sm:bottom-18 right-2 sm:right-16 lg:right-22 anim-sparkle-cycle"
             style={{ animationDelay: '-1.5s' }}
-          >
-            <PixelSparkle size={16} />
-          </div>
-          <div
-            className="hidden md:block absolute bottom-10 right-2 anim-sparkle-cycle"
-            style={{ animationDelay: '-4.5s' }}
           >
             <PixelSparkle size={14} />
           </div>
@@ -182,20 +170,22 @@ export const PixelWorld: React.FC = () => {
           }}
         >
           {/* Left Pipe with Popping Coins */}
-          <div className="hidden md:flex absolute bottom-0 left-24 lg:left-32 flex-col items-center">
+          <div className="flex absolute bottom-0 left-6 sm:left-24 lg:left-32 flex-col items-center">
             <div className="flex gap-1 -mb-1 anim-coin-idle world-join-coin-pop">
+              <PixelCoin size={18} />
               <PixelCoin size={20} />
-              <PixelCoin size={22} />
             </div>
             <div className="anim-pipe-highlight">
-              <PixelPipe width={52} height={34} />
+              <PixelPipe width={46} height={30} />
             </div>
           </div>
 
-          {/* Left Floating Question Block on Bricks + Original Critter Bug */}
-          <div className="hidden lg:block absolute bottom-16 left-48 anim-block-cycle world-block-highlight">
-            <PixelQuestionBlock size={30} />
+          {/* Left Floating Question Block */}
+          <div className="absolute bottom-12 sm:bottom-16 left-24 sm:left-48 anim-block-cycle world-block-highlight">
+            <PixelQuestionBlock size={26} />
           </div>
+
+          {/* Critter Bug (Medium+ screens) */}
           <div className="hidden lg:flex absolute bottom-0 left-52 flex-col items-center">
             <PixelBug size={26} className="mb-0.5" />
             <div className="flex">
@@ -218,8 +208,8 @@ export const PixelWorld: React.FC = () => {
           </div>
 
           {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
-          <div className="hidden sm:block absolute bottom-0 right-10 lg:right-20">
-            <Founder size={46} />
+          <div className="absolute bottom-0 right-6 sm:right-10 lg:right-20">
+            <Founder size={44} />
           </div>
         </div>
       </div>

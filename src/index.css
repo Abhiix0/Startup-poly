@@ -543,12 +543,22 @@
   }
 }
 
+:root {
+  --founder-patrol-dist: -140px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --founder-patrol-dist: -180px;
+  }
+}
+
 @keyframes founder-ground-roam {
   0%, 5% {
     transform: translate3d(0, 0, 0);
   }
   24%, 44% {
-    transform: translate3d(-170px, 0, 0);
+    transform: translate3d(var(--founder-patrol-dist, -140px), 0, 0);
   }
   64%, 100% {
     transform: translate3d(0, 0, 0);
