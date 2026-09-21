@@ -2,8 +2,15 @@ import { createClient, RealtimeChannel } from '@supabase/supabase-js';
 import { MatchState, RollAnimationEvent, GameTransaction } from '../types/game';
 
 // Supabase Project configuration
-export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://dbmswyjkpkvxshwikrpn.supabase.co';
-export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRibXN3eWprcGt2eHNod2lrcnBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIwNDQ4MDAsImV4cCI6MjA1NzYyMDgwMH0.placeholder';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — copy .env.example to .env.local');
+}
+
+export const SUPABASE_URL = supabaseUrl;
+export const SUPABASE_ANON_KEY = supabaseAnonKey;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
