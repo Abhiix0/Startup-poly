@@ -6,6 +6,7 @@ export interface PixelPolyProps {
   size?: number;
   animation?: PolyAnimation;
   className?: string;
+  stripClassName?: string;
   ariaHidden?: boolean;
 }
 
@@ -18,6 +19,7 @@ export const PixelPoly: React.FC<PixelPolyProps> = ({
   size = 48,
   animation = 'static',
   className = '',
+  stripClassName = '',
   ariaHidden = true,
 }) => {
   // Translate wrapper offset based on requested animation
@@ -62,7 +64,7 @@ export const PixelPoly: React.FC<PixelPolyProps> = ({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         shapeRendering="crispEdges"
-        className={`absolute top-0 left-0 h-full max-w-none ${animClass}`}
+        className={`absolute top-0 left-0 h-full max-w-none poly-sprite-strip ${animClass} ${stripClassName}`}
         style={{
           width: `${size * 7}px`,
           imageRendering: 'pixelated',

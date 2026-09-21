@@ -8,13 +8,13 @@ import {
   PixelCoin,
   PixelHill,
   PixelQuestionBlock,
-  PixelPoly,
   PixelBug,
   PixelGrassTuft,
   PixelSparkle,
   PixelMonitor,
 } from '../../ui/pixel';
 import { usePointerParallax } from '../../lib/usePointerParallax';
+import { Founder } from './Founder';
 
 export const PixelWorld: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -217,12 +217,9 @@ export const PixelWorld: React.FC = () => {
             <PixelMonitor size={26} />
           </div>
 
-          {/* Poly Founder Mascot Slot (Reserved for L4 Animation) */}
-          <div className="hidden sm:flex absolute bottom-0 right-10 lg:right-20 items-end gap-2">
-            <div className="font-pixel text-[10px] bg-white text-[#102040] px-2.5 py-1.5 border-2 border-[#102040] shadow-[2px_2px_0px_#102040] mb-4">
-              Let's Build!
-            </div>
-            <PixelPoly size={36} animation="static" />
+          {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
+          <div className="hidden sm:block absolute bottom-0 right-10 lg:right-20">
+            <Founder size={36} />
           </div>
         </div>
       </div>

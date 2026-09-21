@@ -475,6 +475,150 @@
   animation-duration: 0.3s !important;
 }
 
+/* ========================================================================= */
+/* Founder Mascot "Poly" & Bubble Animation System                           */
+/* ========================================================================= */
+
+@keyframes founder-walk-in {
+  0% {
+    transform: translate3d(-140%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes founder-bob {
+  0%, 45%, 100% {
+    transform: translateY(0);
+  }
+  50%, 95% {
+    transform: translateY(1px);
+  }
+}
+
+@keyframes poly-living-idle {
+  0%, 40% {
+    transform: translateX(0%);
+  }
+  45%, 88% {
+    transform: translateX(-14.2857%);
+  }
+  92%, 96% {
+    transform: translateX(-85.714%);
+  }
+  98%, 100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes poly-hop-jump {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes founder-bubble-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.9);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.95);
+  }
+}
+
+.anim-founder-walk-in {
+  animation: founder-walk-in 1.2s linear forwards;
+}
+
+.anim-founder-idle-bob {
+  animation: founder-bob 1.4s steps(2) infinite;
+}
+
+.anim-poly-idle {
+  animation: poly-living-idle 8s steps(1) infinite;
+}
+
+/* Founder Bubble Visibility Controls */
+.founder-bubble-intro {
+  display: none;
+}
+[data-phase="idle"] .founder-bubble-intro {
+  display: block;
+  animation: founder-bubble-fade 3.5s ease-out 300ms both;
+}
+
+.founder-bubble-join {
+  display: none;
+}
+[data-cta="join"] .founder-bubble-join {
+  display: block !important;
+  animation: founder-bubble-fade 1.5s ease-out both !important;
+}
+[data-cta="join"] .founder-bubble-intro {
+  display: none !important;
+}
+
+.founder-bubble-admin {
+  display: none;
+}
+[data-cta="admin"] .founder-bubble-admin {
+  display: block !important;
+  animation: founder-bubble-fade 1.5s ease-out both !important;
+}
+[data-cta="admin"] .founder-bubble-intro {
+  display: none !important;
+}
+
+.founder-bubble-tail {
+  display: none;
+}
+[data-phase="idle"] .founder-bubble-tail {
+  display: block;
+  animation: founder-bubble-fade 3.5s ease-out 300ms both;
+}
+[data-cta="join"] .founder-bubble-tail,
+[data-cta="admin"] .founder-bubble-tail {
+  display: block !important;
+  animation: founder-bubble-fade 1.5s ease-out both !important;
+}
+
+/* Founder CTA Reactions */
+[data-cta="join"] .founder-motion-track {
+  animation: poly-hop-jump 0.25s ease-out !important;
+}
+[data-cta="join"] .founder-motion-track .poly-sprite-strip {
+  transform: translateX(-71.428%) !important;
+  animation: none !important;
+}
+
+[data-cta="admin"] .founder-motion-track .poly-sprite-strip {
+  transform: translateX(-85.714%) !important;
+  animation: none !important;
+}
+
+@media (max-width: 340px) {
+  .founder-bubble-anchor {
+    display: none !important;
+  }
+}
+
 .motion-loop {
   animation-iteration-count: infinite;
 }
@@ -505,5 +649,18 @@
   [data-entrance] {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .founder-bubble-anchor,
+  .founder-bubble-intro,
+  .founder-bubble-join,
+  .founder-bubble-admin,
+  .founder-bubble-tail {
+    display: none !important;
+  }
+
+  .founder-motion-track {
+    transform: none !important;
+    animation: none !important;
   }
 }
