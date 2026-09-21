@@ -1,170 +1,111 @@
 @import "tailwindcss";
 
+@theme {
+  --color-nes-sky: #5C94FC;
+  --color-nes-green: #22B14C;
+  --color-nes-gold: #FFCC00;
+  --color-nes-brick: #B84418;
+  --color-nes-white: #FFFFFF;
+  --color-nes-card: #FAF8F5;
+  --color-nes-navy: #102040;
+  --color-nes-red: #D32F2F;
+  --color-nes-gray: #E2E8F0;
+  --color-nes-muted: #64748B;
+
+  --font-pixel: "Press Start 2P", monospace;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --shadow-pixel-sm: 2px 2px 0px #102040;
+  --shadow-pixel: 4px 4px 0px #102040;
+  --shadow-pixel-lg: 6px 6px 0px #102040;
+}
+
 @layer base {
-  :root {
-    --bg-base: #0D0D0F;
-    --bg-surface: #19191C;
-    --bg-elevated: #202024;
-    --border-subtle: rgba(247, 242, 246, 0.08);
-    --border-strong: rgba(247, 242, 246, 0.16);
-    --text-primary: #F7F2F6;
-    --text-secondary: rgba(247, 242, 246, 0.65);
-    --text-muted: rgba(247, 242, 246, 0.40);
-    --equinox-blue: #7484FE;
-    --signal-green: #33FF67;
-    --accent-amber: #FFBD59;
-    --accent-red: #FF5C7A;
-    --accent-purple: #B987FF;
-    --accent-cyan: #58D6E8;
+  * {
+    box-sizing: border-box;
   }
 
   body {
-    background-color: #0D0D0F;
-    color: #F7F2F6;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    background-color: #5C94FC;
+    color: #102040;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
-    overflow-x: hidden;
+    min-height: 100vh;
   }
 
-  .safe-bottom {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  .font-pixel {
+    font-family: 'Press Start 2P', monospace;
   }
-  .safe-top {
-    padding-top: max(12px, env(safe-area-inset-top));
+
+  .font-tabular {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
   }
 }
 
-/* Equinox UI Card Systems */
-.eqx-card {
-  background-color: #19191C;
-  border: 1px solid rgba(247, 242, 246, 0.08);
-  border-radius: 20px;
+/* NES 8-bit chunky styles */
+.pixel-box {
+  border: 4px solid #102040;
+  box-shadow: 4px 4px 0px #102040;
+  background-color: #FFFFFF;
 }
 
-.eqx-card-elevated {
-  background-color: #202024;
-  border: 1px solid rgba(247, 242, 246, 0.12);
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+.pixel-box-sm {
+  border: 3px solid #102040;
+  box-shadow: 2px 2px 0px #102040;
 }
 
-.eqx-glass {
-  background-color: rgba(25, 25, 28, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(247, 242, 246, 0.10);
+.pixel-box-gold {
+  border: 4px solid #102040;
+  box-shadow: 4px 4px 0px #102040;
+  background-color: #FFCC00;
 }
 
-.eqx-glass-elevated {
-  background-color: rgba(32, 32, 36, 0.90);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(247, 242, 246, 0.14);
+.pixel-btn {
+  border: 4px solid #102040;
+  box-shadow: 4px 4px 0px #102040;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
-/* Touch Targets & Modern Buttons */
-.btn-eqx-primary {
-  background-color: #7484FE;
-  color: #0D0D0F;
-  font-weight: 700;
-  border-radius: 14px;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 14px rgba(116, 132, 254, 0.35);
-}
-.btn-eqx-primary:hover:not(:disabled) {
-  background-color: #8A98FF;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(116, 132, 254, 0.45);
-}
-.btn-eqx-primary:active:not(:disabled) {
-  transform: translateY(0);
+.pixel-btn:hover:not(:disabled) {
+  filter: brightness(1.05);
 }
 
-.btn-eqx-green {
-  background-color: #33FF67;
-  color: #0D0D0F;
-  font-weight: 700;
-  border-radius: 14px;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 14px rgba(51, 255, 103, 0.35);
-}
-.btn-eqx-green:hover:not(:disabled) {
-  background-color: #4DFF7C;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(51, 255, 103, 0.45);
-}
-.btn-eqx-green:active:not(:disabled) {
-  transform: translateY(0);
+.pixel-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #102040;
 }
 
-.btn-eqx-secondary {
-  background-color: #202024;
-  color: #F7F2F6;
-  border: 1px solid rgba(247, 242, 246, 0.12);
-  font-weight: 600;
-  border-radius: 14px;
-  transition: all 0.15s ease;
-}
-.btn-eqx-secondary:hover:not(:disabled) {
-  background-color: #28282D;
-  border-color: rgba(247, 242, 246, 0.2);
+.pixel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: 2px 2px 0px #102040;
 }
 
-.btn-eqx-danger {
-  background-color: rgba(255, 92, 122, 0.15);
-  color: #FF5C7A;
-  border: 1px solid rgba(255, 92, 122, 0.3);
-  font-weight: 700;
-  border-radius: 14px;
-  transition: all 0.15s ease;
-}
-.btn-eqx-danger:hover:not(:disabled) {
-  background-color: rgba(255, 92, 122, 0.25);
-  border-color: rgba(255, 92, 122, 0.5);
-}
-
-/* Animations & Smooth GPU Transitions */
-@keyframes pulse-subtle {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.08); opacity: 0.85; }
-}
-.animate-pulse-subtle {
-  animation: pulse-subtle 1.8s infinite ease-in-out;
+/* Brick ground pattern for landing/footer */
+.nes-brick-pattern {
+  background-color: #B84418;
+  background-image: 
+    linear-gradient(335deg, rgba(0,0,0,0.25) 23px, transparent 23px),
+    linear-gradient(155deg, rgba(255,255,255,0.15) 23px, transparent 23px),
+    linear-gradient(335deg, rgba(0,0,0,0.25) 23px, transparent 23px),
+    linear-gradient(155deg, rgba(255,255,255,0.15) 23px, transparent 23px);
+  background-size: 58px 58px;
+  background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
 }
 
-@keyframes glow-blue {
-  0%, 100% { box-shadow: 0 0 15px rgba(116, 132, 254, 0.35); }
-  50% { box-shadow: 0 0 25px rgba(116, 132, 254, 0.65); }
-}
-.animate-glow-blue {
-  animation: glow-blue 2s infinite ease-in-out;
-}
-
-@keyframes glow-green {
-  0%, 100% { box-shadow: 0 0 15px rgba(51, 255, 103, 0.35); }
-  50% { box-shadow: 0 0 25px rgba(51, 255, 103, 0.65); }
-}
-.animate-glow-green {
-  animation: glow-green 2s infinite ease-in-out;
-}
-
-/* Custom Minimal Scrollbar */
+/* Custom Scrollbar for scoreboard / table */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #FAF8F5;
+  border-left: 2px solid #102040;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(247, 242, 246, 0.15);
-  border-radius: 4px;
+  background: #102040;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(247, 242, 246, 0.25);
-}
-
-
-
