@@ -1,10 +1,25 @@
 import React from 'react';
 
-export const PixelPipe: React.FC<{ className?: string }> = ({ className = '' }) => {
+export interface PixelPipeProps {
+  width?: number;
+  height?: number;
+  size?: number;
+  className?: string;
+}
+
+export const PixelPipe: React.FC<PixelPipeProps> = ({
+  width,
+  height,
+  size,
+  className = '',
+}) => {
+  const actualWidth = width || (size ? size * (40 / 24) : 52);
+  const actualHeight = height || size || 32;
+
   return (
     <svg
-      width={40}
-      height={24}
+      width={actualWidth}
+      height={actualHeight}
       viewBox="0 0 40 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

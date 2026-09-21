@@ -129,23 +129,23 @@ export const PixelWorld: React.FC = () => {
         >
           {/* Left Hill */}
           <div className="hidden md:block absolute bottom-0 left-2 lg:left-6">
-            <PixelHill size={96} />
+            <PixelHill size={118} />
           </div>
 
           {/* Left Sparkles with desynchronized low-duty twinkle */}
           <div className="hidden md:block absolute bottom-18 left-14 lg:left-20 anim-sparkle-cycle">
-            <PixelSparkle size={14} />
+            <PixelSparkle size={16} />
           </div>
           <div
             className="hidden md:block absolute bottom-12 left-2 anim-sparkle-cycle"
             style={{ animationDelay: '-3s' }}
           >
-            <PixelSparkle size={12} />
+            <PixelSparkle size={14} />
           </div>
 
           {/* Right Hill */}
           <div className="hidden md:block absolute bottom-0 right-2 lg:right-6">
-            <PixelHill size={96} />
+            <PixelHill size={118} />
           </div>
 
           {/* Right Sparkles */}
@@ -153,21 +153,21 @@ export const PixelWorld: React.FC = () => {
             className="hidden md:block absolute bottom-18 right-16 lg:right-22 anim-sparkle-cycle"
             style={{ animationDelay: '-1.5s' }}
           >
-            <PixelSparkle size={14} />
+            <PixelSparkle size={16} />
           </div>
           <div
             className="hidden md:block absolute bottom-10 right-2 anim-sparkle-cycle"
             style={{ animationDelay: '-4.5s' }}
           >
-            <PixelSparkle size={12} />
+            <PixelSparkle size={14} />
           </div>
 
           {/* Grass Tufts with subtle 2-frame alternate sway */}
           <div className="hidden lg:block absolute bottom-0 left-40 anim-grass-sway">
-            <PixelGrassTuft size={16} variant={1} />
+            <PixelGrassTuft size={20} variant={1} />
           </div>
           <div className="hidden lg:block absolute bottom-0 right-44 anim-grass-sway" style={{ animationDelay: '-1.5s' }}>
-            <PixelGrassTuft size={16} variant={2} />
+            <PixelGrassTuft size={20} variant={2} />
           </div>
         </div>
 
@@ -184,23 +184,23 @@ export const PixelWorld: React.FC = () => {
           {/* Left Pipe with Popping Coins */}
           <div className="hidden md:flex absolute bottom-0 left-24 lg:left-32 flex-col items-center">
             <div className="flex gap-1 -mb-1 anim-coin-idle world-join-coin-pop">
-              <PixelCoin size={16} />
-              <PixelCoin size={18} />
+              <PixelCoin size={20} />
+              <PixelCoin size={22} />
             </div>
             <div className="anim-pipe-highlight">
-              <PixelPipe />
+              <PixelPipe width={52} height={34} />
             </div>
           </div>
 
           {/* Left Floating Question Block on Bricks + Original Critter Bug */}
           <div className="hidden lg:block absolute bottom-16 left-48 anim-block-cycle world-block-highlight">
-            <PixelQuestionBlock size={24} />
+            <PixelQuestionBlock size={30} />
           </div>
           <div className="hidden lg:flex absolute bottom-0 left-52 flex-col items-center">
-            <PixelBug size={20} className="mb-0.5" />
+            <PixelBug size={26} className="mb-0.5" />
             <div className="flex">
-              <div className="w-6 h-6 bg-[#B84418] border-2 border-[#102040]" />
-              <div className="w-6 h-6 bg-[#B84418] border-2 border-[#102040]" />
+              <div className="w-7 h-7 bg-[#B84418] border-2 border-[#102040]" />
+              <div className="w-7 h-7 bg-[#B84418] border-2 border-[#102040]" />
             </div>
           </div>
 
@@ -209,17 +209,17 @@ export const PixelWorld: React.FC = () => {
             className="hidden md:block absolute bottom-16 right-28 lg:right-36 anim-block-cycle world-block-highlight"
             style={{ animationDelay: '-4s' }}
           >
-            <PixelQuestionBlock size={24} />
+            <PixelQuestionBlock size={30} />
           </div>
 
           {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
           <div className="hidden lg:block absolute bottom-0 right-60 world-admin-monitor">
-            <PixelMonitor size={26} />
+            <PixelMonitor size={34} />
           </div>
 
           {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
           <div className="hidden sm:block absolute bottom-0 right-10 lg:right-20">
-            <Founder size={36} />
+            <Founder size={46} />
           </div>
         </div>
       </div>
