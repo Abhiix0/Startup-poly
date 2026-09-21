@@ -11,3 +11,8 @@ export * from './PixelLogo';
 export * from './PixelBusinessIcon';
 export * from './PixelPhoneIcon';
 export * from './PixelTerminalIcon';
+export * from './PixelHill';
+export * from './PixelQuestionBlock';
+export * from './PixelGoomba';
+export * from './PixelCharacter';
+export * from './PixelSparkle';
