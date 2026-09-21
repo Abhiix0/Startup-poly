@@ -46,6 +46,40 @@ LEFT JOIN public.admins a ON u.id = a.user_id
 WHERE a.user_id IS NOT NULL;
 ```
 
+### De-provisioning an Admin
+
+To remove admin rights from a user **without** deleting their auth account, run the following in the Supabase SQL Editor:
+
+```sql
+-- Replace <ADMIN_USER_UUID> with the target User UID
+DELETE FROM public.admins WHERE user_id = '<ADMIN_USER_UUID>';
+```
+
+**When this takes effect:**
+The row deletion is immediate in the database. However, the frontend derives the active role via `getSessionRole()`, which is called on each page load and on every `onAuthStateChange` event. An admin who already has the console open in a tab will therefore retain their apparent role until their next page load or auth state refresh.
+
+> **If instant revocation is required:** go to **Dashboard > Authentication > Users > (user) > "Sign out user"** to invalidate all of the user's active sessions. Their next RPC call will fail the `is_admin()` guard and the frontend will redirect them to the login page.
+
+---
+
+### Password Reset for Admins
+
+Because public sign-up is disabled for this project, admins cannot use a standard "forgot password" self-service flow unless Supabase's password-recovery email feature is explicitly enabled. There are two supported paths:
+
+#### a) Operator-assisted reset (always available)
+
+1. Go to **Dashboard > Authentication > Users**.
+2. Select the target admin user.
+3. Click **Reset password** — Supabase sends a one-time reset link to the user's email regardless of whether recovery email is globally enabled.
+
+This path works at any time and requires no frontend changes.
+
+#### b) `resetPasswordForEmail` recovery flow (future phase)
+
+If password-recovery emails are enabled in the Supabase project settings, the standard Supabase client call `supabase.auth.resetPasswordForEmail(email)` can be used to send a self-service reset link.
+
+> **⚠️ Not implemented in this phase.** This application currently has **no forgot-password UI**. Path (b) requires a future frontend addition (a "Forgot password?" link on the admin login page plus a password-update handler on the recovery callback URL). Until that work is completed, operators must use path (a) above for all admin password resets.
+
 ---
 
 ## 3. Database CLI & Migrations
