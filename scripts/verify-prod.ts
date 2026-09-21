@@ -2,18 +2,22 @@
  * STARTUPOLY Production Verification Script
  * 
  * Verifies critical RLS, RPC security guards, and table permissions:
- * 1. Anon client CANNOT select directly from `teams`
- * 2. Anon client CANNOT select directly from `rooms`
- * 3. Anon client CANNOT select directly from `activity_events`
- * 4. Anon client CANNOT invoke admin RPCs (fails with NOT_ADMIN)
- * 5. Calling `join_team` with a wrong PIN fails (fails with BAD_CODE_OR_PIN or similar error)
+ * 1. Anon client CANNOT select directly from `teams` (RLS hides rows)
+ * 2. Anon client CANNOT select directly from `rooms` (RLS hides rows)
+ * 3. Anon client CANNOT select directly from `activity_events` (RLS hides rows)
+ * 4. Anon client CANNOT invoke admin RPCs (fails with NOT_ADMIN / 42501)
+ * 5. Calling `join_team` with invalid credentials fails properly via RPC logic
  * 6. `business_catalog` IS readable by anonymous users (returns 10 businesses)
  * 
  * Usage:
  *   npx tsx scripts/verify-prod.ts [--url=https://<project>.supabase.co] [--key=<anon_key>]
+ * 
+ * If --url or --key are omitted, values are automatically loaded from .env.local or .env.
  */
 
 import { createClient } from '@supabase/supabase-js';
+import * as fs from 'fs';
+import * as path from 'path';
 
 interface CheckResult {
   name: string;
@@ -21,9 +25,30 @@ interface CheckResult {
   message: string;
 }
 
+function loadEnvFile(filePath: string) {
+  if (!fs.existsSync(filePath)) return;
+  const content = fs.readFileSync(filePath, 'utf8');
+  for (const line of content.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx > 0) {
+      const key = trimmed.slice(0, eqIdx).trim();
+      const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
 async function runVerification() {
+  // Load .env.local then .env if present
+  loadEnvFile(path.resolve(process.cwd(), '.env.local'));
+  loadEnvFile(path.resolve(process.cwd(), '.env'));
+
   const args = process.argv.slice(2);
-  let supabaseUrl = process.env.VITE_SUPABASE_URL || 'http://127.0.0.1:54321';
+  let supabaseUrl = process.env.VITE_SUPABASE_URL || '';
   let supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
 
   for (const arg of args) {
@@ -37,31 +62,64 @@ async function runVerification() {
   console.log('='.repeat(60));
   console.log('🚀 STARTUPOLY PRODUCTION SECURITY & PERMISSION VERIFICATION');
   console.log('='.repeat(60));
-  console.log(`Target URL: ${supabaseUrl}`);
-  console.log(`Using Key:  ${supabaseAnonKey.slice(0, 12)}...${supabaseAnonKey.slice(-6)}`);
-  console.log('-'.repeat(60));
-
-  if (!supabaseAnonKey) {
-    console.error('❌ Error: No Supabase Anon Key provided via VITE_SUPABASE_ANON_KEY or --key=');
+  console.log(`Target URL: ${supabaseUrl || '(none)'}`);
+  
+  if (!supabaseUrl) {
+    console.error('❌ Error: No Supabase URL provided via VITE_SUPABASE_URL, .env.local, or --url=');
     process.exit(1);
   }
+
+  if (!supabaseAnonKey) {
+    console.error('❌ Error: No Supabase Anon Key provided via VITE_SUPABASE_ANON_KEY, .env.local, or --key=');
+    process.exit(1);
+  }
+
+  // Detect truncated keys (e.g. copied preview ending in '...')
+  if (supabaseAnonKey.endsWith('...') || supabaseAnonKey.includes('...')) {
+    console.error(`Using Key:  ${supabaseAnonKey}`);
+    console.error('\n❌ ERROR: The API key contains ellipsis ("...").');
+    console.error('It appears the key was copied from a truncated UI preview rather than the full key.');
+    console.error('Please copy the full anon public key from:');
+    console.error('  Supabase Dashboard -> Project Settings -> API -> Project API Keys -> anon / public');
+    console.error('Or simply run `npx tsx scripts/verify-prod.ts` to automatically read from .env.local.');
+    process.exit(1);
+  }
+
+  console.log(`Using Key:  ${supabaseAnonKey.slice(0, 12)}...${supabaseAnonKey.slice(-6)}`);
+  console.log('-'.repeat(60));
 
   // Create an unauthenticated / anonymous Supabase client
   const client = createClient(supabaseUrl, supabaseAnonKey, {
     auth: { persistSession: false },
   });
 
+  // Pre-flight check: verify API key is accepted by Supabase Gateway
+  const preflight = await client.from('business_catalog').select('key').limit(1);
+  if (preflight.error && preflight.error.message?.toLowerCase().includes('invalid api key')) {
+    console.error('\n❌ ERROR: Supabase rejected the provided key with "Invalid API key".');
+    console.error('Check that the key matches the "anon" public key in your Supabase project settings.');
+    process.exit(1);
+  }
+
   const results: CheckResult[] = [];
 
   // Check 1: Anon cannot select directly from `teams`
   try {
-    const { data, error } = await client.from('teams').select('id, name, cash, pin');
+    const { data, error } = await client.from('teams').select('id, name, cash');
     if (error) {
-      results.push({
-        name: 'Block direct SELECT on teams table',
-        passed: true,
-        message: `Blocked with error: ${error.message}`,
-      });
+      if (error.message?.toLowerCase().includes('invalid api key')) {
+        results.push({
+          name: 'Block direct SELECT on teams table',
+          passed: false,
+          message: `API Key rejected by server: ${error.message}`,
+        });
+      } else {
+        results.push({
+          name: 'Block direct SELECT on teams table',
+          passed: true,
+          message: `Blocked with error: ${error.message}`,
+        });
+      }
     } else if (!data || data.length === 0) {
       results.push({
         name: 'Block direct SELECT on teams table',
@@ -87,11 +145,19 @@ async function runVerification() {
   try {
     const { data, error } = await client.from('rooms').select('id, code, status');
     if (error) {
-      results.push({
-        name: 'Block direct SELECT on rooms table',
-        passed: true,
-        message: `Blocked with error: ${error.message}`,
-      });
+      if (error.message?.toLowerCase().includes('invalid api key')) {
+        results.push({
+          name: 'Block direct SELECT on rooms table',
+          passed: false,
+          message: `API Key rejected by server: ${error.message}`,
+        });
+      } else {
+        results.push({
+          name: 'Block direct SELECT on rooms table',
+          passed: true,
+          message: `Blocked with error: ${error.message}`,
+        });
+      }
     } else if (!data || data.length === 0) {
       results.push({
         name: 'Block direct SELECT on rooms table',
@@ -115,13 +181,21 @@ async function runVerification() {
 
   // Check 3: Anon cannot select directly from `activity_events`
   try {
-    const { data, error } = await client.from('activity_events').select('id, event_type, note');
+    const { data, error } = await client.from('activity_events').select('id, type, note');
     if (error) {
-      results.push({
-        name: 'Block direct SELECT on activity_events table',
-        passed: true,
-        message: `Blocked with error: ${error.message}`,
-      });
+      if (error.message?.toLowerCase().includes('invalid api key')) {
+        results.push({
+          name: 'Block direct SELECT on activity_events table',
+          passed: false,
+          message: `API Key rejected by server: ${error.message}`,
+        });
+      } else {
+        results.push({
+          name: 'Block direct SELECT on activity_events table',
+          passed: true,
+          message: `Blocked with error: ${error.message}`,
+        });
+      }
     } else if (!data || data.length === 0) {
       results.push({
         name: 'Block direct SELECT on activity_events table',
@@ -146,15 +220,16 @@ async function runVerification() {
   // Check 4: Anon cannot invoke admin RPCs
   try {
     const { data, error } = await client.rpc('admin_create_room', {
-      p_team_count: 5,
-      p_teams: [{ name: 'Hackers', color: '#FF0000' }],
+      team_count: 5,
+      teams: [{ name: 'Hackers', color: '#FF0000' }],
     });
 
     if (error) {
+      // Expect rejection due to NOT_ADMIN / NOT_AUTHENTICATED / permission denied
       results.push({
         name: 'Block anonymous admin RPC calls',
         passed: true,
-        message: `Admin RPC rejected: ${error.message} (${error.code})`,
+        message: `Admin RPC rejected as expected: ${error.message} (${error.code})`,
       });
     } else {
       results.push({
@@ -171,15 +246,15 @@ async function runVerification() {
     });
   }
 
-  // Check 5: join_team with an invalid PIN fails
+  // Check 5: join_team with an invalid PIN fails properly
   try {
     // Ensure an anonymous session is established
     await client.auth.signInAnonymously();
 
     const { data, error } = await client.rpc('join_team', {
-      p_code: 'NONEXISTENT999',
-      p_slot: 1,
-      p_pin: '0000',
+      code: 'NONEXISTENT999',
+      slot: 1,
+      pin: '0000',
     });
 
     if (error) {
