@@ -1,10 +1,65 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
-import { PixelButton, PixelCard, StatusPill } from '../../ui';
+import { supabase } from '../../data/client';
+import { PixelButton } from '../../ui';
+import { CreateRoomView } from './CreateRoomView';
 
 export const AdminDashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
+  const [checkingActiveRoom, setCheckingActiveRoom] = useState(true);
+  const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function checkCurrentRoom() {
+      try {
+        const { data, error } = await supabase
+          .from('rooms')
+          .select('id, status')
+          .neq('status', 'FINALIZED')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!error && data?.id && isMounted) {
+          setActiveRoomId(data.id);
+        }
+      } catch (err) {
+        console.warn('Failed to check active room:', err);
+      } finally {
+        if (isMounted) {
+          setCheckingActiveRoom(false);
+        }
+      }
+    }
+
+    checkCurrentRoom();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (checkingActiveRoom) {
+    return (
+      <div className="min-h-screen bg-[#5C94FC] flex items-center justify-center p-4">
+        <div className="bg-[#FAF8F5] border-4 border-[#102040] shadow-[6px_6px_0px_#102040] p-8 text-center max-w-sm w-full">
+          <div className="w-12 h-12 bg-[#FFCC00] border-3 border-[#102040] mx-auto mb-4 flex items-center justify-center font-pixel text-lg animate-spin">
+            ★
+          </div>
+          <h2 className="font-pixel text-xs uppercase tracking-wider text-[#102040] mb-2">
+            CHECKING MATCH STATE...
+          </h2>
+          <p className="font-mono text-xs text-[#64748B]">Locating any active room in progress</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If a non-finalized room already exists, redirect directly to its control console
+  if (activeRoomId) {
+    return <Navigate to={`/admin/room/${activeRoomId}`} replace />;
+  }
 
   return (
     <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between">
@@ -32,44 +87,9 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Admin Content */}
+      {/* Main Container: Create Room View */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
-        <PixelCard title="MATCH OPERATIONS" headerBg="navy" padding="lg">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b-2 border-[#102040]">
-            <div>
-              <h1 className="font-pixel text-lg uppercase text-[#102040] mb-1">
-                ACTIVE GAME ROOM
-              </h1>
-              <p className="font-mono text-xs text-[#64748B]">
-                Only one non-finalized room can run at a time (Official Rulebook)
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <StatusPill status="LOBBY" pulse />
-            </div>
-          </div>
-
-          <div className="py-8 text-center flex flex-col items-center justify-center gap-4">
-            <div className="w-16 h-16 bg-[#FFCC00] border-3 border-[#102040] shadow-[3px_3px_0px_#102040] flex items-center justify-center font-pixel text-2xl text-[#102040]">
-              🎮
-            </div>
-            <h2 className="font-pixel text-sm text-[#102040]">READY TO HOST A TOURNAMENT MATCH</h2>
-            <p className="font-mono text-xs text-[#64748B] max-w-md">
-              Create a new room with 5–6 teams, project the scoreboard onto the main screen, and record
-              cash, acquisitions, and upgrades as teams move physically around the board.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-              <PixelButton variant="primary" size="lg">
-                CREATE NEW ROOM (PHASE 5)
-              </PixelButton>
-              <Link to="/admin/history">
-                <PixelButton variant="secondary" size="lg">
-                  PAST MATCHES
-                </PixelButton>
-              </Link>
-            </div>
-          </div>
-        </PixelCard>
+        <CreateRoomView />
       </main>
 
       {/* Brick Ground Base */}

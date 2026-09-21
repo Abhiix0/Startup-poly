@@ -155,14 +155,58 @@ export async function rpcAdminSetTiebreak(room_id: string, ordered_team_ids: str
   return callRpc<any>('admin_set_tiebreak', { room_id, ordered_team_ids, note });
 }
 
+export interface AdminRoomSnapshot {
+  room: {
+    id: string;
+    code: string;
+    status: 'CREATED' | 'LOBBY' | 'ACTIVE' | 'TIME_EXPIRED' | 'FINALIZED' | string;
+    team_count: number;
+    started_at: string | null;
+    ends_at: string | null;
+    created_at: string;
+    created_by: string;
+    finalized_at?: string | null;
+    winner_team_id?: string | null;
+    duration_seconds?: number;
+  };
+  server_now: string;
+  teams: Array<{
+    id: string;
+    slot: number;
+    name: string;
+    color: string;
+    cash: number;
+    cv: number;
+    is_bankrupt: boolean;
+    version: number;
+    tiebreak_order: number | null;
+    claimed: boolean;
+    pin?: string | null;
+    businesses: Array<{
+      business_key: string;
+      name: string;
+      level: number;
+      cost: number;
+      initial_cv: number;
+    }>;
+  }>;
+  events: Array<{
+    id: number;
+    team_id: string | null;
+    group_id: string | null;
+    type: string;
+    business_key?: string | null;
+    prev: any;
+    new: any;
+    note?: string | null;
+    is_correction: boolean;
+    created_at: string;
+  }>;
+}
+
 // 5. Admin Inspection, Standings & History
-export async function rpcGetAdminSnapshot(room_id: string) {
-  return callRpc<{
-    room: any;
-    server_now: string;
-    teams: any[];
-    events: any[];
-  }>('get_admin_snapshot', { room_id });
+export async function rpcGetAdminSnapshot(room_id: string): Promise<AdminRoomSnapshot> {
+  return callRpc<AdminRoomSnapshot>('get_admin_snapshot', { room_id });
 }
 
 export async function rpcGetStandings(room_id: string) {
