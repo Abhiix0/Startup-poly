@@ -3,8 +3,11 @@ import { renderHook, act } from '@testing-library/react';
 import { useServerClock } from './useServerClock';
 
 describe('useServerClock', () => {
+  const mockFetchTime = vi.fn(async () => new Date().toISOString());
+
   beforeEach(() => {
     vi.useFakeTimers();
+    mockFetchTime.mockClear();
   });
 
   afterEach(() => {
@@ -16,6 +19,7 @@ describe('useServerClock', () => {
       useServerClock({
         endsAt: new Date(Date.now() + 60000).toISOString(),
         status: 'TIME_EXPIRED',
+        fetchTimeFn: mockFetchTime,
       })
     );
 
@@ -29,6 +33,7 @@ describe('useServerClock', () => {
       useServerClock({
         endsAt: null,
         status: 'LOBBY',
+        fetchTimeFn: mockFetchTime,
       })
     );
 
@@ -46,6 +51,7 @@ describe('useServerClock', () => {
       useServerClock({
         endsAt,
         status: 'ACTIVE',
+        fetchTimeFn: mockFetchTime,
       })
     );
 
@@ -71,6 +77,7 @@ describe('useServerClock', () => {
         endsAt,
         status: 'ACTIVE',
         onExpire,
+        fetchTimeFn: mockFetchTime,
       })
     );
 

@@ -47,6 +47,7 @@ export function useServerClock(
   const [, setTick] = useState<number>(() => Date.now());
   const fetchRef = useRef(fetchTimeFn);
   const hasExpiredRef = useRef(false);
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
     fetchRef.current = fetchTimeFn;
@@ -55,18 +56,19 @@ export function useServerClock(
   const sync = useCallback(async () => {
     if (!fetchRef.current) return;
     try {
-      setIsSyncing(true);
+      if (isMountedRef.current) setIsSyncing(true);
       const res = await fetchServerOffset(fetchRef.current);
-      setOffsetMs(res.offsetMs);
-    } catch (err) {
-      console.warn('Failed to sync server clock:', err);
+      if (isMountedRef.current) setOffsetMs(res.offsetMs);
+    } catch {
+      // Ignored if network/server is unavailable; local clock fallback continues
     } finally {
-      setIsSyncing(false);
+      if (isMountedRef.current) setIsSyncing(false);
     }
   }, []);
 
   // Sync on mount, online, and visibility change
   useEffect(() => {
+    isMountedRef.current = true;
     sync();
 
     const handleOnline = () => {
@@ -83,6 +85,7 @@ export function useServerClock(
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
+      isMountedRef.current = false;
       window.removeEventListener('online', handleOnline);
       document.removeEventListener('visibilitychange', handleVisibility);
     };
@@ -91,7 +94,9 @@ export function useServerClock(
   // Derive tick every 1 second
   useEffect(() => {
     const timer = setInterval(() => {
-      setTick(Date.now());
+      if (isMountedRef.current) {
+        setTick(Date.now());
+      }
     }, 1000);
 
     return () => clearInterval(timer);
