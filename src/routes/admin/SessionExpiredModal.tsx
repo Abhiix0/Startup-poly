@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, PixelButton, TextField } from '../../ui';
-import { supabase } from '../../data/client';
+import { useAuth } from '../../data/auth';
+import { AuthError } from '../../data/authErrors';
 import { logger } from '../../lib/logger';
 
 export interface SessionExpiredModalProps {
@@ -14,7 +15,8 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
   userEmail = '',
   onSuccess,
 }) => {
-  const [email, setEmail] = useState<string>(userEmail);
+  const { loginAsAdmin } = useAuth();
+  const [email] = useState<string>(userEmail);
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,20 +33,27 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
     setLoading(true);
     setError(null);
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-
-      if (signInError) throw signInError;
-      if (!data.session) throw new Error('Failed to restore admin session.');
-
+      await loginAsAdmin(email, password);
       logger.info('Auth', 'Admin session successfully restored mid-match.');
       setPassword('');
       onSuccess();
     } catch (err: any) {
       logger.warn('Auth', 'Session restoration failed:', err);
-      setError(err?.message || 'Sign in failed. Check password.');
+      if (err instanceof AuthError) {
+        if (err.code === 'NOT_ADMIN') {
+          setError('This account is not authorized for admin access.');
+        } else if (err.code === 'INVALID_CREDENTIALS') {
+          setError('Invalid email or password.');
+        } else if (err.code === 'NETWORK') {
+          setError("Can't reach the server. Check your connection.");
+        } else if (err.code === 'RATE_LIMITED') {
+          setError('Too many attempts. Wait a minute and try again.');
+        } else {
+          setError(err.message || 'Sign in failed. Check password.');
+        }
+      } else {
+        setError(err?.message || 'Sign in failed. Check password.');
+      }
     } finally {
       setLoading(false);
     }
@@ -72,8 +81,8 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
           label="Admin Email"
           type="email"
           value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-          disabled={loading}
+          readOnly
+          disabled
           required
         />
 
@@ -84,6 +93,7 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           disabled={loading}
           autoFocus
+          autoComplete="current-password"
           required
         />
 

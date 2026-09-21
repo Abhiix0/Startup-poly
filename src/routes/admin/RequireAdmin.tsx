@@ -1,16 +1,18 @@
 import React from 'react';
 import { Navigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
+import { SessionExpiredModal } from './SessionExpiredModal';
 
 export interface RequireAdminProps {
   children?: React.ReactNode;
 }
 
 export const RequireAdmin: React.FC<RequireAdminProps> = ({ children }) => {
-  const { role, isLoading } = useAuth();
+  const { role, roleStatus, isSessionExpired, lastAdminEmail, user } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  // 1. Initial or state transition checking state
+  if (roleStatus === 'checking') {
     return (
       <div className="min-h-screen bg-nes-sky flex items-center justify-center p-4">
         <div className="bg-nes-card border-4 border-nes-navy shadow-pixel-lg p-8 text-center max-w-sm w-full">
@@ -26,17 +28,37 @@ export const RequireAdmin: React.FC<RequireAdminProps> = ({ children }) => {
     );
   }
 
-  // Redirect to login for any non-admin role, regardless of how we got here.
-  // This covers two distinct cases:
-  //   1. "Never logged in" — role is 'none' from the very first render.
-  //   2. "Session expired mid-session" — role transitions from 'admin' to 'none'
-  //      after the onAuthStateChange SIGNED_OUT path settles (e.g. refresh token
-  //      revoked while the admin was viewing a protected page).
-  // In both cases the user is sent to /admin/login with state={{ from: location }}
-  // so the login page can redirect back after successful re-authentication.
+  const content = children ? <>{children}</> : <Outlet />;
+
+  // 2. Session expired mid-match (token revocation or timeout): keep drafts mounted and overlay modal
+  if (isSessionExpired) {
+    return (
+      <>
+        {content}
+        <SessionExpiredModal
+          isOpen={true}
+          userEmail={lastAdminEmail || user?.email || ''}
+          onSuccess={() => {}}
+        />
+      </>
+    );
+  }
+
+  // 3. Not an admin and not expired: redirect to login with return path
   if (role !== 'admin') {
     return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
 
-  return children ? <>{children}</> : <Outlet />;
+  // 4. Admin role active: show reconnecting banner if network check is currently unverified
+  return (
+    <>
+      {roleStatus === 'unverified' && (
+        <div className="fixed top-2 left-1/2 -translate-x-1/2 z-50 bg-[#FEF9C3] text-[#854D0E] border-2 border-[#102040] shadow-pixel-sm px-4 py-2 flex items-center gap-2 font-pixel text-[10px]">
+          <span className="w-2 h-2 rounded-full bg-[#EAB308] animate-ping" />
+          <span>Reconnecting… verifying admin session</span>
+        </div>
+      )}
+      {content}
+    </>
+  );
 };

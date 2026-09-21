@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, Session } from '@supabase/supabase-js';
 import { Database } from './database.types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -17,6 +17,10 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 
 export type UserRole = 'admin' | 'team' | 'none';
 
+export type ResolveRoleResult =
+  | { role: UserRole; verified: true; error?: never }
+  | { role: null; verified: false; error: Error };
+
 /**
  * Ensures an anonymous session exists for player phones.
  */
@@ -33,33 +37,38 @@ export async function ensureAnonymousSession() {
 }
 
 /**
- * Derives user role server-side via Supabase permissions, never trusting localStorage flags.
+ * Resolves the role for a given session by checking PostgreSQL permissions.
+ * - No session -> { role: 'none', verified: true }
+ * - Anonymous session -> { role: 'team', verified: true } (without invoking is_admin RPC)
+ * - Authenticated session -> queries is_admin() RPC:
+ *     - data === true -> { role: 'admin', verified: true }
+ *     - data === false -> { role: 'team', verified: true }
+ *     - error/network failure -> { role: null, verified: false, error }
  */
-export async function getSessionRole(): Promise<UserRole> {
-  const { data: { session } } = await supabase.auth.getSession();
+export async function resolveRole(session: Session | null): Promise<ResolveRoleResult> {
   if (!session || !session.user) {
-    return 'none';
+    return { role: 'none', verified: true };
   }
 
-  // 1. Check if user is an admin by querying is_admin() RPC or admins table
+  // Anonymous users are always team players; skip RPC
+  if (session.user.is_anonymous) {
+    return { role: 'team', verified: true };
+  }
+
   try {
     const { data: isAdmin, error } = await supabase.rpc('is_admin');
-    if (!error && isAdmin === true) {
-      return 'admin';
+    if (error) {
+      return { role: null, verified: false, error: new Error(error.message) };
     }
-  } catch {
-    // Fall back to table query
-    const { data } = await supabase
-      .from('admins')
-      .select('user_id')
-      .eq('user_id', session.user.id)
-      .maybeSingle();
-
-    if (data) {
-      return 'admin';
+    if (isAdmin === true) {
+      return { role: 'admin', verified: true };
     }
+    return { role: 'team', verified: true };
+  } catch (err: any) {
+    return {
+      role: null,
+      verified: false,
+      error: err instanceof Error ? err : new Error(String(err)),
+    };
   }
-
-  // 2. Otherwise, if user has an active session (e.g. anonymous or claimed), they are a team player
-  return 'team';
 }

@@ -13,25 +13,40 @@ In the **Supabase Dashboard** under **Authentication > Providers / Settings**:
 - **Enable Email Provider**: **ON**
 - **Allow new users to sign up**: **OFF** (Public sign-ups must be disabled so outside users cannot register).
 - **Confirm email**: Optional / OFF (Tech Runner admin accounts are provisioned directly by project administrators).
+- **Minimum password length**: Set to `12` characters.
 
 > [!NOTE]
 > In Supabase, disabling "Allow new users to sign up" specifically prevents self-service registration via `signUp()`, while anonymous sign-ins (`signInAnonymously()`) remain operational if enabled.
 
 ---
 
-## 2. Admin User Provisioning
+## 2. Admin User Provisioning & Lifecycle
 
 Event administrators (Tech Runners and Game Masters) authenticate with email and password to access the desktop admin console.
 
-### Step 1: Create Admin User in Dashboard
-1. Go to **Authentication > Users** in Supabase Dashboard.
+### Option A: CLI Provisioning (Recommended)
+
+Run the interactive script with `SUPABASE_SERVICE_ROLE_KEY` in your shell:
+
+```bash
+export SUPABASE_URL="https://<your-project>.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOi..."
+
+npm run admin:create
+```
+This script prompts for the admin's email and a masked password (minimum 12 characters), creates or updates the user in `auth.users`, and inserts the `user_id` into `public.admins`.
+
+### Option B: Manual Provisioning via Supabase Dashboard
+
+#### Step 1: Create User
+1. Go to **Authentication > Users** in the Supabase Dashboard.
 2. Click **Add User** -> **Create User**.
-3. Enter the administrator's email and a secure password.
+3. Enter the administrator's email and a secure password (minimum 12 chars).
 4. Auto-confirm user: **Checked**.
 5. Copy the generated `User UID` (UUID).
 
-### Step 2: Grant Admin Privileges
-Run the following SQL snippet in the Supabase SQL Editor to add the user to `public.admins`:
+#### Step 2: Grant Admin Privileges
+Run the following SQL snippet in the Supabase SQL Editor:
 
 ```sql
 -- Replace <ADMIN_USER_UUID> with the actual User UID from Auth > Users
@@ -46,19 +61,20 @@ LEFT JOIN public.admins a ON u.id = a.user_id
 WHERE a.user_id IS NOT NULL;
 ```
 
-### De-provisioning an Admin
+### De-provisioning / Revoking an Admin
 
-To remove admin rights from a user **without** deleting their auth account, run the following in the Supabase SQL Editor:
+To instantly revoke admin access and kill active sessions across all devices:
 
+```bash
+npm run admin:revoke
+```
+This script removes the user from `public.admins` and calls `auth.admin.signOut(userId, 'global')`.
+
+If running manually in SQL:
 ```sql
--- Replace <ADMIN_USER_UUID> with the target User UID
 DELETE FROM public.admins WHERE user_id = '<ADMIN_USER_UUID>';
 ```
-
-**When this takes effect:**
-The row deletion is immediate in the database. However, the frontend derives the active role via `getSessionRole()`, which is called on each page load and on every `onAuthStateChange` event. An admin who already has the console open in a tab will therefore retain their apparent role until their next page load or auth state refresh.
-
-> **If instant revocation is required:** go to **Dashboard > Authentication > Users > (user) > "Sign out user"** to invalidate all of the user's active sessions. Their next RPC call will fail the `is_admin()` guard and the frontend will redirect them to the login page.
+Then go to **Dashboard > Authentication > Users > (user) > "Sign out user"** to invalidate all of the user's active JWT tokens. Any subsequent RPC call will immediately fail the `is_admin()` check.
 
 ---
 

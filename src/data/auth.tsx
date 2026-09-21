@@ -1,16 +1,20 @@
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase, getSessionRole, UserRole } from './client';
-import { SessionExpiredModal } from '../routes/admin/SessionExpiredModal';
+import { supabase, resolveRole, UserRole } from './client';
+import { AuthError, mapSupabaseAuthError } from './authErrors';
 import { logger } from '../lib/logger';
+
+export type RoleStatus = 'checking' | 'verified' | 'unverified';
 
 export interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: UserRole;
+  roleStatus: RoleStatus;
   loading: boolean;
   isLoading: boolean;
   isSessionExpired: boolean;
+  lastAdminEmail?: string;
   promptReAuth: () => void;
   loginAsAdmin: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
@@ -19,76 +23,143 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const RETRY_DELAYS = [2000, 5000, 10000];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<UserRole>('none');
+  const [roleStatus, setRoleStatus] = useState<RoleStatus>('checking');
   const [loading, setLoading] = useState<boolean>(true);
   const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
+
   const wasAdminRef = useRef<boolean>(false);
+  const intentionalSignOutRef = useRef<boolean>(false);
+  const lastAdminEmailRef = useRef<string>('');
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryAttemptRef = useRef<number>(0);
+  const activeSessionRef = useRef<Session | null>(null);
+
+  const clearRetryTimer = useCallback(() => {
+    if (retryTimerRef.current !== null) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+  }, []);
+
+  const verifyRole = useCallback(async (targetSession: Session | null) => {
+    clearRetryTimer();
+
+    if (!targetSession || !targetSession.user) {
+      setRole('none');
+      setRoleStatus('verified');
+      setLoading(false);
+      return;
+    }
+
+    const result = await resolveRole(targetSession);
+
+    if (result.verified) {
+      setRole(result.role);
+      setRoleStatus('verified');
+      retryAttemptRef.current = 0;
+
+      if (result.role === 'admin') {
+        wasAdminRef.current = true;
+        if (targetSession.user.email) {
+          lastAdminEmailRef.current = targetSession.user.email;
+        }
+        setIsSessionExpired(false);
+      }
+      setLoading(false);
+    } else {
+      // Unverified due to network/server failure: KEEP the previous role, mark unverified
+      logger.warn('Auth', 'Role verification network failure. Preserving current role and retrying...', result.error);
+      setRoleStatus('unverified');
+      setLoading(false);
+
+      // Schedule retry with exponential backoff: 2s -> 5s -> 10s -> 10s...
+      const delay = RETRY_DELAYS[Math.min(retryAttemptRef.current, RETRY_DELAYS.length - 1)];
+      retryAttemptRef.current += 1;
+
+      retryTimerRef.current = setTimeout(() => {
+        if (activeSessionRef.current) {
+          verifyRole(activeSessionRef.current);
+        }
+      }, delay);
+    }
+  }, [clearRetryTimer]);
 
   useEffect(() => {
     // Initial session load
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const userRole = await getSessionRole();
-        setRole(userRole);
-        if (userRole === 'admin') {
-          wasAdminRef.current = true;
-        }
-      } else {
-        setRole('none');
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      activeSessionRef.current = initialSession;
+      setSession(initialSession);
+      setUser(initialSession?.user ?? null);
+      if (initialSession?.user?.email && wasAdminRef.current) {
+        lastAdminEmailRef.current = initialSession.user.email;
       }
-      setLoading(false);
+      verifyRole(initialSession);
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+    // Synchronous auth state listener (must not be async)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       logger.debug('Auth', `onAuthStateChange: ${event}`);
+      activeSessionRef.current = newSession;
       setSession(newSession);
       setUser(newSession?.user ?? null);
 
-      if (newSession?.user) {
-        const userRole = await getSessionRole();
-        setRole(userRole);
-        if (userRole === 'admin') {
-          wasAdminRef.current = true;
+      if (event === 'SIGNED_OUT') {
+        if (intentionalSignOutRef.current) {
+          // Intentional logout: skip session expired, clear admin memory
+          wasAdminRef.current = false;
+          lastAdminEmailRef.current = '';
+          intentionalSignOutRef.current = false;
           setIsSessionExpired(false);
-        }
-      } else {
-        // If an admin lost session mid-game
-        if (wasAdminRef.current) {
-          // This branch covers the revoked-session path: supabase fires
-          // SIGNED_OUT (e.g. refresh token invalidated server-side) while the
-          // admin is on a protected page.  We attempt one token refresh; if that
-          // also fails we surface the SessionExpiredModal so the admin can
-          // re-authenticate without losing their place.  We do NOT throw here —
-          // the state simply settles to role='none', user=null, session=null via
-          // the setRole('none') call below, and the modal handles the UX.
-          logger.warn('Auth', 'Admin session was lost/expired. Attempting token refresh...');
-          const { data, error } = await supabase.auth.refreshSession();
-          if (error || !data.session) {
+          setRole('none');
+          setRoleStatus('verified');
+        } else {
+          // Unexpected SIGNED_OUT while admin (token revocation / expiry):
+          // Surface expired modal, do not call refreshSession() here
+          if (wasAdminRef.current) {
             setIsSessionExpired(true);
           }
+          setRole('none');
+          setRoleStatus('verified');
         }
-        setRole('none');
+        clearRetryTimer();
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      if (newSession?.user) {
+        if (newSession.user.email) {
+          lastAdminEmailRef.current = newSession.user.email;
+        }
+        // Defer role verification to next tick
+        setTimeout(() => {
+          verifyRole(newSession);
+        }, 0);
+      } else {
+        setRole('none');
+        setRoleStatus('verified');
+        setLoading(false);
+      }
     });
 
     return () => {
+      clearRetryTimer();
       subscription.unsubscribe();
     };
+  }, [verifyRole, clearRetryTimer]);
+
+  const promptReAuth = useCallback(() => {
+    setIsSessionExpired(true);
   }, []);
 
-  const promptReAuth = () => {
-    setIsSessionExpired(true);
-  };
-
-  const loginAsAdmin = async (email: string, password: string) => {
+  const loginAsAdmin = useCallback(async (email: string, password: string) => {
     setLoading(true);
+    clearRetryTimer();
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
@@ -96,49 +167,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        // Map Supabase credential errors to a fixed, attacker-neutral message so
-        // the UI always shows "Invalid email or password." for any bad-credentials
-        // failure, without leaking whether the email exists.
-        throw new Error('Invalid email or password.');
+        throw mapSupabaseAuthError(error);
       }
 
-      if (!data.user) {
-        throw new Error('Invalid email or password.');
+      if (!data.session || !data.user) {
+        throw new AuthError('INVALID_CREDENTIALS', 'Invalid email or password.');
       }
 
-      // Verify admin membership in Postgres
-      const verifiedRole = await getSessionRole();
-      if (verifiedRole !== 'admin') {
+      activeSessionRef.current = data.session;
+
+      // Verify PostgreSQL admin membership
+      const roleResult = await resolveRole(data.session);
+
+      if (!roleResult.verified) {
         await supabase.auth.signOut();
-        // Distinct message for the "valid creds, not an admin" case.
-        // AdminLoginPage renders err.message as-is, so keep this exact string
-        // in sync with the spec copy.
-        throw new Error('This account is not authorized for admin access.');
+        throw new AuthError('NETWORK', "Can't reach the server. Check your connection.");
+      }
+
+      if (roleResult.role !== 'admin') {
+        await supabase.auth.signOut();
+        throw new AuthError('NOT_ADMIN', 'This account is not authorized for admin access.');
       }
 
       setUser(data.user);
       setSession(data.session);
       setRole('admin');
+      setRoleStatus('verified');
       wasAdminRef.current = true;
+      lastAdminEmailRef.current = data.user.email || email.trim();
       setIsSessionExpired(false);
+      retryAttemptRef.current = 0;
+    } catch (err: any) {
+      if (err instanceof AuthError) {
+        throw err;
+      }
+      throw mapSupabaseAuthError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [clearRetryTimer]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     setLoading(true);
+    clearRetryTimer();
+    intentionalSignOutRef.current = true;
     try {
       await supabase.auth.signOut();
+      activeSessionRef.current = null;
       setUser(null);
       setSession(null);
       setRole('none');
+      setRoleStatus('verified');
       wasAdminRef.current = false;
+      lastAdminEmailRef.current = '';
       setIsSessionExpired(false);
     } finally {
       setLoading(false);
+      intentionalSignOutRef.current = false;
     }
-  };
+  }, [clearRetryTimer]);
 
   return (
     <AuthContext.Provider
@@ -146,9 +233,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         session,
         role,
+        roleStatus,
         loading,
-        isLoading: loading,
+        isLoading: loading || roleStatus === 'checking',
         isSessionExpired,
+        lastAdminEmail: lastAdminEmailRef.current,
         promptReAuth,
         loginAsAdmin,
         login: loginAsAdmin,
@@ -156,11 +245,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-      <SessionExpiredModal
-        isOpen={isSessionExpired}
-        userEmail={user?.email || ''}
-        onSuccess={() => setIsSessionExpired(false)}
-      />
     </AuthContext.Provider>
   );
 }

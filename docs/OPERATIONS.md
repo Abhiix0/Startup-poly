@@ -30,8 +30,8 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOi... (public anon key)
 
 > [!CAUTION]
 > **Service Role Key Security**:
-> - The `SUPABASE_SERVICE_ROLE_KEY` has superuser bypass privileges and **MUST NEVER** be present in client-side code, `.env`, `.env.production`, or Git repositories.
-> - Client code uses **only** `VITE_SUPABASE_ANON_KEY`. All administrative mutations occur via Postgres RPC functions secured by `auth.role() = 'authenticated'` and user metadata verification.
+> - The `SUPABASE_SERVICE_ROLE_KEY` has superuser bypass privileges and **MUST NEVER** be present in client-side code, `src/`, `.env`, `.env.production`, or Git repositories. It must never have a `VITE_` prefix.
+> - Client code uses **only** `VITE_SUPABASE_ANON_KEY`. All administrative mutations occur via Postgres RPC functions secured strictly by `public.admins` table lookups (`is_admin()` helper). User metadata or app metadata claims are never trusted for authorization.
 
 ---
 
@@ -47,6 +47,9 @@ When provisioning the new dedicated production Supabase project, verify these se
 2. **Auth Settings**:
    - **Anonymous Sign-Ins**: `ENABLED` (Required for team phones to receive an `auth.uid()` without creating accounts).
    - **User Signups (Email)**: `DISABLED` (Prevents unauthorized public users from creating accounts).
+   - **Email Provider**: `ENABLED` (For admin email/password login).
+   - **Confirm Email**: `DISABLED` (Admins are provisioned directly by operators).
+   - **Minimum Password Length**: Set to `12` or higher.
    - **Site URL**: Set to `https://<your-production-domain>.vercel.app`.
    - **Redirect URLs**: Add `https://<your-production-domain>.vercel.app/**`.
 3. **Run Production Verification Script**:
@@ -84,7 +87,7 @@ If the public anon key or JWT secret is compromised, follow this rotation protoc
 - For high-stakes tournament days, enable Point-In-Time Recovery (PITR) in project settings.
 
 ### Post-Match Event Data Export
-After each tournament or event day, export match results and audit logs for official record keeping:
+After each tournament or event day, export match results and activity logs for official record keeping:
 
 ```sql
 -- 1. Export finalized match results
@@ -128,17 +131,31 @@ Admin accounts have full control over live match timers, cash balances, and offi
 - Tournament Game Masters
 - Designated Event Tech Runners
 
+Authorization is strictly derived from the PostgreSQL `public.admins` table. Merely having an account in `auth.users` is not sufficient to access admin functions or RPCs.
+
 ### Creating an Event Admin User
-Create admin users directly using the Supabase CLI or Dashboard:
+Use the dedicated CLI script with the service role key exported in your shell:
 
 ```bash
-# Using Supabase CLI
-npx supabase auth admin create-user \
-  --email "admin-runner1@startupoly.com" \
-  --password "SecurePassphrase2026!"
+export SUPABASE_URL="https://<your-project>.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOi..."
+
+npm run admin:create
+# Prompts for admin email and a masked password (minimum 12 characters).
+# Creates or updates the user in auth.users and registers their UID in public.admins.
 ```
 
-To revoke access after an event, delete or disable the user in **Authentication** → **Users** in the Supabase Dashboard.
+### Revoking Admin Access
+To immediately revoke all admin privileges and kill all active sessions across devices:
+
+```bash
+export SUPABASE_URL="https://<your-project>.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOi..."
+
+npm run admin:revoke
+# Prompts for target admin email.
+# Removes the user from public.admins and calls auth.admin.signOut(userId, 'global').
+```
 
 ---
 *End of Operations Manual.*

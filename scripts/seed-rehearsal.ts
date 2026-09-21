@@ -1,17 +1,8 @@
 /**
- * STARTUPOLY Rehearsal & Demo Seeding Script
- * 
- * Creates a simulated match with 6 teams and realistic board activity for:
- * - Pre-event Tech Runner dry runs
- * - Staging / Local rehearsals
- * - Practice with quick actions, forced sales, and tie-breaking
- * 
- * SAFETY GUARD:
- *   Will refuse to run against URLs containing 'prod' or production domain
- *   unless explicitly bypassed with --force-staging.
- * 
- * Usage:
- *   npx tsx scripts/seed-rehearsal.ts [--email=admin@startupoly.com] [--password=secret]
+ * ⚠️ SECURITY WARNING:
+ * This script is intended for rehearsal and mock match simulation only.
+ * Admin credentials must be supplied via CLI flags or shell environment variables.
+ * Never commit admin passwords or hardcode credentials in source control.
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -29,21 +20,35 @@ async function seedRehearsal() {
   const args = process.argv.slice(2);
   let supabaseUrl = process.env.VITE_SUPABASE_URL || 'http://127.0.0.1:54321';
   let supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
-  let adminEmail = 'admin@startupoly.com';
-  let adminPassword = 'password123';
-  let forceStaging = false;
+  let adminEmail = process.env.STARTUPOLY_ADMIN_EMAIL || '';
+  let adminPassword = process.env.STARTUPOLY_ADMIN_PASSWORD || '';
+  let allowRemote = false;
 
-  for (const arg of args) {
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
     if (arg.startsWith('--url=')) supabaseUrl = arg.split('=')[1];
-    if (arg.startsWith('--key=')) supabaseAnonKey = arg.split('=')[1];
-    if (arg.startsWith('--email=')) adminEmail = arg.split('=')[1];
-    if (arg.startsWith('--password=')) adminPassword = arg.split('=')[1];
-    if (arg === '--force-staging') forceStaging = true;
+    else if (arg === '--url' && args[i + 1]) { supabaseUrl = args[++i]; }
+    else if (arg.startsWith('--key=')) supabaseAnonKey = arg.split('=')[1];
+    else if (arg === '--key' && args[i + 1]) { supabaseAnonKey = args[++i]; }
+    else if (arg.startsWith('--email=')) adminEmail = arg.split('=')[1];
+    else if (arg === '--email' && args[i + 1]) { adminEmail = args[++i]; }
+    else if (arg.startsWith('--password=')) adminPassword = arg.split('=')[1];
+    else if (arg === '--password' && args[i + 1]) { adminPassword = args[++i]; }
+    else if (arg === '--allow-remote' || arg === '--force-staging') allowRemote = true;
   }
 
-  // Safety check: prohibit running on accidental production URL without flag
-  if (supabaseUrl.includes('prod') && !forceStaging) {
-    console.error('⛔ SAFETY ABORT: Target URL appears to be production. Use --force-staging to bypass.');
+  const urlObj = new URL(supabaseUrl);
+  const isLocal = urlObj.hostname === 'localhost' || urlObj.hostname === '127.0.0.1';
+
+  if (!isLocal && !allowRemote) {
+    console.error(`⛔ SAFETY ABORT: Target URL "${supabaseUrl}" is not localhost. Pass --allow-remote to proceed.`);
+    process.exit(1);
+  }
+
+  if (!adminEmail || !adminPassword) {
+    console.error('❌ ERROR: Admin credentials required.');
+    console.error('Usage: npx tsx scripts/seed-rehearsal.ts --email <email> --password <password>');
+    console.error('   or: STARTUPOLY_ADMIN_EMAIL=... STARTUPOLY_ADMIN_PASSWORD=... npx tsx scripts/seed-rehearsal.ts');
     process.exit(1);
   }
 

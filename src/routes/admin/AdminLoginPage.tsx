@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
+import { AuthError } from '../../data/authErrors';
 import { PixelButton, PixelCard, TextField, ErrorBanner, PixelBrickTile } from '../../ui';
 
 export const AdminLoginPage: React.FC = () => {
@@ -32,16 +33,23 @@ export const AdminLoginPage: React.FC = () => {
       setIsSubmitting(true);
       setErrorMsg(null);
       await login(email, password);
-      navigate(from, { replace: true });
+      // Navigation is triggered by the role === 'admin' effect above
     } catch (err: any) {
-      // Render the exact message from loginAsAdmin so the two failure cases are
-      // presented distinctly:
-      //   • bad credentials  → Supabase's "Invalid login credentials" message
-      //     displayed as: "Invalid email or password."
-      //   • valid credentials but not in admins table
-      //     displayed as: "This account is not authorized for admin access."
-      // Neither case leaks which half of the check failed to an external prober.
-      setErrorMsg(err.message ?? 'Authentication failed. Please verify your admin credentials.');
+      if (err instanceof AuthError) {
+        if (err.code === 'INVALID_CREDENTIALS') {
+          setErrorMsg('Invalid email or password.');
+        } else if (err.code === 'RATE_LIMITED') {
+          setErrorMsg('Too many attempts. Wait a minute and try again.');
+        } else if (err.code === 'NETWORK') {
+          setErrorMsg("Can't reach the server. Check your connection.");
+        } else if (err.code === 'NOT_ADMIN') {
+          setErrorMsg('This account is not authorized for admin access.');
+        } else {
+          setErrorMsg('Sign-in failed. Try again.');
+        }
+      } else {
+        setErrorMsg('Sign-in failed. Try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -86,7 +94,7 @@ export const AdminLoginPage: React.FC = () => {
                 EVENT ORGANIZER LOGIN
               </h1>
               <p className="font-mono text-xs text-nes-muted">
-                Supabase email &amp; password for the verified admins table
+                Authorized organisers only.
               </p>
             </div>
 
@@ -125,6 +133,7 @@ export const AdminLoginPage: React.FC = () => {
                   variant="primary"
                   fullWidth
                   isLoading={isSubmitting}
+                  disabled={isSubmitting}
                 >
                   ENTER CONSOLE
                 </PixelButton>
