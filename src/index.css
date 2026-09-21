@@ -97,6 +97,23 @@
   background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
 }
 
+/* NES Banded Retro Sky Gradient for Landing Page */
+.nes-sky-gradient {
+  background: linear-gradient(
+    to bottom,
+    #3B6FE0 0%,
+    #3B6FE0 20%,
+    #4A80E8 20%,
+    #4A80E8 40%,
+    #5C94FC 40%,
+    #5C94FC 60%,
+    #71A9FC 60%,
+    #71A9FC 80%,
+    #87CEFA 80%,
+    #87CEFA 100%
+  );
+}
+
 /* Custom Scrollbar for scoreboard / table */
 ::-webkit-scrollbar {
   width: 8px;

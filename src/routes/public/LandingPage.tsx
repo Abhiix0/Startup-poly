@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   PixelButton,
   PixelCard,
-  PixelCloud,
+  PixelCloudFluffy,
   PixelPipe,
   PixelMascot,
   PixelLogo,
@@ -12,15 +12,21 @@ import {
 
 export const LandingPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040]">
+    <div className="min-h-screen nes-sky-gradient flex flex-col justify-between overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040]">
       {/* NES Sky & Clouds Header */}
       <header className="relative pt-8 pb-4 px-4 text-center">
         {/* Decorative Floating Clouds */}
-        <div className="hidden sm:block absolute top-6 left-8 lg:left-16 opacity-90 select-none pointer-events-none">
-          <PixelCloud size={72} />
+        <div className="absolute top-4 left-4 sm:left-8 opacity-90 select-none pointer-events-none">
+          <PixelCloudFluffy size={72} />
         </div>
-        <div className="hidden md:block absolute top-12 right-12 lg:right-24 opacity-90 select-none pointer-events-none">
-          <PixelCloud size={88} />
+        <div className="absolute top-6 right-4 sm:right-10 opacity-90 select-none pointer-events-none">
+          <PixelCloudFluffy size={84} />
+        </div>
+        <div className="hidden sm:block absolute top-24 left-16 lg:left-20 opacity-60 select-none pointer-events-none">
+          <PixelCloudFluffy size={56} />
+        </div>
+        <div className="hidden sm:block absolute top-28 right-16 lg:right-24 opacity-75 select-none pointer-events-none">
+          <PixelCloudFluffy size={68} />
         </div>
 
         {/* Wordmark Logo */}
