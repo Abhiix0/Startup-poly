@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
+import { PixelLoader } from '../../ui';
 import { SessionExpiredModal } from './SessionExpiredModal';
 
 export interface RequireAdminProps {
@@ -13,19 +14,7 @@ export const RequireAdmin: React.FC<RequireAdminProps> = ({ children }) => {
 
   // 1. Initial or state transition checking state
   if (roleStatus === 'checking') {
-    return (
-      <div className="min-h-screen bg-nes-sky flex items-center justify-center p-4">
-        <div className="bg-nes-card border-4 border-nes-navy shadow-pixel-lg p-8 text-center max-w-sm w-full">
-          <div className="w-12 h-12 bg-nes-gold border-3 border-nes-navy mx-auto mb-4 flex items-center justify-center font-pixel text-lg animate-spin">
-            ★
-          </div>
-          <h2 className="font-pixel text-xs uppercase tracking-wider text-nes-navy mb-2">
-            VERIFYING CREDENTIALS...
-          </h2>
-          <p className="font-mono text-xs text-nes-muted">Checking admin status with server</p>
-        </div>
-      </div>
-    );
+    return <PixelLoader label="VERIFYING CREDENTIALS…" />;
   }
 
   const content = children ? <>{children}</> : <Outlet />;

@@ -10,6 +10,8 @@ import {
 import { usePageVisibility } from '../../lib/usePageVisibility';
 import { useFirstVisit } from '../../lib/useFirstVisit';
 import { PixelWorld } from './PixelWorld';
+import { LandingHud } from './LandingHud';
+import { LiveIndicator } from './LiveIndicator';
 
 export const LandingPage: React.FC = () => {
   const { isFirstVisit, markSeen } = useFirstVisit();
@@ -76,6 +78,11 @@ export const LandingPage: React.FC = () => {
               ★
             </span>
           </div>
+
+          {/* Live Indicator */}
+          <div className="mt-2">
+            <LiveIndicator />
+          </div>
         </div>
 
         {/* Level 3: Tagline & Supporting Text */}
@@ -84,7 +91,7 @@ export const LandingPage: React.FC = () => {
             THE BOARD IS PHYSICAL.
             <br className="sm:hidden" /> THE SCORE IS LIVE.
           </p>
-          <p className="font-mono text-[11px] sm:text-xs md:text-sm text-[#FFFBEB]/90 font-medium tracking-wide">
+          <p className="font-mono text-[11px] sm:text-xs md:text-sm text-[#FFFBEB]/90 font-medium tracking-wide drop-shadow-[1px_1px_0px_#102040]">
             The live digital scoreboard for the STARTUPOLY physical startup game.
           </p>
         </div>
@@ -167,8 +174,10 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Level 5: HUD Placeholder Container */}
-        <div data-slot="hud" className="w-full" />
+        {/* Level 5: HUD Slot */}
+        <div data-slot="hud" className="w-full">
+          <LandingHud />
+        </div>
       </main>
 
       {/* Level 6: Living Pixel World Scene */}

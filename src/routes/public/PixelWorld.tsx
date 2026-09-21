@@ -229,9 +229,9 @@ export const PixelWorld: React.FC = () => {
       {/* ========================================================================= */}
       <div data-layer="6-ground" className="w-full relative z-10">
         <PixelBrickTile hasGrass={true} className="h-8 sm:h-10 w-full" />
-        <div className="bg-[#102040] py-2.5 sm:py-3 px-4 text-center border-t-2 border-[#FFCC00]">
+        <div className="bg-[#102040] pt-2.5 sm:pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-[#FFCC00]">
           <p className="font-pixel text-[8px] sm:text-[10px] text-[#FFCC00] tracking-wider">
-            STARTUPOLY © 2026 • 8-BIT LIVE SCOREBOARD & EVENT MANAGEMENT SYSTEM
+            STARTUPOLY © 2026
           </p>
         </div>
       </div>

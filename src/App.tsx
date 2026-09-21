@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './data/auth';
-import { ToastProvider, ErrorBoundary, PixelCard } from './ui';
+import { ToastProvider, ErrorBoundary, PixelLoader } from './ui';
 
 // Immediate static imports for Team & Public routes (instant mobile load)
 import { LandingPage } from './routes/public/LandingPage';
@@ -27,26 +27,13 @@ const AdminRoomHistoryPage = React.lazy(() =>
   import('./routes/admin/AdminRoomHistoryPage').then((m) => ({ default: m.AdminRoomHistoryPage }))
 );
 
-const RouteLoadingFallback: React.FC = () => (
-  <div className="min-h-screen bg-[#5C94FC] flex items-center justify-center p-4">
-    <PixelCard className="max-w-xs w-full text-center py-6">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-4 border-[#102040] border-t-[#FFCC00] rounded-full animate-spin" />
-        <span className="font-pixel text-xs text-[#102040] tracking-wider uppercase">
-          Loading Module...
-        </span>
-      </div>
-    </PixelCard>
-  </div>
-);
-
 export const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
         <ToastProvider>
           <BrowserRouter>
-            <Suspense fallback={<RouteLoadingFallback />}>
+            <Suspense fallback={<PixelLoader />}>
               <Routes>
                 {/* Public Root */}
                 <Route path="/" element={<LandingPage />} />

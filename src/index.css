@@ -636,6 +636,32 @@
   will-change: auto;
 }
 
+@keyframes live-dot-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes progress-segment-fill {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.anim-live-dot {
+  animation: live-dot-pulse 2s ease-in-out infinite;
+}
+
+.anim-progress-segment {
+  animation: progress-segment-fill 1.2s steps(2) infinite;
+}
+
 /* Global Prefers Reduced Motion Rule */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -649,6 +675,12 @@
   [data-entrance] {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .anim-live-dot,
+  .anim-progress-segment {
+    animation: none !important;
+    opacity: 1 !important;
   }
 
   .founder-bubble-anchor,

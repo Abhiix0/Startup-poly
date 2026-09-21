@@ -13,4 +13,6 @@ export * from './ErrorBanner';
 export * from './Countdown';
 export * from './ErrorBoundary';
 export * from './Leaderboard';
+export * from './PixelLoader';
+export * from './useDelayedFlag';
 export * from './pixel';

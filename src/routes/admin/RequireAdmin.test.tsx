@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { RequireAdmin } from './RequireAdmin';
 import * as authModule from '../../data/auth';
@@ -25,6 +25,7 @@ describe('RequireAdmin', () => {
   };
 
   it('renders loading state when authentication is checking', () => {
+    vi.useFakeTimers();
     vi.mocked(authModule.useAuth).mockReturnValue({
       ...baseAuthMock,
       roleStatus: 'checking',
@@ -42,8 +43,13 @@ describe('RequireAdmin', () => {
       </MemoryRouter>
     );
 
+    act(() => {
+      vi.advanceTimersByTime(250);
+    });
+
     expect(screen.getByText(/VERIFYING CREDENTIALS/i)).toBeInTheDocument();
     expect(screen.queryByText(/PROTECTED ADMIN DASHBOARD/i)).not.toBeInTheDocument();
+    vi.useRealTimers();
   });
 
   it('redirects to /admin/login when user role is not admin', () => {
