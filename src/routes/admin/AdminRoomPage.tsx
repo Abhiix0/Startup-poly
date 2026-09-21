@@ -5,10 +5,26 @@ import { PixelCard, PixelButton, StatusPill, ConnectionPill, ErrorBanner, Skelet
 import { SetupView } from './SetupView';
 import { LobbyView } from './LobbyView';
 import { ActiveSummaryView } from './ActiveSummaryView';
+import { AdminConsoleView } from './console';
 
 export const AdminRoomPage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { snapshot, status, error, refetch, connection, lastUpdated } = useAdminRoom(roomId);
+
+  if (
+    status === 'ready' &&
+    snapshot &&
+    (snapshot.room.status === 'ACTIVE' || snapshot.room.status === 'TIME_EXPIRED')
+  ) {
+    return (
+      <AdminConsoleView
+        snapshot={snapshot}
+        onRefetch={refetch}
+        connection={connection}
+        lastUpdated={lastUpdated}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between">
