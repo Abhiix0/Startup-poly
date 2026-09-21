@@ -6,15 +6,15 @@ import {
   PixelCloudFluffy,
   PixelPipe,
   PixelMascot,
-  PixelLogo,
   PixelBrickTile,
 } from '../../ui';
+import { PixelCoin } from '../../ui/pixel';
 
 export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen nes-sky-gradient flex flex-col justify-between overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040]">
       {/* NES Sky & Clouds Header */}
-      <header className="relative pt-8 pb-4 px-4 text-center">
+      <header className="relative pt-6 pb-3 px-4 text-center">
         {/* Decorative Floating Clouds */}
         <div className="absolute top-4 left-4 sm:left-8 opacity-90 select-none pointer-events-none">
           <PixelCloudFluffy size={72} />
@@ -29,11 +29,39 @@ export const LandingPage: React.FC = () => {
           <PixelCloudFluffy size={68} />
         </div>
 
-        {/* Wordmark Logo */}
-        <div className="mt-2 mb-4">
-          <PixelLogo size="lg" showSubtitle={true} />
+        {/* Wordmark Logo flanked by PixelCoins */}
+        <div className="flex flex-col items-center select-none text-center mt-1 mb-2">
+          {/* Wordmark Container */}
+          <div className="relative inline-flex items-center gap-2 sm:gap-3 md:gap-4">
+            <PixelCoin size={28} className="animate-bounce shrink-0" />
+            <h1
+              className="font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase text-2xl sm:text-4xl md:text-5xl lg:text-6xl"
+              style={{
+                textShadow: `
+                  3px 3px 0 #B84418,
+                  6px 6px 0 #102040,
+                  -2px -2px 0 #102040,
+                  2px -2px 0 #102040,
+                  -2px 2px 0 #102040,
+                  2px 2px 0 #102040
+                `,
+                letterSpacing: '0.08em',
+              }}
+            >
+              STARTUPOLY
+            </h1>
+            <PixelCoin size={28} className="animate-bounce shrink-0" />
+          </div>
+
+          {/* Subtitle Badge: DREAM · BUILD · GROW */}
+          <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-[#102040] border-2 border-[#FFCC00] rounded-sm shadow-[2px_2px_0px_#B84418]">
+            <span className="font-pixel text-[10px] md:text-xs text-[#FFFBEB] tracking-widest font-bold">
+              ★ DREAM · BUILD · GROW ★
+            </span>
+          </div>
         </div>
 
+        {/* Subtitle Description Box */}
         <div className="inline-block bg-[#102040] text-[#FFFBEB] px-4 py-2 border-2 border-[#FFCC00] shadow-[3px_3px_0px_#102040] max-w-lg mx-auto mt-2">
           <p className="font-mono text-xs sm:text-sm font-bold tracking-wide">
             The server-authoritative live scoreboard for the physical startup board game.
