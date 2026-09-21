@@ -111,7 +111,7 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Rulebook Highlights Pill Bar */}
-        <div className="bg-white border-4 border-[#102040] p-4 shadow-[4px_4px_0px_#102040] text-center">
+        <div className="bg-white border-2 border-[#102040] p-4 text-center">
           <div className="font-pixel text-[10px] text-[#102040] uppercase tracking-wider mb-2 font-bold">
             ★ OFFICIAL TOURNAMENT SPECIFICATIONS ★
           </div>
