@@ -2,13 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   PixelButton,
-  PixelCard,
   PixelCloudFluffy,
   PixelPipe,
   PixelMascot,
   PixelBrickTile,
 } from '../../ui';
-import { PixelCoin } from '../../ui/pixel';
+import { PixelCoin, PixelPhoneIcon, PixelTerminalIcon } from '../../ui/pixel';
 
 export const LandingPage: React.FC = () => {
   return (
@@ -73,17 +72,9 @@ export const LandingPage: React.FC = () => {
       <main className="max-w-4xl w-full mx-auto px-4 py-4 flex-1 flex flex-col justify-center gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
           {/* Team Portal Card */}
-          <PixelCard
-            title="PLAYING IN A MATCH?"
-            headerBg="gold"
-            variant="cream"
-            padding="lg"
-            className="flex flex-col justify-between"
-          >
+          <div className="bg-[#FAF8F5] border-2 border-[#FFCC00] p-6 flex flex-col justify-between">
             <div className="flex flex-col items-center text-center gap-3 mb-6">
-              <div className="w-16 h-16 bg-[#FFCC00] text-[#102040] border-4 border-[#102040] shadow-[3px_3px_0px_#102040] flex items-center justify-center font-pixel text-2xl">
-                📱
-              </div>
+              <PixelPhoneIcon size={56} />
               <h2 className="font-pixel text-sm sm:text-base text-[#102040]">
                 TEAM PHONE SCOREBOARD
               </h2>
@@ -94,23 +85,15 @@ export const LandingPage: React.FC = () => {
 
             <Link to="/join" className="w-full block">
               <PixelButton variant="secondary" size="lg" fullWidth>
-                JOIN MATCH (PHONE)
+                JOIN MATCH
               </PixelButton>
             </Link>
-          </PixelCard>
+          </div>
 
           {/* Admin Portal Card */}
-          <PixelCard
-            title="EVENT ORGANIZER?"
-            headerBg="green"
-            variant="cream"
-            padding="lg"
-            className="flex flex-col justify-between"
-          >
+          <div className="bg-[#FAF8F5] border-2 border-[#22B14C] p-6 flex flex-col justify-between">
             <div className="flex flex-col items-center text-center gap-3 mb-6">
-              <div className="w-16 h-16 bg-[#22B14C] text-white border-4 border-[#102040] shadow-[3px_3px_0px_#102040] flex items-center justify-center font-pixel text-2xl">
-                💻
-              </div>
+              <PixelTerminalIcon size={56} />
               <h2 className="font-pixel text-sm sm:text-base text-[#102040]">
                 EVENT ADMIN CONSOLE
               </h2>
@@ -121,10 +104,10 @@ export const LandingPage: React.FC = () => {
 
             <Link to="/admin" className="w-full block">
               <PixelButton variant="primary" size="lg" fullWidth>
-                OPEN ADMIN CONSOLE
+                ADMIN CONSOLE
               </PixelButton>
             </Link>
-          </PixelCard>
+          </div>
         </div>
 
         {/* Rulebook Highlights Pill Bar */}

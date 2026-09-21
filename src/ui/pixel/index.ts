@@ -9,3 +9,5 @@ export * from './PixelBrickTile';
 export * from './PixelMascot';
 export * from './PixelLogo';
 export * from './PixelBusinessIcon';
+export * from './PixelPhoneIcon';
+export * from './PixelTerminalIcon';
