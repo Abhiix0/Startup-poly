@@ -417,6 +417,154 @@ export interface Database {
         Args: Record<PropertyKey, never>;
         Returns: string;
       };
+      server_time: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
+      };
+      expire_if_due: {
+        Args: { p_room_id: string };
+        Returns: RoomStatus;
+      };
+      admin_create_room: {
+        Args: { team_count: number; teams: Json };
+        Returns: Json;
+      };
+      admin_update_team_config: {
+        Args: { team_id: string; name: string; color: string };
+        Returns: Json;
+      };
+      admin_open_lobby: {
+        Args: { room_id: string };
+        Returns: Json;
+      };
+      admin_release_team: {
+        Args: { team_id: string };
+        Returns: Json;
+      };
+      admin_start_game: {
+        Args: { room_id: string; force?: boolean };
+        Returns: Json;
+      };
+      admin_set_team_values: {
+        Args: {
+          team_id: string;
+          cash?: number | null;
+          cv?: number | null;
+          expected_version?: number;
+          request_id?: string | null;
+          note?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_adjust: {
+        Args: {
+          changes: Json;
+          label: string;
+          note?: string | null;
+          request_id?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_add_business: {
+        Args: {
+          team_id: string;
+          business_key: string;
+          apply_purchase?: boolean;
+          expected_version?: number;
+          request_id?: string | null;
+          note?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_set_business_level: {
+        Args: {
+          team_id: string;
+          business_key: string;
+          new_level: number;
+          apply_upgrade?: boolean;
+          expected_version?: number;
+          request_id?: string | null;
+          note?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_remove_business: {
+        Args: {
+          team_id: string;
+          business_key: string;
+          reason: string;
+          credit_resale?: boolean;
+          expected_version?: number;
+          request_id?: string | null;
+          note?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_set_bankrupt: {
+        Args: {
+          team_id: string;
+          value: boolean;
+          expected_version?: number;
+          request_id?: string | null;
+          note?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_set_tiebreak: {
+        Args: {
+          room_id: string;
+          ordered_team_ids: string[];
+          note?: string | null;
+        };
+        Returns: Json;
+      };
+      get_admin_snapshot: {
+        Args: { room_id: string };
+        Returns: Json;
+      };
+      list_history: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
+      get_history_detail: {
+        Args: { room_id: string };
+        Returns: Json;
+      };
+      get_lobby: {
+        Args: { code: string };
+        Returns: Json;
+      };
+      join_team: {
+        Args: { code: string; slot: number; pin: string };
+        Returns: Json;
+      };
+      get_my_state: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json | null;
+      };
+      room_standings: {
+        Args: { p_room_id: string };
+        Returns: {
+          team_id: string;
+          slot: number;
+          name: string;
+          rank: number;
+          is_bankrupt: boolean;
+          cv: number;
+          cash: number;
+          business_count: number;
+          tiebreak_order: number | null;
+          tie_unresolved: boolean;
+        }[];
+      };
+      get_standings: {
+        Args: { p_room_id: string };
+        Returns: Json;
+      };
+      admin_finalize: {
+        Args: { p_room_id: string };
+        Returns: Json;
+      };
     };
     Enums: {
       room_status: RoomStatus;
