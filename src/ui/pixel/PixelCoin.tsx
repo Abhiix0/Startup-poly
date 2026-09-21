@@ -1,8 +1,15 @@
 import React from 'react';
 
-export const PixelCoin: React.FC<{ size?: number; className?: string }> = ({
+export interface PixelCoinProps {
+  size?: number;
+  className?: string;
+  ariaHidden?: boolean;
+}
+
+export const PixelCoin: React.FC<PixelCoinProps> = ({
   size = 28,
   className = '',
+  ariaHidden = true,
 }) => {
   return (
     <svg
@@ -13,6 +20,9 @@ export const PixelCoin: React.FC<{ size?: number; className?: string }> = ({
       xmlns="http://www.w3.org/2000/svg"
       className={`inline-block flex-shrink-0 select-none ${className}`}
       style={{ imageRendering: 'pixelated' }}
+      aria-hidden={ariaHidden}
+      role={ariaHidden ? undefined : 'img'}
+      aria-label={ariaHidden ? undefined : 'Coin'}
     >
       {/* Outer Dark Navy Border */}
       <rect x="4" y="1" width="8" height="1" fill="#102040" />

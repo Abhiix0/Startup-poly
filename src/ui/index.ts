@@ -1,4 +1,5 @@
 export * from './PixelButton';
+export * from './ArcadeLink';
 export * from './PixelCard';
 export * from './BigNumber';
 export * from './StatusPill';
