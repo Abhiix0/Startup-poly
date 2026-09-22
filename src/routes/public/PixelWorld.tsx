@@ -10,6 +10,7 @@ import {
   PixelQuestionBlock,
   PixelBug,
   PixelGrassTuft,
+  PixelFlower,
   PixelSparkle,
   PixelMonitor,
 } from '../../ui/pixel';
@@ -159,13 +160,24 @@ export const PixelWorld: React.FC = () => {
             transform: 'translate3d(calc(var(--px, 0) * 5px), calc(var(--py, 0) * 2px), 0)',
           }}
         >
-          {/* LEFT GROUND OBJECTS: Large Warp Pipe + Stepped Brick Podium + ? Block + Coin + Bug */}
-          <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-2 sm:gap-3">
+          {/* LEFT GROUND OBJECTS: Daisy Flower & Grass + Warp Pipe + Grass + Brick Podium + Orange Flower */}
+          <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-1.5 sm:gap-2.5">
+            {/* Leftmost Daisy Flower & Grass tuft */}
+            <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
+              <PixelFlower size={20} variant={1} />
+              <PixelGrassTuft size={18} variant={1} />
+            </div>
+
             {/* Classic Large Green Warp Pipe */}
             <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
                 <PixelPipe width={68} height={58} />
               </div>
+            </div>
+
+            {/* Grass tuft between pipe & brick podium */}
+            <div className="hidden sm:block mb-0.5">
+              <PixelGrassTuft size={18} variant={2} />
             </div>
 
             {/* Stepped Brick Podium with ? Block & Bug */}
@@ -190,10 +202,15 @@ export const PixelWorld: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Orange Wildflower beside Brick podium */}
+            <div className="hidden sm:block mb-0.5">
+              <PixelFlower size={20} variant={2} />
+            </div>
           </div>
 
-          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Poly + CRT Monitor + Large Warp Pipe */}
-          <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-2 sm:gap-3.5">
+          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Poly + CRT Monitor + Grass + Pipe + Daisy + Grass */}
+          <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-1.5 sm:gap-3">
             {/* Floating Question Block and Coins */}
             <div className="hidden md:flex items-end gap-1.5">
               <div className="flex flex-col items-center">
@@ -221,11 +238,22 @@ export const PixelWorld: React.FC = () => {
               <PixelMonitor size={36} />
             </div>
 
+            {/* Grass tuft beside right warp pipe */}
+            <div className="hidden sm:block mb-0.5">
+              <PixelGrassTuft size={18} variant={1} />
+            </div>
+
             {/* Right Large Green Warp Pipe */}
             <div className="hidden sm:flex flex-col items-center">
               <div className="anim-pipe-highlight">
                 <PixelPipe width={68} height={54} />
               </div>
+            </div>
+
+            {/* Daisy Wildflower & Grass to the right of the Warp pipe */}
+            <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
+              <PixelFlower size={20} variant={1} />
+              <PixelGrassTuft size={18} variant={2} />
             </div>
           </div>
         </div>

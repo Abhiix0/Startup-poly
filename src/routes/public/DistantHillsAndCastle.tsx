@@ -41,7 +41,7 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
       {/* ======================================================================= */}
       {/* LAYER: Majestic Castle Fortress Silhouette (Elevated and Visible)        */}
       {/* ======================================================================= */}
-      <div className="hidden sm:block absolute bottom-14 sm:bottom-18 lg:bottom-22 right-4 sm:right-8 lg:right-12 z-0">
+      <div className="hidden sm:block absolute bottom-14 sm:bottom-18 lg:bottom-22 right-4 sm:right-8 lg:right-12 z-0 opacity-40">
         <div className="relative flex flex-col items-center">
           {/* Main Central Castle Tower with Flag */}
           <div className="relative flex flex-col items-center">

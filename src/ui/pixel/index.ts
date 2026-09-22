@@ -19,6 +19,7 @@ export * from './PixelBuildingIcon';
 export * from './PixelHill';
 export * from './PixelQuestionBlock';
 export * from './PixelGrassTuft';
+export * from './PixelFlower';
 export * from './PixelBug';
 export * from './PixelSparkle';
 export * from './WoodenSignboard';

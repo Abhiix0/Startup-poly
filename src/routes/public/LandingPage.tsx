@@ -6,6 +6,8 @@ import {
   PixelCoin,
   PixelPhoneIcon,
   PixelTerminalIcon,
+  PixelGrassTuft,
+  PixelFlower,
 } from '../../ui/pixel';
 import { usePageVisibility } from '../../lib/usePageVisibility';
 import { useFirstVisit } from '../../lib/useFirstVisit';
@@ -302,15 +304,30 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Raised Grassy Stage Platform with Daisies (Underneath the Posts) */}
+          {/* Raised Grassy Stage Platform with Wildflowers & Grass (Underneath the Posts) */}
           <div className="hidden sm:flex flex-col items-center w-full -mt-0.5 pointer-events-none">
             {/* Top Grass Strip with Wildflowers & Earthy Base */}
-            <div className="w-full h-4 bg-[#22C55E] border-3 border-[#181512] relative flex items-center justify-around px-8 shadow-sm">
-              <span className="text-[12px] select-none -mt-1">🌼</span>
-              <span className="text-[12px] select-none -mt-1">🌸</span>
-              <span className="text-[12px] select-none -mt-1">🌼</span>
-              <span className="text-[12px] select-none -mt-1">🌸</span>
-              <span className="text-[12px] select-none -mt-1">🌼</span>
+            <div className="w-full h-5 bg-[#22C55E] border-3 border-[#181512] relative flex items-center justify-around px-4 sm:px-8 shadow-sm">
+              <div className="flex items-center gap-0.5 -mt-3.5">
+                <PixelGrassTuft size={18} variant={1} />
+                <PixelFlower size={18} variant={1} />
+              </div>
+              <div className="flex items-center gap-0.5 -mt-3.5">
+                <PixelFlower size={18} variant={2} />
+                <PixelGrassTuft size={18} variant={2} />
+              </div>
+              <div className="flex items-center gap-0.5 -mt-3.5">
+                <PixelGrassTuft size={18} variant={1} />
+                <PixelFlower size={18} variant={1} />
+              </div>
+              <div className="flex items-center gap-0.5 -mt-3.5">
+                <PixelFlower size={18} variant={2} />
+                <PixelGrassTuft size={18} variant={2} />
+              </div>
+              <div className="flex items-center gap-0.5 -mt-3.5">
+                <PixelGrassTuft size={18} variant={1} />
+                <PixelFlower size={18} variant={1} />
+              </div>
             </div>
             <div className="w-full h-2 bg-[#B84418] border-x-3 border-b-3 border-[#181512]" />
           </div>
