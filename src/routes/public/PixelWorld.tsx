@@ -221,7 +221,7 @@ export const PixelWorld: React.FC = () => {
         <PixelBrickTile hasGrass={true} className="h-7 sm:h-8 w-full" />
         <div className="bg-[#102040] pt-1.5 sm:pt-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-[#FFCC00]">
           <p className="font-pixel text-[8px] sm:text-[9px] text-[#FFCC00] tracking-wider">
-            STARTUPOLY © 2026
+            WORLD 01 · STARTUPOLY © 2026
           </p>
         </div>
       </div>

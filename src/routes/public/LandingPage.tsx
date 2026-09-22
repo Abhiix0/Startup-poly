@@ -103,16 +103,26 @@ export const LandingPage: React.FC = () => {
         <main className="max-w-3xl w-full mx-auto px-4 py-1 sm:py-2 flex flex-col justify-center gap-2.5 sm:gap-4 z-10">
           <div
             onAnimationEnd={handleEntranceEnd}
-            className={`grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 items-stretch ${isFirstVisit ? 'anim-entrance-ctas' : ''}`}
+            className={`grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5 items-stretch ${isFirstVisit ? 'anim-entrance-ctas' : ''}`}
           >
-            {/* Team Portal Card */}
-            <div className="relative bg-white border-3 sm:border-4 border-[#102040] shadow-[5px_5px_0px_#102040] pt-1 px-3 sm:px-5 pb-3 sm:pb-4 flex flex-col justify-between rounded-sm">
-              {/* Top Accent Bar */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-[#FFCC00]" />
+            {/* Team Portal Checkpoint Card */}
+            <div
+              onPointerEnter={() => setActiveCta('join')}
+              onPointerLeave={() => setActiveCta(null)}
+              className="group relative bg-[#FFFDF5] border-4 border-[#102040] shadow-[5px_5px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-1 px-3.5 sm:px-5 pb-3.5 sm:pb-5 flex flex-col justify-between rounded-none select-none"
+            >
+              {/* Corner Iron Rivets */}
+              <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
+              <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
+              <div className="absolute bottom-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
+              <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
 
-              <div className="flex sm:flex-col items-center sm:text-center gap-2.5 sm:gap-2 my-2 sm:mb-3">
-                <div className="shrink-0">
-                  <PixelPhoneIcon size={38} />
+              {/* Top Gold Accent Bar */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#FFCC00] border-b-2 border-[#102040]" />
+
+              <div className="flex sm:flex-col items-center sm:text-center gap-2.5 sm:gap-2 my-2.5 sm:mb-3.5">
+                <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
+                  <PixelPhoneIcon size={40} />
                 </div>
                 <div className="flex-1 sm:flex-initial">
                   <h2 className="font-pixel text-xs sm:text-sm text-[#102040] uppercase tracking-wider mb-0.5">
@@ -130,9 +140,6 @@ export const LandingPage: React.FC = () => {
                 size="md"
                 fullWidth
                 ctaType="join"
-                onPointerEnter={() => setActiveCta('join')}
-                onPointerLeave={() => setActiveCta(null)}
-                onPointerDown={() => setActiveCta('join')}
                 onFocus={() => setActiveCta('join')}
                 onBlur={() => setActiveCta(null)}
               >
@@ -140,14 +147,24 @@ export const LandingPage: React.FC = () => {
               </ArcadeLink>
             </div>
 
-            {/* Admin Portal Card */}
-            <div className="relative bg-white border-3 sm:border-4 border-[#102040] shadow-[5px_5px_0px_#102040] pt-1 px-3 sm:px-5 pb-3 sm:pb-4 flex flex-col justify-between rounded-sm">
-              {/* Top Accent Bar */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-[#22B14C]" />
+            {/* Admin Portal Checkpoint Card */}
+            <div
+              onPointerEnter={() => setActiveCta('admin')}
+              onPointerLeave={() => setActiveCta(null)}
+              className="group relative bg-[#FFFDF5] border-4 border-[#102040] shadow-[5px_5px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-1 px-3.5 sm:px-5 pb-3.5 sm:pb-5 flex flex-col justify-between rounded-none select-none"
+            >
+              {/* Corner Iron Rivets */}
+              <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
+              <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
+              <div className="absolute bottom-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
+              <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
 
-              <div className="flex sm:flex-col items-center sm:text-center gap-2.5 sm:gap-2 my-2 sm:mb-3">
-                <div className="shrink-0">
-                  <PixelTerminalIcon size={38} />
+              {/* Top Emerald Accent Bar */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#22B14C] border-b-2 border-[#102040]" />
+
+              <div className="flex sm:flex-col items-center sm:text-center gap-2.5 sm:gap-2 my-2.5 sm:mb-3.5">
+                <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
+                  <PixelTerminalIcon size={40} />
                 </div>
                 <div className="flex-1 sm:flex-initial">
                   <h2 className="font-pixel text-xs sm:text-sm text-[#102040] uppercase tracking-wider mb-0.5">
@@ -165,9 +182,6 @@ export const LandingPage: React.FC = () => {
                 size="md"
                 fullWidth
                 ctaType="admin"
-                onPointerEnter={() => setActiveCta('admin')}
-                onPointerLeave={() => setActiveCta(null)}
-                onPointerDown={() => setActiveCta('admin')}
                 onFocus={() => setActiveCta('admin')}
                 onBlur={() => setActiveCta(null)}
               >
