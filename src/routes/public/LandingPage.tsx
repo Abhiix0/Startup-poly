@@ -113,129 +113,183 @@ export const LandingPage: React.FC = () => {
         <main className="max-w-3xl w-full mx-auto px-4 py-1 flex flex-col justify-center z-10">
           <div
             onAnimationEnd={handleEntranceEnd}
-            className={`grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 items-end ${isFirstVisit ? 'anim-entrance-ctas' : ''}`}
+            className={`grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 items-end justify-items-center ${isFirstVisit ? 'anim-entrance-ctas' : ''}`}
           >
             {/* ================================================================= */}
             {/* TEAM PHONE: Wooden Checkpoint Signboard                           */}
             {/* ================================================================= */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full max-w-[340px]">
               <div
                 onPointerEnter={() => setActiveCta('join')}
                 onPointerLeave={() => setActiveCta(null)}
-                className="group relative w-full bg-[#FFFDF0] border-[5px] border-[#102040] shadow-[7px_7px_0px_#102040] hover:shadow-[9px_9px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-4 px-5 sm:px-7 pb-5 sm:pb-7 flex flex-col justify-between items-center text-center gap-4 rounded-none select-none"
-                style={{
-                  outline: '3px solid #C88A4A',
-                  outlineOffset: '-7px',
-                }}
+                className="group relative w-full bg-[#D78B30] border-[4px] border-[#181512] shadow-[6px_6px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1 transition-all duration-100 ease-out p-2.5 sm:p-3 flex flex-col justify-between items-center text-center rounded-sm select-none"
               >
-                {/* Moss / Leaf tuft on top-left corner */}
-                <div className="absolute -top-3 -left-3 pointer-events-none flex">
-                  <div className="w-4 h-4 bg-[#22B14C] border-2 border-[#102040] rounded-sm -rotate-12" />
-                  <div className="w-3 h-3 bg-[#16A34A] border-2 border-[#102040] rounded-sm -ml-1 mt-1" />
-                </div>
+                {/* Left edge wood grain shadow */}
+                <div className="absolute top-0 bottom-0 left-0 w-2.5 bg-[#B86B1E] border-r-2 border-[#8A4810] pointer-events-none" />
+                {/* Right edge wood grain shadow */}
+                <div className="absolute top-0 bottom-0 right-0 w-2.5 bg-[#8A4810] border-l-2 border-[#5C2E0A] pointer-events-none" />
+                {/* Bottom wood shadow */}
+                <div className="absolute bottom-0 left-0 right-0 h-2.5 bg-[#8A4810] border-t-2 border-[#5C2E0A] pointer-events-none" />
+                {/* Top wood highlight */}
+                <div className="absolute top-0 left-0 right-0 h-2 bg-[#F3B05A] pointer-events-none" />
 
-                {/* 4 Corner Iron Rivet Bolts */}
-                <div className="absolute top-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
-                <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
-                <div className="absolute bottom-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
-                <div className="absolute bottom-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
-
-                {/* Top Wooden Plank Header Bar */}
-                <div className="absolute top-0 left-0 right-0 h-3 bg-[#D4A373] border-b-2 border-[#102040]" />
-
-                <div className="flex flex-col items-center text-center gap-2.5 pt-2">
-                  <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
-                    <PixelPhoneIcon size={44} />
+                {/* Top-Left Green Ivy / Leaves Cluster */}
+                <div className="absolute -top-3.5 -left-3.5 pointer-events-none z-20 flex flex-col">
+                  <div className="flex">
+                    <div className="w-3.5 h-3.5 bg-[#22C55E] border-2 border-[#181512] rounded-sm -rotate-12" />
+                    <div className="w-3 h-3 bg-[#16A34A] border-2 border-[#181512] rounded-sm -ml-1.5 mt-1" />
                   </div>
-                  <h2 className="font-pixel text-sm sm:text-base text-[#102040] uppercase tracking-wider font-extrabold">
-                    TEAM PHONE
-                  </h2>
+                  <div className="flex -mt-1 ml-1">
+                    <div className="w-3.5 h-3.5 bg-[#15803D] border-2 border-[#181512] rounded-sm" />
+                    <div className="w-2.5 h-2.5 bg-[#22C55E] border border-[#181512] rounded-sm -ml-1" />
+                  </div>
                 </div>
 
-                <ArcadeLink
-                  to="/join"
-                  variant="secondary"
-                  size="md"
-                  fullWidth
-                  ctaType="join"
-                  onFocus={() => setActiveCta('join')}
-                  onBlur={() => setActiveCta(null)}
-                >
-                  JOIN MATCH
-                </ArcadeLink>
+                {/* Inner Cream/Parchment Face */}
+                <div className="relative w-full bg-[#FFF5D6] border-[3px] border-[#9E5D1D] shadow-inner pt-3 pb-3 px-3 sm:px-4 flex flex-col items-center justify-between gap-3 rounded-none z-10">
+                  {/* 4 Corner Silver Rivets with Screws */}
+                  <div className="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181512]" />
+                  </div>
+                  <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181512]" />
+                  </div>
+                  <div className="absolute bottom-1.5 left-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181512]" />
+                  </div>
+                  <div className="absolute bottom-1.5 right-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181512]" />
+                  </div>
+
+                  {/* Icon & Title */}
+                  <div className="flex flex-col items-center text-center gap-1.5 pt-0.5">
+                    <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
+                      <PixelPhoneIcon size={40} />
+                    </div>
+                    <h2 className="font-pixel text-xs sm:text-sm text-[#181512] uppercase tracking-wider font-extrabold">
+                      TEAM PHONE
+                    </h2>
+                  </div>
+
+                  {/* Action Button: JOIN MATCH */}
+                  <ArcadeLink
+                    to="/join"
+                    variant="secondary"
+                    size="md"
+                    fullWidth
+                    ctaType="join"
+                    onFocus={() => setActiveCta('join')}
+                    onBlur={() => setActiveCta(null)}
+                    className="!bg-[#FFCC00] hover:!bg-[#FFB800] !border-[#181512] !text-[#181512] shadow-[3px_3px_0px_#181512]"
+                  >
+                    JOIN MATCH
+                  </ArcadeLink>
+                </div>
               </div>
 
-              {/* Sturdy Wooden Log Support Posts (Planted into ground) */}
-              <div className="hidden sm:flex justify-between w-4/5 px-4 -mt-1 pointer-events-none">
-                <div className="w-7 h-6 bg-[#8C5320] border-x-[3px] border-b-[3px] border-[#102040]" />
-                <div className="w-7 h-6 bg-[#8C5320] border-x-[3px] border-b-[3px] border-[#102040]" />
+              {/* Sturdy Wooden Timber Support Posts (Planted into ground) */}
+              <div className="hidden sm:flex justify-between w-4/5 px-4 -mt-1 pointer-events-none z-0">
+                <div className="w-8 h-8 bg-[#A1551E] border-x-[3px] border-b-[3px] border-[#181512] flex flex-col justify-around py-1">
+                  <div className="w-full h-0.5 bg-[#6E3811]" />
+                  <div className="w-full h-0.5 bg-[#6E3811]" />
+                </div>
+                <div className="w-8 h-8 bg-[#A1551E] border-x-[3px] border-b-[3px] border-[#181512] flex flex-col justify-around py-1">
+                  <div className="w-full h-0.5 bg-[#6E3811]" />
+                  <div className="w-full h-0.5 bg-[#6E3811]" />
+                </div>
               </div>
             </div>
 
             {/* ================================================================= */}
             {/* EVENT ADMIN: Stone Castle Battlement Signboard                    */}
             {/* ================================================================= */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full max-w-[340px]">
               {/* Castle Battlements & Red Waving Flag Header */}
-              <div className="hidden sm:flex justify-between w-full px-2 -mb-1 z-10 pointer-events-none">
-                <div className="flex gap-1.5">
-                  <div className="w-5 h-4 bg-[#64748B] border-t-[3px] border-x-[3px] border-[#102040]" />
-                  <div className="w-5 h-4 bg-[#64748B] border-t-[3px] border-x-[3px] border-[#102040]" />
-                  <div className="w-5 h-4 bg-[#64748B] border-t-[3px] border-x-[3px] border-[#102040]" />
+              <div className="hidden sm:flex justify-between items-end w-full px-1 -mb-1.5 z-10 pointer-events-none">
+                {/* 6 Castle Merlons / Teeth */}
+                <div className="flex gap-1">
+                  <div className="w-4 h-3.5 bg-[#94A3B8] border-t-[3px] border-x-[3px] border-[#181E28]" />
+                  <div className="w-4 h-3.5 bg-[#94A3B8] border-t-[3px] border-x-[3px] border-[#181E28]" />
+                  <div className="w-4 h-3.5 bg-[#94A3B8] border-t-[3px] border-x-[3px] border-[#181E28]" />
+                  <div className="w-4 h-3.5 bg-[#94A3B8] border-t-[3px] border-x-[3px] border-[#181E28]" />
+                  <div className="w-4 h-3.5 bg-[#94A3B8] border-t-[3px] border-x-[3px] border-[#181E28]" />
+                  <div className="w-4 h-3.5 bg-[#94A3B8] border-t-[3px] border-x-[3px] border-[#181E28]" />
                 </div>
-                {/* Waving Castle Flag */}
-                <div className="flex items-end -mb-1 mr-1">
-                  <div className="w-5 h-4 bg-[#D32F2F] border-2 border-[#102040] anim-flag-flutter flex items-center justify-center shadow-sm">
+                {/* Waving Castle Flag on Pole */}
+                <div className="flex items-end -mb-1 mr-0.5">
+                  <div className="w-6 h-4 bg-[#E11D48] border-2 border-[#181E28] anim-flag-flutter flex items-center justify-center shadow-sm">
                     <div className="w-2 h-2 bg-[#FFCC00]" />
                   </div>
-                  <div className="w-1.5 h-6 bg-[#102040]" />
+                  <div className="w-1.5 h-7 bg-[#181E28]" />
                 </div>
               </div>
 
               <div
                 onPointerEnter={() => setActiveCta('admin')}
                 onPointerLeave={() => setActiveCta(null)}
-                className="group relative w-full bg-[#F8FAFC] border-[5px] border-[#102040] shadow-[7px_7px_0px_#102040] hover:shadow-[9px_9px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-4 px-5 sm:px-7 pb-5 sm:pb-7 flex flex-col justify-between items-center text-center gap-4 rounded-none select-none"
-                style={{
-                  outline: '3px solid #94A3B8',
-                  outlineOffset: '-7px',
-                }}
+                className="group relative w-full bg-[#64748B] border-[4px] border-[#181E28] shadow-[6px_6px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1 transition-all duration-100 ease-out p-2.5 sm:p-3 flex flex-col justify-between items-center text-center rounded-sm select-none"
               >
-                {/* 4 Corner Iron Rivet Bolts */}
-                <div className="absolute top-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
-                <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
-                <div className="absolute bottom-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
-                <div className="absolute bottom-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+                {/* Left stone highlight */}
+                <div className="absolute top-0 bottom-0 left-0 w-2.5 bg-[#94A3B8] border-r-2 border-[#475569] pointer-events-none" />
+                {/* Right stone shadow */}
+                <div className="absolute top-0 bottom-0 right-0 w-2.5 bg-[#475569] border-l-2 border-[#334155] pointer-events-none" />
+                {/* Top stone highlight */}
+                <div className="absolute top-0 left-0 right-0 h-2 bg-[#CBD5E1] pointer-events-none" />
+                {/* Bottom Stone Corbel Bracket Blocks */}
+                <div className="absolute bottom-0 left-0 right-0 h-2 bg-[#334155] border-t-2 border-[#1E293B] pointer-events-none" />
 
-                {/* Top Stone Wall Accent Bar */}
-                <div className="absolute top-0 left-0 right-0 h-3 bg-[#64748B] border-b-2 border-[#102040]" />
-
-                <div className="flex flex-col items-center text-center gap-2.5 pt-2">
-                  <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
-                    <PixelTerminalIcon size={44} />
+                {/* Inner Light Grey/Stone Face */}
+                <div className="relative w-full bg-[#F1F5F9] border-[3px] border-[#64748B] shadow-inner pt-3 pb-3 px-3 sm:px-4 flex flex-col items-center justify-between gap-3 rounded-none z-10">
+                  {/* 4 Corner Silver Rivets with Screws */}
+                  <div className="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181E28] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181E28]" />
                   </div>
-                  <h2 className="font-pixel text-sm sm:text-base text-[#102040] uppercase tracking-wider font-extrabold">
-                    EVENT ADMIN
-                  </h2>
-                </div>
+                  <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181E28] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181E28]" />
+                  </div>
+                  <div className="absolute bottom-1.5 left-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181E28] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181E28]" />
+                  </div>
+                  <div className="absolute bottom-1.5 right-1.5 w-2 h-2 rounded-full bg-[#CBD5E1] border border-[#181E28] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                    <div className="w-1 h-0.5 bg-[#181E28]" />
+                  </div>
 
-                <ArcadeLink
-                  to="/admin"
-                  variant="primary"
-                  size="md"
-                  fullWidth
-                  ctaType="admin"
-                  onFocus={() => setActiveCta('admin')}
-                  onBlur={() => setActiveCta(null)}
-                >
-                  ADMIN CONSOLE
-                </ArcadeLink>
+                  {/* Icon & Title */}
+                  <div className="flex flex-col items-center text-center gap-1.5 pt-0.5">
+                    <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
+                      <PixelTerminalIcon size={40} />
+                    </div>
+                    <h2 className="font-pixel text-xs sm:text-sm text-[#181E28] uppercase tracking-wider font-extrabold">
+                      EVENT ADMIN
+                    </h2>
+                  </div>
+
+                  {/* Action Button: ADMIN CONSOLE */}
+                  <ArcadeLink
+                    to="/admin"
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                    ctaType="admin"
+                    onFocus={() => setActiveCta('admin')}
+                    onBlur={() => setActiveCta(null)}
+                    className="!bg-[#16A34A] hover:!bg-[#15803D] !border-[#181E28] !text-white shadow-[3px_3px_0px_#181E28]"
+                  >
+                    ADMIN CONSOLE
+                  </ArcadeLink>
+                </div>
               </div>
 
               {/* Sturdy Stone Pillar Support Posts (Planted into ground) */}
-              <div className="hidden sm:flex justify-between w-4/5 px-4 -mt-1 pointer-events-none">
-                <div className="w-7 h-6 bg-[#64748B] border-x-[3px] border-b-[3px] border-[#102040]" />
-                <div className="w-7 h-6 bg-[#64748B] border-x-[3px] border-b-[3px] border-[#102040]" />
+              <div className="hidden sm:flex justify-between w-4/5 px-4 -mt-1 pointer-events-none z-0">
+                <div className="w-8 h-8 bg-[#64748B] border-x-[3px] border-b-[3px] border-[#181E28] flex flex-col justify-around py-1">
+                  <div className="w-full h-0.5 bg-[#334155]" />
+                  <div className="w-full h-0.5 bg-[#334155]" />
+                </div>
+                <div className="w-8 h-8 bg-[#64748B] border-x-[3px] border-b-[3px] border-[#181E28] flex flex-col justify-around py-1">
+                  <div className="w-full h-0.5 bg-[#334155]" />
+                  <div className="w-full h-0.5 bg-[#334155]" />
+                </div>
               </div>
             </div>
           </div>
@@ -243,14 +297,14 @@ export const LandingPage: React.FC = () => {
           {/* Raised Grassy Stage Platform with Daisies (Underneath the Posts) */}
           <div className="hidden sm:flex flex-col items-center w-full -mt-0.5 pointer-events-none">
             {/* Top Grass Strip with Wildflowers & Earthy Base */}
-            <div className="w-full h-4 bg-[#22B14C] border-3 border-[#102040] relative flex items-center justify-around px-6">
+            <div className="w-full h-4 bg-[#22C55E] border-3 border-[#181512] relative flex items-center justify-around px-8 shadow-sm">
               <span className="text-[12px] select-none -mt-1">🌼</span>
               <span className="text-[12px] select-none -mt-1">🌸</span>
               <span className="text-[12px] select-none -mt-1">🌼</span>
               <span className="text-[12px] select-none -mt-1">🌸</span>
               <span className="text-[12px] select-none -mt-1">🌼</span>
             </div>
-            <div className="w-full h-2 bg-[#B84418] border-x-3 border-b-3 border-[#102040]" />
+            <div className="w-full h-2 bg-[#B84418] border-x-3 border-b-3 border-[#181512]" />
           </div>
         </main>
       </div>
