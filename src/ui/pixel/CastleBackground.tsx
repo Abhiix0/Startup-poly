@@ -33,7 +33,7 @@ export const CastleBackground: React.FC<CastleBackgroundProps> = ({
       {/* ======================================================================= */}
       <div className="absolute inset-x-0 bottom-8 h-80 sm:h-96 pointer-events-none z-0 flex justify-between items-end">
         {/* Left Castle Tower */}
-        <div className="w-24 sm:w-36 h-full flex flex-col items-center">
+        <div className="hidden sm:flex w-36 h-full flex-col items-center">
           {/* Flag */}
           <div className="w-8 h-5 bg-[#D32F2F] border-2 border-[#102040] anim-flag self-start ml-4 flex items-center justify-center">
             <div className="w-2 h-2 bg-[#FFCC00]" />
@@ -69,7 +69,7 @@ export const CastleBackground: React.FC<CastleBackgroundProps> = ({
           </div>
 
           {/* Torches framing the gate area */}
-          <div className="w-full flex justify-between px-12 sm:px-24 mt-4">
+          <div className="hidden sm:flex w-full justify-between px-12 sm:px-24 mt-4">
             <div className="flex flex-col items-center anim-torch">
               <div className="w-3.5 h-3.5 bg-[#FFCC00] border border-[#102040] rounded-full" />
               <div className="w-1.5 h-4 bg-[#8B4513] border border-[#102040]" />
@@ -97,7 +97,7 @@ export const CastleBackground: React.FC<CastleBackgroundProps> = ({
         </div>
 
         {/* Right Castle Tower */}
-        <div className="w-24 sm:w-36 h-full flex flex-col items-center">
+        <div className="hidden sm:flex w-36 h-full flex-col items-center">
           {/* Flag */}
           <div className="w-8 h-5 bg-[#22B14C] border-2 border-[#102040] anim-flag self-end mr-4 flex items-center justify-center">
             <div className="w-2 h-2 bg-[#FFCC00]" />
