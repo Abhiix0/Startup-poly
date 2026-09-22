@@ -40,7 +40,7 @@ export const LandingPage: React.FC = () => {
   return (
     <div
       data-cta={activeCta || undefined}
-      className="min-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040]"
+      className="min-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040] anim-scene-transition"
     >
       {/* ======================================================================= */}
       {/* LAYER 1: Distant Hills & Castle Silhouette Layer                         */}

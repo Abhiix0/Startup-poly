@@ -13,7 +13,7 @@ export interface PlainsBackgroundProps {
 
 export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between relative overflow-hidden select-none">
+    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between relative overflow-hidden select-none anim-scene-transition">
       {/* ======================================================================= */}
       {/* Sky & Clouds Layer                                                      */}
       {/* ======================================================================= */}

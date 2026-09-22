@@ -12,7 +12,7 @@ export const CastleBackground: React.FC<CastleBackgroundProps> = ({
   children,
 }) => {
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between relative overflow-hidden select-none">
+    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between relative overflow-hidden select-none anim-scene-transition">
       {/* ======================================================================= */}
       {/* Sky & Drifting Clouds                                                  */}
       {/* ======================================================================= */}

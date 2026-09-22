@@ -965,6 +965,22 @@
   background-size: 100% 26px, 48px 26px;
 }
 
+@keyframes scene-fade-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-scene-transition {
+  animation: scene-fade-slide 200ms ease-out both;
+  will-change: opacity, transform;
+}
+
 /* Global Prefers Reduced Motion Rule */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -975,7 +991,8 @@
   }
 
   .entrance-anim,
-  [data-entrance] {
+  [data-entrance],
+  .anim-scene-transition {
     opacity: 1 !important;
     transform: none !important;
   }
@@ -999,3 +1016,4 @@
     animation: none !important;
   }
 }
+
