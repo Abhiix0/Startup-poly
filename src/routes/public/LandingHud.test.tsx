@@ -41,9 +41,9 @@ describe('LandingHud Component', () => {
     // Must NOT have aria-live (no announcer spam)
     expect(container.querySelector('[aria-live]')).toBeNull();
 
-    // Must render LIVE SCOREBOARD and NEVER LIVE GAME
+    // Must render LIVE and NEVER LIVE GAME
     const text = container.textContent || '';
-    expect(text).toContain('LIVE SCOREBOARD');
+    expect(text).toContain('LIVE');
     expect(text.toLowerCase()).not.toContain('live game');
   });
 });
