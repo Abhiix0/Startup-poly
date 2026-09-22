@@ -11,6 +11,8 @@ import { usePageVisibility } from '../../lib/usePageVisibility';
 import { useFirstVisit } from '../../lib/useFirstVisit';
 import { PixelWorld } from './PixelWorld';
 import { LiveIndicator } from './LiveIndicator';
+import { FloatingPlatforms } from './FloatingPlatforms';
+import { DistantHillsAndCastle } from './DistantHillsAndCastle';
 
 export const LandingPage: React.FC = () => {
   const { isFirstVisit, markSeen } = useFirstVisit();
@@ -38,10 +40,22 @@ export const LandingPage: React.FC = () => {
   return (
     <div
       data-cta={activeCta || undefined}
-      className="min-h-screen nes-sky-gradient flex flex-col justify-between overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040]"
+      className="min-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040]"
     >
-      {/* Centered Hero Content Block (Title Screen Main Frame) */}
-      <div className="flex-1 flex flex-col justify-center pt-8 sm:pt-12 md:pt-16 pb-4 sm:pb-8">
+      {/* ======================================================================= */}
+      {/* LAYER 1: Distant Hills & Castle Silhouette Layer                         */}
+      {/* ======================================================================= */}
+      <DistantHillsAndCastle />
+
+      {/* ======================================================================= */}
+      {/* LAYER 2: Upper Floating Platforms (Question block, coins, critter)       */}
+      {/* ======================================================================= */}
+      <FloatingPlatforms />
+
+      {/* ======================================================================= */}
+      {/* LAYER 3: Main Title Screen UI (Logo, Status, Headline, Signboards)       */}
+      {/* ======================================================================= */}
+      <div className="flex-1 flex flex-col justify-center pt-8 sm:pt-12 md:pt-16 pb-4 sm:pb-8 relative z-10">
         {/* NES Sky Header */}
         <header className="relative pb-4 sm:pb-6 px-4 text-center z-10">
           {/* Level 1: Wordmark Logo */}
@@ -96,89 +110,154 @@ export const LandingPage: React.FC = () => {
         </header>
 
         {/* Main Portals Grid (Level 4 Primary Checkpoints) */}
-        <main className="max-w-2xl w-full mx-auto px-4 py-2 flex flex-col justify-center z-10">
+        <main className="max-w-3xl w-full mx-auto px-4 py-1 flex flex-col justify-center z-10">
           <div
             onAnimationEnd={handleEntranceEnd}
-            className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-stretch ${isFirstVisit ? 'anim-entrance-ctas' : ''}`}
+            className={`grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 items-end ${isFirstVisit ? 'anim-entrance-ctas' : ''}`}
           >
-            {/* Team Portal Checkpoint Card */}
-            <div
-              onPointerEnter={() => setActiveCta('join')}
-              onPointerLeave={() => setActiveCta(null)}
-              className="group relative bg-[#FFFDF5] border-4 border-[#102040] shadow-[5px_5px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-3 px-4 sm:px-6 pb-4 sm:pb-6 flex flex-col justify-between items-center text-center gap-3 sm:gap-4 rounded-none select-none"
-            >
-              {/* Corner Iron Rivets */}
-              <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-              <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-              <div className="absolute bottom-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-              <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-
-              {/* Top Gold Accent Bar */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#FFCC00] border-b-2 border-[#102040]" />
-
-              <div className="flex flex-col items-center text-center gap-2 pt-1">
-                <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
-                  <PixelPhoneIcon size={36} />
+            {/* ================================================================= */}
+            {/* TEAM PHONE: Wooden Checkpoint Signboard                           */}
+            {/* ================================================================= */}
+            <div className="flex flex-col items-center">
+              <div
+                onPointerEnter={() => setActiveCta('join')}
+                onPointerLeave={() => setActiveCta(null)}
+                className="group relative w-full bg-[#FFFDF0] border-[5px] border-[#102040] shadow-[7px_7px_0px_#102040] hover:shadow-[9px_9px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-4 px-5 sm:px-7 pb-5 sm:pb-7 flex flex-col justify-between items-center text-center gap-4 rounded-none select-none"
+                style={{
+                  outline: '3px solid #C88A4A',
+                  outlineOffset: '-7px',
+                }}
+              >
+                {/* Moss / Leaf tuft on top-left corner */}
+                <div className="absolute -top-3 -left-3 pointer-events-none flex">
+                  <div className="w-4 h-4 bg-[#22B14C] border-2 border-[#102040] rounded-sm -rotate-12" />
+                  <div className="w-3 h-3 bg-[#16A34A] border-2 border-[#102040] rounded-sm -ml-1 mt-1" />
                 </div>
-                <h2 className="font-pixel text-xs sm:text-sm text-[#102040] uppercase tracking-wider">
-                  TEAM PHONE
-                </h2>
+
+                {/* 4 Corner Iron Rivet Bolts */}
+                <div className="absolute top-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+                <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+                <div className="absolute bottom-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+                <div className="absolute bottom-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+
+                {/* Top Wooden Plank Header Bar */}
+                <div className="absolute top-0 left-0 right-0 h-3 bg-[#D4A373] border-b-2 border-[#102040]" />
+
+                <div className="flex flex-col items-center text-center gap-2.5 pt-2">
+                  <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
+                    <PixelPhoneIcon size={44} />
+                  </div>
+                  <h2 className="font-pixel text-sm sm:text-base text-[#102040] uppercase tracking-wider font-extrabold">
+                    TEAM PHONE
+                  </h2>
+                </div>
+
+                <ArcadeLink
+                  to="/join"
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                  ctaType="join"
+                  onFocus={() => setActiveCta('join')}
+                  onBlur={() => setActiveCta(null)}
+                >
+                  JOIN MATCH
+                </ArcadeLink>
               </div>
 
-              <ArcadeLink
-                to="/join"
-                variant="secondary"
-                size="md"
-                fullWidth
-                ctaType="join"
-                onFocus={() => setActiveCta('join')}
-                onBlur={() => setActiveCta(null)}
-              >
-                JOIN MATCH
-              </ArcadeLink>
+              {/* Sturdy Wooden Log Support Posts (Planted into ground) */}
+              <div className="hidden sm:flex justify-between w-4/5 px-4 -mt-1 pointer-events-none">
+                <div className="w-7 h-6 bg-[#8C5320] border-x-[3px] border-b-[3px] border-[#102040]" />
+                <div className="w-7 h-6 bg-[#8C5320] border-x-[3px] border-b-[3px] border-[#102040]" />
+              </div>
             </div>
 
-            {/* Admin Portal Checkpoint Card */}
-            <div
-              onPointerEnter={() => setActiveCta('admin')}
-              onPointerLeave={() => setActiveCta(null)}
-              className="group relative bg-[#FFFDF5] border-4 border-[#102040] shadow-[5px_5px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-3 px-4 sm:px-6 pb-4 sm:pb-6 flex flex-col justify-between items-center text-center gap-3 sm:gap-4 rounded-none select-none"
-            >
-              {/* Corner Iron Rivets */}
-              <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-              <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-              <div className="absolute bottom-1.5 left-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-              <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 bg-[#102040] pointer-events-none" />
-
-              {/* Top Emerald Accent Bar */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#22B14C] border-b-2 border-[#102040]" />
-
-              <div className="flex flex-col items-center text-center gap-2 pt-1">
-                <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
-                  <PixelTerminalIcon size={36} />
+            {/* ================================================================= */}
+            {/* EVENT ADMIN: Stone Castle Battlement Signboard                    */}
+            {/* ================================================================= */}
+            <div className="flex flex-col items-center">
+              {/* Castle Battlements & Red Waving Flag Header */}
+              <div className="hidden sm:flex justify-between w-full px-2 -mb-1 z-10 pointer-events-none">
+                <div className="flex gap-1.5">
+                  <div className="w-5 h-4 bg-[#64748B] border-t-[3px] border-x-[3px] border-[#102040]" />
+                  <div className="w-5 h-4 bg-[#64748B] border-t-[3px] border-x-[3px] border-[#102040]" />
+                  <div className="w-5 h-4 bg-[#64748B] border-t-[3px] border-x-[3px] border-[#102040]" />
                 </div>
-                <h2 className="font-pixel text-xs sm:text-sm text-[#102040] uppercase tracking-wider">
-                  EVENT ADMIN
-                </h2>
+                {/* Waving Castle Flag */}
+                <div className="flex items-end -mb-1 mr-1">
+                  <div className="w-5 h-4 bg-[#D32F2F] border-2 border-[#102040] anim-flag-flutter flex items-center justify-center shadow-sm">
+                    <div className="w-2 h-2 bg-[#FFCC00]" />
+                  </div>
+                  <div className="w-1.5 h-6 bg-[#102040]" />
+                </div>
               </div>
 
-              <ArcadeLink
-                to="/admin"
-                variant="primary"
-                size="md"
-                fullWidth
-                ctaType="admin"
-                onFocus={() => setActiveCta('admin')}
-                onBlur={() => setActiveCta(null)}
+              <div
+                onPointerEnter={() => setActiveCta('admin')}
+                onPointerLeave={() => setActiveCta(null)}
+                className="group relative w-full bg-[#F8FAFC] border-[5px] border-[#102040] shadow-[7px_7px_0px_#102040] hover:shadow-[9px_9px_0px_#102040] hover:-translate-y-1.5 transition-all duration-100 ease-out pt-4 px-5 sm:px-7 pb-5 sm:pb-7 flex flex-col justify-between items-center text-center gap-4 rounded-none select-none"
+                style={{
+                  outline: '3px solid #94A3B8',
+                  outlineOffset: '-7px',
+                }}
               >
-                ADMIN CONSOLE
-              </ArcadeLink>
+                {/* 4 Corner Iron Rivet Bolts */}
+                <div className="absolute top-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+                <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+                <div className="absolute bottom-2 left-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+                <div className="absolute bottom-2 right-2 w-2.5 h-2.5 bg-[#102040] pointer-events-none" />
+
+                {/* Top Stone Wall Accent Bar */}
+                <div className="absolute top-0 left-0 right-0 h-3 bg-[#64748B] border-b-2 border-[#102040]" />
+
+                <div className="flex flex-col items-center text-center gap-2.5 pt-2">
+                  <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
+                    <PixelTerminalIcon size={44} />
+                  </div>
+                  <h2 className="font-pixel text-sm sm:text-base text-[#102040] uppercase tracking-wider font-extrabold">
+                    EVENT ADMIN
+                  </h2>
+                </div>
+
+                <ArcadeLink
+                  to="/admin"
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  ctaType="admin"
+                  onFocus={() => setActiveCta('admin')}
+                  onBlur={() => setActiveCta(null)}
+                >
+                  ADMIN CONSOLE
+                </ArcadeLink>
+              </div>
+
+              {/* Sturdy Stone Pillar Support Posts (Planted into ground) */}
+              <div className="hidden sm:flex justify-between w-4/5 px-4 -mt-1 pointer-events-none">
+                <div className="w-7 h-6 bg-[#64748B] border-x-[3px] border-b-[3px] border-[#102040]" />
+                <div className="w-7 h-6 bg-[#64748B] border-x-[3px] border-b-[3px] border-[#102040]" />
+              </div>
             </div>
+          </div>
+
+          {/* Raised Grassy Stage Platform with Daisies (Underneath the Posts) */}
+          <div className="hidden sm:flex flex-col items-center w-full -mt-0.5 pointer-events-none">
+            {/* Top Grass Strip with Wildflowers & Earthy Base */}
+            <div className="w-full h-4 bg-[#22B14C] border-3 border-[#102040] relative flex items-center justify-around px-6">
+              <span className="text-[12px] select-none -mt-1">🌼</span>
+              <span className="text-[12px] select-none -mt-1">🌸</span>
+              <span className="text-[12px] select-none -mt-1">🌼</span>
+              <span className="text-[12px] select-none -mt-1">🌸</span>
+              <span className="text-[12px] select-none -mt-1">🌼</span>
+            </div>
+            <div className="w-full h-2 bg-[#B84418] border-x-3 border-b-3 border-[#102040]" />
           </div>
         </main>
       </div>
 
-      {/* Level 5: Living Pixel World Scene */}
+      {/* ======================================================================= */}
+      {/* LAYER 4: Living Pixel World Ground & Scene                              */}
+      {/* ======================================================================= */}
       <PixelWorld />
     </div>
   );

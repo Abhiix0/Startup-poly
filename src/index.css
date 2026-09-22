@@ -457,6 +457,32 @@
   animation: sparkle-cycle 6s ease-in-out infinite;
 }
 
+@keyframes winged-hover {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+}
+
+@keyframes flag-flutter {
+  0%, 100% {
+    transform: skewY(0deg) scaleX(1);
+  }
+  50% {
+    transform: skewY(-4deg) scaleX(0.92);
+  }
+}
+
+.anim-winged-hover {
+  animation: winged-hover 2.8s ease-in-out infinite;
+}
+
+.anim-flag-flutter {
+  animation: flag-flutter 1.2s steps(2, end) infinite;
+}
+
 /* Interaction Hooks via [data-cta] */
 [data-cta="join"] .world-join-coin-pop {
   animation: pop-coins 0.5s ease-out forwards;
