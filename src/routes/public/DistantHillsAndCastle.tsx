@@ -33,50 +33,71 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
 
         {/* Mid-Distant Rolling Green Rounded Hills */}
         <path
-          d="M 0,280 L 0,200 Q 140,120 280,195 T 560,160 T 840,210 T 1120,165 T 1400,200 L 1440,200 L 1440,280 Z"
+          d="M 0,280 L 0,200 Q 140,120 280,195 T 560,150 T 840,205 T 1120,160 Q 1280,215 1440,230 L 1440,280 Z"
           fill="url(#greenHillsGrad)"
         />
       </svg>
 
       {/* ======================================================================= */}
-      {/* LAYER: Distant Castle Fortress Silhouette (Far Right)                    */}
+      {/* LAYER: Majestic Castle Fortress Silhouette (Elevated and Visible)        */}
       {/* ======================================================================= */}
-      <div className="hidden md:block absolute bottom-14 sm:bottom-18 lg:bottom-20 right-6 sm:right-12 lg:right-18 opacity-80">
+      <div className="hidden sm:block absolute bottom-14 sm:bottom-18 lg:bottom-22 right-4 sm:right-8 lg:right-12 z-0">
         <div className="relative flex flex-col items-center">
-          {/* Main Central Castle Tower */}
+          {/* Main Central Castle Tower with Flag */}
           <div className="relative flex flex-col items-center">
-            {/* Waving Red Flag atop Tower */}
-            <div className="flex items-center -mb-0.5 self-start ml-2">
-              <div className="w-4 h-3 bg-[#D32F2F] border border-[#102040] anim-flag-flutter" />
-              <div className="w-0.5 h-4 bg-[#102040]" />
+            {/* Flagpole mounted right in the center of the conical roof peak */}
+            <div className="relative flex items-end justify-center -mb-0.5">
+              <div className="w-1.5 h-10 bg-[#102040] rounded-t-sm" />
+              {/* Triangular Flag attached at the top of the pole extending right */}
+              <div className="absolute top-0 left-1">
+                <svg
+                  width="28"
+                  height="18"
+                  viewBox="0 0 28 18"
+                  fill="none"
+                  className="anim-flag-flutter origin-left"
+                >
+                  <path d="M0 0 L28 9 L0 18 Z" fill="#E11D48" stroke="#102040" strokeWidth="2" />
+                  <path d="M0 2 L20 9 L0 11 Z" fill="#FB7185" />
+                  <rect x="4" y="7" width="4" height="4" fill="#FFCC00" />
+                </svg>
+              </div>
             </div>
 
             {/* Conical Roof / Battlements */}
-            <div className="w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-b-[20px] border-b-[#334155]" />
-            <div className="w-9 h-3.5 bg-[#334155] border-x-2 border-[#102040] flex justify-between px-0.5">
-              <div className="w-1.5 h-1.5 bg-[#102040]" />
-              <div className="w-1.5 h-1.5 bg-[#102040]" />
+            <div className="w-0 h-0 border-l-[22px] border-l-transparent border-r-[22px] border-r-transparent border-b-[26px] border-b-[#334155]" />
+            <div className="w-13 h-4 bg-[#334155] border-x-2 border-[#102040] flex justify-between px-1">
+              <div className="w-2 h-2 bg-[#102040]" />
+              <div className="w-2 h-2 bg-[#102040]" />
+              <div className="w-2 h-2 bg-[#102040]" />
             </div>
 
-            {/* Tower Body with Arched Window */}
-            <div className="w-8 h-16 bg-[#334155] border-x-2 border-[#102040] flex flex-col items-center pt-2">
-              <div className="w-2.5 h-5 bg-[#102040] rounded-t-sm" />
+            {/* Central Tower Body with Arched Windows */}
+            <div className="w-11 h-28 bg-[#334155] border-x-2 border-[#102040] flex flex-col items-center pt-3 gap-2">
+              <div className="w-3.5 h-6 bg-[#102040] rounded-t-sm" />
+              <div className="w-3 h-5 bg-[#102040] rounded-t-sm" />
             </div>
           </div>
 
-          {/* Left & Right Flanking Turrets */}
-          <div className="w-24 h-12 bg-[#334155] border-t-2 border-x-2 border-[#102040] flex justify-between items-start -mt-10 px-1">
+          {/* Left & Right Flanking Turrets with Battlements */}
+          <div className="w-36 h-20 bg-[#334155] border-t-2 border-x-2 border-[#102040] flex justify-between items-start -mt-18 px-2">
             {/* Left Turret Top */}
-            <div className="flex flex-col items-center -mt-5">
-              <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[12px] border-b-[#334155]" />
-              <div className="w-5 h-2.5 bg-[#334155] border border-[#102040]" />
+            <div className="flex flex-col items-center -mt-7">
+              <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-[#334155]" />
+              <div className="w-7 h-3 bg-[#334155] border-x-2 border-[#102040]" />
+              <div className="w-2.5 h-4 bg-[#102040] rounded-t-sm mt-1" />
             </div>
-            {/* Castle Gate Slit */}
-            <div className="w-5 h-7 bg-[#102040] rounded-t-sm self-end" />
+
+            {/* Castle Main Gate / Portcullis */}
+            <div className="w-8 h-12 bg-[#102040] rounded-t-md self-end flex items-center justify-center">
+              <div className="w-6 h-9 border-t border-x border-[#64748B] rounded-t-sm opacity-60" />
+            </div>
+
             {/* Right Turret Top */}
-            <div className="flex flex-col items-center -mt-5">
-              <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[12px] border-b-[#334155]" />
-              <div className="w-5 h-2.5 bg-[#334155] border border-[#102040]" />
+            <div className="flex flex-col items-center -mt-7">
+              <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-[#334155]" />
+              <div className="w-7 h-3 bg-[#334155] border-x-2 border-[#102040]" />
+              <div className="w-2.5 h-4 bg-[#102040] rounded-t-sm mt-1" />
             </div>
           </div>
         </div>

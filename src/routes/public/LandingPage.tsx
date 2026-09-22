@@ -216,11 +216,19 @@ export const LandingPage: React.FC = () => {
                   <div className="w-4 h-3.5 bg-[#94A3B8] border-t-[3px] border-x-[3px] border-[#181E28]" />
                 </div>
                 {/* Waving Castle Flag on Pole */}
-                <div className="flex items-end -mb-1 mr-0.5">
-                  <div className="w-6 h-4 bg-[#E11D48] border-2 border-[#181E28] anim-flag-flutter flex items-center justify-center shadow-sm">
-                    <div className="w-2 h-2 bg-[#FFCC00]" />
-                  </div>
-                  <div className="w-1.5 h-7 bg-[#181E28]" />
+                <div className="flex items-start -mb-1 mr-0.5">
+                  <div className="w-1.5 h-8 bg-[#181E28] shrink-0 rounded-t-sm" />
+                  <svg
+                    width="24"
+                    height="16"
+                    viewBox="0 0 24 16"
+                    fill="none"
+                    className="anim-flag-flutter origin-left -ml-0.5"
+                  >
+                    <path d="M0 0 L24 8 L0 16 Z" fill="#E11D48" stroke="#181E28" strokeWidth="2" />
+                    <path d="M0 2 L18 8 L0 10 Z" fill="#FB7185" />
+                    <rect x="4" y="6" width="3.5" height="3.5" fill="#FFCC00" />
+                  </svg>
                 </div>
               </div>
 

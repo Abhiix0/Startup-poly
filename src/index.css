@@ -467,20 +467,27 @@
 }
 
 @keyframes flag-flutter {
-  0%, 100% {
-    transform: skewY(0deg) scaleX(1);
+  0% {
+    transform: perspective(120px) rotateY(0deg) skewY(0deg) scaleX(1);
+  }
+  25% {
+    transform: perspective(120px) rotateY(-20deg) skewY(-5deg) scaleX(0.95);
   }
   50% {
-    transform: skewY(-4deg) scaleX(0.92);
+    transform: perspective(120px) rotateY(0deg) skewY(2deg) scaleX(1);
   }
-}
-
-.anim-winged-hover {
-  animation: winged-hover 2.8s ease-in-out infinite;
+  75% {
+    transform: perspective(120px) rotateY(20deg) skewY(5deg) scaleX(0.92);
+  }
+  100% {
+    transform: perspective(120px) rotateY(0deg) skewY(0deg) scaleX(1);
+  }
 }
 
 .anim-flag-flutter {
-  animation: flag-flutter 1.2s steps(2, end) infinite;
+  transform-origin: left center;
+  animation: flag-flutter 1.8s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Interaction Hooks via [data-cta] */

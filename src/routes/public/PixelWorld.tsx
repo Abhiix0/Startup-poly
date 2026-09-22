@@ -127,19 +127,9 @@ export const PixelWorld: React.FC = () => {
             transform: 'translate3d(calc(var(--px, 0) * 3px), calc(var(--py, 0) * 1px), 0)',
           }}
         >
-          {/* Left Hill */}
-          <div className="absolute bottom-0 -left-6 sm:left-2 lg:left-4">
-            <PixelHill size={145} />
-          </div>
-
           {/* Left Sparkles with desynchronized low-duty twinkle */}
           <div className="absolute bottom-12 sm:bottom-16 left-8 sm:left-14 lg:left-20 anim-sparkle-cycle">
             <PixelSparkle size={18} />
-          </div>
-
-          {/* Right Hill */}
-          <div className="hidden md:block absolute bottom-0 right-2 lg:right-4">
-            <PixelHill size={160} />
           </div>
 
           {/* Right Sparkles */}
@@ -169,12 +159,12 @@ export const PixelWorld: React.FC = () => {
             transform: 'translate3d(calc(var(--px, 0) * 5px), calc(var(--py, 0) * 2px), 0)',
           }}
         >
-          {/* LEFT GROUND OBJECTS: Warp Pipe + Stepped Brick Podium + ? Block + Coin + Bug */}
-          <div className="absolute bottom-0 left-2 sm:left-8 lg:left-14 flex items-end gap-2 sm:gap-3">
-            {/* Classic Green Warp Pipe */}
+          {/* LEFT GROUND OBJECTS: Large Warp Pipe + Stepped Brick Podium + ? Block + Coin + Bug */}
+          <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-2 sm:gap-3">
+            {/* Classic Large Green Warp Pipe */}
             <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
-                <PixelPipe width={52} height={38} />
+                <PixelPipe width={68} height={58} />
               </div>
             </div>
 
@@ -202,8 +192,8 @@ export const PixelWorld: React.FC = () => {
             </div>
           </div>
 
-          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Green Warp Pipe + CRT Monitor + Poly */}
-          <div className="absolute bottom-0 right-2 sm:right-8 lg:right-14 flex items-end gap-2 sm:gap-4">
+          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Poly + CRT Monitor + Large Warp Pipe */}
+          <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-2 sm:gap-3.5">
             {/* Floating Question Block and Coins */}
             <div className="hidden md:flex items-end gap-1.5">
               <div className="flex flex-col items-center">
@@ -221,11 +211,9 @@ export const PixelWorld: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Green Warp Pipe */}
-            <div className="hidden sm:flex flex-col items-center">
-              <div className="anim-pipe-highlight">
-                <PixelPipe width={52} height={34} />
-              </div>
+            {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
+            <div className="relative">
+              <Founder size={48} />
             </div>
 
             {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
@@ -233,9 +221,11 @@ export const PixelWorld: React.FC = () => {
               <PixelMonitor size={36} />
             </div>
 
-            {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
-            <div className="relative">
-              <Founder size={48} />
+            {/* Right Large Green Warp Pipe */}
+            <div className="hidden sm:flex flex-col items-center">
+              <div className="anim-pipe-highlight">
+                <PixelPipe width={68} height={54} />
+              </div>
             </div>
           </div>
         </div>
