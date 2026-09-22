@@ -32,7 +32,7 @@ export const WoodenActionButton: React.FC<WoodenActionButtonProps> = ({
         ${fullWidth ? 'w-full' : ''}
         ${
           disabled
-            ? 'opacity-60 cursor-not-allowed filter grayscale'
+            ? 'opacity-85 cursor-not-allowed'
             : 'hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none'
         }
         ${className}

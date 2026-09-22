@@ -10,6 +10,7 @@ import {
   PixelQuestionBlock,
   PixelBug,
   PixelGrassTuft,
+  PixelFlower,
   PixelSparkle,
   PixelMonitor,
 } from '../../ui/pixel';
@@ -118,7 +119,7 @@ export const PixelWorld: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 4: GROUND DECORATIONS (Hills, Grass Tufts, Sparkles)               */}
+        {/* LAYER 4: GROUND DECORATIONS (Hills, Grass Tufts, Sparkles, Flowers)     */}
         {/* ========================================================================= */}
         <div
           data-layer="4-ground-deco"
@@ -127,19 +128,9 @@ export const PixelWorld: React.FC = () => {
             transform: 'translate3d(calc(var(--px, 0) * 3px), calc(var(--py, 0) * 1px), 0)',
           }}
         >
-          {/* Left Hill */}
-          <div className="absolute bottom-0 -left-6 sm:left-2 lg:left-6">
-            <PixelHill size={135} />
-          </div>
-
           {/* Left Sparkles with desynchronized low-duty twinkle */}
           <div className="absolute bottom-12 sm:bottom-16 left-8 sm:left-14 lg:left-20 anim-sparkle-cycle">
             <PixelSparkle size={18} />
-          </div>
-
-          {/* Right Hill */}
-          <div className="hidden md:block absolute bottom-0 right-2 lg:right-6">
-            <PixelHill size={150} />
           </div>
 
           {/* Right Sparkles */}
@@ -169,47 +160,101 @@ export const PixelWorld: React.FC = () => {
             transform: 'translate3d(calc(var(--px, 0) * 5px), calc(var(--py, 0) * 2px), 0)',
           }}
         >
-          {/* Left Pipe with Popping Coins */}
-          <div className="flex absolute bottom-0 left-6 sm:left-24 lg:left-32 flex-col items-center">
-            <div className="flex gap-1.5 -mb-1.5 anim-coin-idle world-join-coin-pop">
-              <PixelCoin size={20} />
-              <PixelCoin size={22} />
+          {/* LEFT GROUND OBJECTS: Daisy Flower & Grass + Warp Pipe + Grass + Brick Podium + Orange Flower */}
+          <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-1.5 sm:gap-2.5">
+            {/* Leftmost Daisy Flower & Grass tuft */}
+            <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
+              <PixelFlower size={20} variant={1} />
+              <PixelGrassTuft size={18} variant={1} />
             </div>
-            <div className="anim-pipe-highlight">
-              <PixelPipe width={58} height={36} />
+
+            {/* Classic Large Green Warp Pipe */}
+            <div className="flex flex-col items-center">
+              <div className="anim-pipe-highlight">
+                <PixelPipe width={68} height={58} />
+              </div>
+            </div>
+
+            {/* Grass tuft between pipe & brick podium */}
+            <div className="hidden sm:block mb-0.5">
+              <PixelGrassTuft size={18} variant={2} />
+            </div>
+
+            {/* Stepped Brick Podium with ? Block & Bug */}
+            <div className="hidden sm:flex items-end gap-1.5">
+              {/* Coin hovering */}
+              <div className="flex flex-col items-center -mb-1">
+                <div className="anim-coin-idle">
+                  <PixelCoin size={18} />
+                </div>
+                {/* Floating Question Block */}
+                <div className="anim-block-cycle world-block-highlight">
+                  <PixelQuestionBlock size={28} />
+                </div>
+              </div>
+
+              {/* Stepped Brick Block with Walking Bug */}
+              <div className="flex flex-col items-center">
+                <PixelBug size={24} className="mb-0.5" />
+                <div className="flex">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Orange Wildflower beside Brick podium */}
+            <div className="hidden sm:block mb-0.5">
+              <PixelFlower size={20} variant={2} />
             </div>
           </div>
 
-          {/* Left Floating Question Block */}
-          <div className="absolute bottom-13 sm:bottom-16 left-26 sm:left-50 anim-block-cycle world-block-highlight">
-            <PixelQuestionBlock size={32} />
-          </div>
-
-          {/* Critter Bug (Medium+ screens) */}
-          <div className="hidden lg:flex absolute bottom-0 left-56 flex-col items-center">
-            <PixelBug size={32} className="mb-0.5" />
-            <div className="flex">
-              <div className="w-8 h-8 bg-[#B84418] border-2 border-[#102040]" />
-              <div className="w-8 h-8 bg-[#B84418] border-2 border-[#102040]" />
+          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Poly + CRT Monitor + Grass + Pipe + Daisy + Grass */}
+          <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-1.5 sm:gap-3">
+            {/* Floating Question Block and Coins */}
+            <div className="hidden md:flex items-end gap-1.5">
+              <div className="flex flex-col items-center">
+                <div className="anim-block-cycle world-block-highlight">
+                  <PixelQuestionBlock size={28} />
+                </div>
+              </div>
+              <div className="flex items-center gap-1 mb-1">
+                <div className="anim-coin-idle">
+                  <PixelCoin size={18} />
+                </div>
+                <div className="anim-coin-idle" style={{ animationDelay: '-0.4s' }}>
+                  <PixelCoin size={18} />
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Right Floating Question Block */}
-          <div
-            className="hidden md:block absolute bottom-14 sm:bottom-18 right-26 lg:right-36 anim-block-cycle world-block-highlight"
-            style={{ animationDelay: '-4s' }}
-          >
-            <PixelQuestionBlock size={36} />
-          </div>
+            {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
+            <div className="relative">
+              <Founder size={48} />
+            </div>
 
-          {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
-          <div className="hidden lg:block absolute bottom-0 right-60 world-admin-monitor">
-            <PixelMonitor size={42} />
-          </div>
+            {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
+            <div className="hidden lg:block world-admin-monitor mb-1">
+              <PixelMonitor size={36} />
+            </div>
 
-          {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
-          <div className="absolute bottom-0 right-6 sm:right-10 lg:right-20">
-            <Founder size={52} />
+            {/* Grass tuft beside right warp pipe */}
+            <div className="hidden sm:block mb-0.5">
+              <PixelGrassTuft size={18} variant={1} />
+            </div>
+
+            {/* Right Large Green Warp Pipe */}
+            <div className="hidden sm:flex flex-col items-center">
+              <div className="anim-pipe-highlight">
+                <PixelPipe width={68} height={54} />
+              </div>
+            </div>
+
+            {/* Daisy Wildflower & Grass to the right of the Warp pipe */}
+            <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
+              <PixelFlower size={20} variant={1} />
+              <PixelGrassTuft size={18} variant={2} />
+            </div>
           </div>
         </div>
       </div>
@@ -221,7 +266,7 @@ export const PixelWorld: React.FC = () => {
         <PixelBrickTile hasGrass={true} className="h-7 sm:h-8 w-full" />
         <div className="bg-[#102040] pt-1.5 sm:pt-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-[#FFCC00]">
           <p className="font-pixel text-[8px] sm:text-[9px] text-[#FFCC00] tracking-wider">
-            STARTUPOLY © 2026
+            ★ &nbsp; WORLD 01 · STARTUPOLY © 2026 &nbsp; ★
           </p>
         </div>
       </div>

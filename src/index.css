@@ -457,6 +457,39 @@
   animation: sparkle-cycle 6s ease-in-out infinite;
 }
 
+@keyframes winged-hover {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+}
+
+@keyframes flag-flutter {
+  0% {
+    transform: perspective(120px) rotateY(0deg) skewY(0deg) scaleX(1);
+  }
+  25% {
+    transform: perspective(120px) rotateY(-20deg) skewY(-5deg) scaleX(0.95);
+  }
+  50% {
+    transform: perspective(120px) rotateY(0deg) skewY(2deg) scaleX(1);
+  }
+  75% {
+    transform: perspective(120px) rotateY(20deg) skewY(5deg) scaleX(0.92);
+  }
+  100% {
+    transform: perspective(120px) rotateY(0deg) skewY(0deg) scaleX(1);
+  }
+}
+
+.anim-flag-flutter {
+  transform-origin: left center;
+  animation: flag-flutter 1.8s ease-in-out infinite;
+  will-change: transform;
+}
+
 /* Interaction Hooks via [data-cta] */
 [data-cta="join"] .world-join-coin-pop {
   animation: pop-coins 0.5s ease-out forwards;
@@ -932,6 +965,22 @@
   background-size: 100% 26px, 48px 26px;
 }
 
+@keyframes scene-fade-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-scene-transition {
+  animation: scene-fade-slide 200ms ease-out both;
+  will-change: opacity, transform;
+}
+
 /* Global Prefers Reduced Motion Rule */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -942,7 +991,8 @@
   }
 
   .entrance-anim,
-  [data-entrance] {
+  [data-entrance],
+  .anim-scene-transition {
     opacity: 1 !important;
     transform: none !important;
   }
@@ -966,3 +1016,4 @@
     animation: none !important;
   }
 }
+

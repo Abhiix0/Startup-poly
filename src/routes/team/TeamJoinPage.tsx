@@ -124,17 +124,18 @@ export const TeamJoinPage: React.FC = () => {
 
   return (
     <PlainsBackground>
-      {/* Top Navbar / World Map Arrow Signpost */}
+      {/* Top Navbar / World Map Signpost & Checkpoint Badge */}
       <header className="p-3 sm:p-4 flex items-center justify-between z-20">
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 font-pixel text-xs bg-[#102040] text-[#FFCC00] px-3 py-1.5 border-2 border-[#102040] shadow-[3px_3px_0px_#102040] hover:bg-[#22B14C] hover:text-white transition-transform active:translate-x-0.5 active:translate-y-0.5"
+          className="inline-flex items-center gap-2 font-pixel text-xs bg-[#102040] text-[#FFCC00] px-3 sm:px-4 py-2 border-2 border-[#102040] shadow-[3px_3px_0px_#102040] hover:bg-[#22B14C] hover:text-white transition-transform active:translate-x-0.5 active:translate-y-0.5"
         >
-          <span>◄</span>
+          <span className="text-sm">🗺️</span>
           <span>WORLD MAP</span>
         </Link>
-        <span className="font-pixel text-[10px] text-[#102040] bg-[#FFCC00] px-3 py-1 border-2 border-[#102040] shadow-[2px_2px_0px_#102040]">
-          🍄 CHECKPOINT
+        <span className="inline-flex items-center gap-1.5 font-pixel text-[10px] sm:text-xs text-[#102040] bg-[#FFCC00] px-3 sm:px-4 py-1.5 border-2 border-[#102040] shadow-[3px_3px_0px_#102040] font-black tracking-wider">
+          <span>🚩</span>
+          <span>CHECKPOINT</span>
         </span>
       </header>
 
@@ -151,9 +152,8 @@ export const TeamJoinPage: React.FC = () => {
 
         {/* Central Wooden Checkpoint Signboard */}
         <WoodenSignboard
-          title="🍄 JOIN THE MATCH"
+          title="JOIN THE MATCH"
           subtitle="ENTER YOUR ROOM CODE"
-          instruction="LOOK AT THE BIG SCREEN FOR YOUR CODE"
           state={errorMessage ? 'shake' : isSuccess ? 'bounce' : 'idle'}
           maxWidth="max-w-md"
         >
@@ -185,15 +185,6 @@ export const TeamJoinPage: React.FC = () => {
               <form onSubmit={handleJoin} className="flex flex-col gap-4">
                 {/* Step 1: 6-Character Physical Block Slots */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040] drop-shadow-[1px_1px_0px_rgba(255,255,255,0.6)]">
-                      1. ROOM CODE
-                    </label>
-                    <span className="font-mono text-[10px] text-[#102040]/80 font-bold">
-                      {roomCode.length}/6
-                    </span>
-                  </div>
-
                   <PixelInputSlots
                     value={roomCode}
                     onChange={handleRoomCodeChange}
@@ -211,8 +202,8 @@ export const TeamJoinPage: React.FC = () => {
                 {/* Step 2: Team Tiles (Embedded Wooden Badges) */}
                 {lobbyTeams.length > 0 && (
                   <div className="flex flex-col gap-1.5 pt-1 border-t-2 border-[#102040]/20">
-                    <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040] drop-shadow-[1px_1px_0px_rgba(255,255,255,0.6)]">
-                      2. CHOOSE YOUR TEAM
+                    <label className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-[#FFF5D6] drop-shadow-[1px_1px_0px_#102040]">
+                      CHOOSE YOUR TEAM
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       {lobbyTeams.map((t) => {
@@ -266,11 +257,11 @@ export const TeamJoinPage: React.FC = () => {
                     <div className="flex items-center justify-between mb-1">
                       <label
                         htmlFor="secret-pin"
-                        className="font-pixel text-[11px] uppercase tracking-wider text-[#102040] drop-shadow-[1px_1px_0px_rgba(255,255,255,0.6)]"
+                        className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-[#FFF5D6] drop-shadow-[1px_1px_0px_#102040]"
                       >
-                        3. SECRET TEAM PIN
+                        SECRET TEAM PIN
                       </label>
-                      <span className="font-mono text-[10px] text-[#102040]/80">
+                      <span className="font-mono text-[10px] text-[#FFF5D6]/80">
                         4 Digits
                       </span>
                     </div>
@@ -297,34 +288,32 @@ export const TeamJoinPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* Wooden Plank Action Button */}
-                {lobbyTeams.length > 0 && (
-                  <div className="pt-2">
-                    <WoodenActionButton
-                      type="submit"
-                      variant="gold"
-                      disabled={
-                        roomCode.length !== 6 ||
-                        selectedSlot === null ||
-                        pin.length !== 4 ||
-                        isJoining
-                      }
-                      isLoading={isJoining}
-                    >
-                      ENTER WORLD →
-                    </WoodenActionButton>
-                  </div>
-                )}
+                {/* Golden Wooden Plank Action Button */}
+                <div className="pt-1">
+                  <WoodenActionButton
+                    type="submit"
+                    variant="gold"
+                    aria-label={lobbyTeams.length > 0 ? 'ENTER WORLD' : 'JOIN MATCH'}
+                    disabled={
+                      roomCode.length !== 6 ||
+                      (lobbyTeams.length > 0 && (selectedSlot === null || pin.length !== 4)) ||
+                      isJoining
+                    }
+                    isLoading={isJoining}
+                  >
+                    {lobbyTeams.length > 0 ? 'ENTER WORLD →' : 'JOIN MATCH →'}
+                  </WoodenActionButton>
+                </div>
               </form>
             </>
           )}
         </WoodenSignboard>
 
-        {/* Pixel Mascot Poly Patrols The Ground (Mobile & Desktop) */}
+        {/* Pixel Mascot Poly Patrols The Ground (with "Let's play!" speech bubble) */}
         <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
           <RoamingCharacter
             size={52}
-            bubbleText={isSuccess ? 'Lets Go!!' : 'Enter Code!'}
+            bubbleText={isSuccess ? 'Lets Go!!' : "Let's play!"}
             isCheering={isSuccess}
           />
         </div>
