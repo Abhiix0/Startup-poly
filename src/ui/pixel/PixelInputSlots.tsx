@@ -75,33 +75,31 @@ export const PixelInputSlots: React.FC<PixelInputSlotsProps> = ({
               ${
                 hasError
                   ? 'bg-[#FEE2E2] border-[#D32F2F]'
-                  : isFilled
-                  ? 'bg-[#FFFBEB] shadow-[2px_2px_0px_#102040]'
-                  : 'bg-[#5A2C0D]/20 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.4)]'
+                  : 'bg-[#FFFBEB] border-[#102040]'
               }
               ${isActive ? 'anim-slot-active ring-2 ring-[#FFCC00]' : ''}
             `}
             style={{
               boxShadow: isFilled
                 ? '3px 3px 0px #102040'
-                : 'inset 2px 2px 0px rgba(0,0,0,0.5), 1px 1px 0px rgba(255,255,255,0.2)',
+                : '2px 2px 0px #102040',
             }}
           >
             {/* Top Inset Highlight */}
-            <div className="absolute top-0 inset-x-0 h-0.5 sm:h-1 bg-white/40 pointer-events-none" />
+            <div className="absolute top-0 inset-x-0 h-0.5 sm:h-1 bg-white/60 pointer-events-none" />
 
-            {/* Character */}
+            {/* Character or Centered Dash */}
             {char ? (
               <span className="font-pixel text-base sm:text-xl md:text-2xl text-[#102040] font-black drop-shadow-[1px_1px_0px_rgba(255,255,255,0.8)]">
                 {char}
               </span>
             ) : (
-              <span className="font-pixel text-xs text-[#102040]/30">_</span>
+              <span className="font-pixel text-sm sm:text-base text-[#102040]/30 font-bold select-none">-</span>
             )}
 
             {/* Blinking typing underline indicator on empty active slot */}
             {isActive && !char && (
-              <div className="absolute bottom-2 inset-x-2 h-1 bg-[#FFCC00] anim-blink" />
+              <div className="absolute bottom-1.5 inset-x-2 h-1 bg-[#FFCC00] anim-blink" />
             )}
           </div>
         );
