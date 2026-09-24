@@ -1,5 +1,5 @@
 import React from 'react';
-import { PixelQuestionBlock, PixelCoin, PixelGrassTuft, RetroCoin } from '../../ui/pixel';
+import { PixelQuestionBlock, PixelCoin, PixelGrassTuft } from '../../ui/pixel';
 
 export const FloatingPlatforms: React.FC<{ className?: string }> = ({ className = '' }) => {
   return (
@@ -10,14 +10,14 @@ export const FloatingPlatforms: React.FC<{ className?: string }> = ({ className 
       {/* ======================================================================= */}
       {/* UPPER-LEFT FLOATING ISLAND                                             */}
       {/* ======================================================================= */}
-      <div className="hidden sm:block absolute top-8 sm:top-12 md:top-16 left-6 sm:left-10 md:left-14 lg:left-20">
+      <div className="hidden sm:block absolute top-8 sm:top-12 md:top-16 left-3 sm:left-6 md:left-10 lg:left-14">
         {/* Floating Island Group */}
         <div className="relative flex flex-col items-center">
           {/* Top Row: Coin above ? Block + Wildflower */}
           <div className="w-full flex items-end justify-between px-2 mb-1">
             <div className="flex flex-col items-center">
-              <div className="-mb-1">
-                <RetroCoin size={20} />
+              <div className="anim-coin-idle -mb-1">
+                <PixelCoin size={20} />
               </div>
               <div className="anim-block-cycle">
                 <PixelQuestionBlock size={32} />
@@ -64,13 +64,19 @@ export const FloatingPlatforms: React.FC<{ className?: string }> = ({ className 
       {/* ======================================================================= */}
       {/* UPPER-RIGHT FLOATING ISLAND                                            */}
       {/* ======================================================================= */}
-      <div className="hidden sm:block absolute top-10 sm:top-14 md:top-20 right-6 sm:right-10 md:right-14 lg:right-20">
+      <div className="hidden sm:block absolute top-10 sm:top-14 md:top-20 right-3 sm:right-6 md:right-10 lg:right-14">
         <div className="relative flex flex-col items-center">
           {/* Top Row: 3 Gold Coins in a Row + Winged Flying Critter */}
           <div className="flex items-center gap-2 mb-1.5 px-2">
-            <RetroCoin size={20} style={{ animationDelay: '0s' }} />
-            <RetroCoin size={20} style={{ animationDelay: '-0.25s' }} />
-            <RetroCoin size={20} style={{ animationDelay: '-0.5s' }} />
+            <div className="anim-coin-idle">
+              <PixelCoin size={22} />
+            </div>
+            <div className="anim-coin-idle" style={{ animationDelay: '-0.3s' }}>
+              <PixelCoin size={22} />
+            </div>
+            <div className="anim-coin-idle" style={{ animationDelay: '-0.6s' }}>
+              <PixelCoin size={22} />
+            </div>
           </div>
 
           {/* Winged Red Flying Critter (Beside Platform) */}
