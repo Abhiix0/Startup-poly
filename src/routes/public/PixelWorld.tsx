@@ -171,7 +171,8 @@ export const PixelWorld: React.FC = () => {
             {/* Classic Large Green Warp Pipe */}
             <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
-                <PixelPipe width={68} height={58} />
+                <PixelPipe width={56} height={50} className="sm:hidden" />
+                <PixelPipe width={68} height={58} className="hidden sm:inline-block" />
               </div>
             </div>
 
@@ -230,7 +231,7 @@ export const PixelWorld: React.FC = () => {
 
             {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
             <div className="relative z-20">
-              <Founder size={48} />
+              <Founder size={46} className="scale-90 sm:scale-100 origin-bottom" />
             </div>
 
             {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
@@ -244,9 +245,10 @@ export const PixelWorld: React.FC = () => {
             </div>
 
             {/* Right Large Green Warp Pipe */}
-            <div className="hidden sm:flex flex-col items-center">
+            <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
-                <PixelPipe width={68} height={54} />
+                <PixelPipe width={56} height={50} className="sm:hidden" />
+                <PixelPipe width={68} height={54} className="hidden sm:inline-block" />
               </div>
             </div>
 
