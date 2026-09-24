@@ -578,86 +578,259 @@
 
 :root {
   --founder-patrol-dist: -140px;
+  --founder-run-left-pipe: calc(-76vw + 30px);
 }
 
-@media (min-width: 640px) {
+@media (max-width: 639px) {
   :root {
-    --founder-patrol-dist: -180px;
+    --founder-patrol-dist: -140px;
+    --founder-run-left-pipe: -230px;
   }
 }
 
 @keyframes founder-ground-roam {
-  0%, 5% {
+  /* 0% - 4%: Home idle */
+  0%, 4% {
     transform: translate3d(0, 0, 0);
+    animation-timing-function: linear;
   }
-  24%, 44% {
-    transform: translate3d(var(--founder-patrol-dist, -140px), 0, 0);
+
+  /* 4% - 8%: Run right towards right pipe */
+  8% {
+    transform: translate3d(65px, 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
-  64%, 100% {
+
+  /* 8% - 13%: Jump over right pipe */
+  10.5% {
+    transform: translate3d(115px, -66px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  13% {
+    transform: translate3d(165px, 0, 0);
+    animation-timing-function: ease-out;
+  }
+
+  /* 13% - 17%: Far right edge explore & turn */
+  15%, 17% {
+    transform: translate3d(175px, 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 17% - 22%: Jump back over right pipe */
+  19.5% {
+    transform: translate3d(115px, -66px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  22% {
+    transform: translate3d(55px, 0, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 22% - 26%: Run left past home towards question block */
+  26% {
+    transform: translate3d(-45px, 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 26% - 30%: Hop up to punch question block */
+  28% {
+    transform: translate3d(-75px, -46px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  30% {
+    transform: translate3d(-105px, 0, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 30% - 46%: Sprint across open ground to the left */
+  46% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 95px), 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 46% - 52%: Jump over left warp pipe */
+  49% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 35px), -74px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  52% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) - 25px), 0, 0);
+    animation-timing-function: ease-out;
+  }
+
+  /* 52% - 54%: Far left pause & turn */
+  54% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) - 25px), 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 54% - 57%: Celebratory little victory bounce */
+  55.5% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) - 25px), -24px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  57%, 58% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) - 20px), 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 58% - 64%: Jump back over left warp pipe */
+  61% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 35px), -74px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  64% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 95px), 0, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 64% - 80%: Sprint back across the field towards home */
+  72% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) * 0.45), 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  73.5% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) * 0.35), -28px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  75% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) * 0.25), 0, 0);
+    animation-timing-function: linear;
+  }
+  80% {
+    transform: translate3d(-50px, 0, 0);
+    animation-timing-function: ease-out;
+  }
+
+  /* 80% - 88%: Arrive back at home base */
+  88%, 100% {
     transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes founder-turn-facing {
-  0%, 23.9% {
+  0%, 15.9% {
+    transform: scaleX(1);
+  }
+  16%, 53.9% {
     transform: scaleX(-1);
   }
-  24%, 43.9% {
-    transform: scaleX(1);
-  }
-  44%, 63.9% {
-    transform: scaleX(1);
-  }
-  64%, 100% {
+  54%, 100% {
     transform: scaleX(1);
   }
 }
 
 @keyframes founder-legs-patrol {
-  /* Walk Left 0% - 24% */
-  0%, 2.7%, 5.4%, 8.1%, 10.8%, 13.5%, 16.2%, 18.9%, 21.6% {
+  /* 0% - 4%: Home idle */
+  0%, 3.9% {
+    transform: translateX(0%);
+  }
+
+  /* 4% - 8%: Running right */
+  4%, 4.9%, 5.8%, 6.7%, 7.6% {
     transform: translateX(-28.5714%);
   }
-  0.9%, 3.6%, 6.3%, 9.0%, 11.7%, 14.4%, 17.1%, 19.8%, 22.5% {
+  4.3%, 5.2%, 6.1%, 7.0% {
     transform: translateX(-42.8571%);
   }
-  1.8%, 4.5%, 7.2%, 9.9%, 12.6%, 15.3%, 18.0%, 20.7%, 23.4% {
+  4.6%, 5.5%, 6.4%, 7.3% {
     transform: translateX(-57.1428%);
   }
 
-  /* Pause Left 24% - 44% */
-  24%, 33% {
-    transform: translateX(0%);
+  /* 8% - 13%: Jump over right pipe (Hop pose) */
+  8%, 12.9% {
+    transform: translateX(-71.428%);
   }
-  34%, 41% {
-    transform: translateX(-14.2857%);
-  }
-  42%, 43.9% {
+
+  /* 13% - 17%: Far right pause */
+  13%, 16.9% {
     transform: translateX(0%);
   }
 
-  /* Walk Right 44% - 64% */
-  44%, 46.7%, 49.4%, 52.1%, 54.8%, 57.5%, 60.2%, 62.9% {
+  /* 17% - 22%: Jump back over right pipe (Hop pose) */
+  17%, 21.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 22% - 26%: Run left */
+  22%, 22.9%, 23.8%, 24.7%, 25.6% {
     transform: translateX(-28.5714%);
   }
-  44.9%, 47.6%, 50.3%, 53.0%, 55.7%, 58.4%, 61.1%, 63.8% {
+  22.3%, 23.2%, 24.1%, 25.0% {
     transform: translateX(-42.8571%);
   }
-  45.8%, 48.5%, 51.2%, 53.9%, 56.6%, 59.3%, 62.0% {
+  22.6%, 23.5%, 24.4%, 25.3% {
     transform: translateX(-57.1428%);
   }
 
-  /* Pause Home 64% - 100% */
-  64%, 78% {
+  /* 26% - 30%: Question block punch hop */
+  26%, 29.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 30% - 46%: Sprint across open ground */
+  30%, 31%, 32%, 33%, 34%, 35%, 36%, 37%, 38%, 39%, 40%, 41%, 42%, 43%, 44%, 45% {
+    transform: translateX(-28.5714%);
+  }
+  30.3%, 31.3%, 32.3%, 33.3%, 34.3%, 35.3%, 36.3%, 37.3%, 38.3%, 39.3%, 40.3%, 41.3%, 42.3%, 43.3%, 44.3%, 45.3% {
+    transform: translateX(-42.8571%);
+  }
+  30.6%, 31.6%, 32.6%, 33.6%, 34.6%, 35.6%, 36.6%, 37.6%, 38.6%, 39.6%, 40.6%, 41.6%, 42.6%, 43.6%, 44.6%, 45.6% {
+    transform: translateX(-57.1428%);
+  }
+
+  /* 46% - 52%: Jump over left pipe */
+  46%, 51.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 52% - 54%: Far left pause */
+  52%, 53.9% {
     transform: translateX(0%);
   }
-  79%, 87% {
-    transform: translateX(-14.2857%);
+
+  /* 54% - 57%: Victory bounce hop */
+  54%, 56.9% {
+    transform: translateX(-71.428%);
   }
-  88%, 93% {
-    transform: translateX(-85.714%);
+
+  /* 57% - 58%: Land */
+  57%, 57.9% {
+    transform: translateX(0%);
   }
-  94%, 100% {
+
+  /* 58% - 64%: Jump back over left pipe */
+  58%, 63.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 64% - 80%: Sprint back across field */
+  64%, 65%, 66%, 67%, 68%, 69%, 70%, 71%, 75%, 76%, 77%, 78%, 79% {
+    transform: translateX(-28.5714%);
+  }
+  64.3%, 65.3%, 66.3%, 67.3%, 68.3%, 69.3%, 70.3%, 71.3%, 75.3%, 76.3%, 77.3%, 78.3%, 79.3% {
+    transform: translateX(-42.8571%);
+  }
+  64.6%, 65.6%, 66.6%, 67.6%, 68.6%, 69.6%, 70.6%, 71.6%, 75.6%, 76.6%, 77.6%, 78.6%, 79.6% {
+    transform: translateX(-57.1428%);
+  }
+
+  /* 72% - 75%: Mid-field hop */
+  72%, 74.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 80% - 88%: Decelerate to home */
+  80%, 82%, 84%, 86% {
+    transform: translateX(-28.5714%);
+  }
+  81%, 83%, 85%, 87% {
+    transform: translateX(-42.8571%);
+  }
+
+  /* 88% - 100%: Home rest */
+  88%, 100% {
     transform: translateX(0%);
   }
 }
@@ -671,15 +844,15 @@
 }
 
 .anim-founder-roam {
-  animation: founder-ground-roam 16s ease-in-out infinite;
+  animation: founder-ground-roam 22s ease-in-out infinite;
 }
 
 [data-phase="idle"] .founder-character-container {
-  animation: founder-turn-facing 16s steps(1) infinite;
+  animation: founder-turn-facing 22s steps(1) infinite;
 }
 
 [data-phase="idle"] .anim-founder-roam .poly-sprite-strip {
-  animation: founder-legs-patrol 16s steps(1) infinite !important;
+  animation: founder-legs-patrol 22s steps(1) infinite !important;
 }
 
 .anim-poly-idle {

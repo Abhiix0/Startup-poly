@@ -229,7 +229,7 @@ export const PixelWorld: React.FC = () => {
             </div>
 
             {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
-            <div className="relative">
+            <div className="relative z-20">
               <Founder size={48} />
             </div>
 
