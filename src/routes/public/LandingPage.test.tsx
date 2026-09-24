@@ -188,23 +188,28 @@ describe('LandingPage Hero Rebuild', () => {
     // Step 6: Tagline plaque entrance
     expect(container.querySelector('.anim-entrance-tagline')).toBeInTheDocument();
 
-    // Step 7: Portals container entrance
-    const ctasContainer = container.querySelector('.anim-entrance-ctas');
-    expect(ctasContainer).toBeInTheDocument();
+    // Step 7: Staggered Card Arrivals & Grounded Stage Platform
+    const phoneCard = container.querySelector('.anim-card-arrival-phone');
+    const adminCard = container.querySelector('.anim-card-arrival-admin');
+    const stagePlatform = container.querySelector('.anim-stage-arrival');
+
+    expect(phoneCard).toBeInTheDocument();
+    expect(adminCard).toBeInTheDocument();
+    expect(stagePlatform).toBeInTheDocument();
 
     // Confirm links remain clickable and interactive during boot sequence
     const joinLink = screen.getByRole('link', { name: /JOIN MATCH/i });
     expect(joinLink).not.toHaveAttribute('aria-hidden');
     expect(joinLink).not.toBeDisabled();
 
-    // Trigger onAnimationEnd on the last step (ctasContainer)
-    if (ctasContainer) {
-      fireEvent.animationEnd(ctasContainer);
+    // Trigger onAnimationEnd on the last arriving card (adminCard)
+    if (adminCard) {
+      fireEvent.animationEnd(adminCard);
     }
     expect(sessionStorage.getItem('startupoly:landing-seen')).toBe('true');
   });
 
-  it('Phase 2: confirms repeat visits skip boot sequence entirely', () => {
+  it('Phase 2 & 3: confirms repeat visits skip boot sequence and card arrivals entirely', () => {
     sessionStorage.setItem('startupoly:landing-seen', 'true');
 
     const { container } = render(
@@ -218,8 +223,32 @@ describe('LandingPage Hero Rebuild', () => {
     expect(container.querySelector('.anim-entrance-word-1')).toBeNull();
     expect(container.querySelector('.anim-boot-live-indicator')).toBeNull();
     expect(container.querySelector('.anim-entrance-tagline')).toBeNull();
-    expect(container.querySelector('.anim-entrance-ctas')).toBeNull();
+    expect(container.querySelector('.anim-card-arrival-phone')).toBeNull();
+    expect(container.querySelector('.anim-card-arrival-admin')).toBeNull();
+    expect(container.querySelector('.anim-stage-arrival')).toBeNull();
     // Live pulse is still present
     expect(container.querySelector('.anim-live-dot')).toBeInTheDocument();
+  });
+
+  it('Phase 3: verifies staggered card arrival choreography classes and interactive accessibility', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    // Primary CTA arrives with phone arrival class
+    const phoneCardWrapper = container.querySelector('.anim-card-arrival-phone');
+    expect(phoneCardWrapper).toBeInTheDocument();
+    expect(phoneCardWrapper).toHaveTextContent('TEAM PHONE');
+
+    // Secondary CTA arrives with admin arrival class
+    const adminCardWrapper = container.querySelector('.anim-card-arrival-admin');
+    expect(adminCardWrapper).toBeInTheDocument();
+    expect(adminCardWrapper).toHaveTextContent('EVENT ADMIN');
+
+    // Ground stage platform arrives in sync
+    const stagePlatform = container.querySelector('.anim-stage-arrival');
+    expect(stagePlatform).toBeInTheDocument();
   });
 });

@@ -127,14 +127,11 @@ export const LandingPage: React.FC = () => {
 
         {/* Main Portals Grid (Level 4 Primary Checkpoints) */}
         <main className="relative max-w-3xl w-full mx-auto px-4 py-1 flex flex-col justify-center z-10">
-          <div
-            onAnimationEnd={handleEntranceEnd}
-            className={`grid grid-cols-1 sm:grid-cols-[1.15fr_0.85fr] gap-6 sm:gap-6 items-end justify-items-center ${isFirstVisit ? 'anim-entrance-ctas' : ''}`}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-[1.15fr_0.85fr] gap-6 sm:gap-6 items-end justify-items-center">
             {/* ================================================================= */}
             {/* PRIMARY HERO CTA: TEAM PHONE (Wooden Checkpoint Signboard)       */}
             {/* ================================================================= */}
-            <div className="flex flex-col items-center w-full max-w-[360px]">
+            <div className={`flex flex-col items-center w-full max-w-[360px] ${isFirstVisit ? 'anim-card-arrival-phone' : ''}`}>
               <div
                 onPointerEnter={() => setActiveCta('join')}
                 onPointerLeave={() => setActiveCta(null)}
@@ -219,7 +216,10 @@ export const LandingPage: React.FC = () => {
             {/* ================================================================= */}
             {/* SECONDARY UTILITY CTA: EVENT ADMIN (Subordinate Castle Console)    */}
             {/* ================================================================= */}
-            <div className="flex flex-col items-center w-full max-w-[280px] opacity-90 hover:opacity-100 transition-opacity">
+            <div
+              onAnimationEnd={handleEntranceEnd}
+              className={`flex flex-col items-center w-full max-w-[280px] opacity-90 hover:opacity-100 transition-opacity ${isFirstVisit ? 'anim-card-arrival-admin' : ''}`}
+            >
               {/* Castle Battlements & Compact Waving Flag Header */}
               <div className="hidden sm:flex justify-between items-end w-full px-1 -mb-1 z-10 pointer-events-none">
                 {/* 5 Compact Castle Merlons */}
@@ -319,7 +319,7 @@ export const LandingPage: React.FC = () => {
           {/* ================================================================= */}
           {/* Grounded 16-Bit Stage Platform (Chunky Brick/Dirt Foundation)     */}
           {/* ================================================================= */}
-          <div className="hidden sm:flex flex-col items-center w-full -mt-0.5 pointer-events-none select-none">
+          <div className={`hidden sm:flex flex-col items-center w-full -mt-0.5 pointer-events-none select-none ${isFirstVisit ? 'anim-stage-arrival' : ''}`}>
             {/* Top Grass Strip with Wildflowers & Tuft Decor */}
             <div className="w-full h-4 sm:h-5 bg-[#22C55E] border-x-[3px] border-t-[3px] border-[#181512] relative flex items-center justify-around px-4 sm:px-8 shadow-sm">
               {/* Grass drops hanging into dirt */}
