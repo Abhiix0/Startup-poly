@@ -209,7 +209,7 @@ export const LandingPage: React.FC = () => {
                     ctaType="join"
                     onFocus={() => setActiveCta('join')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-[#FFCC00] hover:!bg-[#FFB800] !border-[3px] !border-[#181512] !text-[#181512] font-black tracking-wider text-xs sm:text-sm py-2 sm:py-2.5 shadow-[0_4px_0_#B8860B,3px_4px_0_#181512] hover:shadow-[0_5px_0_#B8860B,4px_5px_0_#181512] active:translate-y-1 active:shadow-[0_0px_0_#B8860B,1px_1px_0_#181512] transition-all"
+                    className="!bg-[#FFCC00] hover:!bg-[#FFB800] !border-[3px] !border-[#181512] !text-[#181512] font-black tracking-wider text-xs sm:text-sm py-2 sm:py-2.5 shadow-[0_4px_0_#B8860B,3px_4px_0_#181512] hover:shadow-[0_5px_0_#B8860B,4px_5px_0_#181512] active:translate-y-1 active:shadow-[0_0px_0_#B8860B,1px_1px_0_#181512] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
                   >
                     JOIN MATCH
                   </ArcadeLink>
@@ -311,7 +311,7 @@ export const LandingPage: React.FC = () => {
                     ctaType="admin"
                     onFocus={() => setActiveCta('admin')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-[#334155] hover:!bg-[#1E293B] !border-2 !border-[#181E28] !text-[#F1F5F9] font-bold text-[10px] sm:text-xs py-1.5 shadow-[0_2px_0_#0F172A,2px_2px_0_#181E28] active:translate-y-0.5 active:shadow-none"
+                    className="!bg-[#334155] hover:!bg-[#1E293B] !border-2 !border-[#181E28] !text-[#F1F5F9] font-bold text-[10px] sm:text-xs py-1.5 shadow-[0_2px_0_#0F172A,2px_2px_0_#181E28] hover:-translate-y-[1px] hover:shadow-[0_3px_0_#0F172A,2px_3px_0_#181E28] active:translate-y-0.5 active:shadow-[0_1px_0_#0F172A,1px_1px_0_#181E28] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
                   >
                     ADMIN CONSOLE
                   </ArcadeLink>
