@@ -69,7 +69,7 @@ export const LandingPage: React.FC = () => {
       {/* ======================================================================= */}
       {/* LAYER 3: Main Title Screen UI (Logo, Status, Headline, Signboards)       */}
       {/* ======================================================================= */}
-      <div className="flex-1 flex flex-col justify-center pt-8 sm:pt-12 md:pt-16 pb-4 sm:pb-8 relative z-10">
+      <div className="flex-1 flex flex-col justify-center pt-[max(2rem,env(safe-area-inset-top))] sm:pt-12 md:pt-16 pb-4 sm:pb-8 relative z-10">
         {/* NES Sky Header */}
         <header className="relative pb-4 sm:pb-6 px-4 text-center z-10">
           {/* Level 1: Wordmark Logo */}
