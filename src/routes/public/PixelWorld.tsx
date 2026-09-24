@@ -169,9 +169,18 @@ export const PixelWorld: React.FC = () => {
             </div>
 
             {/* Classic Large Green Warp Pipe */}
-            <div className="flex flex-col items-center">
+            <div className="relative flex flex-col items-center">
+              {/* Phase 4: Rare ambient coin peek */}
+              <div
+                data-testid="ambient-pipe-coin"
+                className="absolute -top-3 left-1/2 -translate-x-1/2 pointer-events-none anim-pipe-coin-peek"
+                aria-hidden="true"
+              >
+                <PixelCoin size={14} />
+              </div>
               <div className="anim-pipe-highlight">
-                <PixelPipe width={68} height={58} />
+                <PixelPipe width={56} height={50} className="sm:hidden" />
+                <PixelPipe width={68} height={58} className="hidden sm:inline-block" />
               </div>
             </div>
 
@@ -195,7 +204,7 @@ export const PixelWorld: React.FC = () => {
 
               {/* Stepped Brick Block with Walking Bug */}
               <div className="flex flex-col items-center">
-                <PixelBug size={24} className="mb-0.5" />
+                <PixelBug size={24} className="mb-0.5 anim-critter-crawl" />
                 <div className="flex">
                   <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />
                   <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />
@@ -229,8 +238,8 @@ export const PixelWorld: React.FC = () => {
             </div>
 
             {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
-            <div className="relative">
-              <Founder size={48} />
+            <div className="relative z-20">
+              <Founder size={46} className="scale-90 sm:scale-100 origin-bottom" />
             </div>
 
             {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
@@ -244,9 +253,10 @@ export const PixelWorld: React.FC = () => {
             </div>
 
             {/* Right Large Green Warp Pipe */}
-            <div className="hidden sm:flex flex-col items-center">
+            <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
-                <PixelPipe width={68} height={54} />
+                <PixelPipe width={56} height={50} className="sm:hidden" />
+                <PixelPipe width={68} height={54} className="hidden sm:inline-block" />
               </div>
             </div>
 

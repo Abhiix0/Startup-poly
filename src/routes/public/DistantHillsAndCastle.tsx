@@ -16,8 +16,8 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
       >
         <defs>
           <linearGradient id="distantBlueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#4A80E8" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#356BD6" stopOpacity="0.95" />
+            <stop offset="0%" stopColor="#2554B8" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#183B82" stopOpacity="1" />
           </linearGradient>
           <linearGradient id="greenHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#22C55E" stopOpacity="0.75" />

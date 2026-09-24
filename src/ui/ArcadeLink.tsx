@@ -30,6 +30,11 @@ export const ArcadeLink = React.forwardRef<HTMLAnchorElement, ArcadeLinkProps>(
     ref
   ) => {
     const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
+    const [hasPressBurst, setHasPressBurst] = useState(false);
+
+    const isReducedMotion = () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
     const variantStyles = {
       primary: 'bg-[#22B14C] hover:bg-[#1fa145] text-white',
@@ -64,6 +69,20 @@ export const ArcadeLink = React.forwardRef<HTMLAnchorElement, ArcadeLinkProps>(
       onBlur?.(e);
     };
 
+    const handlePointerDown = (e: React.PointerEvent<HTMLAnchorElement>) => {
+      if (ctaType === 'join' && !isReducedMotion()) {
+        setHasPressBurst(true);
+      }
+      props.onPointerDown?.(e);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>) => {
+      if ((e.key === 'Enter' || e.key === ' ') && ctaType === 'join' && !isReducedMotion()) {
+        setHasPressBurst(true);
+      }
+      props.onKeyDown?.(e);
+    };
+
     return (
       <Link
         ref={ref}
@@ -72,6 +91,8 @@ export const ArcadeLink = React.forwardRef<HTMLAnchorElement, ArcadeLinkProps>(
         onPointerLeave={handlePointerLeave}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onPointerDown={handlePointerDown}
+        onKeyDown={handleKeyDown}
         className={`
           relative inline-flex items-center justify-center gap-2 cursor-pointer font-bold select-none text-center no-underline
           border-4 border-[#102040] shadow-[4px_4px_0px_#102040]
@@ -89,14 +110,27 @@ export const ArcadeLink = React.forwardRef<HTMLAnchorElement, ArcadeLinkProps>(
         `}
         {...props}
       >
-        {/* Popping coins effect for JOIN MATCH CTA */}
-        {ctaType === 'join' && isHoveredOrFocused && (
+        {/* Popping coins effect for JOIN MATCH CTA on hover/focus (suppressed in reduced motion) */}
+        {ctaType === 'join' && isHoveredOrFocused && !isReducedMotion() && (
           <div
             className="absolute -top-3 left-1/2 -translate-x-1/2 pointer-events-none flex gap-6 anim-pop-coins"
             aria-hidden="true"
           >
             <PixelCoin size={14} className="opacity-90" />
             <PixelCoin size={14} className="opacity-90" />
+          </div>
+        )}
+
+        {/* Phase 4: Button-press coin feedback for JOIN MATCH CTA */}
+        {ctaType === 'join' && hasPressBurst && (
+          <div
+            data-testid="join-press-coins"
+            className="absolute -top-3.5 left-1/2 -translate-x-1/2 pointer-events-none flex gap-5 anim-press-coins z-20"
+            aria-hidden="true"
+            onAnimationEnd={() => setHasPressBurst(false)}
+          >
+            <PixelCoin size={12} className="opacity-95" />
+            <PixelCoin size={12} className="opacity-95" />
           </div>
         )}
 

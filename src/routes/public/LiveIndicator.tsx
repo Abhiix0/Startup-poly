@@ -1,9 +1,19 @@
 import React from 'react';
 
-export const LiveIndicator: React.FC<{ className?: string }> = ({ className = '' }) => {
+export interface LiveIndicatorProps {
+  className?: string;
+  isFirstVisit?: boolean;
+}
+
+export const LiveIndicator: React.FC<LiveIndicatorProps> = ({
+  className = '',
+  isFirstVisit = false,
+}) => {
   return (
     <div
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#102040] border border-[#22B14C] rounded-sm shadow-[1px_1px_0px_#102040] select-none ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#102040] border border-[#22B14C] rounded-sm shadow-[1px_1px_0px_#102040] select-none ${
+        isFirstVisit ? 'anim-boot-live-indicator' : ''
+      } ${className}`}
     >
       <span
         className="w-1.5 h-1.5 rounded-full bg-[#22C55E] anim-live-dot shrink-0"

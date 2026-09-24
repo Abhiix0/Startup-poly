@@ -12,7 +12,7 @@ export const FloatingPlatforms: React.FC<{ className?: string }> = ({ className 
       {/* ======================================================================= */}
       <div className="hidden sm:block absolute top-8 sm:top-12 md:top-16 left-3 sm:left-6 md:left-10 lg:left-14">
         {/* Floating Island Group */}
-        <div className="relative flex flex-col items-center">
+        <div className="relative flex flex-col items-center anim-island-float-left">
           {/* Top Row: Coin above ? Block + Wildflower */}
           <div className="w-full flex items-end justify-between px-2 mb-1">
             <div className="flex flex-col items-center">
@@ -65,7 +65,7 @@ export const FloatingPlatforms: React.FC<{ className?: string }> = ({ className 
       {/* UPPER-RIGHT FLOATING ISLAND                                            */}
       {/* ======================================================================= */}
       <div className="hidden sm:block absolute top-10 sm:top-14 md:top-20 right-3 sm:right-6 md:right-10 lg:right-14">
-        <div className="relative flex flex-col items-center">
+        <div className="relative flex flex-col items-center anim-island-float-right">
           {/* Top Row: 3 Gold Coins in a Row + Winged Flying Critter */}
           <div className="flex items-center gap-2 mb-1.5 px-2">
             <div className="anim-coin-idle">

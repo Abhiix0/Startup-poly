@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  /* Original NES Tokens (preserves backwards-compatibility) */
   --color-nes-sky: #5C94FC;
   --color-nes-green: #22B14C;
   --color-nes-gold: #FFCC00;
@@ -11,6 +12,88 @@
   --color-nes-red: #D32F2F;
   --color-nes-gray: #E2E8F0;
   --color-nes-muted: #64748B;
+
+  /* Global Color Palette — Unified across Landing, Join & Admin pages */
+  /* NES & Retro Sky Bands */
+  --color-sky-deep: #3B6FE0;
+  --color-sky-mid: #4A80E8;
+  --color-sky-base: #5C94FC;
+  --color-sky-light: #71A9FC;
+  --color-sky-horizon: #87CEFA;
+
+  /* Signature Pixel Navy & 8-Bit Ink (Borders & Shadows) */
+  --color-navy-deep: #0A1128;
+  --color-navy-base: #102040;
+  --color-navy-mid: #1E293B;
+  --color-navy-surface: #1E3A5F;
+
+  /* Arcade Gold & Currency Accents */
+  --color-gold-base: #FFCC00;
+  --color-gold-hover: #FFE066;
+  --color-gold-active: #E6B800;
+  --color-gold-coin: #FFD700;
+  --color-gold-sparkle: #FFF275;
+  --color-gold-dark: #B8860B;
+
+  /* Warp Pipe & Pixel Greens */
+  --color-pipe-green: #22C55E;
+  --color-pipe-body: #16A34A;
+  --color-pipe-dark: #15803D;
+  --color-pipe-highlight: #86EFAC;
+  --color-pipe-light: #4ADE80;
+  --color-green-retro: #22B14C;
+
+  /* Terracotta Brick & Question Blocks */
+  --color-brick-base: #B84418;
+  --color-brick-dark: #8A2E0B;
+  --color-brick-light: #D96B43;
+  --color-block-orange: #E6631F;
+  --color-block-gold: #F7CE46;
+  --color-block-dark: #C2410C;
+
+  /* Parchment, Cream & Card Surfaces (Join Page / Team Signboard) */
+  --color-parchment-base: #FFFBEB;
+  --color-parchment-light: #FEF9C3;
+  --color-parchment-card: #FAF8F5;
+  --color-parchment-border: #FDE68A;
+  --color-parchment-text: #92400E;
+  --color-parchment-muted: #B45309;
+
+  /* Industrial Tech Slate & Admin Console (Metal Billboard / CRT) */
+  --color-metal-surface: #F8FAFC;
+  --color-metal-light: #F1F5F9;
+  --color-metal-plate: #E2E8F0;
+  --color-metal-border: #CBD5E1;
+  --color-metal-mid: #64748B;
+  --color-metal-dark: #475569;
+  --color-metal-deep: #334155;
+
+  /* Wood Grain & Signboard Trim */
+  --color-wood-dark: #3D1C06;
+  --color-wood-base: #8B4513;
+  --color-wood-border: #A0522D;
+  --color-wood-light: #C68642;
+  --color-wood-bright: #E6B87D;
+
+  /* Castle Fortress Stone & Royal Accents */
+  --color-castle-stone: #334155;
+  --color-castle-shadow: #1E293B;
+  --color-flag-red: #D32F2F;
+  --color-flag-dark: #991B1B;
+
+  /* Distant Hills & Mountains */
+  --color-mountain-front: #2870C0;
+  --color-mountain-mid: #1E5CA8;
+  --color-mountain-dark: #164E8C;
+  --color-mountain-deep: #103B6D;
+
+  /* Multiplayer Team Slots */
+  --color-team-1: #E52521;
+  --color-team-2: #0099FF;
+  --color-team-3: #22C55E;
+  --color-team-4: #FFCC00;
+  --color-team-5: #A855F7;
+  --color-team-6: #EC4899;
 
   --font-pixel: "Press Start 2P", monospace;
   --font-mono: "JetBrains Mono", monospace;
@@ -91,6 +174,288 @@
   opacity: 0.5;
   cursor: not-allowed;
   box-shadow: 2px 2px 0px #102040;
+}
+
+/* ========================================================================= */
+/* STARTUPOLY GLOBAL DESIGN SYSTEM — CSS Custom Properties                   */
+/* Unified color palette across Landing, Join, and Admin pages               */
+/* ========================================================================= */
+
+:root {
+  /* Sky & Atmosphere */
+  --color-sky-deep: #3B6FE0;
+  --color-sky-mid: #4A80E8;
+  --color-sky-base: #5C94FC;
+  --color-sky-light: #71A9FC;
+  --color-sky-horizon: #87CEFA;
+
+  /* Ink & 8-Bit Borders */
+  --color-navy-deep: #0A1128;
+  --color-navy-base: #102040;
+  --color-navy-mid: #1E293B;
+  --color-navy-surface: #1E3A5F;
+
+  /* Arcade Gold & Currency Accents */
+  --color-gold-base: #FFCC00;
+  --color-gold-hover: #FFE066;
+  --color-gold-active: #E6B800;
+  --color-gold-coin: #FFD700;
+  --color-gold-sparkle: #FFF275;
+  --color-gold-dark: #B8860B;
+
+  /* Warp Pipe & Flora */
+  --color-pipe-green: #22C55E;
+  --color-pipe-body: #16A34A;
+  --color-pipe-dark: #15803D;
+  --color-pipe-highlight: #86EFAC;
+  --color-pipe-light: #4ADE80;
+  --color-green-retro: #22B14C;
+
+  /* Terracotta Brick & Question Blocks */
+  --color-brick-base: #B84418;
+  --color-brick-dark: #8A2E0B;
+  --color-brick-light: #D96B43;
+  --color-block-orange: #E6631F;
+  --color-block-gold: #F7CE46;
+  --color-block-dark: #C2410C;
+
+  /* Parchment & Cream Surfaces */
+  --color-parchment-base: #FFFBEB;
+  --color-parchment-light: #FEF9C3;
+  --color-parchment-card: #FAF8F5;
+  --color-parchment-border: #FDE68A;
+  --color-parchment-text: #92400E;
+  --color-parchment-muted: #B45309;
+
+  /* Metal Slate & Admin Tech */
+  --color-metal-surface: #F8FAFC;
+  --color-metal-light: #F1F5F9;
+  --color-metal-plate: #E2E8F0;
+  --color-metal-border: #CBD5E1;
+  --color-metal-mid: #64748B;
+  --color-metal-dark: #475569;
+  --color-metal-deep: #334155;
+
+  /* Wood & Signboard Trim */
+  --color-wood-dark: #3D1C06;
+  --color-wood-base: #8B4513;
+  --color-wood-border: #A0522D;
+  --color-wood-light: #C68642;
+  --color-wood-bright: #E6B87D;
+
+  /* Castle & Fortress */
+  --color-castle-stone: #334155;
+  --color-castle-shadow: #1E293B;
+  --color-flag-red: #D32F2F;
+  --color-flag-dark: #991B1B;
+
+  /* Distant Hills & Mountains */
+  --color-mountain-front: #2870C0;
+  --color-mountain-mid: #1E5CA8;
+  --color-mountain-dark: #164E8C;
+  --color-mountain-deep: #103B6D;
+
+  /* Standard Pixel Shadows */
+  --pixel-shadow-sm: 2px 2px 0px var(--color-navy-base);
+  --pixel-shadow-md: 3px 3px 0px var(--color-navy-base);
+  --pixel-shadow-lg: 4px 4px 0px var(--color-navy-base);
+  --pixel-shadow-xl: 6px 6px 0px var(--color-navy-base);
+}
+
+/* ========================================================================= */
+/* Reusable Global UI Surface & Component Classes                            */
+/* ========================================================================= */
+
+/* Surface: Warm Parchment Card (Landing Team Phone / Join Match / Lobby) */
+.surface-parchment {
+  background-color: var(--color-parchment-base);
+  border: 3px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-lg);
+  color: var(--color-navy-base);
+}
+
+/* Surface: Industrial Tech / Admin Slate (Admin Console / Event Billboard) */
+.surface-metal {
+  background-color: var(--color-metal-light);
+  border: 3px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-lg);
+  color: var(--color-navy-base);
+}
+
+/* Surface: Neutral Retro Card (Dashboards / Summary Views) */
+.surface-card {
+  background-color: var(--color-parchment-card);
+  border: 3px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-lg);
+  color: var(--color-navy-base);
+}
+
+/* Surface: Castle Fortress Stone */
+.surface-castle {
+  background-color: var(--color-castle-stone);
+  border: 4px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-xl);
+  color: #FFFFFF;
+}
+
+/* Global Buttons: Arcade Tactile Feedback */
+.btn-pixel-gold {
+  background-color: var(--color-gold-base);
+  color: var(--color-navy-base);
+  border: 3px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-md);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  transition: transform 0.05s ease, filter 0.05s ease, box-shadow 0.05s ease;
+}
+.btn-pixel-gold:hover:not(:disabled) {
+  background-color: var(--color-gold-hover);
+  filter: brightness(1.04);
+}
+.btn-pixel-gold:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-navy-base);
+}
+
+.btn-pixel-navy {
+  background-color: var(--color-navy-base);
+  color: var(--color-gold-base);
+  border: 2px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-md);
+  font-family: var(--font-pixel);
+  transition: transform 0.05s ease, background-color 0.05s ease;
+}
+.btn-pixel-navy:hover:not(:disabled) {
+  background-color: var(--color-green-retro);
+  color: #FFFFFF;
+}
+.btn-pixel-navy:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-navy-base);
+}
+
+.btn-pixel-metal {
+  background-color: var(--color-metal-deep);
+  color: #FFFFFF;
+  border: 2px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-md);
+  font-family: var(--font-pixel);
+  transition: transform 0.05s ease, filter 0.05s ease;
+}
+.btn-pixel-metal:hover:not(:disabled) {
+  background-color: var(--color-metal-dark);
+  filter: brightness(1.1);
+}
+.btn-pixel-metal:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-navy-base);
+}
+
+.btn-pixel-wood {
+  background-color: var(--color-block-orange);
+  color: #FFFFFF;
+  border: 3px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-md);
+  font-family: var(--font-pixel);
+  transition: transform 0.05s ease, filter 0.05s ease;
+}
+.btn-pixel-wood:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.btn-pixel-wood:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-navy-base);
+}
+
+.btn-pixel-green {
+  background-color: var(--color-pipe-green);
+  color: #FFFFFF;
+  border: 3px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-md);
+  font-family: var(--font-pixel);
+  transition: transform 0.05s ease, filter 0.05s ease;
+}
+.btn-pixel-green:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.btn-pixel-green:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-navy-base);
+}
+
+.btn-pixel-red {
+  background-color: var(--color-flag-red);
+  color: #FFFFFF;
+  border: 3px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-md);
+  font-family: var(--font-pixel);
+  transition: transform 0.05s ease, filter 0.05s ease;
+}
+.btn-pixel-red:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.btn-pixel-red:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--color-navy-base);
+}
+
+/* Global Badges / Indicators */
+.badge-pixel-gold {
+  background-color: var(--color-gold-base);
+  color: var(--color-navy-base);
+  border: 2px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-sm);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+}
+
+.badge-pixel-green {
+  background-color: var(--color-pipe-green);
+  color: #FFFFFF;
+  border: 2px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-sm);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+}
+
+.badge-pixel-navy {
+  background-color: var(--color-navy-base);
+  color: var(--color-gold-base);
+  border: 2px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-sm);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+}
+
+.badge-pixel-metal {
+  background-color: var(--color-metal-dark);
+  color: #FFFFFF;
+  border: 2px solid var(--color-navy-base);
+  box-shadow: var(--pixel-shadow-sm);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Global Text Input Field */
+.input-pixel {
+  background-color: var(--color-parchment-base);
+  border: 3px solid var(--color-navy-base);
+  color: var(--color-navy-base);
+  font-family: var(--font-pixel);
+  padding: 0.625rem 1rem;
+  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.15);
+}
+.input-pixel:focus {
+  outline: none;
+  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.15), 0 0 0 2px var(--color-gold-base);
 }
 
 /* Brick ground pattern for landing/footer */
@@ -321,29 +686,119 @@
   }
 }
 
-/* Motion Classes */
-.anim-entrance-logo {
-  animation: entrance-drop 300ms steps(3) forwards;
+/* Phase 2: Game-Start Boot Sequence Keyframes */
+@keyframes boot-coin-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.85);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
+@keyframes boot-live-entrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Motion Classes: Coordinated Boot Sequence (Total perceived time ~900ms) */
+/* Step 2 (~0–250ms): Wordmark logo drops into world */
+.anim-entrance-logo {
+  animation: entrance-drop 250ms steps(3) forwards;
+}
+
+/* Step 3 (~160–340ms): Logo coins settle beside wordmark */
+.anim-boot-coin-settle {
+  animation: boot-coin-settle 180ms ease-out 160ms both;
+}
+
+/* Step 4 (~300–460ms): Subtitle wordmark reveals */
 .anim-entrance-word-1 {
-  animation: entrance-word-reveal 80ms steps(1) 250ms both;
+  animation: entrance-word-reveal 60ms steps(1) 300ms both;
 }
 
 .anim-entrance-word-2 {
-  animation: entrance-word-reveal 80ms steps(1) 370ms both;
+  animation: entrance-word-reveal 60ms steps(1) 360ms both;
 }
 
 .anim-entrance-word-3 {
-  animation: entrance-word-reveal 80ms steps(1) 490ms both;
+  animation: entrance-word-reveal 60ms steps(1) 420ms both;
 }
 
+/* Step 5 (~480–620ms): Live indicator pops and joins ambient pulse */
+.anim-boot-live-indicator {
+  animation: boot-live-entrance 140ms ease-out 480ms both;
+}
+
+/* Step 6 (~560–740ms): Headline plaque slides into view */
 .anim-entrance-tagline {
-  animation: entrance-fade-slide 200ms ease-out 550ms both;
+  animation: entrance-fade-slide 180ms ease-out 560ms both;
+}
+
+/* Step 7 (~660–1040ms): Main portal cards arrive with tactile physical settle */
+@keyframes card-level-arrival {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stage-platform-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .anim-entrance-ctas {
-  animation: entrance-fade-slide 200ms ease-out 650ms both;
+  animation: entrance-fade-slide 240ms ease-out 680ms both;
+}
+
+.anim-card-arrival-phone {
+  animation: card-level-arrival 280ms cubic-bezier(0.2, 0.8, 0.3, 1) 660ms both;
+  will-change: transform, opacity;
+}
+
+.anim-card-arrival-admin {
+  animation: card-level-arrival 280ms cubic-bezier(0.2, 0.8, 0.3, 1) 760ms both;
+  will-change: transform, opacity;
+}
+
+.anim-stage-arrival {
+  animation: stage-platform-settle 260ms ease-out 700ms both;
+  will-change: transform, opacity;
 }
 
 .anim-coin-idle {
@@ -352,6 +807,99 @@
 
 .anim-pop-coins {
   animation: pop-coins 0.45s ease-out forwards;
+}
+
+/* Phase 4: Coin Micro-interaction Language */
+/* 1. Button-Press Coin Feedback (JOIN MATCH CTA) */
+@keyframes press-coins {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    transform: translate3d(0, -10px, 0) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, -18px, 0) scale(0.85);
+    opacity: 0;
+  }
+}
+
+.anim-press-coins {
+  animation: press-coins 420ms ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* 2. Section-Entrance Coin Accent (Primary CTA Arrival) */
+@keyframes section-coin-accent {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.6);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.1);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.8);
+  }
+}
+
+.anim-section-coin-accent {
+  animation: section-coin-accent 580ms ease-out 760ms both;
+  will-change: transform, opacity;
+}
+
+/* 3. Rare Ambient Event (Ground Warp Pipe Coin Peek) */
+@keyframes pipe-coin-peek {
+  0%, 94%, 100% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.6);
+  }
+  96% {
+    opacity: 1;
+    transform: translate3d(0, -8px, 0) scale(1.1);
+  }
+  97.5% {
+    opacity: 1;
+    transform: translate3d(0, -10px, 0) scale(1);
+  }
+  99% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.7);
+  }
+}
+
+.anim-pipe-coin-peek {
+  animation: pipe-coin-peek 60s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* 4. Tap/Touch Easter Egg Burst */
+@keyframes tap-burst {
+  0% {
+    transform: translate3d(-50%, -50%, 0) scale(0.5);
+    opacity: 0;
+  }
+  30% {
+    transform: translate3d(-50%, calc(-50% - 14px), 0) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-50%, calc(-50% - 28px), 0) scale(0.7);
+    opacity: 0;
+  }
+}
+
+.anim-tap-burst {
+  animation: tap-burst 450ms ease-out forwards;
+  will-change: transform, opacity;
 }
 
 .anim-poly-idle {
@@ -490,6 +1038,42 @@
   will-change: transform;
 }
 
+/* Layer 1: Ambient Floating Island Gentle Vertical Hover */
+@keyframes island-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.anim-island-float-left {
+  animation: island-float 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.anim-island-float-right {
+  animation: island-float 7.8s ease-in-out infinite;
+  animation-delay: -3.2s;
+  will-change: transform;
+}
+
+/* Layer 1: Ambient Bug Crawl on Stepped Podium */
+@keyframes critter-patrol {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, 0, 0);
+  }
+}
+
+.anim-critter-crawl {
+  animation: critter-patrol 3.2s steps(2) infinite;
+  will-change: transform;
+}
+
 /* Interaction Hooks via [data-cta] */
 [data-cta="join"] .world-join-coin-pop {
   animation: pop-coins 0.5s ease-out forwards;
@@ -578,86 +1162,524 @@
 
 :root {
   --founder-patrol-dist: -140px;
+  --founder-run-left-pipe: calc(-76vw + 30px);
 }
 
-@media (min-width: 640px) {
+@media (max-width: 639px) {
   :root {
-    --founder-patrol-dist: -180px;
+    --founder-patrol-dist: -140px;
+    --founder-run-left-pipe: -230px;
   }
 }
 
 @keyframes founder-ground-roam {
-  0%, 5% {
+  /* 0% - 4%: Home idle */
+  0%, 4% {
     transform: translate3d(0, 0, 0);
+    animation-timing-function: linear;
   }
-  24%, 44% {
-    transform: translate3d(var(--founder-patrol-dist, -140px), 0, 0);
+
+  /* 4% - 8%: Run right towards right pipe */
+  8% {
+    transform: translate3d(55px, 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
-  64%, 100% {
+
+  /* 8% - 10.5%: Jump UP onto right pipe */
+  9.2% {
+    transform: translate3d(85px, -64px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  10.5% {
+    transform: translate3d(115px, -52px, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 10.5% - 13.5%: STAND on top of right pipe */
+  13.5% {
+    transform: translate3d(115px, -52px, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 13.5% - 15.5%: Jump DOWN from right pipe to ground */
+  14.5% {
+    transform: translate3d(142px, -45px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  15.5% {
+    transform: translate3d(170px, 0, 0);
+    animation-timing-function: ease-out;
+  }
+
+  /* 15.5% - 18%: Far right edge explore & turn */
+  16.5%, 18% {
+    transform: translate3d(175px, 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 18% - 20.5%: Jump UP onto right pipe (facing left) */
+  19.2% {
+    transform: translate3d(142px, -64px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  20.5% {
+    transform: translate3d(115px, -52px, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 20.5% - 23.5%: STAND on top of right pipe (facing left) */
+  23.5% {
+    transform: translate3d(115px, -52px, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 23.5% - 25.5%: Jump DOWN from right pipe to ground */
+  24.5% {
+    transform: translate3d(85px, -45px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  25.5% {
+    transform: translate3d(55px, 0, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 25.5% - 28.5%: Run left past home towards question block */
+  28.5% {
+    transform: translate3d(-45px, 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 28.5% - 31.5%: Hop up to punch question block */
+  30% {
+    transform: translate3d(-75px, -46px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  31.5% {
+    transform: translate3d(-105px, 0, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 31.5% - 46%: Sprint across open ground to the left */
+  46% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 85px), 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 46% - 49%: Jump UP onto left warp pipe */
+  47.5% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 58px), -68px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  49% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 30px), -56px, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 49% - 52%: STAND on top of left warp pipe */
+  52% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 30px), -56px, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 52% - 54.5%: Jump DOWN from left pipe to far left ground */
+  53.2% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 5px), -45px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  54.5% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) - 25px), 0, 0);
+    animation-timing-function: ease-out;
+  }
+
+  /* 54.5% - 57.5%: Far left pause & turn */
+  57.5% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) - 20px), 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 57.5% - 60%: Jump UP onto left warp pipe (facing right) */
+  58.7% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 5px), -68px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  60% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 30px), -56px, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 60% - 63%: STAND on top of left warp pipe (facing right) */
+  63% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 30px), -56px, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* 63% - 65.5%: Jump DOWN from left pipe to ground */
+  64.2% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 58px), -45px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  65.5% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) + 85px), 0, 0);
+    animation-timing-function: linear;
+  }
+
+  /* 65.5% - 82%: Sprint back across the field towards home */
+  73% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) * 0.45), 0, 0);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  74.5% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) * 0.35), -28px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  76% {
+    transform: translate3d(calc(var(--founder-run-left-pipe) * 0.25), 0, 0);
+    animation-timing-function: linear;
+  }
+  82% {
+    transform: translate3d(-50px, 0, 0);
+    animation-timing-function: ease-out;
+  }
+
+  /* 82% - 89%: Arrive back at home base */
+  89%, 100% {
     transform: translate3d(0, 0, 0);
   }
 }
 
+/* ========================================================================= */
+/* Mobile View Roaming Animation (< 640px)                                   */
+/* Tailored specifically for tight mobile viewports & perched pipe jumping   */
+/* ========================================================================= */
+@media (max-width: 639px) {
+  @keyframes founder-ground-roam {
+    /* 0% - 4%: Home idle */
+    0%, 4% {
+      transform: translate3d(0, 0, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 4% - 8%: Run right towards right pipe */
+    8% {
+      transform: translate3d(22px, 0, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 8% - 10.5%: Jump UP onto right pipe */
+    9.2% {
+      transform: translate3d(36px, -62px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    10.5% {
+      transform: translate3d(50px, -50px, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 10.5% - 13.5%: STAND on top of right pipe rim */
+    13.5% {
+      transform: translate3d(50px, -50px, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 13.5% - 15.5%: Jump DOWN from right pipe to ground */
+    14.5% {
+      transform: translate3d(30px, -35px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    15.5% {
+      transform: translate3d(8px, 0, 0);
+      animation-timing-function: ease-out;
+    }
+
+    /* 15.5% - 18%: Pause & turn facing left */
+    16.5%, 18% {
+      transform: translate3d(8px, 0, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 18% - 20.5%: Jump UP onto right pipe (facing left) */
+    19.2% {
+      transform: translate3d(30px, -62px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    20.5% {
+      transform: translate3d(50px, -50px, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 20.5% - 23.5%: STAND on top of right pipe (facing left) */
+    23.5% {
+      transform: translate3d(50px, -50px, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 23.5% - 25.5%: Jump DOWN from right pipe to ground */
+    24.5% {
+      transform: translate3d(28px, -35px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    25.5% {
+      transform: translate3d(0, 0, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 25.5% - 28.5%: Run left past home towards question block */
+    28.5% {
+      transform: translate3d(-35px, 0, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 28.5% - 31.5%: Hop up punch */
+    30% {
+      transform: translate3d(-52px, -38px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    31.5% {
+      transform: translate3d(-70px, 0, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 31.5% - 46%: Sprint across open ground to the left pipe */
+    46% {
+      transform: translate3d(calc(-100vw + 175px), 0, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 46% - 49%: Jump UP onto left warp pipe */
+    47.5% {
+      transform: translate3d(calc(-100vw + 152px), -64px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    49% {
+      transform: translate3d(calc(-100vw + 126px), -50px, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 49% - 52%: STAND on top of left warp pipe rim */
+    52% {
+      transform: translate3d(calc(-100vw + 126px), -50px, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 52% - 54.5%: Jump DOWN from left pipe */
+    53.2% {
+      transform: translate3d(calc(-100vw + 105px), -35px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    54.5% {
+      transform: translate3d(calc(-100vw + 85px), 0, 0);
+      animation-timing-function: ease-out;
+    }
+
+    /* 54.5% - 57.5%: Far left pause & turn */
+    57.5% {
+      transform: translate3d(calc(-100vw + 85px), 0, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 57.5% - 60%: Jump UP onto left warp pipe (facing right) */
+    58.7% {
+      transform: translate3d(calc(-100vw + 105px), -64px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    60% {
+      transform: translate3d(calc(-100vw + 126px), -50px, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 60% - 63%: STAND on top of left warp pipe (facing right) */
+    63% {
+      transform: translate3d(calc(-100vw + 126px), -50px, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 63% - 65.5%: Jump DOWN from left pipe to ground */
+    64.2% {
+      transform: translate3d(calc(-100vw + 152px), -35px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    65.5% {
+      transform: translate3d(calc(-100vw + 175px), 0, 0);
+      animation-timing-function: linear;
+    }
+
+    /* 65.5% - 82%: Sprint back across the field towards home */
+    73% {
+      transform: translate3d(calc(-50vw + 60px), 0, 0);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    74.5% {
+      transform: translate3d(calc(-50vw + 42px), -24px, 0);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    76% {
+      transform: translate3d(calc(-50vw + 24px), 0, 0);
+      animation-timing-function: linear;
+    }
+    82% {
+      transform: translate3d(-15px, 0, 0);
+      animation-timing-function: ease-out;
+    }
+
+    /* 82% - 89%: Arrive back at home base */
+    89%, 100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+}
+
 @keyframes founder-turn-facing {
-  0%, 23.9% {
+  0%, 16.9% {
+    transform: scaleX(1);
+  }
+  17%, 55.9% {
     transform: scaleX(-1);
   }
-  24%, 43.9% {
-    transform: scaleX(1);
-  }
-  44%, 63.9% {
-    transform: scaleX(1);
-  }
-  64%, 100% {
+  56%, 100% {
     transform: scaleX(1);
   }
 }
 
 @keyframes founder-legs-patrol {
-  /* Walk Left 0% - 24% */
-  0%, 2.7%, 5.4%, 8.1%, 10.8%, 13.5%, 16.2%, 18.9%, 21.6% {
+  /* 0% - 4%: Home idle */
+  0%, 3.9% {
+    transform: translateX(0%);
+  }
+
+  /* 4% - 8%: Running right */
+  4%, 4.9%, 5.8%, 6.7%, 7.6% {
     transform: translateX(-28.5714%);
   }
-  0.9%, 3.6%, 6.3%, 9.0%, 11.7%, 14.4%, 17.1%, 19.8%, 22.5% {
+  4.3%, 5.2%, 6.1%, 7.0% {
     transform: translateX(-42.8571%);
   }
-  1.8%, 4.5%, 7.2%, 9.9%, 12.6%, 15.3%, 18.0%, 20.7%, 23.4% {
+  4.6%, 5.5%, 6.4%, 7.3% {
     transform: translateX(-57.1428%);
   }
 
-  /* Pause Left 24% - 44% */
-  24%, 33% {
-    transform: translateX(0%);
+  /* 8% - 10.4%: Jump UP to right pipe (Hop pose) */
+  8%, 10.4% {
+    transform: translateX(-71.428%);
   }
-  34%, 41% {
-    transform: translateX(-14.2857%);
-  }
-  42%, 43.9% {
+
+  /* 10.5% - 13.4%: STANDING on top of right pipe (Flat feet planted) */
+  10.5%, 13.4% {
     transform: translateX(0%);
   }
 
-  /* Walk Right 44% - 64% */
-  44%, 46.7%, 49.4%, 52.1%, 54.8%, 57.5%, 60.2%, 62.9% {
+  /* 13.5% - 15.4%: Jump DOWN from right pipe */
+  13.5%, 15.4% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 15.5% - 17.9%: Far right pause */
+  15.5%, 17.9% {
+    transform: translateX(0%);
+  }
+
+  /* 18% - 20.4%: Jump UP to right pipe going left (Hop pose) */
+  18%, 20.4% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 20.5% - 23.4%: STANDING on top of right pipe facing left */
+  20.5%, 23.4% {
+    transform: translateX(0%);
+  }
+
+  /* 23.5% - 25.4%: Jump DOWN from right pipe to ground */
+  23.5%, 25.4% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 25.5% - 28.4%: Run left */
+  25.5%, 26.2%, 26.9%, 27.6%, 28.3% {
     transform: translateX(-28.5714%);
   }
-  44.9%, 47.6%, 50.3%, 53.0%, 55.7%, 58.4%, 61.1%, 63.8% {
+  25.8%, 26.5%, 27.2%, 27.9% {
     transform: translateX(-42.8571%);
   }
-  45.8%, 48.5%, 51.2%, 53.9%, 56.6%, 59.3%, 62.0% {
+  26.0%, 26.7%, 27.4%, 28.1% {
     transform: translateX(-57.1428%);
   }
 
-  /* Pause Home 64% - 100% */
-  64%, 78% {
+  /* 28.5% - 31.4%: Question block punch hop */
+  28.5%, 31.4% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 31.5% - 45.9%: Sprint across open ground */
+  31.5%, 32.5%, 33.5%, 34.5%, 35.5%, 36.5%, 37.5%, 38.5%, 39.5%, 40.5%, 41.5%, 42.5%, 43.5%, 44.5%, 45.5% {
+    transform: translateX(-28.5714%);
+  }
+  31.8%, 32.8%, 33.8%, 34.8%, 35.8%, 36.8%, 37.8%, 38.8%, 39.8%, 40.8%, 41.8%, 42.8%, 43.8%, 44.8%, 45.8% {
+    transform: translateX(-42.8571%);
+  }
+  32.1%, 33.1%, 34.1%, 35.1%, 36.1%, 37.1%, 38.1%, 39.1%, 40.1%, 41.1%, 42.1%, 43.1%, 44.1%, 45.1% {
+    transform: translateX(-57.1428%);
+  }
+
+  /* 46% - 48.9%: Jump UP to left pipe */
+  46%, 48.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 49% - 51.9%: STANDING on top of left pipe */
+  49%, 51.9% {
     transform: translateX(0%);
   }
-  79%, 87% {
-    transform: translateX(-14.2857%);
+
+  /* 52% - 54.4%: Jump DOWN from left pipe */
+  52%, 54.4% {
+    transform: translateX(-71.428%);
   }
-  88%, 93% {
-    transform: translateX(-85.714%);
+
+  /* 54.5% - 57.4%: Far left pause */
+  54.5%, 57.4% {
+    transform: translateX(0%);
   }
-  94%, 100% {
+
+  /* 57.5% - 59.9%: Jump UP to left pipe going right */
+  57.5%, 59.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 60% - 62.9%: STANDING on top of left pipe facing right */
+  60%, 62.9% {
+    transform: translateX(0%);
+  }
+
+  /* 63% - 65.4%: Jump DOWN from left pipe to ground */
+  63%, 65.4% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 65.5% - 82%: Sprint back across field */
+  65.5%, 66.5%, 67.5%, 68.5%, 69.5%, 70.5%, 71.5%, 76.5%, 77.5%, 78.5%, 79.5%, 80.5%, 81.5% {
+    transform: translateX(-28.5714%);
+  }
+  65.8%, 66.8%, 67.8%, 68.8%, 69.8%, 70.8%, 71.8%, 76.8%, 77.8%, 78.8%, 79.8%, 80.8%, 81.8% {
+    transform: translateX(-42.8571%);
+  }
+  66.1%, 67.1%, 68.1%, 69.1%, 70.1%, 71.1%, 72.1%, 77.1%, 78.1%, 79.1%, 80.1%, 81.1% {
+    transform: translateX(-57.1428%);
+  }
+
+  /* 73% - 75.9%: Mid-field hop */
+  73%, 75.9% {
+    transform: translateX(-71.428%);
+  }
+
+  /* 82% - 88.9%: Decelerate to home */
+  82%, 84%, 86%, 88% {
+    transform: translateX(-28.5714%);
+  }
+  83%, 85%, 87% {
+    transform: translateX(-42.8571%);
+  }
+
+  /* 89% - 100%: Home rest */
+  89%, 100% {
     transform: translateX(0%);
   }
 }
@@ -671,15 +1693,15 @@
 }
 
 .anim-founder-roam {
-  animation: founder-ground-roam 16s ease-in-out infinite;
+  animation: founder-ground-roam 24s ease-in-out infinite;
 }
 
 [data-phase="idle"] .founder-character-container {
-  animation: founder-turn-facing 16s steps(1) infinite;
+  animation: founder-turn-facing 24s steps(1) infinite;
 }
 
 [data-phase="idle"] .anim-founder-roam .poly-sprite-strip {
-  animation: founder-legs-patrol 16s steps(1) infinite !important;
+  animation: founder-legs-patrol 24s steps(1) infinite !important;
 }
 
 .anim-poly-idle {
@@ -992,7 +2014,10 @@
 
   .entrance-anim,
   [data-entrance],
-  .anim-scene-transition {
+  .anim-scene-transition,
+  .anim-card-arrival-phone,
+  .anim-card-arrival-admin,
+  .anim-stage-arrival {
     opacity: 1 !important;
     transform: none !important;
   }
@@ -1001,6 +2026,15 @@
   .anim-progress-segment {
     animation: none !important;
     opacity: 1 !important;
+  }
+
+  .anim-press-coins,
+  .anim-pop-coins,
+  .anim-section-coin-accent,
+  .anim-pipe-coin-peek,
+  .anim-tap-burst {
+    display: none !important;
+    animation: none !important;
   }
 
   .founder-bubble-anchor,
