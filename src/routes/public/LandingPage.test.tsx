@@ -140,4 +140,25 @@ describe('LandingPage Hero Rebuild', () => {
     adminLink.focus();
     expect(document.activeElement).toBe(adminLink);
   });
+
+  it('Phase 0 Guard: confirms landing tree structural integrity without accidental regressions', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    // Verify key landmark structural layers are present
+    expect(container.querySelector('header')).toBeInTheDocument();
+    expect(container.querySelector('main')).toBeInTheDocument();
+    expect(container.querySelector('footer')).toBeInTheDocument();
+
+    // Verify critical CTAs and brand identity
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('STARTUPOLY');
+    expect(screen.getByRole('link', { name: /JOIN MATCH/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /ADMIN CONSOLE/i })).toBeInTheDocument();
+
+    // Verify world ground footer layer
+    expect(container.querySelector('[data-layer="6-ground"]')).toBeInTheDocument();
+  });
 });
