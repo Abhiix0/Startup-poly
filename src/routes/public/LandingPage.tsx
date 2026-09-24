@@ -16,10 +16,16 @@ import { LiveIndicator } from './LiveIndicator';
 import { FloatingPlatforms } from './FloatingPlatforms';
 import { DistantHillsAndCastle } from './DistantHillsAndCastle';
 import { SkyLayer } from './SkyLayer';
+import { TapCoinBurst } from './TapCoinBurst';
 
 export const LandingPage: React.FC = () => {
   const { isFirstVisit, markSeen } = useFirstVisit();
   const [activeCta, setActiveCta] = useState<'join' | 'admin' | null>(null);
+
+  // Check prefers-reduced-motion
+  const isReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
   // Synchronize document pause state with tab visibility
   usePageVisibility();
@@ -131,7 +137,17 @@ export const LandingPage: React.FC = () => {
             {/* ================================================================= */}
             {/* PRIMARY HERO CTA: TEAM PHONE (Wooden Checkpoint Signboard)       */}
             {/* ================================================================= */}
-            <div className={`flex flex-col items-center w-full max-w-[360px] ${isFirstVisit ? 'anim-card-arrival-phone' : ''}`}>
+            <div className={`relative flex flex-col items-center w-full max-w-[360px] ${isFirstVisit ? 'anim-card-arrival-phone' : ''}`}>
+              {/* Phase 4: One-time section entrance coin accent on primary card arrival */}
+              {isFirstVisit && !isReducedMotion && (
+                <div
+                  data-testid="section-entrance-coin"
+                  className="absolute -top-3.5 right-3 pointer-events-none z-30 anim-section-coin-accent"
+                  aria-hidden="true"
+                >
+                  <PixelCoin size={16} />
+                </div>
+              )}
               <div
                 onPointerEnter={() => setActiveCta('join')}
                 onPointerLeave={() => setActiveCta(null)}
@@ -376,6 +392,11 @@ export const LandingPage: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {/* ======================================================================= */}
+      {/* Tap / Touch Easter Egg Bursts (Phase 4)                                 */}
+      {/* ======================================================================= */}
+      <TapCoinBurst isBooting={isFirstVisit} />
 
       {/* ======================================================================= */}
       {/* LAYER 4: Living Pixel World Ground & Scene                              */}

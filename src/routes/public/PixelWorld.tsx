@@ -169,7 +169,15 @@ export const PixelWorld: React.FC = () => {
             </div>
 
             {/* Classic Large Green Warp Pipe */}
-            <div className="flex flex-col items-center">
+            <div className="relative flex flex-col items-center">
+              {/* Phase 4: Rare ambient coin peek */}
+              <div
+                data-testid="ambient-pipe-coin"
+                className="absolute -top-3 left-1/2 -translate-x-1/2 pointer-events-none anim-pipe-coin-peek"
+                aria-hidden="true"
+              >
+                <PixelCoin size={14} />
+              </div>
               <div className="anim-pipe-highlight">
                 <PixelPipe width={56} height={50} className="sm:hidden" />
                 <PixelPipe width={68} height={58} className="hidden sm:inline-block" />

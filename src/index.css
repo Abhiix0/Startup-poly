@@ -809,6 +809,99 @@
   animation: pop-coins 0.45s ease-out forwards;
 }
 
+/* Phase 4: Coin Micro-interaction Language */
+/* 1. Button-Press Coin Feedback (JOIN MATCH CTA) */
+@keyframes press-coins {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    transform: translate3d(0, -10px, 0) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, -18px, 0) scale(0.85);
+    opacity: 0;
+  }
+}
+
+.anim-press-coins {
+  animation: press-coins 420ms ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* 2. Section-Entrance Coin Accent (Primary CTA Arrival) */
+@keyframes section-coin-accent {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.6);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.1);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.8);
+  }
+}
+
+.anim-section-coin-accent {
+  animation: section-coin-accent 580ms ease-out 760ms both;
+  will-change: transform, opacity;
+}
+
+/* 3. Rare Ambient Event (Ground Warp Pipe Coin Peek) */
+@keyframes pipe-coin-peek {
+  0%, 94%, 100% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.6);
+  }
+  96% {
+    opacity: 1;
+    transform: translate3d(0, -8px, 0) scale(1.1);
+  }
+  97.5% {
+    opacity: 1;
+    transform: translate3d(0, -10px, 0) scale(1);
+  }
+  99% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.7);
+  }
+}
+
+.anim-pipe-coin-peek {
+  animation: pipe-coin-peek 60s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* 4. Tap/Touch Easter Egg Burst */
+@keyframes tap-burst {
+  0% {
+    transform: translate3d(-50%, -50%, 0) scale(0.5);
+    opacity: 0;
+  }
+  30% {
+    transform: translate3d(-50%, calc(-50% - 14px), 0) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-50%, calc(-50% - 28px), 0) scale(0.7);
+    opacity: 0;
+  }
+}
+
+.anim-tap-burst {
+  animation: tap-burst 450ms ease-out forwards;
+  will-change: transform, opacity;
+}
+
 .anim-poly-idle {
   animation: sprite-idle 3.5s steps(1) infinite;
 }
@@ -1933,6 +2026,15 @@
   .anim-progress-segment {
     animation: none !important;
     opacity: 1 !important;
+  }
+
+  .anim-press-coins,
+  .anim-pop-coins,
+  .anim-section-coin-accent,
+  .anim-pipe-coin-peek,
+  .anim-tap-burst {
+    display: none !important;
+    animation: none !important;
   }
 
   .founder-bubble-anchor,
