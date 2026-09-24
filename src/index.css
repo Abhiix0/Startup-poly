@@ -855,6 +855,42 @@
   will-change: transform;
 }
 
+/* Layer 1: Ambient Floating Island Gentle Vertical Hover */
+@keyframes island-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.anim-island-float-left {
+  animation: island-float 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.anim-island-float-right {
+  animation: island-float 7.8s ease-in-out infinite;
+  animation-delay: -3.2s;
+  will-change: transform;
+}
+
+/* Layer 1: Ambient Bug Crawl on Stepped Podium */
+@keyframes critter-patrol {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, 0, 0);
+  }
+}
+
+.anim-critter-crawl {
+  animation: critter-patrol 3.2s steps(2) infinite;
+  will-change: transform;
+}
+
 /* Interaction Hooks via [data-cta] */
 [data-cta="join"] .world-join-coin-pop {
   animation: pop-coins 0.5s ease-out forwards;

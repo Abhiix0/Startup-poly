@@ -196,7 +196,7 @@ export const PixelWorld: React.FC = () => {
 
               {/* Stepped Brick Block with Walking Bug */}
               <div className="flex flex-col items-center">
-                <PixelBug size={24} className="mb-0.5" />
+                <PixelBug size={24} className="mb-0.5 anim-critter-crawl" />
                 <div className="flex">
                   <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />
                   <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />

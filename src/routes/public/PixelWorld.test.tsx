@@ -58,4 +58,23 @@ describe('PixelWorld Living Scene', () => {
     expect(worldContent.includes('animate-bounce')).toBe(false);
     expect(worldContent.includes('animate-pulse')).toBe(false);
   });
+
+  it('Phase 1: verifies ambient layer classes and speed differentiation across depth bands', () => {
+    const { container: worldContainer } = render(<PixelWorld />);
+    expect(worldContainer.querySelector('.anim-cloud-drift-far')).toBeInTheDocument();
+    expect(worldContainer.querySelector('.anim-cloud-drift-near')).toBeInTheDocument();
+    expect(worldContainer.querySelector('.anim-critter-crawl')).toBeInTheDocument();
+
+    const cssFile = path.resolve(__dirname, '../../index.css');
+    const cssContent = fs.readFileSync(cssFile, 'utf-8');
+
+    // Confirm distinct speed tokens
+    expect(cssContent.includes('--duration-cloud-far: 110s;')).toBe(true);
+    expect(cssContent.includes('--duration-cloud-mid: 70s;')).toBe(true);
+    expect(cssContent.includes('--duration-cloud-near: 45s;')).toBe(true);
+
+    // Confirm reduced-motion and tab-pause coverage
+    expect(cssContent.includes('prefers-reduced-motion')).toBe(true);
+    expect(cssContent.includes('[data-paused="true"] *')).toBe(true);
+  });
 });
