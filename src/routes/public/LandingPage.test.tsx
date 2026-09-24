@@ -161,4 +161,65 @@ describe('LandingPage Hero Rebuild', () => {
     // Verify world ground footer layer
     expect(container.querySelector('[data-layer="6-ground"]')).toBeInTheDocument();
   });
+
+  it('Phase 2: sequences game-start boot sequence steps in order on first visit', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    // Step 2: Logo drops
+    expect(container.querySelector('.anim-entrance-logo')).toBeInTheDocument();
+
+    // Step 3: Logo coins settle
+    const settleCoins = container.querySelectorAll('.anim-boot-coin-settle');
+    expect(settleCoins.length).toBe(2);
+
+    // Step 4: Tagline words reveal
+    expect(container.querySelector('.anim-entrance-word-1')).toBeInTheDocument();
+    expect(container.querySelector('.anim-entrance-word-2')).toBeInTheDocument();
+    expect(container.querySelector('.anim-entrance-word-3')).toBeInTheDocument();
+
+    // Step 5: Live indicator entrance
+    expect(container.querySelector('.anim-boot-live-indicator')).toBeInTheDocument();
+    expect(container.querySelector('.anim-live-dot')).toBeInTheDocument();
+
+    // Step 6: Tagline plaque entrance
+    expect(container.querySelector('.anim-entrance-tagline')).toBeInTheDocument();
+
+    // Step 7: Portals container entrance
+    const ctasContainer = container.querySelector('.anim-entrance-ctas');
+    expect(ctasContainer).toBeInTheDocument();
+
+    // Confirm links remain clickable and interactive during boot sequence
+    const joinLink = screen.getByRole('link', { name: /JOIN MATCH/i });
+    expect(joinLink).not.toHaveAttribute('aria-hidden');
+    expect(joinLink).not.toBeDisabled();
+
+    // Trigger onAnimationEnd on the last step (ctasContainer)
+    if (ctasContainer) {
+      fireEvent.animationEnd(ctasContainer);
+    }
+    expect(sessionStorage.getItem('startupoly:landing-seen')).toBe('true');
+  });
+
+  it('Phase 2: confirms repeat visits skip boot sequence entirely', () => {
+    sessionStorage.setItem('startupoly:landing-seen', 'true');
+
+    const { container } = render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    expect(container.querySelector('.anim-entrance-logo')).toBeNull();
+    expect(container.querySelector('.anim-boot-coin-settle')).toBeNull();
+    expect(container.querySelector('.anim-entrance-word-1')).toBeNull();
+    expect(container.querySelector('.anim-boot-live-indicator')).toBeNull();
+    expect(container.querySelector('.anim-entrance-tagline')).toBeNull();
+    expect(container.querySelector('.anim-entrance-ctas')).toBeNull();
+    // Live pulse is still present
+    expect(container.querySelector('.anim-live-dot')).toBeInTheDocument();
+  });
 });

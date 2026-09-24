@@ -69,7 +69,11 @@ export const LandingPage: React.FC = () => {
           {/* Level 1: Wordmark Logo */}
           <div className={`flex flex-col items-center select-none text-center mb-2 ${isFirstVisit ? 'anim-entrance-logo' : ''}`}>
             <div className="relative inline-flex items-center gap-2 sm:gap-3 md:gap-4">
-              <PixelCoin size={22} className="anim-coin-idle shrink-0" ariaHidden={true} />
+              <PixelCoin
+                size={22}
+                className={`anim-coin-idle shrink-0 ${isFirstVisit ? 'anim-boot-coin-settle' : ''}`}
+                ariaHidden={true}
+              />
               <h1
                 className="font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase text-2xl sm:text-3xl md:text-4xl lg:text-5xl"
                 style={{
@@ -86,7 +90,11 @@ export const LandingPage: React.FC = () => {
               >
                 STARTUPOLY
               </h1>
-              <PixelCoin size={22} className="anim-coin-idle shrink-0" ariaHidden={true} />
+              <PixelCoin
+                size={22}
+                className={`anim-coin-idle shrink-0 ${isFirstVisit ? 'anim-boot-coin-settle' : ''}`}
+                ariaHidden={true}
+              />
             </div>
 
             {/* Level 2: Subtitle Badge */}
@@ -102,9 +110,9 @@ export const LandingPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Live Indicator (Compact Game HUD status) */}
+            {/* Live Indicator (Compact Game HUD status with boot sequence entrance) */}
             <div className="mt-2">
-              <LiveIndicator />
+              <LiveIndicator isFirstVisit={isFirstVisit} />
             </div>
           </div>
 

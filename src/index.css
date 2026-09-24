@@ -686,29 +686,74 @@
   }
 }
 
-/* Motion Classes */
-.anim-entrance-logo {
-  animation: entrance-drop 300ms steps(3) forwards;
+/* Phase 2: Game-Start Boot Sequence Keyframes */
+@keyframes boot-coin-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.85);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
+@keyframes boot-live-entrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Motion Classes: Coordinated Boot Sequence (Total perceived time ~900ms) */
+/* Step 2 (~0–250ms): Wordmark logo drops into world */
+.anim-entrance-logo {
+  animation: entrance-drop 250ms steps(3) forwards;
+}
+
+/* Step 3 (~160–340ms): Logo coins settle beside wordmark */
+.anim-boot-coin-settle {
+  animation: boot-coin-settle 180ms ease-out 160ms both;
+}
+
+/* Step 4 (~300–460ms): Subtitle wordmark reveals */
 .anim-entrance-word-1 {
-  animation: entrance-word-reveal 80ms steps(1) 250ms both;
+  animation: entrance-word-reveal 60ms steps(1) 300ms both;
 }
 
 .anim-entrance-word-2 {
-  animation: entrance-word-reveal 80ms steps(1) 370ms both;
+  animation: entrance-word-reveal 60ms steps(1) 360ms both;
 }
 
 .anim-entrance-word-3 {
-  animation: entrance-word-reveal 80ms steps(1) 490ms both;
+  animation: entrance-word-reveal 60ms steps(1) 420ms both;
 }
 
+/* Step 5 (~480–620ms): Live indicator pops and joins ambient pulse */
+.anim-boot-live-indicator {
+  animation: boot-live-entrance 140ms ease-out 480ms both;
+}
+
+/* Step 6 (~560–740ms): Headline plaque slides into view */
 .anim-entrance-tagline {
-  animation: entrance-fade-slide 200ms ease-out 550ms both;
+  animation: entrance-fade-slide 180ms ease-out 560ms both;
 }
 
+/* Step 7 (~680–920ms): Main portal cards arrive */
 .anim-entrance-ctas {
-  animation: entrance-fade-slide 200ms ease-out 650ms both;
+  animation: entrance-fade-slide 240ms ease-out 680ms both;
 }
 
 .anim-coin-idle {
