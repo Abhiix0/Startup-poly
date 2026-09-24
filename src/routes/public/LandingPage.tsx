@@ -15,6 +15,7 @@ import { PixelWorld } from './PixelWorld';
 import { LiveIndicator } from './LiveIndicator';
 import { FloatingPlatforms } from './FloatingPlatforms';
 import { DistantHillsAndCastle } from './DistantHillsAndCastle';
+import { SkyLayer } from './SkyLayer';
 
 export const LandingPage: React.FC = () => {
   const { isFirstVisit, markSeen } = useFirstVisit();
@@ -44,6 +45,11 @@ export const LandingPage: React.FC = () => {
       data-cta={activeCta || undefined}
       className="min-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040] anim-scene-transition"
     >
+      {/* ======================================================================= */}
+      {/* LAYER 0: Upper Sky Moving Clouds Atmosphere                             */}
+      {/* ======================================================================= */}
+      <SkyLayer />
+
       {/* ======================================================================= */}
       {/* LAYER 1: Distant Hills & Castle Silhouette Layer                         */}
       {/* ======================================================================= */}
