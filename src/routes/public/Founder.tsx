@@ -5,15 +5,17 @@ import { useFirstVisit } from '../../lib/useFirstVisit';
 export interface FounderProps {
   size?: number;
   className?: string;
+  initialPhase?: 'enter' | 'idle';
 }
 
 export const Founder: React.FC<FounderProps> = ({
   size = 40,
   className = '',
+  initialPhase,
 }) => {
   const { isFirstVisit } = useFirstVisit();
   const [phase, setPhase] = useState<'enter' | 'idle'>(() =>
-    isFirstVisit ? 'enter' : 'idle'
+    initialPhase !== undefined ? initialPhase : (isFirstVisit ? 'enter' : 'idle')
   );
 
   // Safety fallback: switch to idle if animationend never fires (e.g. background tab)

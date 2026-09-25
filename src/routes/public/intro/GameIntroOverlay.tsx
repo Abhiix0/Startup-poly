@@ -75,7 +75,7 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       setStage('logo_settled');
     }, 550);
 
-    // 0.95s: Mario enters running from left (gives user ~400ms clear view of large logo)
+    // 0.95s: Mario enters running from left (gives user clear view of large logo)
     const tMarioEnter = setTimeout(() => {
       setStage('mario_approach');
       setMarioPose('run-1');
@@ -92,27 +92,27 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       setScreenShake(true);
     }, 1750);
 
-    // 1.86s: Screen shake stops; Mario begins diving downward towards the brick ground
+    // 1.83s: Screen shake stops; Mario begins diving downward towards the brick ground
     const tDive = setTimeout(() => {
       setScreenShake(false);
       setStage('falling');
       setMarioPose('jump');
-    }, 1860);
+    }, 1830);
 
-    // 2.25s: Nearing ground: feet drop into run stride
+    // 2.35s: Nearing ground: feet drop into run stride ready for touchdown
     const tFeetDown = setTimeout(() => {
       setMarioPose('run-1');
-    }, 2250);
+    }, 2350);
 
-    // 2.48s: Touchdown on brick ground with squash & dust puff
+    // 2.48s: Touchdown on brick ground with squash & dust puff (1830 + 650ms)
     const tTouchdown = setTimeout(() => {
       setStage('touchdown');
     }, 2480);
 
-    // 2.65s: Seamless handoff to the ground character (exact same Mario in PixelWorld)
+    // 2.64s: Seamless handoff to the ground character (exact same Mario in PixelWorld)
     const tComplete = setTimeout(() => {
       completeIntro();
-    }, 2650);
+    }, 2640);
 
     return () => {
       clearTimeout(tLogoEnter);
@@ -174,10 +174,8 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       {/* =================================================================== */}
       {showLogo && (
         <div
-          className={`absolute inset-x-0 flex items-center justify-center px-4 transition-opacity duration-300 ${
-            isBackdropFading ? 'opacity-0' : 'opacity-100'
-          }`}
-          style={{ top: 'clamp(50px, 14vh, 100px)' }}
+          className="absolute inset-x-0 flex items-center justify-center px-4"
+          style={{ top: 'var(--intro-logo-y, clamp(45px, 12vh, 85px))' }}
         >
           <div
             className={`relative z-10 ${
@@ -195,23 +193,17 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       {/* =================================================================== */}
       {stage !== 'blue' && stage !== 'logo_enter' && stage !== 'logo_settled' && (
         <div
-          className={`absolute z-20 pointer-events-none ${
+          className={`absolute top-0 left-0 pointer-events-none z-20 ${
             stage === 'mario_approach'
               ? 'anim-intro-mario-approach'
+              : stage === 'impact'
+              ? 'intro-mario-impact-pos'
               : stage === 'falling'
               ? 'anim-intro-mario-dive'
-              : stage === 'impact'
-              ? 'left-[calc(50vw-20px)]'
-              : 'right-[calc(100vw-165px)]'
+              : stage === 'touchdown'
+              ? 'intro-mario-touchdown-pos'
+              : ''
           }`}
-          style={{
-            top: 'clamp(50px, 14vh, 100px)',
-            // When touchdown, lock exactly to the ground target
-            transform:
-              stage === 'touchdown'
-                ? 'translate3d(calc(100vw - 165px), calc(100vh - 16vh - 65px), 0)'
-                : undefined,
-          }}
         >
           {/* Dash speed puffs during dash */}
           {marioPose === 'dash' && stage === 'mario_approach' && (
@@ -224,7 +216,7 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
 
           {/* Touchdown ground dust puff when landing */}
           {stage === 'touchdown' && (
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2">
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-2">
               <div className="w-3 h-2 bg-white rounded-full opacity-90 animate-ping" />
               <div className="w-3 h-2 bg-white rounded-full opacity-90 animate-ping" />
             </div>
@@ -232,14 +224,14 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
 
           {/* Mario Sprite: Plays landing squash when touchdown */}
           <div
-            className={`w-18 h-18 sm:w-22 sm:h-22 md:w-26 md:h-26 flex items-center justify-center ${
+            className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center ${
               stage === 'touchdown' ? 'anim-mario-squash' : ''
             }`}
           >
             <PixelMario
-              size={stage === 'falling' || stage === 'touchdown' ? 56 : 96}
+              size={48}
               pose={marioPose}
-              className="origin-bottom transition-all duration-150"
+              className="origin-bottom"
             />
           </div>
         </div>

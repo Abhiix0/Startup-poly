@@ -2108,54 +2108,78 @@
 /* Intro Mario Run & Dash across the top arena */
 @keyframes intro-mario-approach {
   0% {
-    transform: translate3d(-100px, 0, 0);
+    transform: translate3d(-100px, var(--intro-logo-y, clamp(45px, 12vh, 85px)), 0);
   }
   65% {
-    transform: translate3d(calc(50vw - 140px), 0, 0);
+    transform: translate3d(calc(50vw - 120px), var(--intro-logo-y, clamp(45px, 12vh, 85px)), 0);
   }
   100% {
-    transform: translate3d(calc(50vw - 20px), 0, 0);
+    transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, clamp(45px, 12vh, 85px)), 0);
   }
 }
 
 .anim-intro-mario-approach {
-  animation: intro-mario-approach 800ms cubic-bezier(0.2, 0, 0.4, 1) forwards;
+  animation: intro-mario-approach 800ms cubic-bezier(0.2, 0, 0.35, 1) forwards;
+  will-change: transform;
+}
+
+/* Impact position holding */
+.intro-mario-impact-pos {
+  transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, clamp(45px, 12vh, 85px)), 0);
   will-change: transform;
 }
 
 /* Intro Mario Dive from shattered logo down to the brick ground */
 @keyframes intro-mario-dive-desktop {
   0% {
-    transform: translate3d(calc(50vw - 20px), 0, 0);
+    transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, clamp(60px, 14vh, 110px)), 0) scale(1.15);
   }
   20% {
-    transform: translate3d(calc(55vw - 10px), -24px, 0);
+    transform: translate3d(calc(58vw - 10px), calc(var(--intro-logo-y, clamp(60px, 14vh, 110px)) - 32px), 0) scale(1.12);
+  }
+  60% {
+    transform: translate3d(calc(78vw - 10px), calc(var(--intro-logo-y, clamp(60px, 14vh, 110px)) + 45vh), 0) scale(1.05);
   }
   100% {
-    transform: translate3d(calc(100vw - 165px), calc(100vh - 16vh - 65px), 0);
+    transform: translate3d(calc(100vw - 146px), calc(100vh - 104px), 0) scale(1);
   }
 }
 
 @keyframes intro-mario-dive-mobile {
   0% {
-    transform: translate3d(calc(50vw - 20px), 0, 0);
+    transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, clamp(45px, 12vh, 85px)), 0) scale(1.15);
   }
   20% {
-    transform: translate3d(calc(55vw - 5px), -18px, 0);
+    transform: translate3d(calc(58vw - 10px), calc(var(--intro-logo-y, clamp(45px, 12vh, 85px)) - 26px), 0) scale(1.12);
+  }
+  60% {
+    transform: translate3d(calc(76vw - 10px), calc(var(--intro-logo-y, clamp(45px, 12vh, 85px)) + 40vh), 0) scale(1.05);
   }
   100% {
-    transform: translate3d(calc(100vw - 90px), calc(100vh - 16vh - 55px), 0);
+    transform: translate3d(calc(100vw - 110px), calc(100vh - 96px), 0) scale(1);
   }
 }
 
 .anim-intro-mario-dive {
-  animation: intro-mario-dive-desktop 620ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: intro-mario-dive-desktop 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
   will-change: transform;
 }
 
 @media (max-width: 639px) {
   .anim-intro-mario-dive {
     animation-name: intro-mario-dive-mobile;
+  }
+}
+
+/* Touchdown static position (matches 100% of dive) */
+.intro-mario-touchdown-pos {
+  transform: translate3d(calc(100vw - 110px), calc(100vh - 96px), 0);
+  will-change: transform;
+}
+
+@media (min-width: 640px) {
+  .intro-mario-touchdown-pos {
+    transform: translate3d(calc(100vw - 146px), calc(100vh - 104px), 0);
   }
 }
 
@@ -2170,7 +2194,7 @@
 }
 
 .anim-intro-backdrop-fade {
-  animation: intro-backdrop-dissolve 450ms ease-out forwards;
+  animation: intro-backdrop-dissolve 500ms ease-out forwards;
   will-change: opacity;
 }
 
