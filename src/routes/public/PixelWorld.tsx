@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   PixelBrickTile,
   PixelCloudFluffy,
@@ -14,18 +14,11 @@ import {
   PixelSparkle,
   PixelMonitor,
 } from '../../ui/pixel';
-import { usePointerParallax } from '../../lib/usePointerParallax';
 import { Founder } from './Founder';
 
 export const PixelWorld: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Enable subtle pointer parallax on fine-pointer desktop devices
-  usePointerParallax(containerRef);
-
   return (
     <footer
-      ref={containerRef}
       className="w-full relative select-none overflow-hidden"
       aria-hidden="true"
     >
@@ -37,14 +30,11 @@ export const PixelWorld: React.FC = () => {
         <div data-layer="1-sky" className="absolute inset-0 pointer-events-none" />
 
         {/* ========================================================================= */}
-        {/* LAYER 2: FAR CLOUDS (110s drift, small, 40-50% opacity, parallax depth 1) */}
+        {/* LAYER 2: FAR CLOUDS (110s drift, small, 40-50% opacity)                  */}
         {/* ========================================================================= */}
         <div
           data-layer="2-clouds-far"
           className="absolute inset-x-0 top-0 h-20 overflow-hidden pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 2px), calc(var(--py, 0) * 1px), 0)',
-          }}
         >
           <div
             className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-45"
@@ -78,14 +68,11 @@ export const PixelWorld: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 3: NEAR CLOUDS (45s drift, larger, 80-90% opacity, parallax depth 2)*/}
+        {/* LAYER 3: NEAR CLOUDS (45s drift, larger, 80-90% opacity)                  */}
         {/* ========================================================================= */}
         <div
           data-layer="3-clouds-near"
           className="absolute inset-x-0 top-0 h-22 overflow-hidden pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 4px), calc(var(--py, 0) * 2px), 0)',
-          }}
         >
           <div
             className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-85"
@@ -124,9 +111,6 @@ export const PixelWorld: React.FC = () => {
         <div
           data-layer="4-ground-deco"
           className="absolute inset-x-0 bottom-0 h-full pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 3px), calc(var(--py, 0) * 1px), 0)',
-          }}
         >
           {/* Left Sparkles with desynchronized low-duty twinkle */}
           <div className="absolute bottom-12 sm:bottom-16 left-8 sm:left-14 lg:left-20 anim-sparkle-cycle">
@@ -156,9 +140,6 @@ export const PixelWorld: React.FC = () => {
         <div
           data-layer="5-objects"
           className="absolute inset-x-0 bottom-0 h-full pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 5px), calc(var(--py, 0) * 2px), 0)',
-          }}
         >
           {/* LEFT GROUND OBJECTS: Daisy Flower & Grass + Warp Pipe + Grass + Brick Podium + Orange Flower */}
           <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-1.5 sm:gap-2.5">
