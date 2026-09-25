@@ -19,7 +19,7 @@ export type IntroStage =
 export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }) => {
   const [stage, setStage] = useState<IntroStage>('blue');
   const [marioPose, setMarioPose] = useState<MarioPose>('run-1');
-  const [marioProgress, setMarioProgress] = useState<number>(-15); // Percentage across screen (-15% to 115%)
+  const [marioProgress, setMarioProgress] = useState<number>(-16); // Percentage across screen (-16% to 115%)
   const [screenShake, setScreenShake] = useState<boolean>(false);
   const isCompletedRef = useRef<boolean>(false);
 
@@ -31,22 +31,22 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
     onComplete();
   }, [onComplete]);
 
-  // Skip handler on tap/click or keypress
-  const handleSkip = useCallback(() => {
+  // Optional tap/click or keyboard fast-forward (no visible UI button)
+  const handleFastForward = useCallback(() => {
     completeIntro();
   }, [completeIntro]);
 
-  // Listen for Escape / Space keys to skip
+  // Listen for Escape / Space keys
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
-        handleSkip();
+        handleFastForward();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleSkip]);
+  }, [handleFastForward]);
 
   // Main Intro Sequence Director
   useEffect(() => {
@@ -57,9 +57,9 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
 
     if (prefersReducedMotion) {
       // Gentle accessible sequence for reduced motion users
-      const t1 = setTimeout(() => setStage('logo_enter'), 100);
-      const t2 = setTimeout(() => setStage('fade_out'), 1200);
-      const t3 = setTimeout(() => completeIntro(), 1600);
+      const t1 = setTimeout(() => setStage('logo_enter'), 80);
+      const t2 = setTimeout(() => setStage('fade_out'), 1000);
+      const t3 = setTimeout(() => completeIntro(), 1400);
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
@@ -67,49 +67,50 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       };
     }
 
-    // Standard Retro Game Cinematic Sequence
-    // 0.0s: Blue screen
-    // 0.15s: Logo enters
+    // Standard Retro Game Cinematic Sequence (Total ~2.2s)
+    // 0.0s: Solid blue screen
+    // 0.12s: Logo drops in with overshoot bounce
     const tLogoEnter = setTimeout(() => {
       setStage('logo_enter');
-    }, 150);
+    }, 120);
 
-    // 0.65s: Logo settles
+    // 0.58s: Logo settles centered
     const tLogoSettled = setTimeout(() => {
       setStage('logo_settled');
-    }, 650);
+    }, 580);
 
-    // 0.95s: Mario enters running from left
+    // 0.85s: Mario enters running from left
     const tMarioEnter = setTimeout(() => {
       setStage('mario_run');
-    }, 950);
+    }, 850);
 
-    // 1.55s: Mario enters DASH mode (smoke puff, forward lean)
+    // 1.35s: Mario switches to high-speed DASH pose with smoke dust clouds
     const tMarioDash = setTimeout(() => {
       setStage('mario_dash');
       setMarioPose('dash');
-    }, 1550);
+    }, 1350);
 
-    // 1.88s: IMPACT! Mario rams through logo center
+    // 1.68s: IMPACT! Mario smashes directly through the logo center
     const tImpact = setTimeout(() => {
       setStage('impact');
       setScreenShake(true);
-    }, 1880);
+    }, 1680);
 
-    // Settle screen shake after 180ms
+    // 1.84s: Settle screen shake quickly
     const tShakeStop = setTimeout(() => {
       setScreenShake(false);
-    }, 2080);
+    }, 1840);
 
-    // 2.20s: Begin smooth fade out
+    // 1.90s: Seamless transition - as fragments blast outward, the blue overlay
+    // smoothly dissolves away to reveal the living landing page beneath
     const tFadeOut = setTimeout(() => {
       setStage('fade_out');
-    }, 2200);
+    }, 1900);
 
-    // 2.50s: Overlay complete, unmount
+    // 2.25s: Overlay complete, unmount cleanly
     const tComplete = setTimeout(() => {
       completeIntro();
-    }, 2500);
+    }, 2250);
 
     return () => {
       clearTimeout(tLogoEnter);
@@ -139,28 +140,26 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
         stepCount = (stepCount + 1) % 3;
         setMarioPose(stepCount === 0 ? 'run-1' : stepCount === 1 ? 'run-2' : 'run-3');
       }
-    }, 90);
+    }, 85);
 
     const animateMovement = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
 
       if (stage === 'mario_run') {
-        // Accelerating entry from -12% to 18% over 600ms
-        const progress = Math.min(1, elapsed / 600);
-        // Ease in quad
-        const currentPos = -12 + (progress * progress) * 30;
+        // Run from -16% to 22% over 500ms
+        const progress = Math.min(1, elapsed / 500);
+        const currentPos = -16 + (progress * progress) * 38;
         setMarioProgress(currentPos);
       } else if (stage === 'mario_dash') {
-        // High speed dash from 18% to 50% (collision point) over 330ms
+        // High speed sprint from 22% to 50% (logo center) over 330ms
         const progress = Math.min(1, elapsed / 330);
-        // Exponential burst acceleration
-        const currentPos = 18 + Math.pow(progress, 1.8) * 32;
+        const currentPos = 22 + Math.pow(progress, 1.7) * 28;
         setMarioProgress(currentPos);
       } else if (stage === 'impact' || stage === 'fade_out') {
-        // Blasts through from 50% to 110% over 400ms
-        const progress = Math.min(1, elapsed / 400);
-        const currentPos = 50 + progress * 60;
+        // Blasts straight through from 50% to 115% over 380ms
+        const progress = Math.min(1, elapsed / 380);
+        const currentPos = 50 + progress * 65;
         setMarioProgress(currentPos);
       }
 
@@ -188,26 +187,13 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       role="dialog"
       aria-label="Game Intro"
       aria-modal="true"
-      onClick={handleSkip}
-      className={`fixed inset-0 z-50 bg-[#5C94FC] flex flex-col items-center justify-center select-none overflow-hidden cursor-pointer transition-opacity duration-300 ${
-        stage === 'fade_out' ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      onClick={handleFastForward}
+      className={`fixed inset-0 z-50 bg-[#5C94FC] flex flex-col items-center justify-center select-none overflow-hidden transition-all duration-400 ease-out ${
+        stage === 'fade_out' ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100'
       } ${screenShake ? 'anim-intro-screen-shake' : ''}`}
     >
-      {/* Top right subtle skip affordance */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleSkip();
-        }}
-        aria-label="Skip Intro Animation"
-        className="absolute top-4 right-4 z-50 font-pixel text-[9px] sm:text-[10px] text-[#FFCC00] bg-[#102040] border-2 border-[#FFCC00] px-2 py-1 shadow-[2px_2px_0px_#B84418] hover:scale-105 active:scale-95 transition-transform"
-      >
-        SKIP ❯
-      </button>
-
       {/* Main Center Arena (Logo & Mario Collision Path) */}
-      <div className="relative w-full max-w-5xl h-64 sm:h-80 flex items-center justify-center">
+      <div className="relative w-full max-w-5xl h-64 sm:h-80 flex items-center justify-center px-4">
         {/* ================================================================= */}
         {/* STARTUPOLY LOGO                                                   */}
         {/* ================================================================= */}
@@ -228,28 +214,28 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
         {/* ================================================================= */}
         {showMario && (
           <div
-            className="absolute z-20 pointer-events-none transition-transform"
+            className="absolute z-20 pointer-events-none"
             style={{
               left: `${marioProgress}%`,
               top: '50%',
               transform: 'translate(-50%, -50%)',
             }}
           >
-            {/* Speed dust clouds during dash */}
+            {/* Speed dust clouds trailing behind during dash */}
             {stage === 'mario_dash' && (
-              <div className="absolute top-1/2 -left-6 -translate-y-1/2 flex items-center gap-1">
-                <div className="w-2.5 h-2.5 rounded-full bg-white opacity-80 anim-dust-puff" />
-                <div className="w-2 h-2 rounded-full bg-white opacity-60 anim-dust-puff" style={{ animationDelay: '0.04s' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-white opacity-40 anim-dust-puff" style={{ animationDelay: '0.08s' }} />
+              <div className="absolute top-1/2 -left-8 -translate-y-1/2 flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-white opacity-85 anim-dust-puff" />
+                <div className="w-2.5 h-2.5 rounded-full bg-white opacity-65 anim-dust-puff" style={{ animationDelay: '0.04s' }} />
+                <div className="w-2 h-2 rounded-full bg-white opacity-45 anim-dust-puff" style={{ animationDelay: '0.08s' }} />
               </div>
             )}
 
-            {/* Responsive Mario: 56px on mobile, 72px on tablet, 80px on desktop */}
-            <div className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 flex items-center justify-center">
+            {/* Heroic Mario scale: 80px on mobile, 100px on tablet, 114px on desktop */}
+            <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center">
               <PixelMario
-                size={72}
+                size={96}
                 pose={marioPose}
-                className="scale-90 sm:scale-110 md:scale-125 origin-center"
+                className="scale-85 sm:scale-105 md:scale-115 origin-center"
               />
             </div>
           </div>

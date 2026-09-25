@@ -60,12 +60,12 @@ describe('GameIntroOverlay & Mario Animation', () => {
     expect(handleComplete).toHaveBeenCalledTimes(1);
   });
 
-  it('allows user to skip immediately by clicking the SKIP button or overlay', () => {
+  it('allows user to fast-forward immediately by clicking the overlay or pressing Space', () => {
     const handleComplete = vi.fn();
     render(<GameIntroOverlay onComplete={handleComplete} />);
 
-    const skipButton = screen.getByRole('button', { name: /Skip Intro Animation/i });
-    fireEvent.click(skipButton);
+    const overlay = screen.getByRole('dialog', { name: /Game Intro/i });
+    fireEvent.click(overlay);
 
     expect(handleComplete).toHaveBeenCalledTimes(1);
   });
