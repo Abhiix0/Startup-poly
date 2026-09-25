@@ -30,3 +30,4 @@ export * from './CastleBackground';
 export * from './PlainsBackground';
 export * from './RoamingCharacter';
 export * from './SceneTransition';
+export * from './PixelMario';

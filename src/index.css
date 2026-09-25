@@ -2003,6 +2003,97 @@
   will-change: opacity, transform;
 }
 
+/* ========================================================================= */
+/* RETRO GAME INTRO CINEMATIC (0.0s - 2.5s)                                  */
+/* ========================================================================= */
+@keyframes intro-screen-shake {
+  0% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-10px, 4px, 0); }
+  40% { transform: translate3d(10px, -4px, 0); }
+  60% { transform: translate3d(-6px, 2px, 0); }
+  80% { transform: translate3d(4px, -1px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+.anim-intro-screen-shake {
+  animation: intro-screen-shake 200ms steps(5) both;
+}
+
+@keyframes intro-logo-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-90px) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(12px) scale(1.05);
+  }
+  80% {
+    transform: translateY(-4px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.anim-intro-logo-drop {
+  animation: intro-logo-drop 480ms cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+@keyframes logo-fragment-scatter {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--frag-dx, 80px), var(--frag-dy, 120px)) rotate(var(--frag-rot, 360deg)) scale(0.5);
+  }
+}
+
+.anim-logo-fragment {
+  animation: logo-fragment-scatter 380ms cubic-bezier(0.1, 0.7, 0.1, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes impact-burst-flash {
+  0% {
+    transform: scale(0.2) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.6) rotate(45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.4) rotate(90deg);
+    opacity: 0;
+  }
+}
+
+.anim-impact-burst-flash {
+  animation: impact-burst-flash 250ms ease-out forwards;
+}
+
+@keyframes dust-puff {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6) translateX(-8px);
+    opacity: 0;
+  }
+}
+
+.anim-dust-puff {
+  animation: dust-puff 220ms ease-out infinite;
+}
+
 /* Global Prefers Reduced Motion Rule */
 @media (prefers-reduced-motion: reduce) {
   *,

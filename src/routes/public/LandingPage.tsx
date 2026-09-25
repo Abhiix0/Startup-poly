@@ -17,9 +17,11 @@ import { FloatingPlatforms } from './FloatingPlatforms';
 import { DistantHillsAndCastle } from './DistantHillsAndCastle';
 import { SkyLayer } from './SkyLayer';
 import { TapCoinBurst } from './TapCoinBurst';
+import { GameIntroOverlay } from './intro/GameIntroOverlay';
 
 export const LandingPage: React.FC = () => {
   const { isFirstVisit, markSeen } = useFirstVisit();
+  const [showIntro, setShowIntro] = useState<boolean>(true);
   const [activeCta, setActiveCta] = useState<'join' | 'admin' | null>(null);
 
   // Check prefers-reduced-motion
@@ -51,6 +53,13 @@ export const LandingPage: React.FC = () => {
       data-cta={activeCta || undefined}
       className="min-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040] anim-scene-transition"
     >
+      {/* ======================================================================= */}
+      {/* RETRO GAME OPENING INTRO CINEMATIC (Overlay)                           */}
+      {/* ======================================================================= */}
+      {showIntro && (
+        <GameIntroOverlay onComplete={() => setShowIntro(false)} />
+      )}
+
       {/* ======================================================================= */}
       {/* LAYER 0: Upper Sky Moving Clouds Atmosphere                             */}
       {/* ======================================================================= */}
