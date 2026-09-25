@@ -179,8 +179,7 @@ export const PixelWorld: React.FC = () => {
                 <PixelCoin size={14} />
               </div>
               <div className="anim-pipe-highlight">
-                <PixelPipe width={56} height={50} className="sm:hidden" />
-                <PixelPipe width={68} height={58} className="hidden sm:inline-block" />
+                <PixelPipe className="w-[56px] h-[50px] sm:w-[68px] sm:h-[58px]" />
               </div>
             </div>
 
@@ -255,8 +254,7 @@ export const PixelWorld: React.FC = () => {
             {/* Right Large Green Warp Pipe */}
             <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
-                <PixelPipe width={56} height={50} className="sm:hidden" />
-                <PixelPipe width={68} height={54} className="hidden sm:inline-block" />
+                <PixelPipe className="w-[56px] h-[50px] sm:w-[68px] sm:h-[54px]" />
               </div>
             </div>
 
