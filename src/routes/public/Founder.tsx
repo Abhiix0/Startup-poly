@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { PixelPoly } from '../../ui/pixel';
+import { PixelMario } from '../../ui/pixel';
 import { useFirstVisit } from '../../lib/useFirstVisit';
 
 export interface FounderProps {
@@ -72,9 +72,10 @@ export const Founder: React.FC<FounderProps> = ({
 
         {/* Character Facing Direction & Sprite Container */}
         <div className="founder-character-container flex items-center justify-center">
-          <PixelPoly
+          <PixelMario
             size={size}
-            animation={phase === 'enter' ? 'walk' : 'idle'}
+            isStrip={true}
+            stripAnimation={phase === 'enter' ? 'walk' : 'idle'}
             className="shrink-0"
           />
         </div>
