@@ -13,15 +13,15 @@ export type IntroStage =
   | 'mario_run'
   | 'mario_dash'
   | 'impact'
-  | 'follow_descent'
-  | 'landed'
+  | 'falling'
+  | 'touchdown'
   | 'complete';
 
 export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }) => {
   const [stage, setStage] = useState<IntroStage>('blue');
   const [marioPose, setMarioPose] = useState<MarioPose>('run-1');
-  const [marioX, setMarioX] = useState<number>(-16); // Percentage across screen (-16% to 75%)
-  const [marioY, setMarioY] = useState<number>(36);  // Percentage down screen (36% logo level -> 86% ground)
+  const [marioX, setMarioX] = useState<number>(-16); // Percentage across screen (-16% to ~75%)
+  const [marioY, setMarioY] = useState<number>(33);  // Percentage down screen (33% logo level -> 88% ground)
   const [cameraProgress, setCameraProgress] = useState<number>(0); // 0 (intro title) to 1 (ground world)
   const [screenShake, setScreenShake] = useState<boolean>(false);
   const isCompletedRef = useRef<boolean>(false);
@@ -69,48 +69,48 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
     }
 
     // 0.0s: Blue screen
-    // 0.12s: Logo drops in
+    // 0.12s: Strong Hero Logo drops in
     const tLogoEnter = setTimeout(() => {
       setStage('logo_enter');
     }, 120);
 
-    // 0.55s: Logo settles
+    // 0.55s: Logo settles centered
     const tLogoSettled = setTimeout(() => {
       setStage('logo_settled');
     }, 550);
 
-    // 0.82s: Mario enters running from off-screen left
+    // 0.95s: Mario enters running from off-screen left (gives user ~400ms to register large logo)
     const tMarioEnter = setTimeout(() => {
       setStage('mario_run');
-    }, 820);
+    }, 950);
 
-    // 1.30s: Mario accelerates into high-speed DASH pose
+    // 1.40s: Mario accelerates into high-speed DASH pose with speed puffs
     const tMarioDash = setTimeout(() => {
       setStage('mario_dash');
       setMarioPose('dash');
-    }, 1300);
+    }, 1400);
 
-    // 1.62s: IMPACT! Mario smashes directly through the logo center
+    // 1.70s: IMPACT! Mario smashes directly through the center of the logo
     const tImpact = setTimeout(() => {
       setStage('impact');
       setScreenShake(true);
-    }, 1620);
+    }, 1700);
 
-    // 1.76s: Shake settles, Mario enters follow-descent towards the ground
+    // 1.84s: Screen shake settles; Mario starts falling down toward the ground world
     const tShakeStop = setTimeout(() => {
       setScreenShake(false);
-      setStage('follow_descent');
-    }, 1760);
+      setStage('falling');
+    }, 1840);
 
-    // 2.36s: Mario touches ground right beside the warp pipe
-    const tLanded = setTimeout(() => {
-      setStage('landed');
-    }, 2360);
+    // 2.45s: Mario hits the ground with tiny squash & dust
+    const tTouchdown = setTimeout(() => {
+      setStage('touchdown');
+    }, 2450);
 
-    // 2.42s: Clean continuous handoff to the landing world
+    // 2.58s: Seamless handoff to the ground character (exact same Mario in PixelWorld)
     const tComplete = setTimeout(() => {
       completeIntro();
-    }, 2420);
+    }, 2580);
 
     return () => {
       clearTimeout(tLogoEnter);
@@ -119,7 +119,7 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       clearTimeout(tMarioDash);
       clearTimeout(tImpact);
       clearTimeout(tShakeStop);
-      clearTimeout(tLanded);
+      clearTimeout(tTouchdown);
       clearTimeout(tComplete);
     };
   }, [completeIntro]);
@@ -133,17 +133,17 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
     let animationFrameId: number;
     let startTime: number | null = null;
 
-    // Sprite stride legs toggle
+    // Sprite stride legs toggle for running phases
     let stepCount = 0;
     const stepInterval = setInterval(() => {
-      if (stage === 'mario_run' || (stage === 'follow_descent' && marioPose !== 'jump')) {
+      if (stage === 'mario_run' || (stage === 'falling' && marioPose !== 'jump')) {
         stepCount = (stepCount + 1) % 3;
         setMarioPose(stepCount === 0 ? 'run-1' : stepCount === 1 ? 'run-2' : 'run-3');
       }
     }, 80);
 
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    const groundTargetX = isMobile ? 68 : 74;
+    const groundTargetX = isMobile ? 68 : 75;
     const groundTargetY = isMobile ? 86 : 88;
 
     const animateMovement = (timestamp: number) => {
@@ -151,45 +151,49 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       const elapsed = timestamp - startTime;
 
       if (stage === 'mario_run') {
-        // Run from -16% to 22%
-        const progress = Math.min(1, elapsed / 480);
-        const currentX = -16 + (progress * progress) * 38;
+        // Accelerating run from -16% to 20%
+        const progress = Math.min(1, elapsed / 450);
+        const currentX = -16 + (progress * progress) * 36;
         setMarioX(currentX);
-        setMarioY(36);
+        setMarioY(33);
       } else if (stage === 'mario_dash') {
-        // High speed dash from 22% to 48% (into logo center)
-        const progress = Math.min(1, elapsed / 320);
-        const currentX = 22 + Math.pow(progress, 1.7) * 26;
+        // High speed dash from 20% to 48% (into logo center)
+        const progress = Math.min(1, elapsed / 300);
+        const currentX = 20 + Math.pow(progress, 1.7) * 28;
         setMarioX(currentX);
-        setMarioY(36);
+        setMarioY(33);
       } else if (stage === 'impact') {
-        // Blast through center
-        setMarioX(49);
-        setMarioY(36);
-      } else if (stage === 'follow_descent') {
-        // Continuous follow shot: Mario arcs down to groundTargetX, groundTargetY
-        const duration = 600;
+        // Impact hit at center
+        setMarioX(48);
+        setMarioY(33);
+      } else if (stage === 'falling') {
+        // Natural gravity fall from (48%, 33%) down to (groundTargetX, groundTargetY)
+        const duration = 610;
         const progress = Math.min(1, elapsed / duration);
 
-        // First 250ms: heroic jump pose flying through the air
-        if (elapsed < 240) {
+        // First 320ms: Super Mario jump pose (fist raised high!)
+        if (elapsed < 320) {
           setMarioPose('jump');
+        } else {
+          // Approaching ground: feet down ready to touch down
+          setMarioPose('run-1');
         }
 
-        // Horizontal glide
-        const currentX = 49 + Math.pow(progress, 0.85) * (groundTargetX - 49);
-        // Vertical arc with realistic gravity
-        const currentY = 36 + Math.pow(progress, 1.35) * (groundTargetY - 36);
+        // Horizontal forward momentum
+        const currentX = 48 + Math.pow(progress, 0.85) * (groundTargetX - 48);
+        // Realistic gravity curve: y drops with power acceleration
+        const currentY = 33 + Math.pow(progress, 1.6) * (groundTargetY - 33);
 
         setMarioX(currentX);
         setMarioY(currentY);
 
         // Camera tracks down alongside Mario
         setCameraProgress(progress);
-      } else if (stage === 'landed') {
+      } else if (stage === 'touchdown') {
         setMarioX(groundTargetX);
         setMarioY(groundTargetY);
         setCameraProgress(1);
+        setMarioPose('run-1');
       }
 
       animationFrameId = requestAnimationFrame(animateMovement);
@@ -207,13 +211,13 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
     return null;
   }
 
-  const isShattered = stage === 'impact' || stage === 'follow_descent' || stage === 'landed';
+  const isShattered = stage === 'impact' || stage === 'falling' || stage === 'touchdown';
   const showLogo = stage !== 'blue';
   const showMario = stage !== 'blue' && stage !== 'logo_enter' && stage !== 'logo_settled';
 
-  // Camera follow effect: As Mario descends, the blue curtain scrolls up & dissolves
-  const backdropOpacity = Math.max(0, 1 - cameraProgress * 1.15);
-  const backdropTranslateY = -cameraProgress * 40; // Subtle camera tilt upward as world arrives
+  // Camera follow effect: As Mario falls, the solid blue curtain rolls up & fades away
+  const backdropOpacity = Math.max(0, 1 - cameraProgress * 1.25);
+  const backdropTranslateY = -cameraProgress * 50;
 
   return (
     <div
@@ -238,13 +242,13 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       />
 
       {/* =================================================================== */}
-      {/* TITLE LOGO ARENA (Positioned at 36% height where smash occurs)      */}
+      {/* TITLE LOGO ARENA (Positioned at 33% height where smash occurs)      */}
       {/* =================================================================== */}
       {showLogo && (
         <div
           className="absolute inset-x-0 flex items-center justify-center px-4"
           style={{
-            top: '36%',
+            top: '33%',
             transform: 'translateY(-50%)',
             opacity: Math.max(0, 1 - cameraProgress * 1.8),
           }}
@@ -261,7 +265,7 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
 
       {/* =================================================================== */}
       {/* CONTINUOUS MARIO FLIGHT TRACK                                      */}
-      {/* Follows Mario from logo smash smoothly down to the ground pipe      */}
+      {/* Follows Mario from logo smash down to the ground pipe               */}
       {/* =================================================================== */}
       {showMario && (
         <div
@@ -273,7 +277,7 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
             willChange: 'left, top',
           }}
         >
-          {/* Dash speed puffs behind feet */}
+          {/* Dash speed puffs behind feet during dash */}
           {stage === 'mario_dash' && (
             <div className="absolute top-1/2 -left-8 -translate-y-1/2 flex items-center gap-1">
               <div className="w-3 h-3 rounded-full bg-white opacity-85 anim-dust-puff" />
@@ -283,17 +287,21 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
           )}
 
           {/* Touchdown ground dust puff when landing */}
-          {(stage === 'landed' || (stage === 'follow_descent' && cameraProgress > 0.9)) && (
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-              <div className="w-2.5 h-2 bg-white rounded-full opacity-80 animate-ping" />
-              <div className="w-2.5 h-2 bg-white rounded-full opacity-80 animate-ping" />
+          {(stage === 'touchdown' || (stage === 'falling' && cameraProgress > 0.92)) && (
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2">
+              <div className="w-3 h-2 bg-white rounded-full opacity-90 animate-ping" />
+              <div className="w-3 h-2 bg-white rounded-full opacity-90 animate-ping" />
             </div>
           )}
 
-          {/* Heroic Mario Sprite: transitions smoothly down to ground size */}
-          <div className="w-18 h-18 sm:w-22 sm:h-22 md:w-26 md:h-26 flex items-center justify-center">
+          {/* Mario Sprite: Plays landing squash when stage is touchdown */}
+          <div
+            className={`w-18 h-18 sm:w-22 sm:h-22 md:w-26 md:h-26 flex items-center justify-center ${
+              stage === 'touchdown' ? 'anim-mario-squash' : ''
+            }`}
+          >
             <PixelMario
-              size={cameraProgress > 0.8 ? 58 : 88}
+              size={cameraProgress > 0.7 ? 54 : 96}
               pose={marioPose}
               className="origin-bottom transition-all duration-150"
             />

@@ -410,7 +410,7 @@ export const LandingPage: React.FC = () => {
       {/* ======================================================================= */}
       {/* LAYER 4: Living Pixel World Ground & Scene                              */}
       {/* ======================================================================= */}
-      <PixelWorld />
+      <PixelWorld isIntroActive={showIntro} />
     </div>
   );
 };

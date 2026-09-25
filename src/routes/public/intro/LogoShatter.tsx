@@ -31,35 +31,35 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
   shattered,
   className = '',
 }) => {
-  // Deterministic fragment layout around the logo bounds
+  // Deterministic fragment layout across the enlarged logo area
   const fragments: Fragment[] = useMemo(() => {
     const list: Fragment[] = [];
-    const count = 28;
+    const count = 38;
 
     for (let i = 0; i < count; i++) {
       const colorScheme = FRAGMENT_COLORS[i % FRAGMENT_COLORS.length];
       const angle = (i / count) * 2 * Math.PI + (Math.sin(i) * 0.4);
       // Explode outward radially from center
-      const distance = 90 + (i % 5) * 35;
+      const distance = 110 + (i % 6) * 42;
       const dx = `${Math.cos(angle) * distance}px`;
-      // Gravity pulls fragments slightly downward
-      const dy = `${Math.sin(angle) * distance + 40}px`;
-      const rot = `${(i % 2 === 0 ? 1 : -1) * (180 + (i * 25))}deg`;
+      // Gravity pulls fragments downward
+      const dy = `${Math.sin(angle) * distance + 50}px`;
+      const rot = `${(i % 2 === 0 ? 1 : -1) * (200 + (i * 30))}deg`;
 
-      // Distribute initial positions across a ~240x50 logo area
-      const initialX = ((i % 7) - 3) * 32 + (Math.sin(i * 3) * 10);
-      const initialY = (Math.floor(i / 7) - 1.5) * 14 + (Math.cos(i * 2) * 6);
+      // Distribute initial positions across a ~320x80 logo & badge area
+      const initialX = ((i % 9) - 4) * 36 + (Math.sin(i * 3) * 12);
+      const initialY = (Math.floor(i / 9) - 1.5) * 20 + (Math.cos(i * 2) * 8);
 
       list.push({
         id: i,
-        width: 10 + (i % 4) * 4,
-        height: 8 + (i % 3) * 4,
+        width: 12 + (i % 4) * 4,
+        height: 10 + (i % 3) * 4,
         color: colorScheme.fill,
         borderColor: colorScheme.border,
         dx,
         dy,
         rot,
-        delay: `${(i % 3) * 0.02}s`,
+        delay: `${(i % 4) * 0.015}s`,
         initialX,
         initialY,
       });
@@ -70,26 +70,36 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
   return (
     <div className={`relative flex items-center justify-center select-none ${className}`}>
       {/* =================================================================== */}
-      {/* INTACT STATE: Solid, clean pixel STARTUPOLY wordmark               */}
+      {/* INTACT STATE: Heroic Large STARTUPOLY Logo with Badge               */}
       {/* =================================================================== */}
       {!shattered ? (
-        <div
-          data-testid="intro-intact-logo"
-          className="font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase text-3xl sm:text-5xl md:text-6xl lg:text-7xl select-none"
-          style={{
-            textShadow: `
-              3px 3px 0 #B84418,
-              6px 6px 0 #102040,
-              -2px -2px 0 #102040,
-              2px -2px 0 #102040,
-              -2px 2px 0 #102040,
-              2px 2px 0 #102040
-            `,
-            letterSpacing: '0.08em',
-          }}
-          aria-label="STARTUPOLY"
-        >
-          STARTUPOLY
+        <div className="flex flex-col items-center select-none text-center px-4">
+          {/* Main Title Wordmark */}
+          <div
+            data-testid="intro-intact-logo"
+            className="font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase text-4xl sm:text-6xl md:text-7xl lg:text-8xl select-none"
+            style={{
+              textShadow: `
+                4px 4px 0 #B84418,
+                8px 8px 0 #102040,
+                -2px -2px 0 #102040,
+                2px -2px 0 #102040,
+                -2px 2px 0 #102040,
+                2px 2px 0 #102040
+              `,
+              letterSpacing: '0.08em',
+            }}
+            aria-label="STARTUPOLY"
+          >
+            STARTUPOLY
+          </div>
+
+          {/* Subtitle Badge matching user layout: ✦ DREAM • BUILD • GROW ✦ */}
+          <div className="mt-2.5 sm:mt-4 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-[#102040] border-2 sm:border-[3px] border-[#FFCC00] rounded-sm shadow-[3px_3px_0px_#B84418]">
+            <span className="font-pixel text-[9px] sm:text-xs md:text-sm text-[#FFFBEB] tracking-widest font-bold">
+              ✦ DREAM • BUILD • GROW ✦
+            </span>
+          </div>
         </div>
       ) : (
         /* ================================================================= */
@@ -97,26 +107,25 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
         /* ================================================================= */
         <div
           data-testid="intro-shattered-logo"
-          className="relative w-full h-24 flex items-center justify-center pointer-events-none"
+          className="relative w-full h-32 flex items-center justify-center pointer-events-none"
         >
           {/* Central Impact Burst Graphic */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
             <svg
-              width="96"
-              height="96"
+              width="120"
+              height="120"
               viewBox="0 0 32 32"
               fill="none"
               className="anim-impact-burst-flash"
               shapeRendering="crispEdges"
             >
-              {/* Star-shaped 8-point pixel burst */}
               <rect x="14" y="0" width="4" height="32" fill="#FFCC00" />
               <rect x="0" y="14" width="32" height="4" fill="#FFCC00" />
-              <rect x="6" y="6" width="6" height="6" fill="#FFFBEB" />
-              <rect x="20" y="6" width="6" height="6" fill="#FFFBEB" />
-              <rect x="6" y="20" width="6" height="6" fill="#FFFBEB" />
-              <rect x="20" y="20" width="6" height="6" fill="#FFFBEB" />
-              <rect x="12" y="12" width="8" height="8" fill="#FFFFFF" />
+              <rect x="5" y="5" width="7" height="7" fill="#FFFBEB" />
+              <rect x="20" y="5" width="7" height="7" fill="#FFFBEB" />
+              <rect x="5" y="20" width="7" height="7" fill="#FFFBEB" />
+              <rect x="20" y="20" width="7" height="7" fill="#FFFBEB" />
+              <rect x="11" y="11" width="10" height="10" fill="#FFFFFF" />
             </svg>
           </div>
 
@@ -131,7 +140,6 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
                 backgroundColor: frag.color,
                 border: `2px solid ${frag.borderColor}`,
                 transform: `translate(${frag.initialX}px, ${frag.initialY}px)`,
-                // Pass target displacement coordinates to CSS keyframe
                 ['--frag-dx' as any]: frag.dx,
                 ['--frag-dy' as any]: frag.dy,
                 ['--frag-rot' as any]: frag.rot,

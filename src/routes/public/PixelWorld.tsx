@@ -16,7 +16,11 @@ import {
 } from '../../ui/pixel';
 import { Founder } from './Founder';
 
-export const PixelWorld: React.FC = () => {
+export interface PixelWorldProps {
+  isIntroActive?: boolean;
+}
+
+export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false }) => {
   return (
     <footer
       className="w-full relative select-none overflow-hidden"
@@ -217,8 +221,12 @@ export const PixelWorld: React.FC = () => {
               </div>
             </div>
 
-            {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
-            <div className="relative z-20">
+            {/* Founder Mascot with walk-in, idle, bubble & CTA reactions */}
+            <div
+              className={`relative z-20 transition-opacity duration-150 ${
+                isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              }`}
+            >
               <Founder size={46} className="scale-90 sm:scale-100 origin-bottom" />
             </div>
 

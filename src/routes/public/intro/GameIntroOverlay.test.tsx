@@ -40,9 +40,9 @@ describe('GameIntroOverlay & Mario Animation', () => {
     // Logo should now be shattered
     expect(screen.getByTestId('intro-shattered-logo')).toBeInTheDocument();
 
-    // Fast-forward to completion (~2550ms)
+    // Fast-forward to completion (~2700ms)
     act(() => {
-      vi.advanceTimersByTime(600);
+      vi.advanceTimersByTime(700);
     });
 
     expect(handleComplete).toHaveBeenCalledTimes(1);
