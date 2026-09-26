@@ -2108,13 +2108,13 @@
 /* Intro Mario Run & Dash across the centered arena */
 @keyframes intro-mario-approach {
   0% {
-    transform: translate3d(-100px, var(--intro-logo-y, calc(50vh - 10px)), 0);
+    transform: translate3d(-100px, var(--mario-y0, calc(50vh - 15px)), 0);
   }
   65% {
-    transform: translate3d(calc(50vw - 120px), var(--intro-logo-y, calc(50vh - 10px)), 0);
+    transform: translate3d(calc(var(--mario-x0, calc(50vw - 23px)) - 95px), var(--mario-y0, calc(50vh - 15px)), 0);
   }
   100% {
-    transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, calc(50vh - 10px)), 0);
+    transform: translate3d(var(--mario-x0, calc(50vw - 23px)), var(--mario-y0, calc(50vh - 15px)), 0);
   }
 }
 
@@ -2125,62 +2125,69 @@
 
 /* Impact position holding */
 .intro-mario-impact-pos {
-  transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, calc(50vh - 10px)), 0);
+  transform: translate3d(var(--mario-x0, calc(50vw - 23px)), var(--mario-y0, calc(50vh - 15px)), 0);
   will-change: transform;
 }
 
-/* Intro Mario Dive from shattered centered logo down to the brick ground */
-@keyframes intro-mario-dive-desktop {
+/* Intro Mario Dive: Continuous, silky-smooth parabolic arc from shattered logo directly to ground target */
+@keyframes intro-mario-dive {
   0% {
-    transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, calc(50vh - 15px)), 0) scale(1.15);
+    transform: translate3d(var(--mario-x0, calc(50vw - 23px)), var(--mario-y0, calc(50vh - 15px)), 0) scale(1.15);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
-  20% {
-    transform: translate3d(calc(58vw - 10px), calc(var(--intro-logo-y, calc(50vh - 15px)) - 36px), 0) scale(1.12);
+  25% {
+    transform: translate3d(var(--mario-x1, calc(65vw - 20px)), var(--mario-y1, calc(50vh - 55px)), 0) scale(1.1);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
   }
-  60% {
-    transform: translate3d(calc(78vw - 10px), calc(var(--intro-logo-y, calc(50vh - 15px)) + 24vh), 0) scale(1.05);
+  70% {
+    transform: translate3d(var(--mario-x2, calc(85vw - 20px)), var(--mario-y2, calc(75vh - 20px)), 0) scale(1.04);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
   }
   100% {
-    transform: translate3d(calc(100vw - 146px), calc(100vh - 104px), 0) scale(1);
-  }
-}
-
-@keyframes intro-mario-dive-mobile {
-  0% {
-    transform: translate3d(calc(50vw - 24px), var(--intro-logo-y, calc(50vh - 10px)), 0) scale(1.15);
-  }
-  20% {
-    transform: translate3d(calc(58vw - 10px), calc(var(--intro-logo-y, calc(50vh - 10px)) - 30px), 0) scale(1.12);
-  }
-  60% {
-    transform: translate3d(calc(76vw - 10px), calc(var(--intro-logo-y, calc(50vh - 10px)) + 22vh), 0) scale(1.05);
-  }
-  100% {
-    transform: translate3d(calc(100vw - 110px), calc(100vh - 96px), 0) scale(1);
+    transform: translate3d(var(--mario-x3, calc(100vw - 120px)), var(--mario-y3, calc(100vh - 100px)), 0) scale(1);
   }
 }
 
 .anim-intro-mario-dive {
-  animation: intro-mario-dive-desktop 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: intro-mario-dive 650ms linear forwards;
   will-change: transform;
 }
 
-@media (max-width: 639px) {
-  .anim-intro-mario-dive {
-    animation-name: intro-mario-dive-mobile;
-  }
-}
-
-/* Touchdown static position (matches 100% of dive) */
+/* Touchdown static position (matches 100% of dive with zero pixel jump) */
 .intro-mario-touchdown-pos {
-  transform: translate3d(calc(100vw - 110px), calc(100vh - 96px), 0);
+  transform: translate3d(var(--mario-x3, calc(100vw - 120px)), var(--mario-y3, calc(100vh - 100px)), 0);
   will-change: transform;
 }
 
-@media (min-width: 640px) {
-  .intro-mario-touchdown-pos {
-    transform: translate3d(calc(100vw - 146px), calc(100vh - 104px), 0);
+/* Touchdown Pixel Dust Puffs */
+@keyframes dust-puff-left {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.9;
   }
+  100% {
+    transform: translate3d(-14px, -6px, 0) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes dust-puff-right {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(14px, -6px, 0) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.anim-dust-puff-left {
+  animation: dust-puff-left 180ms ease-out forwards;
+}
+
+.anim-dust-puff-right {
+  animation: dust-puff-right 180ms ease-out forwards;
 }
 
 /* Clean backdrop dissolve revealing the living world beneath */

@@ -16,11 +16,83 @@ export type IntroStage =
   | 'touchdown'
   | 'complete';
 
+interface MarioFlightCoords {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  x3: number;
+  y3: number;
+}
+
 export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }) => {
   const [stage, setStage] = useState<IntroStage>('blue');
   const [marioPose, setMarioPose] = useState<MarioPose>('run-1');
   const [screenShake, setScreenShake] = useState<boolean>(false);
   const isCompletedRef = useRef<boolean>(false);
+
+  // Dynamic measurement of the landing target (#founder-ground-target in PixelWorld)
+  const [coords, setCoords] = useState<MarioFlightCoords>(() => {
+    const isClient = typeof window !== 'undefined';
+    const isDesktop = isClient && window.innerWidth >= 640;
+    const w = isClient ? window.innerWidth : 1024;
+    const h = isClient ? window.innerHeight : 768;
+    const marioSize = isDesktop ? 46 : 41.4;
+
+    const x0 = Math.round((w - marioSize) / 2);
+    const y0 = Math.round((h - marioSize) / 2 - 10);
+    const x3 = Math.round(w - (isDesktop ? 248 : 105));
+    const y3 = Math.round(h - (isDesktop ? 102 : 96));
+
+    return {
+      x0,
+      y0,
+      x1: Math.round(x0 + (x3 - x0) * 0.28),
+      y1: Math.round(y0 - 38),
+      x2: Math.round(x0 + (x3 - x0) * 0.74),
+      y2: Math.round(y0 + (y3 - y0) * 0.56),
+      x3,
+      y3,
+    };
+  });
+
+  const measureLandingTarget = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    const isDesktop = window.innerWidth >= 640;
+    const marioSize = isDesktop ? 46 : 41.4;
+
+    const x0 = Math.round((window.innerWidth - marioSize) / 2);
+    const y0 = Math.round((window.innerHeight - marioSize) / 2 - 10);
+
+    let x3 = window.innerWidth - (isDesktop ? 248 : 105);
+    let y3 = window.innerHeight - (isDesktop ? 102 : 96);
+
+    const targetEl = document.getElementById('founder-ground-target');
+    if (targetEl) {
+      const rect = targetEl.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        x3 = Math.round(rect.left + (rect.width - marioSize) / 2);
+        y3 = Math.round(rect.bottom - marioSize);
+      }
+    }
+
+    const x1 = Math.round(x0 + (x3 - x0) * 0.28);
+    const y1 = Math.round(y0 - 38);
+    const x2 = Math.round(x0 + (x3 - x0) * 0.74);
+    const y2 = Math.round(y0 + (y3 - y0) * 0.56);
+
+    setCoords({ x0, y0, x1, y1, x2, y2, x3, y3 });
+  }, []);
+
+  // Measure on mount and window resize
+  useEffect(() => {
+    measureLandingTarget();
+    window.addEventListener('resize', measureLandingTarget);
+    return () => window.removeEventListener('resize', measureLandingTarget);
+  }, [measureLandingTarget]);
 
   // Complete handler ensures onComplete only called once
   const completeIntro = useCallback(() => {
@@ -90,6 +162,7 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
     const tImpact = setTimeout(() => {
       setStage('impact');
       setScreenShake(true);
+      measureLandingTarget();
     }, 1750);
 
     // 1.83s: Screen shake stops; Mario begins diving downward towards the brick ground
@@ -99,10 +172,10 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       setMarioPose('jump');
     }, 1830);
 
-    // 2.35s: Nearing ground: feet drop into run stride ready for touchdown
-    const tFeetDown = setTimeout(() => {
-      setMarioPose('run-1');
-    }, 2350);
+    // 2.38s: Nearing ground: feet drop into flat-foot stance ready for touchdown
+    const tPrepareLand = setTimeout(() => {
+      setMarioPose('idle');
+    }, 2380);
 
     // 2.48s: Touchdown on brick ground with squash & dust puff (1830 + 650ms)
     const tTouchdown = setTimeout(() => {
@@ -121,11 +194,11 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       clearTimeout(tMarioDash);
       clearTimeout(tImpact);
       clearTimeout(tDive);
-      clearTimeout(tFeetDown);
+      clearTimeout(tPrepareLand);
       clearTimeout(tTouchdown);
       clearTimeout(tComplete);
     };
-  }, [completeIntro]);
+  }, [completeIntro, measureLandingTarget]);
 
   // Sprite stride legs toggle for running phases (80ms cycle)
   useEffect(() => {
@@ -190,6 +263,18 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       {/* =================================================================== */}
       {stage !== 'blue' && stage !== 'logo_enter' && stage !== 'logo_settled' && (
         <div
+          style={
+            {
+              '--mario-x0': `${coords.x0}px`,
+              '--mario-y0': `${coords.y0}px`,
+              '--mario-x1': `${coords.x1}px`,
+              '--mario-y1': `${coords.y1}px`,
+              '--mario-x2': `${coords.x2}px`,
+              '--mario-y2': `${coords.y2}px`,
+              '--mario-x3': `${coords.x3}px`,
+              '--mario-y3': `${coords.y3}px`,
+            } as React.CSSProperties
+          }
           className={`absolute top-0 left-0 pointer-events-none z-20 ${
             stage === 'mario_approach'
               ? 'anim-intro-mario-approach'
@@ -213,20 +298,20 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
 
           {/* Touchdown ground dust puff when landing */}
           {stage === 'touchdown' && (
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-2">
-              <div className="w-3 h-2 bg-white rounded-full opacity-90 animate-ping" />
-              <div className="w-3 h-2 bg-white rounded-full opacity-90 animate-ping" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center justify-between w-14 pointer-events-none">
+              <div className="w-2.5 h-2 bg-white/90 rounded-sm anim-dust-puff-left" />
+              <div className="w-2.5 h-2 bg-white/90 rounded-sm anim-dust-puff-right" />
             </div>
           )}
 
           {/* Mario Sprite: Plays landing squash when touchdown */}
           <div
-            className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center ${
+            className={`w-[46px] h-[46px] flex items-end justify-center scale-90 sm:scale-100 origin-bottom ${
               stage === 'touchdown' ? 'anim-mario-squash' : ''
             }`}
           >
             <PixelMario
-              size={48}
+              size={46}
               pose={marioPose}
               className="origin-bottom"
             />

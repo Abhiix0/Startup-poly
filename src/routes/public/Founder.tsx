@@ -6,12 +6,14 @@ export interface FounderProps {
   size?: number;
   className?: string;
   initialPhase?: 'enter' | 'idle';
+  isPaused?: boolean;
 }
 
 export const Founder: React.FC<FounderProps> = ({
   size = 40,
   className = '',
   initialPhase,
+  isPaused = false,
 }) => {
   const { isFirstVisit } = useFirstVisit();
   const [phase, setPhase] = useState<'enter' | 'idle'>(() =>
@@ -20,13 +22,13 @@ export const Founder: React.FC<FounderProps> = ({
 
   // Safety fallback: switch to idle if animationend never fires (e.g. background tab)
   useEffect(() => {
-    if (phase === 'enter') {
+    if (phase === 'enter' && !isPaused) {
       const timer = setTimeout(() => {
         setPhase('idle');
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [phase]);
+  }, [phase, isPaused]);
 
   const handleAnimationEnd = useCallback(() => {
     setPhase('idle');
@@ -35,6 +37,7 @@ export const Founder: React.FC<FounderProps> = ({
   return (
     <div
       data-phase={phase}
+      data-paused={isPaused ? 'true' : undefined}
       className={`founder-wrapper relative select-none pointer-events-none flex flex-col items-center ${className}`}
       aria-hidden="true"
     >
@@ -42,7 +45,11 @@ export const Founder: React.FC<FounderProps> = ({
       <div
         onAnimationEnd={handleAnimationEnd}
         className={`founder-motion-track relative flex flex-col items-center ${
-          phase === 'enter' ? 'anim-founder-walk-in' : 'anim-founder-idle-bob anim-founder-roam'
+          isPaused
+            ? ''
+            : phase === 'enter'
+            ? 'anim-founder-walk-in'
+            : 'anim-founder-idle-bob anim-founder-roam'
         }`}
       >
         {/* Speech Bubble Anchor (moves with Poly, upright orientation) */}

@@ -223,11 +223,17 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
 
             {/* Founder Mascot with walk-in, idle, bubble & CTA reactions */}
             <div
+              id="founder-ground-target"
               className={`relative z-20 transition-opacity duration-150 ${
                 isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
               }`}
             >
-              <Founder size={46} initialPhase="idle" className="scale-90 sm:scale-100 origin-bottom" />
+              <Founder
+                size={46}
+                initialPhase="idle"
+                isPaused={isIntroActive}
+                className="scale-90 sm:scale-100 origin-bottom"
+              />
             </div>
 
             {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}

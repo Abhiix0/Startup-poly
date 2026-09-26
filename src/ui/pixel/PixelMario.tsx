@@ -315,9 +315,49 @@ export const PixelMario: React.FC<PixelMarioProps> = ({
         style={{ imageRendering: 'pixelated' }}
       >
         {/* =================================================================== */}
-        {/* DASH POSE: Aerodynamic, high-speed supersonic ramming sprint        */}
+        {/* IDLE POSE: Classic planted feet, confident retro mascot stance       */}
         {/* =================================================================== */}
-        {pose === 'dash' ? (
+        {pose === 'idle' ? (
+          <g id="mario-idle" transform="translate(2, 3)">
+            {/* Red Cap */}
+            <rect x="7" y="1" width="10" height="4" fill="#E52521" />
+            <rect x="8" y="0" width="8" height="2" fill="#E52521" />
+            <rect x="14" y="4" width="6" height="2" fill="#B91C1C" />
+            {/* White Emblem with Red 'M' */}
+            <rect x="10" y="1" width="4" height="3" fill="#FFFFFF" />
+            <rect x="11" y="2" width="2" height="1" fill="#E52521" />
+            {/* Hair */}
+            <rect x="6" y="5" width="4" height="4" fill="#451A03" />
+            <rect x="5" y="7" width="2" height="2" fill="#181512" />
+            {/* Face Skin */}
+            <rect x="9" y="4" width="8" height="6" fill="#FFC49A" />
+            <rect x="8" y="7" width="2" height="2" fill="#EAA072" />
+            {/* Blue Eye */}
+            <rect x="13" y="5" width="2" height="2" fill="#0284C7" />
+            <rect x="13" y="5" width="1" height="1" fill="#FFFFFF" />
+            {/* Nose */}
+            <rect x="16" y="5" width="4" height="3" fill="#FFC49A" />
+            {/* Mustache */}
+            <rect x="12" y="7" width="7" height="2" fill="#181512" />
+            <rect x="14" y="9" width="5" height="1" fill="#181512" />
+            {/* Overalls Torso */}
+            <rect x="7" y="10" width="10" height="7" fill="#0B4FD7" />
+            <rect x="5" y="10" width="3" height="4" fill="#E52521" />
+            <rect x="16" y="10" width="3" height="4" fill="#E52521" />
+            {/* Yellow Buttons */}
+            <rect x="9" y="11" width="2" height="2" fill="#FFCC00" />
+            <rect x="13" y="11" width="2" height="2" fill="#FFCC00" />
+            {/* White Gloves */}
+            <rect x="4" y="13" width="3" height="3" fill="#FFFFFF" />
+            <rect x="17" y="13" width="3" height="3" fill="#FFFFFF" />
+            {/* Legs */}
+            <rect x="7" y="17" width="4" height="4" fill="#0B4FD7" />
+            <rect x="13" y="17" width="4" height="4" fill="#0B4FD7" />
+            {/* Boots */}
+            <rect x="6" y="21" width="5" height="3" fill="#78350F" />
+            <rect x="13" y="21" width="5" height="3" fill="#78350F" />
+          </g>
+        ) : pose === 'dash' ? (
           <g id="mario-dash">
             {/* Speed dust puffs behind feet */}
             <rect x="0" y="24" width="3" height="2" fill="#FFFFFF" opacity="0.8" />
@@ -375,8 +415,8 @@ export const PixelMario: React.FC<PixelMarioProps> = ({
             <rect x="11" y="1" width="10" height="2" fill="#E52521" />
             <rect x="18" y="6" width="7" height="2" fill="#B91C1C" />
 
-            <rect x="13" y="2" width="6" height="4" fill="#FFFFFF" />
-            <rect x="14" y="3" width="4" height="2" fill="#E52521" />
+            <rect x="14" y="2" width="4" height="3" fill="#FFFFFF" />
+            <rect x="15" y="3" width="2" height="1" fill="#E52521" />
           </g>
         ) : pose === 'jump' ? (
           /* =================================================================== */
@@ -387,8 +427,8 @@ export const PixelMario: React.FC<PixelMarioProps> = ({
             <rect x="9" y="3" width="10" height="2" fill="#E52521" />
             <rect x="16" y="8" width="7" height="2" fill="#B91C1C" />
 
-            <rect x="11" y="4" width="6" height="4" fill="#FFFFFF" />
-            <rect x="12" y="5" width="4" height="2" fill="#E52521" />
+            <rect x="12" y="4" width="4" height="3" fill="#FFFFFF" />
+            <rect x="13" y="5" width="2" height="1" fill="#E52521" />
 
             <rect x="7" y="8" width="4" height="5" fill="#451A03" />
             <rect x="10" y="7" width="9" height="7" fill="#FFC49A" />
@@ -426,8 +466,8 @@ export const PixelMario: React.FC<PixelMarioProps> = ({
             <rect x="8" y="0" width="10" height="2" fill="#E52521" />
             <rect x="15" y="5" width="7" height="2" fill="#B91C1C" />
 
-            <rect x="10" y="1" width="6" height="4" fill="#FFFFFF" />
-            <rect x="11" y="2" width="4" height="2" fill="#E52521" />
+            <rect x="11" y="1" width="4" height="3" fill="#FFFFFF" />
+            <rect x="12" y="2" width="2" height="1" fill="#E52521" />
 
             <rect x="6" y="6" width="4" height="5" fill="#451A03" />
             <rect x="9" y="5" width="9" height="7" fill="#FFC49A" />
@@ -464,8 +504,8 @@ export const PixelMario: React.FC<PixelMarioProps> = ({
             <rect x="7" y="1" width="10" height="2" fill="#E52521" />
             <rect x="14" y="6" width="7" height="2" fill="#B91C1C" />
 
-            <rect x="9" y="2" width="6" height="4" fill="#FFFFFF" />
-            <rect x="10" y="3" width="4" height="2" fill="#E52521" />
+            <rect x="10" y="2" width="4" height="3" fill="#FFFFFF" />
+            <rect x="11" y="3" width="2" height="1" fill="#E52521" />
 
             <rect x="5" y="7" width="4" height="5" fill="#451A03" />
             <rect x="8" y="6" width="9" height="7" fill="#FFC49A" />
@@ -501,8 +541,8 @@ export const PixelMario: React.FC<PixelMarioProps> = ({
             <rect x="8" y="1" width="10" height="2" fill="#E52521" />
             <rect x="15" y="6" width="7" height="2" fill="#B91C1C" />
 
-            <rect x="10" y="2" width="6" height="4" fill="#FFFFFF" />
-            <rect x="11" y="3" width="4" height="2" fill="#E52521" />
+            <rect x="11" y="2" width="4" height="3" fill="#FFFFFF" />
+            <rect x="12" y="3" width="2" height="1" fill="#E52521" />
 
             <rect x="6" y="7" width="4" height="5" fill="#451A03" />
             <rect x="9" y="6" width="9" height="7" fill="#FFC49A" />
