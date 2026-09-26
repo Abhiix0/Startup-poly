@@ -170,15 +170,12 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       />
 
       {/* =================================================================== */}
-      {/* TITLE LOGO ARENA (Positioned in the top hero area)                 */}
+      {/* TITLE LOGO ARENA (Centered on the screen)                          */}
       {/* =================================================================== */}
       {showLogo && (
-        <div
-          className="absolute inset-x-0 flex items-center justify-center px-4"
-          style={{ top: 'var(--intro-logo-y, clamp(45px, 12vh, 85px))' }}
-        >
+        <div className="absolute inset-0 flex items-center justify-center px-4 pointer-events-none">
           <div
-            className={`relative z-10 ${
+            className={`relative z-10 flex flex-col items-center justify-center ${
               stage === 'logo_enter' ? 'anim-intro-logo-drop' : ''
             }`}
           >
