@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Outer Outline -->
+  <!-- Mushroom Cap -->
+  <path d="M72 268 C60 170, 120 48, 256 48 C392 48, 452 170, 440 268 C440 292, 420 304, 386 304 C350 304, 330 286, 314 268 C294 246, 274 236, 256 236 C238 236, 218 246, 198 268 C182 286, 162 304, 126 304 C92 304, 72 292, 72 268 Z" 
+        fill="#E52521" 
+        stroke="#111111" 
+        stroke-width="24" 
+        stroke-linejoin="round" />
+
+  <!-- Cap White Spots -->
+  <!-- Center Oval Spot -->
+  <path d="M196 160 C196 100, 222 72, 256 72 C290 72, 316 100, 316 160 C316 220, 290 248, 256 248 C222 248, 196 220, 196 160 Z" 
+        fill="#FFFFFF" />
+
+  <!-- Left Spot -->
+  <path d="M80 230 C80 180, 102 134, 140 134 C162 134, 172 154, 172 196 C172 238, 154 274, 118 274 C96 274, 80 254, 80 230 Z" 
+        fill="#FFFFFF" />
+
+  <!-- Right Spot -->
+  <path d="M432 230 C432 180, 410 134, 372 134 C350 134, 340 154, 340 196 C340 238, 358 274, 394 274 C416 274, 432 254, 432 230 Z" 
+        fill="#FFFFFF" />
+
+  <!-- Stem / Face Base -->
+  <path d="M136 300 C136 380, 176 464, 256 464 C336 464, 376 380, 376 300 C340 300, 328 286, 314 268 C294 246, 274 236, 256 236 C238 236, 218 246, 198 268 C184 286, 172 300, 136 300 Z" 
+        fill="#FCE4C8" 
+        stroke="#111111" 
+        stroke-width="24" 
+        stroke-linejoin="round" />
+
+  <!-- Left Eye -->
+  <rect x="204" y="316" width="22" height="66" rx="11" fill="#111111" />
+  <circle cx="215" cy="332" r="5" fill="#FFFFFF" />
+
+  <!-- Right Eye -->
+  <rect x="286" y="316" width="22" height="66" rx="11" fill="#111111" />
+  <circle cx="297" cy="332" r="5" fill="#FFFFFF" />
+</svg>
