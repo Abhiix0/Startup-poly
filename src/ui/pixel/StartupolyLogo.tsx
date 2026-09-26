@@ -17,10 +17,10 @@ export const StartupolyLogo: React.FC<StartupolyLogoProps> = ({
 }) => {
   const sizeClasses = {
     sm: 'w-[180px] sm:w-[220px]',
-    md: 'w-[240px] sm:w-[300px] md:w-[360px]',
-    lg: 'w-[320px] sm:w-[400px] md:w-[460px]',
-    hero: 'w-[290px] sm:w-[420px] md:w-[520px] lg:w-[580px]',
-    responsive: 'w-[260px] sm:w-[340px] md:w-[400px]',
+    md: 'w-[220px] sm:w-[260px] md:w-[290px]',
+    lg: 'w-[260px] sm:w-[320px] md:w-[360px]',
+    hero: 'w-[280px] sm:w-[380px] md:w-[460px] lg:w-[520px]',
+    responsive: 'w-[220px] sm:w-[260px] md:w-[300px] lg:w-[330px]',
   };
 
   return (

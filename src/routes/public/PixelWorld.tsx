@@ -27,7 +27,7 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
       aria-hidden="true"
     >
       {/* Dynamic World Viewport */}
-      <div className="relative w-full h-24 sm:h-28 md:h-34 pointer-events-none">
+      <div className="relative w-full h-20 sm:h-24 md:h-26 lg:h-28 pointer-events-none">
         {/* ========================================================================= */}
         {/* LAYER 1: SKY (Background canvas layer)                                   */}
         {/* ========================================================================= */}
