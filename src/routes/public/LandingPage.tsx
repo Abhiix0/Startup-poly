@@ -8,6 +8,7 @@ import {
   PixelTerminalIcon,
   PixelGrassTuft,
   PixelFlower,
+  StartupolyLogo,
 } from '../../ui/pixel';
 import { usePageVisibility } from '../../lib/usePageVisibility';
 import { useFirstVisit } from '../../lib/useFirstVisit';
@@ -89,21 +90,8 @@ export const LandingPage: React.FC = () => {
                 className={`anim-coin-idle shrink-0 ${isFirstVisit ? 'anim-boot-coin-settle' : ''}`}
                 ariaHidden={true}
               />
-              <h1
-                className="font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase text-2xl sm:text-3xl md:text-4xl lg:text-5xl"
-                style={{
-                  textShadow: `
-                    3px 3px 0 #B84418,
-                    5px 5px 0 #102040,
-                    -2px -2px 0 #102040,
-                    2px -2px 0 #102040,
-                    -2px 2px 0 #102040,
-                    2px 2px 0 #102040
-                  `,
-                  letterSpacing: '0.08em',
-                }}
-              >
-                STARTUPOLY
+              <h1 className="relative inline-flex items-center justify-center">
+                <StartupolyLogo size="responsive" />
               </h1>
               <PixelCoin
                 size={22}

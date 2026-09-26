@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { StartupolyLogo } from '../../../ui/pixel/StartupolyLogo';
 
 export interface LogoShatterProps {
   shattered: boolean;
@@ -20,10 +21,13 @@ interface Fragment {
 }
 
 const FRAGMENT_COLORS = [
-  { fill: '#FFCC00', border: '#B84418' }, // Gold with brick outline
-  { fill: '#FFD700', border: '#102040' }, // Bright gold with navy outline
-  { fill: '#B84418', border: '#102040' }, // Brick red
-  { fill: '#102040', border: '#FFCC00' }, // Deep Navy
+  { fill: '#FFCC00', border: '#B84418' }, // Gold letter face
+  { fill: '#EA580C', border: '#102040' }, // Orange 3D letter bevel
+  { fill: '#E52521', border: '#102040' }, // Mushroom Red
+  { fill: '#FFFFFF', border: '#E52521' }, // Mushroom White Spot
+  { fill: '#FFC49A', border: '#102040' }, // Mushroom Face
+  { fill: '#FFD700', border: '#102040' }, // Bright yellow spark
+  { fill: '#102040', border: '#FFCC00' }, // Dark navy outline
   { fill: '#FFFBEB', border: '#B84418' }, // Cream highlight
 ];
 
@@ -34,7 +38,7 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
   // Deterministic fragment layout across the enlarged logo area
   const fragments: Fragment[] = useMemo(() => {
     const list: Fragment[] = [];
-    const count = 38;
+    const count = 42;
 
     for (let i = 0; i < count; i++) {
       const colorScheme = FRAGMENT_COLORS[i % FRAGMENT_COLORS.length];
@@ -46,9 +50,9 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
       const dy = `${Math.sin(angle) * distance + 50}px`;
       const rot = `${(i % 2 === 0 ? 1 : -1) * (200 + (i * 30))}deg`;
 
-      // Distribute initial positions across a ~320x80 logo & badge area
+      // Distribute initial positions across the mushroom and wordmark area
       const initialX = ((i % 9) - 4) * 36 + (Math.sin(i * 3) * 12);
-      const initialY = (Math.floor(i / 9) - 1.5) * 20 + (Math.cos(i * 2) * 8);
+      const initialY = (Math.floor(i / 9) - 1.5) * 22 + (Math.cos(i * 2) * 8);
 
       list.push({
         id: i,
@@ -70,32 +74,18 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
   return (
     <div className={`relative flex items-center justify-center select-none ${className}`}>
       {/* =================================================================== */}
-      {/* INTACT STATE: Heroic Large STARTUPOLY Logo with Badge               */}
+      {/* INTACT STATE: Heroic Large STARTUPOLY Logo with Mushroom & Badge    */}
       {/* =================================================================== */}
       {!shattered ? (
-        <div className="flex flex-col items-center select-none text-center px-4">
-          {/* Main Title Wordmark */}
-          <div
-            data-testid="intro-intact-logo"
-            className="font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase text-4xl sm:text-6xl md:text-7xl lg:text-8xl select-none"
-            style={{
-              textShadow: `
-                4px 4px 0 #B84418,
-                8px 8px 0 #102040,
-                -2px -2px 0 #102040,
-                2px -2px 0 #102040,
-                -2px 2px 0 #102040,
-                2px 2px 0 #102040
-              `,
-              letterSpacing: '0.08em',
-            }}
-            aria-label="STARTUPOLY"
-          >
-            STARTUPOLY
-          </div>
+        <div
+          data-testid="intro-intact-logo"
+          className="flex flex-col items-center select-none text-center px-4"
+        >
+          {/* Main Title Wordmark with Mushroom */}
+          <StartupolyLogo size="hero" glow={true} />
 
-          {/* Subtitle Badge matching user layout: ✦ DREAM • BUILD • GROW ✦ */}
-          <div className="mt-2.5 sm:mt-4 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-[#102040] border-2 sm:border-[3px] border-[#FFCC00] rounded-sm shadow-[3px_3px_0px_#B84418]">
+          {/* Subtitle Badge: ✦ DREAM • BUILD • GROW ✦ */}
+          <div className="mt-2.5 sm:mt-3.5 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-[#102040] border-2 sm:border-[3px] border-[#FFCC00] rounded-sm shadow-[3px_3px_0px_#B84418]">
             <span className="font-pixel text-[9px] sm:text-xs md:text-sm text-[#FFFBEB] tracking-widest font-bold">
               ✦ DREAM • BUILD • GROW ✦
             </span>
