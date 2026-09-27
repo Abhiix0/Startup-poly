@@ -61,7 +61,7 @@ export const Podium: React.FC<PodiumProps> = ({
         <div className="flex-1 max-w-[180px] sm:max-w-[230px] flex flex-col items-center z-10">
           {/* Floating Trophy & Winner Pill */}
           <div className="mb-1 flex flex-col items-center">
-            <PixelTrophy size={presentationMode ? 56 : 42} className="motion-safe:animate-bounce mb-1" />
+            <PixelTrophy size={presentationMode ? 56 : 42} className="anim-trophy-bob mb-1" />
             <span className="font-pixel text-[9px] sm:text-[10px] bg-[#FFCC00] text-[#102040] px-2 py-0.5 border-2 border-[#102040] uppercase tracking-wider font-bold shadow-[1px_1px_0px_#102040]">
               ★ WINNER ★
             </span>

@@ -1038,6 +1038,53 @@
   will-change: transform;
 }
 
+/* Ambient Star Twinkle (Low-duty sparse accent for PixelLogo) */
+@keyframes star-twinkle {
+  0%, 80%, 100% {
+    transform: scale(1) translateY(0);
+    filter: brightness(1);
+  }
+  90% {
+    transform: scale(1.12) translateY(-2px);
+    filter: brightness(1.25);
+  }
+}
+
+.anim-star-twinkle {
+  animation: star-twinkle 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Ambient Cloud Float (Gentle vertical bob for LobbyWaitView) */
+@keyframes cloud-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.anim-cloud-float {
+  animation: cloud-float 3.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Ambient Trophy Bob (Gentle celebratory hover for Podium winner) */
+@keyframes trophy-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.anim-trophy-bob {
+  animation: trophy-bob 2.2s ease-in-out infinite;
+  will-change: transform;
+}
+
 /* Layer 1: Ambient Floating Island Gentle Vertical Hover */
 @keyframes island-float {
   0%, 100% {
@@ -2225,8 +2272,12 @@
   }
 
   .anim-live-dot,
-  .anim-progress-segment {
+  .anim-progress-segment,
+  .anim-star-twinkle,
+  .anim-cloud-float,
+  .anim-trophy-bob {
     animation: none !important;
+    transform: none !important;
     opacity: 1 !important;
   }
 

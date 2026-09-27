@@ -1,8 +1,9 @@
 import React from 'react';
 
-export const PixelStar: React.FC<{ size?: number; className?: string }> = ({
+export const PixelStar: React.FC<{ size?: number; className?: string; style?: React.CSSProperties }> = ({
   size = 24,
   className = '',
+  style = {},
 }) => {
   return (
     <svg
@@ -12,7 +13,7 @@ export const PixelStar: React.FC<{ size?: number; className?: string }> = ({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`inline-block flex-shrink-0 select-none ${className}`}
-      style={{ imageRendering: 'pixelated' }}
+      style={{ imageRendering: 'pixelated', ...style }}
     >
       {/* Outer Navy Outline */}
       <rect x="7" y="1" width="2" height="1" fill="#102040" />
