@@ -205,6 +205,16 @@ export function formatActivityEvent(
         category: 'system',
       };
 
+    case 'GAME_ABORTED':
+      return {
+        sentence: 'Match aborted — teams reset to starting state',
+        teamName: null,
+        teamColor: null,
+        note,
+        isCorrection: true,
+        category: 'system',
+      };
+
     case 'GAME_EXPIRED':
       return {
         sentence: 'Game time expired — scores frozen',

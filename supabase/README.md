@@ -113,6 +113,7 @@ All schema definitions, triggers, RLS policies, and seed data are version-contro
 - `0010_standings_finalize.sql`: Standings calculation, tiebreak ordering, and finalization.
 - `0011_perf_indexes.sql`: Performance indexes on hot foreign keys and query paths.
 - `0012_admin_abort_game.sql`: Admin game abort stored procedure.
+- `0013_fix_admin_abort_reset.sql`: Fix admin abort to reset team state, delete businesses, increment version, and require mandatory note.
 
 > [!IMPORTANT]
 > Ad-hoc SQL patches are not used going forward — every change goes through a numbered migration in `supabase/migrations/`, and any future hotfix must be added as a new numbered migration (and reflected in `all_migrations.sql`) rather than a standalone patch file.

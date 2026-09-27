@@ -167,5 +167,7 @@ describe('formatActivityEvent', () => {
       .toBe('Game started (50-minute match)');
     expect(formatActivityEvent({ id: 13, team_id: null, group_id: null, type: 'GAME_EXPIRED', created_at: '' }).sentence)
       .toBe('Game time expired — scores frozen');
+    expect(formatActivityEvent({ id: 14, team_id: null, group_id: null, type: 'GAME_ABORTED', note: 'Accidental start', is_correction: true, created_at: '' }).sentence)
+      .toBe('Match aborted — teams reset to starting state');
   });
 });
