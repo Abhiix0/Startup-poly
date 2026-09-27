@@ -567,7 +567,7 @@ export interface Database {
         Returns: Json;
       };
       admin_abort_game: {
-        Args: { room_id: string; note?: string | null };
+        Args: { p_room_id: string; note?: string | null };
         Returns: Json;
       };
     };

@@ -56,7 +56,7 @@ export const AdminDashboardPage: React.FC = () => {
       <header className="bg-nes-navy text-white border-b-4 border-nes-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_var(--color-brand-navy)]">
         <div className="flex items-center gap-3">
           <span className="font-pixel text-sm text-nes-gold">STARTUPOLY</span>
-          <span className="hidden sm:inline font-mono text-xs text-nes-gray border-l-2 border-white/20 pl-3">
+          <span className="hidden sm:inline font-mono text-xs text-neutral-200 border-l-2 border-white/20 pl-3">
             ADMIN CONSOLE
           </span>
         </div>

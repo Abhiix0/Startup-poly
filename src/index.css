@@ -76,33 +76,20 @@
   --color-team-6: #EC4899;
 
   /* ========================================================================= */
-  /* DEPRECATED ALIASES (Preserved during migration, removed in Phase 6)       */
+  /* CANONICAL BRAND ALIASES (Backward-compatible shortcuts for utility classes)*/
   /* ========================================================================= */
-  --color-nes-sky: #5C94FC;
-  --color-nes-green: #22B14C;
-  --color-nes-gold: #FFCC00;
-  --color-nes-brick: #B84418;
-  --color-nes-white: #FFFFFF;
-  --color-nes-card: #FAF8F5;
-  --color-nes-navy: #102040;
-  --color-nes-red: #D32F2F;
-  --color-nes-gray: #E2E8F0;
-  --color-nes-muted: #64748B;
+  --color-nes-sky: var(--color-brand-sky);
+  --color-nes-green: var(--color-brand-green);
+  --color-nes-gold: var(--color-brand-gold);
+  --color-nes-brick: var(--color-brand-brick);
+  --color-nes-white: var(--color-brand-white);
+  --color-nes-navy: var(--color-brand-navy);
+  --color-nes-red: var(--color-brand-red);
 
-  --color-sky-deep: #3B6FE0;
-  --color-sky-mid: #4A80E8;
-  --color-sky-base: #5C94FC;
-  --color-sky-light: #71A9FC;
-  --color-sky-horizon: #87CEFA;
-
-  --color-navy-deep: #0A1128;
-  --color-navy-base: #102040;
-  --color-navy-mid: #1E293B;
-  --color-navy-surface: #1E3A5F;
-
-  --color-gold-base: #FFCC00;
+  /* ========================================================================= */
+  /* RETRO SCENERY & PROP PALETTE (Signs, Pipes, Blocks, Coin Sparkles)        */
+  /* ========================================================================= */
   --color-gold-hover: #FFE066;
-  --color-gold-active: #E6B800;
   --color-gold-coin: #FFD700;
   --color-gold-sparkle: #FFF275;
   --color-gold-dark: #B8860B;
@@ -112,29 +99,8 @@
   --color-pipe-dark: #15803D;
   --color-pipe-highlight: #86EFAC;
   --color-pipe-light: #4ADE80;
-  --color-green-retro: #22B14C;
 
-  --color-brick-base: #B84418;
-  --color-brick-dark: #8A2E0B;
-  --color-brick-light: #D96B43;
   --color-block-orange: #E6631F;
-  --color-block-gold: #F7CE46;
-  --color-block-dark: #C2410C;
-
-  --color-parchment-base: #FFFBEB;
-  --color-parchment-light: #FEF9C3;
-  --color-parchment-card: #FAF8F5;
-  --color-parchment-border: #FDE68A;
-  --color-parchment-text: #92400E;
-  --color-parchment-muted: #B45309;
-
-  --color-metal-surface: #F8FAFC;
-  --color-metal-light: #F1F5F9;
-  --color-metal-plate: #E2E8F0;
-  --color-metal-border: #CBD5E1;
-  --color-metal-mid: #64748B;
-  --color-metal-dark: #475569;
-  --color-metal-deep: #334155;
 
   --color-wood-dark: #3D1C06;
   --color-wood-base: #8B4513;
@@ -142,23 +108,13 @@
   --color-wood-light: #C68642;
   --color-wood-bright: #E6B87D;
 
-  --color-castle-stone: #334155;
-  --color-castle-shadow: #1E293B;
-  --color-flag-red: #D32F2F;
-  --color-flag-dark: #991B1B;
-
-  --color-mountain-front: #2870C0;
-  --color-mountain-mid: #1E5CA8;
-  --color-mountain-dark: #164E8C;
-  --color-mountain-deep: #103B6D;
-
   --font-pixel: "Press Start 2P", monospace;
   --font-mono: "JetBrains Mono", monospace;
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  --shadow-pixel-sm: 2px 2px 0px #102040;
-  --shadow-pixel: 4px 4px 0px #102040;
-  --shadow-pixel-lg: 6px 6px 0px #102040;
+  --shadow-pixel-sm: 2px 2px 0px var(--color-brand-navy);
+  --shadow-pixel: 4px 4px 0px var(--color-brand-navy);
+  --shadow-pixel-lg: 6px 6px 0px var(--color-brand-navy);
 
   /* Arcade Motion Tokens */
   --ease-arcade: steps(1, end);
@@ -175,8 +131,8 @@
   }
 
   body {
-    background-color: #5C94FC;
-    color: #102040;
+    background-color: var(--color-brand-sky);
+    color: var(--color-brand-navy);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

@@ -198,7 +198,7 @@ export const TeamJoinPage: React.FC = () => {
                 {/* Step 2: Team Tiles (Embedded Wooden Badges) */}
                 {lobbyTeams.length > 0 && (
                   <div className="flex flex-col gap-1.5 pt-1 border-t-2 border-nes-navy/20">
-                    <label className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-parchment-light drop-shadow-[1px_1px_0px_var(--color-nes-navy)]">
+                    <label className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-status-warning-light drop-shadow-[1px_1px_0px_var(--color-nes-navy)]">
                       CHOOSE YOUR TEAM
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -253,11 +253,11 @@ export const TeamJoinPage: React.FC = () => {
                     <div className="flex items-center justify-between mb-1">
                       <label
                         htmlFor="secret-pin"
-                        className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-parchment-light drop-shadow-[1px_1px_0px_var(--color-nes-navy)]"
+                        className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-status-warning-light drop-shadow-[1px_1px_0px_var(--color-nes-navy)]"
                       >
                         SECRET TEAM PIN
                       </label>
-                      <span className="font-mono text-[10px] text-parchment-light/80">
+                      <span className="font-mono text-[10px] text-status-warning-light/80">
                         4 Digits
                       </span>
                     </div>

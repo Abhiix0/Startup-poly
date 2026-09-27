@@ -132,11 +132,11 @@ describe('Phase 5: Physical Button Feedback Pass & ArcadeLink', () => {
     const adminLink = screen.getByRole('link', { name: /ADMIN CONSOLE/i });
 
     // JOIN MATCH: physical compression down to 1px shadow
-    expect(joinLink.className).toContain('active:shadow-[0_0px_0_#B8860B,1px_1px_0_#181512]');
+    expect(joinLink.className).toContain('active:shadow-[0_0px_0_var(--color-gold-dark),1px_1px_0_var(--color-neutral-950)]');
     expect(joinLink.className).toContain('motion-reduce:active:translate-y-0');
 
     // ADMIN CONSOLE: physical compression down to 1px shadow
-    expect(adminLink.className).toContain('active:shadow-[0_1px_0_#0F172A,1px_1px_0_#181E28]');
+    expect(adminLink.className).toContain('active:shadow-[0_1px_0_var(--color-neutral-900),1px_1px_0_var(--color-neutral-950)]');
     expect(adminLink.className).toContain('motion-reduce:active:translate-y-0');
   });
 });

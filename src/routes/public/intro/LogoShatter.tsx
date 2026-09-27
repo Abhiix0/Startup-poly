@@ -34,7 +34,7 @@ const FRAGMENT_COLORS = [
   { fill: SPRITE_SKIN_TONE, border: 'var(--color-nes-navy)' }, // Mushroom Face
   { fill: 'var(--color-gold-coin)', border: 'var(--color-nes-navy)' }, // Bright yellow spark
   { fill: 'var(--color-nes-navy)', border: 'var(--color-nes-gold)' }, // Dark navy outline
-  { fill: 'var(--color-parchment-base)', border: 'var(--color-nes-brick)' }, // Cream highlight
+  { fill: 'var(--color-status-warning-bg)', border: 'var(--color-nes-brick)' }, // Cream highlight
 ];
 
 export const LogoShatter: React.FC<LogoShatterProps> = ({
@@ -117,10 +117,10 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
             >
               <rect x="14" y="0" width="4" height="32" fill="var(--color-nes-gold)" />
               <rect x="0" y="14" width="32" height="4" fill="var(--color-nes-gold)" />
-              <rect x="5" y="5" width="7" height="7" fill="var(--color-parchment-base)" />
-              <rect x="20" y="5" width="7" height="7" fill="var(--color-parchment-base)" />
-              <rect x="5" y="20" width="7" height="7" fill="var(--color-parchment-base)" />
-              <rect x="20" y="20" width="7" height="7" fill="var(--color-parchment-base)" />
+              <rect x="5" y="5" width="7" height="7" fill="var(--color-status-warning-bg)" />
+              <rect x="20" y="5" width="7" height="7" fill="var(--color-status-warning-bg)" />
+              <rect x="5" y="20" width="7" height="7" fill="var(--color-status-warning-bg)" />
+              <rect x="20" y="20" width="7" height="7" fill="var(--color-status-warning-bg)" />
               <rect x="11" y="11" width="10" height="10" fill="var(--color-nes-white)" />
             </svg>
           </div>

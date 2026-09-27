@@ -102,7 +102,7 @@ export const LandingPage: React.FC = () => {
 
             {/* Level 2: Subtitle Badge */}
             <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-2 px-2.5 py-0.5 bg-nes-navy border-2 border-nes-gold rounded-sm shadow-[2px_2px_0px_var(--color-nes-brick)]">
-              <span className="font-pixel text-[8px] sm:text-[9px] md:text-[10px] text-parchment-light tracking-widest font-bold">
+              <span className="font-pixel text-[8px] sm:text-[9px] md:text-[10px] text-status-warning-light tracking-widest font-bold">
                 ★{' '}
                 <span className={isFirstVisit ? 'anim-entrance-word-1' : ''}>DREAM</span>{' '}
                 ·{' '}
@@ -121,7 +121,7 @@ export const LandingPage: React.FC = () => {
 
           {/* Level 3: Hero Headline */}
           <div className={`mt-1.5 sm:mt-2 text-center max-w-lg mx-auto px-2 ${isFirstVisit ? 'anim-entrance-tagline' : ''}`}>
-            <p className="font-pixel text-[11px] sm:text-xs md:text-sm text-parchment-light uppercase tracking-wider drop-shadow-[2px_2px_0px_var(--color-nes-navy)] leading-snug">
+            <p className="font-pixel text-[11px] sm:text-xs md:text-sm text-status-warning-light uppercase tracking-wider drop-shadow-[2px_2px_0px_var(--color-nes-navy)] leading-snug">
               THE BOARD IS PHYSICAL.
               <br className="sm:hidden" /> THE SCORE IS LIVE.
             </p>
@@ -172,18 +172,18 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Inner Cream/Parchment Face */}
-                <div className="relative w-full bg-parchment-light border-[3px] border-wood-border shadow-inner pt-3 pb-3 px-3 sm:px-4 flex flex-col items-center justify-between gap-3 rounded-none z-10">
+                <div className="relative w-full bg-status-warning-light border-[3px] border-wood-border shadow-inner pt-3 pb-3 px-3 sm:px-4 flex flex-col items-center justify-between gap-3 rounded-none z-10">
                   {/* 4 Corner Silver Rivets with Screws */}
-                  <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1.5 h-0.5 bg-neutral-950" />
                   </div>
-                  <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1.5 h-0.5 bg-neutral-950" />
                   </div>
-                  <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1.5 h-0.5 bg-neutral-950" />
                   </div>
-                  <div className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1.5 h-0.5 bg-neutral-950" />
                   </div>
 
@@ -276,16 +276,16 @@ export const LandingPage: React.FC = () => {
                 {/* Inner Slate Face */}
                 <div className="relative w-full bg-neutral-200 border-2 border-neutral-500 shadow-inner pt-2 pb-2 px-2 sm:px-3 flex flex-col items-center justify-between gap-2 rounded-none z-10">
                   {/* 4 Corner Silver Rivets with Screws */}
-                  <div className="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1 h-0.5 bg-neutral-950" />
                   </div>
-                  <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1 h-0.5 bg-neutral-950" />
                   </div>
-                  <div className="absolute bottom-1.5 left-1.5 w-2 h-2 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute bottom-1.5 left-1.5 w-2 h-2 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1 h-0.5 bg-neutral-950" />
                   </div>
-                  <div className="absolute bottom-1.5 right-1.5 w-2 h-2 rounded-full bg-metal-border border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
+                  <div className="absolute bottom-1.5 right-1.5 w-2 h-2 rounded-full bg-neutral-300 border border-neutral-950 shadow-[1px_1px_0px_var(--color-neutral-600)] flex items-center justify-center">
                     <div className="w-1 h-0.5 bg-neutral-950" />
                   </div>
 
