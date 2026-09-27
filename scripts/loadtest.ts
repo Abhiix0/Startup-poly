@@ -96,8 +96,6 @@ async function runLoadTest() {
   try {
     // 2. Setup mock or live room
     console.log('[Setup] Initializing match room and client sessions...');
-    const roomCode = 'SOAK99';
-    const teamSlots = [1, 2, 3, 4, 5, 6];
 
     // Check if target database is reachable
     const { error: pingError } = await adminClient.rpc('server_time');

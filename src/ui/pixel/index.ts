@@ -6,7 +6,6 @@ export * from './PixelTrophy';
 export * from './PixelLevelPips';
 export * from './PixelStar';
 export * from './PixelBrickTile';
-export * from './PixelMascot';
 export * from './PixelPoly';
 export * from './PixelMonitor';
 export * from './PixelLogo';

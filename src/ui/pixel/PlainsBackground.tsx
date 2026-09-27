@@ -1,9 +1,7 @@
 import React from 'react';
 import { PixelCloudFluffy } from './PixelCloudFluffy';
-import { PixelHill } from './PixelHill';
 import { PixelQuestionBlock } from './PixelQuestionBlock';
 import { PixelCoin } from './PixelCoin';
-import { PixelSparkle } from './PixelSparkle';
 import { PixelGrassTuft } from './PixelGrassTuft';
 import { PixelFlower } from './PixelFlower';
 import { PixelPipe } from './PixelPipe';

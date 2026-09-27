@@ -9,7 +9,7 @@ interface LobbyWaitViewProps {
 }
 
 export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
-  const { team, room } = state;
+  const { team } = state;
 
   return (
     <div className="flex flex-col gap-4">
@@ -17,7 +17,7 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
       <PixelCard title="LOBBY CONNECTED" headerBg="green" padding="lg">
         <div className="flex flex-col items-center text-center gap-3 py-4">
           <div className="relative">
-            <PixelCloud size={72} className="opacity-90 animate-bounce" />
+            <PixelCloud size={72} className="opacity-90 anim-cloud-float" />
             <div className="w-12 h-12 bg-[#FFCC00] border-3 border-[#102040] shadow-[2px_2px_0px_#102040] flex items-center justify-center font-pixel text-xl text-[#102040] mx-auto -mt-6 relative z-10">
               🎮
             </div>

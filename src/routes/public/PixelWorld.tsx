@@ -6,7 +6,6 @@ import {
 } from '../../ui';
 import {
   PixelCoin,
-  PixelHill,
   PixelQuestionBlock,
   PixelBug,
   PixelGrassTuft,

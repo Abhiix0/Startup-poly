@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { PixelButton } from './PixelButton';
 import { logger } from '../lib/logger';
 

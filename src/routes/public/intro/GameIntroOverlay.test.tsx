@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import React from 'react';
 import { GameIntroOverlay } from './GameIntroOverlay';
 import { PixelMario } from '../../../ui/pixel/PixelMario';
 import { LogoShatter } from './LogoShatter';

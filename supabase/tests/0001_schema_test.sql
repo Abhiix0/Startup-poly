@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(22);
+SELECT plan(21);
 
 -- 1. Catalog Seed Test
 SELECT results_eq(

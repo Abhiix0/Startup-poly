@@ -99,6 +99,14 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   // Abort Game state
   const [showAbortModal, setShowAbortModal] = useState<boolean>(false);
   const [isAborting, setIsAborting] = useState<boolean>(false);
+  const [abortNote, setAbortNote] = useState<string>('');
+  const [abortError, setAbortError] = useState<string | null>(null);
+
+  const handleOpenAbort = () => {
+    setAbortNote('');
+    setAbortError(null);
+    setShowAbortModal(true);
+  };
 
   // Ensure selectedTeamId is always valid even if teams change
   useEffect(() => {
@@ -504,7 +512,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         lastUpdated={lastUpdated}
         onRefetch={handleManualRefetch}
         isRefetching={isRefetching}
-        onAbortGame={isActive ? () => setShowAbortModal(true) : undefined}
+        onAbortGame={isActive ? handleOpenAbort : undefined}
       />
 
       {/* Responsive width notice for small devices (< 1024px) */}
@@ -790,15 +798,24 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
             <PixelButton
               variant="danger"
               size="md"
+              disabled={!abortNote.trim() || isAborting}
               onClick={async () => {
+                if (!abortNote.trim()) {
+                  setAbortError('A reason note is required to abort the match.');
+                  return;
+                }
                 try {
                   setIsAborting(true);
-                  await rpcAdminAbortGame(snapshot.room.id, 'Game aborted — accidental start');
-                  successToast('Game aborted. Room returned to LOBBY.');
+                  setAbortError(null);
+                  await rpcAdminAbortGame(snapshot.room.id, abortNote.trim());
+                  successToast('Game aborted. Room returned to LOBBY and teams reset.');
                   setShowAbortModal(false);
+                  setAbortNote('');
                   await onRefetch();
                 } catch (err: any) {
-                  errorToast(err?.message || 'Failed to abort game.');
+                  const msg = err?.message || 'Failed to abort game.';
+                  setAbortError(msg);
+                  errorToast(msg);
                 } finally {
                   setIsAborting(false);
                 }
@@ -812,13 +829,38 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       >
         <div className="flex flex-col gap-3">
           <p className="font-mono text-sm leading-relaxed text-[#102040]">
-            This will <strong>reset the match back to LOBBY</strong> and stop the countdown timer.
+            This will <strong>reset the match back to LOBBY</strong>, stop the countdown timer, and <strong>reset all teams to baseline</strong>.
           </p>
-          <div className="bg-[#FEF2F2] border-2 border-[#102040] p-3 text-xs text-[#991B1B] font-mono">
-            ⚠ All team phones will return to the waiting screen. Cash, CV, and businesses will be <strong>preserved</strong> — only the timer and ACTIVE status are reverted.
+          <div className="bg-[#FEF2F2] border-2 border-[#102040] p-3 text-xs text-[#991B1B] font-mono flex flex-col gap-1">
+            <span className="font-bold">⚠ FULL TEAM RESET:</span>
+            <span>All team cash resets to ₹1,000, CV resets to ₹0, all purchased businesses are removed, and bankruptcy flags are cleared.</span>
           </div>
+          <div className="flex flex-col gap-1">
+            <label className="font-pixel text-[10px] uppercase text-[#102040] font-bold">
+              Mandatory Reason Note *
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Accidental start, team not ready, tournament restart"
+              value={abortNote}
+              onChange={(e) => {
+                setAbortNote(e.target.value);
+                if (abortError) setAbortError(null);
+              }}
+              className="
+                w-full px-2.5 py-1.5 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040]
+                focus:outline-none focus:ring-2 focus:ring-[#FFCC00]
+              "
+            />
+          </div>
+          {abortError && (
+            <span className="font-mono text-xs text-[#D32F2F] font-bold">
+              ⚠ {abortError}
+            </span>
+          )}
           <p className="font-mono text-xs text-[#64748B]">
-            Use this if the match was started by mistake. You can start again from the lobby.
+            Use this if the match was started by mistake. You can start again from the lobby once ready.
           </p>
         </div>
       </Modal>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAdminRoom } from '../../data/useAdminRoom';
-import { PixelCard, PixelButton, StatusPill, ConnectionPill, ErrorBanner, Skeleton, PixelBrickTile } from '../../ui';
+import { PixelCard, StatusPill, ConnectionPill, ErrorBanner, Skeleton, PixelBrickTile } from '../../ui';
 import { SetupView } from './SetupView';
 import { LobbyView } from './LobbyView';
 import { ActiveSummaryView } from './ActiveSummaryView';

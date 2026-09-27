@@ -17,9 +17,9 @@ export const PixelLogo: React.FC<{
     <div className={`flex flex-col items-center select-none text-center ${className}`}>
       {/* Wordmark Container */}
       <div className="relative inline-flex items-center gap-2 md:gap-3">
-        <PixelStar size={starSizes[size]} className="animate-bounce" />
+        <PixelStar size={starSizes[size]} className="anim-star-twinkle" />
         <StartupolyLogo size={size} />
-        <PixelStar size={starSizes[size]} className="animate-bounce" />
+        <PixelStar size={starSizes[size]} className="anim-star-twinkle" style={{ animationDelay: '-2s' }} />
       </div>
 
       {/* Subtitle Badge: DREAM · BUILD · GROW */}

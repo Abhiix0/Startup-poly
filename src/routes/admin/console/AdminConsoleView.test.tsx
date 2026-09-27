@@ -14,6 +14,7 @@ vi.mock('../../../data/rpc', async () => {
     rpcAdminSetBusinessLevel: vi.fn(),
     rpcAdminRemoveBusiness: vi.fn(),
     rpcAdminSetBankrupt: vi.fn(),
+    rpcAdminAbortGame: vi.fn(),
   };
 });
 
@@ -360,5 +361,53 @@ describe('AdminConsoleView', () => {
     expect(screen.getByText(/SCOREBOARD DATA IS STALE \(45s old\)/i)).toBeInTheDocument();
     const updateButtons = screen.getAllByRole('button', { name: 'UPDATE' });
     expect(updateButtons[0]).toBeDisabled();
+  });
+
+  it('manages abort modal with required note and triggers rpcAdminAbortGame', async () => {
+    vi.mocked(rpcModule.rpcAdminAbortGame).mockResolvedValue({} as any);
+
+    renderComponent();
+
+    // Click abort button in top bar
+    const abortBtn = screen.getByRole('button', { name: /ABORT GAME/i });
+    fireEvent.click(abortBtn);
+
+    // Modal opens
+    expect(screen.getByText(/ABORT GAME — RETURN TO LOBBY/i)).toBeInTheDocument();
+    expect(screen.getByText(/FULL TEAM RESET/i)).toBeInTheDocument();
+
+    const confirmBtn = screen.getByRole('button', { name: /CONFIRM ABORT/i });
+    expect(confirmBtn).toBeDisabled();
+
+    // Type note
+    const noteInput = screen.getByPlaceholderText(/Accidental start/i);
+    fireEvent.change(noteInput, { target: { value: 'Accidental start by organizer' } });
+
+    expect(confirmBtn).not.toBeDisabled();
+
+    // Click confirm
+    fireEvent.click(confirmBtn);
+
+    await waitFor(() => {
+      expect(rpcModule.rpcAdminAbortGame).toHaveBeenCalledWith('room-1', 'Accidental start by organizer');
+    });
+  });
+
+  it('displays error in abort modal when rpcAdminAbortGame fails', async () => {
+    vi.mocked(rpcModule.rpcAdminAbortGame).mockRejectedValue(new Error('NOTE_REQUIRED'));
+
+    renderComponent();
+
+    fireEvent.click(screen.getByRole('button', { name: /ABORT GAME/i }));
+
+    const noteInput = screen.getByPlaceholderText(/Accidental start/i);
+    fireEvent.change(noteInput, { target: { value: 'Accident' } });
+
+    const confirmBtn = screen.getByRole('button', { name: /CONFIRM ABORT/i });
+    fireEvent.click(confirmBtn);
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/NOTE_REQUIRED/i).length).toBeGreaterThanOrEqual(1);
+    });
   });
 });

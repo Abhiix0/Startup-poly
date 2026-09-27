@@ -34,6 +34,7 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ events, teams }) => {
           'LOBBY_OPENED',
           'GAME_STARTED',
           'GAME_EXPIRED',
+          'GAME_ABORTED',
           'TEAM_JOINED',
           'TEAM_RELEASED',
           'TIEBREAK_SET',

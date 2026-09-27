@@ -8,7 +8,6 @@ import {
   computeLoseFeature,
   TeamState,
 } from './quickActions';
-import { OFFICIAL_BUSINESSES } from './economy';
 
 describe('quickActions domain calculations', () => {
   const mockPayer: TeamState = {

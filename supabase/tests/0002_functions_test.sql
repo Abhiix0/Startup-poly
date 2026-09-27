@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(26);
+SELECT plan(31);
 
 -- Set test environment and simulated clock
 SELECT set_config('app.env', 'test', true);
@@ -17,7 +17,15 @@ SELECT set_config('app.test_now', '2026-03-01 10:00:00+00', true);
 \set player2_uid 'b0000000-0000-0000-0000-000000000002'
 \set rando_uid 'c0000000-0000-0000-0000-000000000001'
 
--- Seed admin
+-- Seed admin and test users in auth.users
+INSERT INTO auth.users (id, email, created_at, updated_at)
+VALUES 
+  (:'admin_uid', 'func-admin@test.local', now(), now()),
+  (:'player1_uid', 'player1@test.local', now(), now()),
+  (:'player2_uid', 'player2@test.local', now(), now()),
+  (:'rando_uid', 'rando@test.local', now(), now())
+ON CONFLICT DO NOTHING;
+
 INSERT INTO public.admins (user_id) VALUES (:'admin_uid') ON CONFLICT DO NOTHING;
 
 -- 1. server_time returns test clock
@@ -68,18 +76,25 @@ SELECT lives_ok(
   'admin_open_lobby transitions room to LOBBY'
 );
 
+-- Save room code & Player 1 PIN while still admin
+SELECT set_config('app.test_room_code', code, false) FROM public.rooms WHERE status = 'LOBBY';
+SELECT set_config('app.test_pin_1', ts.join_pin, false)
+FROM public.team_secrets ts
+JOIN public.teams t ON ts.team_id = t.id
+WHERE t.slot = 1;
+
 -- 7. get_lobby exposes no IDs or PINs
 SELECT set_config('request.jwt.claims', '{"sub": "c0000000-0000-0000-0000-000000000001", "role": "anon"}', true);
 SET LOCAL ROLE anon;
 
 SELECT is(
-  (SELECT (public.get_lobby(code)->'teams'->0 ? 'pin') FROM public.rooms WHERE status = 'LOBBY'),
+  ((public.get_lobby(current_setting('app.test_room_code')))->'teams'->0 ? 'pin'),
   false,
   'get_lobby does not expose team PIN'
 );
 
 SELECT is(
-  (SELECT (public.get_lobby(code)->'teams'->0 ? 'id') FROM public.rooms WHERE status = 'LOBBY'),
+  ((public.get_lobby(current_setting('app.test_room_code')))->'teams'->0 ? 'id'),
   false,
   'get_lobby does not expose team id'
 );
@@ -90,7 +105,7 @@ SET LOCAL ROLE authenticated;
 
 -- Wrong PIN gives BAD_CODE_OR_PIN
 SELECT throws_ok(
-  $$SELECT public.join_team(code, 1, '0000') FROM public.rooms WHERE status = 'LOBBY'$$,
+  format('SELECT public.join_team(%L, 1, %L)', current_setting('app.test_room_code'), '0000'),
   'P0001',
   'BAD_CODE_OR_PIN',
   'Wrong PIN fails with BAD_CODE_OR_PIN'
@@ -98,25 +113,13 @@ SELECT throws_ok(
 
 -- 9. Correct PIN joins successfully
 SELECT lives_ok(
-  $$
-  SELECT public.join_team(r.code, 1, ts.join_pin)
-  FROM public.rooms r
-  JOIN public.teams t ON r.id = t.room_id AND t.slot = 1
-  JOIN public.team_secrets ts ON t.id = ts.team_id
-  WHERE r.status = 'LOBBY'
-  $$,
+  format('SELECT public.join_team(%L, 1, %L)', current_setting('app.test_room_code'), current_setting('app.test_pin_1')),
   'join_team succeeds with correct PIN'
 );
 
 -- 10. Reconnect with same user is idempotent
 SELECT lives_ok(
-  $$
-  SELECT public.join_team(r.code, 1, ts.join_pin)
-  FROM public.rooms r
-  JOIN public.teams t ON r.id = t.room_id AND t.slot = 1
-  JOIN public.team_secrets ts ON t.id = ts.team_id
-  WHERE r.status = 'LOBBY'
-  $$,
+  format('SELECT public.join_team(%L, 1, %L)', current_setting('app.test_room_code'), current_setting('app.test_pin_1')),
   'join_team is idempotent for reconnected user'
 );
 
@@ -284,8 +287,8 @@ SELECT throws_ok(
 -- Edit with note succeeds
 SELECT lives_ok(
   $$
-  SELECT public.admin_set_team_values(t.id, 1100, NULL, t.version, gen_random_uuid(), 'Reconciled physical transaction')
-  FROM public.teams t WHERE t.slot = 1
+  SELECT public.admin_set_team_values(t.id, 1000 + (t.slot * 50), NULL, t.version, gen_random_uuid(), 'Reconciled physical transaction')
+  FROM public.teams t
   $$,
   'Edits during TIME_EXPIRED succeed when note is provided'
 );
