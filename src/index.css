@@ -1,7 +1,83 @@
 @import "tailwindcss";
 
 @theme {
-  /* Original NES Tokens (preserves backwards-compatibility) */
+  /* ========================================================================= */
+  /* STARTUPOLY CORE 7-COLOR BRAND PALETTE                                     */
+  /* The authoritative brand colors used across the entire application         */
+  /* ========================================================================= */
+  --color-brand-sky: #5C94FC;
+  --color-brand-green: #22B14C;
+  --color-brand-gold: #FFCC00;
+  --color-brand-brick: #B84418;
+  --color-brand-white: #FFFFFF;
+  --color-brand-navy: #102040;
+  --color-brand-red: #D32F2F;
+
+  /* ========================================================================= */
+  /* UNIFIED NAVY-TINTED NEUTRAL SCALE                                         */
+  /* Replaces all ad-hoc slates, grays, and metal tints with a coherent scale  */
+  /* ========================================================================= */
+  --color-neutral-50: #F8FAFC;
+  --color-neutral-100: #F1F5F9;
+  --color-neutral-200: #E2E8F0;
+  --color-neutral-300: #CBD5E1;
+  --color-neutral-400: #94A3B8;
+  --color-neutral-500: #64748B;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1E293B;
+  --color-neutral-900: #102040;
+  --color-neutral-950: #0A1128;
+
+  /* ========================================================================= */
+  /* SEMANTIC STATUS SYSTEM (Derived from Brand Colors)                        */
+  /* ========================================================================= */
+  /* Success — derived from Arcade Green #22B14C */
+  --color-status-success: #22B14C;
+  --color-status-success-light: #86EFAC;
+  --color-status-success-dark: #16A34A;
+  --color-status-success-bg: #F0FDF4;
+
+  /* Warning / Accent — derived from Coin Gold #FFCC00 */
+  --color-status-warning: #FFCC00;
+  --color-status-warning-light: #FEF9C3;
+  --color-status-warning-dark: #B45309;
+  --color-status-warning-text: #92400E;
+  --color-status-warning-bg: #FFFBEB;
+
+  /* Danger / Expense — derived from Expense Red #D32F2F */
+  --color-status-danger: #D32F2F;
+  --color-status-danger-light: #FCA5A5;
+  --color-status-danger-dark: #991B1B;
+  --color-status-danger-bg: #FEECEB;
+
+  /* Info / Network — derived from Sky Blue #5C94FC */
+  --color-status-info: #5C94FC;
+  --color-status-info-light: #BAE6FD;
+  --color-status-info-dark: #1E40AF;
+  --color-status-info-bg: #F0F9FF;
+
+  /* ========================================================================= */
+  /* FUNCTIONAL INTERACTION VARIANTS                                           */
+  /* ========================================================================= */
+  --color-interactive-gold-hover: #f5c400;
+  --color-interactive-gold-active: #e6b800;
+  --color-interactive-green-hover: #1fa145;
+  --color-interactive-red-hover: #bf2626;
+
+  /* ========================================================================= */
+  /* MULTIPLAYER TEAM SWATCHES                                                 */
+  /* ========================================================================= */
+  --color-team-1: #E52521;
+  --color-team-2: #0099FF;
+  --color-team-3: #22C55E;
+  --color-team-4: #FFCC00;
+  --color-team-5: #A855F7;
+  --color-team-6: #EC4899;
+
+  /* ========================================================================= */
+  /* DEPRECATED ALIASES (Preserved during migration, removed in Phase 6)       */
+  /* ========================================================================= */
   --color-nes-sky: #5C94FC;
   --color-nes-green: #22B14C;
   --color-nes-gold: #FFCC00;
@@ -13,21 +89,17 @@
   --color-nes-gray: #E2E8F0;
   --color-nes-muted: #64748B;
 
-  /* Global Color Palette — Unified across Landing, Join & Admin pages */
-  /* NES & Retro Sky Bands */
   --color-sky-deep: #3B6FE0;
   --color-sky-mid: #4A80E8;
   --color-sky-base: #5C94FC;
   --color-sky-light: #71A9FC;
   --color-sky-horizon: #87CEFA;
 
-  /* Signature Pixel Navy & 8-Bit Ink (Borders & Shadows) */
   --color-navy-deep: #0A1128;
   --color-navy-base: #102040;
   --color-navy-mid: #1E293B;
   --color-navy-surface: #1E3A5F;
 
-  /* Arcade Gold & Currency Accents */
   --color-gold-base: #FFCC00;
   --color-gold-hover: #FFE066;
   --color-gold-active: #E6B800;
@@ -35,7 +107,6 @@
   --color-gold-sparkle: #FFF275;
   --color-gold-dark: #B8860B;
 
-  /* Warp Pipe & Pixel Greens */
   --color-pipe-green: #22C55E;
   --color-pipe-body: #16A34A;
   --color-pipe-dark: #15803D;
@@ -43,7 +114,6 @@
   --color-pipe-light: #4ADE80;
   --color-green-retro: #22B14C;
 
-  /* Terracotta Brick & Question Blocks */
   --color-brick-base: #B84418;
   --color-brick-dark: #8A2E0B;
   --color-brick-light: #D96B43;
@@ -51,7 +121,6 @@
   --color-block-gold: #F7CE46;
   --color-block-dark: #C2410C;
 
-  /* Parchment, Cream & Card Surfaces (Join Page / Team Signboard) */
   --color-parchment-base: #FFFBEB;
   --color-parchment-light: #FEF9C3;
   --color-parchment-card: #FAF8F5;
@@ -59,7 +128,6 @@
   --color-parchment-text: #92400E;
   --color-parchment-muted: #B45309;
 
-  /* Industrial Tech Slate & Admin Console (Metal Billboard / CRT) */
   --color-metal-surface: #F8FAFC;
   --color-metal-light: #F1F5F9;
   --color-metal-plate: #E2E8F0;
@@ -68,32 +136,21 @@
   --color-metal-dark: #475569;
   --color-metal-deep: #334155;
 
-  /* Wood Grain & Signboard Trim */
   --color-wood-dark: #3D1C06;
   --color-wood-base: #8B4513;
   --color-wood-border: #A0522D;
   --color-wood-light: #C68642;
   --color-wood-bright: #E6B87D;
 
-  /* Castle Fortress Stone & Royal Accents */
   --color-castle-stone: #334155;
   --color-castle-shadow: #1E293B;
   --color-flag-red: #D32F2F;
   --color-flag-dark: #991B1B;
 
-  /* Distant Hills & Mountains */
   --color-mountain-front: #2870C0;
   --color-mountain-mid: #1E5CA8;
   --color-mountain-dark: #164E8C;
   --color-mountain-deep: #103B6D;
-
-  /* Multiplayer Team Slots */
-  --color-team-1: #E52521;
-  --color-team-2: #0099FF;
-  --color-team-3: #22C55E;
-  --color-team-4: #FFCC00;
-  --color-team-5: #A855F7;
-  --color-team-6: #EC4899;
 
   --font-pixel: "Press Start 2P", monospace;
   --font-mono: "JetBrains Mono", monospace;
@@ -182,21 +239,32 @@
 /* ========================================================================= */
 
 :root {
+  /* ========================================================================= */
+  /* STARTUPOLY CORE BRAND TOKENS (CSS Variables)                              */
+  /* ========================================================================= */
+  --color-brand-sky: #5C94FC;
+  --color-brand-green: #22B14C;
+  --color-brand-gold: #FFCC00;
+  --color-brand-brick: #B84418;
+  --color-brand-white: #FFFFFF;
+  --color-brand-navy: #102040;
+  --color-brand-red: #D32F2F;
+
   /* Sky & Atmosphere */
   --color-sky-deep: #3B6FE0;
   --color-sky-mid: #4A80E8;
-  --color-sky-base: #5C94FC;
+  --color-sky-base: var(--color-brand-sky);
   --color-sky-light: #71A9FC;
   --color-sky-horizon: #87CEFA;
 
   /* Ink & 8-Bit Borders */
   --color-navy-deep: #0A1128;
-  --color-navy-base: #102040;
+  --color-navy-base: var(--color-brand-navy);
   --color-navy-mid: #1E293B;
   --color-navy-surface: #1E3A5F;
 
   /* Arcade Gold & Currency Accents */
-  --color-gold-base: #FFCC00;
+  --color-gold-base: var(--color-brand-gold);
   --color-gold-hover: #FFE066;
   --color-gold-active: #E6B800;
   --color-gold-coin: #FFD700;
@@ -209,10 +277,10 @@
   --color-pipe-dark: #15803D;
   --color-pipe-highlight: #86EFAC;
   --color-pipe-light: #4ADE80;
-  --color-green-retro: #22B14C;
+  --color-green-retro: var(--color-brand-green);
 
   /* Terracotta Brick & Question Blocks */
-  --color-brick-base: #B84418;
+  --color-brick-base: var(--color-brand-brick);
   --color-brick-dark: #8A2E0B;
   --color-brick-light: #D96B43;
   --color-block-orange: #E6631F;
@@ -246,7 +314,7 @@
   /* Castle & Fortress */
   --color-castle-stone: #334155;
   --color-castle-shadow: #1E293B;
-  --color-flag-red: #D32F2F;
+  --color-flag-red: var(--color-brand-red);
   --color-flag-dark: #991B1B;
 
   /* Distant Hills & Mountains */
@@ -256,10 +324,10 @@
   --color-mountain-deep: #103B6D;
 
   /* Standard Pixel Shadows */
-  --pixel-shadow-sm: 2px 2px 0px var(--color-navy-base);
-  --pixel-shadow-md: 3px 3px 0px var(--color-navy-base);
-  --pixel-shadow-lg: 4px 4px 0px var(--color-navy-base);
-  --pixel-shadow-xl: 6px 6px 0px var(--color-navy-base);
+  --pixel-shadow-sm: 2px 2px 0px var(--color-brand-navy);
+  --pixel-shadow-md: 3px 3px 0px var(--color-brand-navy);
+  --pixel-shadow-lg: 4px 4px 0px var(--color-brand-navy);
+  --pixel-shadow-xl: 6px 6px 0px var(--color-brand-navy);
 }
 
 /* ========================================================================= */
