@@ -37,10 +37,10 @@ export const ArcadeLink = React.forwardRef<HTMLAnchorElement, ArcadeLinkProps>(
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
     const variantStyles = {
-      primary: 'bg-[#22B14C] hover:bg-[#1fa145] text-white',
-      secondary: 'bg-[#FFCC00] hover:bg-[#f5c400] text-[#102040]',
-      danger: 'bg-[#D32F2F] hover:bg-[#bf2626] text-white',
-      ghost: 'bg-white hover:bg-[#F0EDE6] text-[#102040]',
+      primary: 'bg-brand-green hover:bg-interactive-green-hover text-brand-white',
+      secondary: 'bg-brand-gold hover:bg-interactive-gold-hover text-brand-navy',
+      danger: 'bg-brand-red hover:bg-interactive-red-hover text-brand-white',
+      ghost: 'bg-brand-white hover:bg-neutral-100 text-brand-navy',
     };
 
     const sizeStyles = {
@@ -95,14 +95,14 @@ export const ArcadeLink = React.forwardRef<HTMLAnchorElement, ArcadeLinkProps>(
         onKeyDown={handleKeyDown}
         className={`
           relative inline-flex items-center justify-center gap-2 cursor-pointer font-bold select-none text-center no-underline
-          border-4 border-[#102040] shadow-[4px_4px_0px_#102040]
-          hover:-translate-y-[2px] hover:shadow-[6px_6px_0px_#102040]
-          focus-visible:-translate-y-[2px] focus-visible:shadow-[6px_6px_0px_#102040]
-          active:translate-y-[2px] active:shadow-[2px_2px_0px_#102040]
-          focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FFCC00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#102040]
+          border-4 border-brand-navy shadow-pixel
+          hover:-translate-y-[2px] hover:shadow-pixel-lg
+          focus-visible:-translate-y-[2px] focus-visible:shadow-pixel-lg
+          active:translate-y-[2px] active:shadow-pixel-sm
+          focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy
           transition-all duration-75 ease-out
           motion-reduce:transition-none motion-reduce:transform-none motion-reduce:hover:transform-none motion-reduce:active:transform-none
-          ${ctaType === 'admin' ? 'hover:ring-2 hover:ring-[#22B14C] focus-visible:ring-2 focus-visible:ring-[#22B14C]' : ''}
+          ${ctaType === 'admin' ? 'hover:ring-2 hover:ring-brand-green focus-visible:ring-2 focus-visible:ring-brand-green' : ''}
           ${variantStyles[variant]}
           ${sizeStyles[size]}
           ${fullWidth ? 'w-full' : ''}
@@ -136,7 +136,7 @@ export const ArcadeLink = React.forwardRef<HTMLAnchorElement, ArcadeLinkProps>(
 
         {/* Terminal cursor for ADMIN CONSOLE CTA */}
         {ctaType === 'admin' && isHoveredOrFocused && (
-          <span className="text-[#86EFAC] font-pixel text-xs animate-pulse" aria-hidden="true">
+          <span className="text-status-success-light font-pixel text-xs animate-pulse" aria-hidden="true">
             ▮
           </span>
         )}

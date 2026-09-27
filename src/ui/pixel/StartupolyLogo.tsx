@@ -30,7 +30,7 @@ export const StartupolyLogo: React.FC<StartupolyLogoProps> = ({
       {/* Optional ambient warm aura behind the logo */}
       {glow && (
         <div
-          className="absolute inset-0 bg-[#FFCC00] opacity-20 blur-xl rounded-full scale-110 pointer-events-none"
+          className="absolute inset-0 bg-brand-gold opacity-20 blur-xl rounded-full scale-110 pointer-events-none"
           aria-hidden="true"
         />
       )}

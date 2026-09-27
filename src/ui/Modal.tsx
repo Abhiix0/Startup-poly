@@ -58,33 +58,33 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         ref={modalRef}
         className={`
-          w-full ${maxWidthStyles[maxWidth]} bg-[#FAF8F5]
-          border-4 border-[#102040] shadow-[6px_6px_0px_#102040]
+          w-full ${maxWidthStyles[maxWidth]} bg-neutral-50
+          border-4 border-brand-navy shadow-pixel-lg
           flex flex-col max-h-[90vh] overflow-hidden
         `}
       >
         {/* Modal Header */}
-        <div className="bg-[#102040] text-white px-4 py-3 flex items-center justify-between border-b-4 border-[#102040]">
+        <div className="bg-brand-navy text-brand-white px-4 py-3 flex items-center justify-between border-b-4 border-brand-navy">
           <h2 className="font-pixel text-xs sm:text-sm uppercase tracking-wider truncate pr-2">
             {title}
           </h2>
           <button
             onClick={onClose}
             aria-label="Close dialog"
-            className="w-8 h-8 flex items-center justify-center bg-[#D32F2F] text-white font-pixel text-xs border-2 border-white hover:bg-[#B71C1C] cursor-pointer active:translate-y-0.5"
+            className="w-8 h-8 flex items-center justify-center bg-brand-red text-brand-white font-pixel text-xs border-2 border-brand-white hover:bg-interactive-red-hover cursor-pointer active:translate-y-0.5"
           >
             ✕
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 font-sans text-sm text-[#102040]">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 font-sans text-sm text-brand-navy">
           {children}
         </div>
 
         {/* Modal Footer */}
         {footer && (
-          <div className="bg-[#EAE5D9] px-4 py-3 border-t-4 border-[#102040] flex items-center justify-end gap-3">
+          <div className="bg-neutral-200 px-4 py-3 border-t-4 border-brand-navy flex items-center justify-end gap-3">
             {footer}
           </div>
         )}

@@ -25,9 +25,9 @@ export const PixelLogo: React.FC<{
       {/* Subtitle Badge: DREAM · BUILD · GROW */}
       {showSubtitle && (
         <div
-          className="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-[#102040] border-2 border-[#FFCC00] rounded-sm shadow-[2px_2px_0px_#B84418]"
+          className="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-brand-navy border-2 border-brand-gold rounded-sm shadow-[2px_2px_0px_var(--color-brand-brick)]"
         >
-          <span className="font-pixel text-[10px] md:text-xs text-[#FFFBEB] tracking-widest font-bold">
+          <span className="font-pixel text-[10px] md:text-xs text-brand-white tracking-widest font-bold">
             ★ DREAM · BUILD · GROW ★
           </span>
         </div>

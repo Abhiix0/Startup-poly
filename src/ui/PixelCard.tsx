@@ -20,18 +20,18 @@ export const PixelCard: React.FC<PixelCardProps> = ({
   padding = 'md',
 }) => {
   const bgStyles = {
-    white: 'bg-white',
-    cream: 'bg-[#FAF8F5]',
-    gold: 'bg-[#FFEDB3]',
-    dark: 'bg-[#182848] text-white',
+    white: 'bg-brand-white',
+    cream: 'bg-neutral-50',
+    gold: 'bg-status-warning-light',
+    dark: 'bg-neutral-800 text-brand-white',
   };
 
   const headerBgStyles = {
-    default: 'bg-[#EAE5D9] text-[#102040] border-b-4 border-[#102040]',
-    navy: 'bg-[#102040] text-white border-b-4 border-[#102040]',
-    brick: 'bg-[#B84418] text-white border-b-4 border-[#102040]',
-    gold: 'bg-[#FFCC00] text-[#102040] border-b-4 border-[#102040]',
-    green: 'bg-[#22B14C] text-[#102040] border-b-4 border-[#102040]',
+    default: 'bg-neutral-200 text-brand-navy border-b-4 border-brand-navy',
+    navy: 'bg-brand-navy text-brand-white border-b-4 border-brand-navy',
+    brick: 'bg-brand-brick text-brand-white border-b-4 border-brand-navy',
+    gold: 'bg-brand-gold text-brand-navy border-b-4 border-brand-navy',
+    green: 'bg-brand-green text-brand-navy border-b-4 border-brand-navy',
   };
 
   const paddingStyles = {
@@ -44,7 +44,7 @@ export const PixelCard: React.FC<PixelCardProps> = ({
   return (
     <div
       className={`
-        border-4 border-[#102040] shadow-[4px_4px_0px_#102040]
+        border-4 border-brand-navy shadow-pixel
         ${bgStyles[variant]}
         overflow-hidden
         ${className}
