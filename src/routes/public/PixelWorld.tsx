@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   PixelBrickTile,
   PixelCloudFluffy,
@@ -14,37 +14,31 @@ import {
   PixelSparkle,
   PixelMonitor,
 } from '../../ui/pixel';
-import { usePointerParallax } from '../../lib/usePointerParallax';
 import { Founder } from './Founder';
 
-export const PixelWorld: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+export interface PixelWorldProps {
+  isIntroActive?: boolean;
+}
 
-  // Enable subtle pointer parallax on fine-pointer desktop devices
-  usePointerParallax(containerRef);
-
+export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false }) => {
   return (
     <footer
-      ref={containerRef}
       className="w-full relative select-none overflow-hidden"
       aria-hidden="true"
     >
       {/* Dynamic World Viewport */}
-      <div className="relative w-full h-24 sm:h-28 md:h-34 pointer-events-none">
+      <div className="relative w-full h-20 sm:h-24 md:h-26 lg:h-28 pointer-events-none">
         {/* ========================================================================= */}
         {/* LAYER 1: SKY (Background canvas layer)                                   */}
         {/* ========================================================================= */}
         <div data-layer="1-sky" className="absolute inset-0 pointer-events-none" />
 
         {/* ========================================================================= */}
-        {/* LAYER 2: FAR CLOUDS (110s drift, small, 40-50% opacity, parallax depth 1) */}
+        {/* LAYER 2: FAR CLOUDS (110s drift, small, 40-50% opacity)                  */}
         {/* ========================================================================= */}
         <div
           data-layer="2-clouds-far"
           className="absolute inset-x-0 top-0 h-20 overflow-hidden pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 2px), calc(var(--py, 0) * 1px), 0)',
-          }}
         >
           <div
             className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-45"
@@ -78,14 +72,11 @@ export const PixelWorld: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 3: NEAR CLOUDS (45s drift, larger, 80-90% opacity, parallax depth 2)*/}
+        {/* LAYER 3: NEAR CLOUDS (45s drift, larger, 80-90% opacity)                  */}
         {/* ========================================================================= */}
         <div
           data-layer="3-clouds-near"
           className="absolute inset-x-0 top-0 h-22 overflow-hidden pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 4px), calc(var(--py, 0) * 2px), 0)',
-          }}
         >
           <div
             className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-85"
@@ -124,9 +115,6 @@ export const PixelWorld: React.FC = () => {
         <div
           data-layer="4-ground-deco"
           className="absolute inset-x-0 bottom-0 h-full pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 3px), calc(var(--py, 0) * 1px), 0)',
-          }}
         >
           {/* Left Sparkles with desynchronized low-duty twinkle */}
           <div className="absolute bottom-12 sm:bottom-16 left-8 sm:left-14 lg:left-20 anim-sparkle-cycle">
@@ -156,9 +144,6 @@ export const PixelWorld: React.FC = () => {
         <div
           data-layer="5-objects"
           className="absolute inset-x-0 bottom-0 h-full pointer-events-none"
-          style={{
-            transform: 'translate3d(calc(var(--px, 0) * 5px), calc(var(--py, 0) * 2px), 0)',
-          }}
         >
           {/* LEFT GROUND OBJECTS: Daisy Flower & Grass + Warp Pipe + Grass + Brick Podium + Orange Flower */}
           <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-1.5 sm:gap-2.5">
@@ -179,8 +164,7 @@ export const PixelWorld: React.FC = () => {
                 <PixelCoin size={14} />
               </div>
               <div className="anim-pipe-highlight">
-                <PixelPipe width={56} height={50} className="sm:hidden" />
-                <PixelPipe width={68} height={58} className="hidden sm:inline-block" />
+                <PixelPipe className="w-[56px] h-[50px] sm:w-[68px] sm:h-[58px]" />
               </div>
             </div>
 
@@ -237,9 +221,19 @@ export const PixelWorld: React.FC = () => {
               </div>
             </div>
 
-            {/* Founder Mascot "Poly" with walk-in, idle, bubble & CTA reactions */}
-            <div className="relative z-20">
-              <Founder size={46} className="scale-90 sm:scale-100 origin-bottom" />
+            {/* Founder Mascot with walk-in, idle, bubble & CTA reactions */}
+            <div
+              id="founder-ground-target"
+              className={`relative z-20 transition-opacity duration-150 ${
+                isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              }`}
+            >
+              <Founder
+                size={46}
+                initialPhase="idle"
+                isPaused={isIntroActive}
+                className="scale-90 sm:scale-100 origin-bottom"
+              />
             </div>
 
             {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
@@ -255,8 +249,7 @@ export const PixelWorld: React.FC = () => {
             {/* Right Large Green Warp Pipe */}
             <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
-                <PixelPipe width={56} height={50} className="sm:hidden" />
-                <PixelPipe width={68} height={54} className="hidden sm:inline-block" />
+                <PixelPipe className="w-[56px] h-[50px] sm:w-[68px] sm:h-[54px]" />
               </div>
             </div>
 

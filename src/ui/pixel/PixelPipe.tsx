@@ -5,16 +5,25 @@ export interface PixelPipeProps {
   height?: number;
   size?: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const PixelPipe: React.FC<PixelPipeProps> = ({
-  width = 68,
-  height = 58,
+  width,
+  height,
   size,
   className = '',
+  style,
 }) => {
-  const actualWidth = width || (size ? size * (44 / 36) : 68);
-  const actualHeight = height || size || 58;
+  const hasWidthClass = /\bw-\[?\w+\]?/.test(className);
+  const hasHeightClass = /\bh-\[?\w+\]?/.test(className);
+  const actualWidth = width ?? (size ? size * (44 / 36) : hasWidthClass ? undefined : 68);
+  const actualHeight = height ?? (size ? size : hasHeightClass ? undefined : 58);
+
+  const displayClass =
+    className.includes('block') || className.includes('flex') || className.includes('hidden')
+      ? ''
+      : 'inline-block';
 
   return (
     <svg
@@ -23,8 +32,8 @@ export const PixelPipe: React.FC<PixelPipeProps> = ({
       viewBox="0 0 44 38"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`inline-block select-none ${className}`}
-      style={{ imageRendering: 'pixelated' }}
+      className={`${displayClass} select-none ${className}`.trim()}
+      style={{ imageRendering: 'pixelated', ...style }}
     >
       {/* Pipe Lip / Rim Header */}
       <rect x="1" y="1" width="42" height="12" fill="#22C55E" stroke="#102040" strokeWidth="2" />

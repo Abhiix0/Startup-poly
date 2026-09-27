@@ -1,17 +1,12 @@
 import React from 'react';
 import { PixelStar } from './PixelStar';
+import { StartupolyLogo } from './StartupolyLogo';
 
 export const PixelLogo: React.FC<{
   size?: 'sm' | 'md' | 'lg';
   showSubtitle?: boolean;
   className?: string;
 }> = ({ size = 'md', showSubtitle = true, className = '' }) => {
-  const fontSizes = {
-    sm: 'text-2xl',
-    md: 'text-4xl md:text-5xl',
-    lg: 'text-5xl md:text-6xl lg:text-7xl',
-  };
-
   const starSizes = {
     sm: 18,
     md: 26,
@@ -23,22 +18,7 @@ export const PixelLogo: React.FC<{
       {/* Wordmark Container */}
       <div className="relative inline-flex items-center gap-2 md:gap-3">
         <PixelStar size={starSizes[size]} className="animate-bounce" />
-        <h1
-          className={`font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase ${fontSizes[size]}`}
-          style={{
-            textShadow: `
-              3px 3px 0 #B84418,
-              6px 6px 0 #102040,
-              -2px -2px 0 #102040,
-              2px -2px 0 #102040,
-              -2px 2px 0 #102040,
-              2px 2px 0 #102040
-            `,
-            letterSpacing: '0.08em',
-          }}
-        >
-          STARTUPOLY
-        </h1>
+        <StartupolyLogo size={size} />
         <PixelStar size={starSizes[size]} className="animate-bounce" />
       </div>
 

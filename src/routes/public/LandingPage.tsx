@@ -8,6 +8,7 @@ import {
   PixelTerminalIcon,
   PixelGrassTuft,
   PixelFlower,
+  StartupolyLogo,
 } from '../../ui/pixel';
 import { usePageVisibility } from '../../lib/usePageVisibility';
 import { useFirstVisit } from '../../lib/useFirstVisit';
@@ -17,9 +18,11 @@ import { FloatingPlatforms } from './FloatingPlatforms';
 import { DistantHillsAndCastle } from './DistantHillsAndCastle';
 import { SkyLayer } from './SkyLayer';
 import { TapCoinBurst } from './TapCoinBurst';
+import { GameIntroOverlay } from './intro/GameIntroOverlay';
 
 export const LandingPage: React.FC = () => {
   const { isFirstVisit, markSeen } = useFirstVisit();
+  const [showIntro, setShowIntro] = useState<boolean>(true);
   const [activeCta, setActiveCta] = useState<'join' | 'admin' | null>(null);
 
   // Check prefers-reduced-motion
@@ -49,8 +52,15 @@ export const LandingPage: React.FC = () => {
   return (
     <div
       data-cta={activeCta || undefined}
-      className="min-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040] anim-scene-transition"
+      className="min-h-screen lg:h-screen lg:max-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-x-hidden selection:bg-[#FFCC00] selection:text-[#102040] anim-scene-transition"
     >
+      {/* ======================================================================= */}
+      {/* RETRO GAME OPENING INTRO CINEMATIC (Overlay)                           */}
+      {/* ======================================================================= */}
+      {showIntro && (
+        <GameIntroOverlay onComplete={() => setShowIntro(false)} />
+      )}
+
       {/* ======================================================================= */}
       {/* LAYER 0: Upper Sky Moving Clouds Atmosphere                             */}
       {/* ======================================================================= */}
@@ -69,32 +79,19 @@ export const LandingPage: React.FC = () => {
       {/* ======================================================================= */}
       {/* LAYER 3: Main Title Screen UI (Logo, Status, Headline, Signboards)       */}
       {/* ======================================================================= */}
-      <div className="flex-1 flex flex-col justify-center pt-[max(2rem,env(safe-area-inset-top))] sm:pt-12 md:pt-16 pb-4 sm:pb-8 relative z-10">
+      <div className="flex-1 flex flex-col justify-center pt-[max(1rem,env(safe-area-inset-top))] sm:pt-2 md:pt-4 lg:pt-5 pb-1 sm:pb-2 relative z-10">
         {/* NES Sky Header */}
-        <header className="relative pb-4 sm:pb-6 px-4 text-center z-10">
+        <header className="relative pb-2 sm:pb-3 md:pb-4 px-4 text-center z-10">
           {/* Level 1: Wordmark Logo */}
-          <div className={`flex flex-col items-center select-none text-center mb-2 ${isFirstVisit ? 'anim-entrance-logo' : ''}`}>
-            <div className="relative inline-flex items-center gap-2 sm:gap-3 md:gap-4">
+          <div className={`flex flex-col items-center select-none text-center mb-1.5 sm:mb-2 ${isFirstVisit ? 'anim-entrance-logo' : ''}`}>
+            <div className="relative inline-flex items-center gap-2 sm:gap-3">
               <PixelCoin
                 size={22}
                 className={`anim-coin-idle shrink-0 ${isFirstVisit ? 'anim-boot-coin-settle' : ''}`}
                 ariaHidden={true}
               />
-              <h1
-                className="font-pixel tracking-wider font-extrabold text-[#FFCC00] uppercase text-2xl sm:text-3xl md:text-4xl lg:text-5xl"
-                style={{
-                  textShadow: `
-                    3px 3px 0 #B84418,
-                    5px 5px 0 #102040,
-                    -2px -2px 0 #102040,
-                    2px -2px 0 #102040,
-                    -2px 2px 0 #102040,
-                    2px 2px 0 #102040
-                  `,
-                  letterSpacing: '0.08em',
-                }}
-              >
-                STARTUPOLY
+              <h1 className="relative inline-flex items-center justify-center">
+                <StartupolyLogo size="responsive" />
               </h1>
               <PixelCoin
                 size={22}
@@ -104,7 +101,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Level 2: Subtitle Badge */}
-            <div className="mt-1.5 inline-flex items-center gap-1 sm:gap-2 px-2.5 py-0.5 bg-[#102040] border-2 border-[#FFCC00] rounded-sm shadow-[2px_2px_0px_#B84418]">
+            <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-2 px-2.5 py-0.5 bg-[#102040] border-2 border-[#FFCC00] rounded-sm shadow-[2px_2px_0px_#B84418]">
               <span className="font-pixel text-[8px] sm:text-[9px] md:text-[10px] text-[#FFFBEB] tracking-widest font-bold">
                 ★{' '}
                 <span className={isFirstVisit ? 'anim-entrance-word-1' : ''}>DREAM</span>{' '}
@@ -117,13 +114,13 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Live Indicator (Compact Game HUD status with boot sequence entrance) */}
-            <div className="mt-2">
+            <div className="mt-1.5 sm:mt-2">
               <LiveIndicator isFirstVisit={isFirstVisit} />
             </div>
           </div>
 
           {/* Level 3: Hero Headline */}
-          <div className={`mt-2 sm:mt-3 text-center max-w-lg mx-auto px-2 ${isFirstVisit ? 'anim-entrance-tagline' : ''}`}>
+          <div className={`mt-1.5 sm:mt-2 text-center max-w-lg mx-auto px-2 ${isFirstVisit ? 'anim-entrance-tagline' : ''}`}>
             <p className="font-pixel text-[11px] sm:text-xs md:text-sm text-[#FFFBEB] uppercase tracking-wider drop-shadow-[2px_2px_0px_#102040] leading-snug">
               THE BOARD IS PHYSICAL.
               <br className="sm:hidden" /> THE SCORE IS LIVE.
@@ -132,8 +129,8 @@ export const LandingPage: React.FC = () => {
         </header>
 
         {/* Main Portals Grid (Level 4 Primary Checkpoints) */}
-        <main className="relative max-w-3xl w-full mx-auto px-4 py-1 flex flex-col justify-center z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-[1.15fr_0.85fr] gap-6 sm:gap-6 items-end justify-items-center">
+        <main className="relative max-w-3xl w-full mx-auto px-4 py-0.5 flex flex-col justify-center z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-[1.15fr_0.85fr] gap-4 sm:gap-5 md:gap-6 items-end justify-items-center">
             {/* ================================================================= */}
             {/* PRIMARY HERO CTA: TEAM PHONE (Wooden Checkpoint Signboard)       */}
             {/* ================================================================= */}
@@ -401,7 +398,7 @@ export const LandingPage: React.FC = () => {
       {/* ======================================================================= */}
       {/* LAYER 4: Living Pixel World Ground & Scene                              */}
       {/* ======================================================================= */}
-      <PixelWorld />
+      <PixelWorld isIntroActive={showIntro} />
     </div>
   );
 };

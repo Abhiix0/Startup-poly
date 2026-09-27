@@ -77,4 +77,11 @@ describe('PixelWorld Living Scene', () => {
     expect(cssContent.includes('prefers-reduced-motion')).toBe(true);
     expect(cssContent.includes('[data-paused="true"] *')).toBe(true);
   });
+
+  it('verifies exactly 2 pipes are rendered in PixelWorld without duplicates', () => {
+    const { container } = render(<PixelWorld />);
+    // Select all pipe SVG elements within the objects layer
+    const pipes = container.querySelectorAll('[data-layer="5-objects"] svg[viewBox="0 0 44 38"]');
+    expect(pipes).toHaveLength(2);
+  });
 });
