@@ -58,5 +58,14 @@ describe('Phase 3: Animation & Reduced-Motion Consistency Pass', () => {
     expect(block).toContain('.anim-star-twinkle');
     expect(block).toContain('.anim-cloud-float');
     expect(block).toContain('.anim-trophy-bob');
+    expect(block).toContain('.anim-signboard-enter');
+    expect(block).toContain('.anim-signboard-error');
+    expect(block).toContain('.anim-signboard-success');
+    expect(block).toContain('.anim-flag');
+    expect(block).toContain('.anim-torch');
+    expect(block).toContain('.anim-gate-open');
+    expect(block).toContain('.anim-block-cycle');
+    expect(block).toContain('.anim-coin-idle');
+    expect(block).toContain('.anim-pipe-highlight');
   });
 });

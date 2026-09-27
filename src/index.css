@@ -2275,7 +2275,18 @@
   .anim-progress-segment,
   .anim-star-twinkle,
   .anim-cloud-float,
-  .anim-trophy-bob {
+  .anim-trophy-bob,
+  .anim-signboard-enter,
+  .anim-signboard-error,
+  .anim-signboard-success,
+  .anim-slot-active,
+  .anim-flag,
+  .anim-torch,
+  .anim-gate-open,
+  .anim-match-found,
+  .anim-block-cycle,
+  .anim-coin-idle,
+  .anim-pipe-highlight {
     animation: none !important;
     transform: none !important;
     opacity: 1 !important;

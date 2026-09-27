@@ -17,9 +17,9 @@ export const WoodenActionButton: React.FC<WoodenActionButtonProps> = ({
   ...props
 }) => {
   const bgStyles = {
-    gold: 'bg-[#FFCC00] text-[#102040] hover:bg-[#FFE066]',
-    green: 'bg-[#22B14C] text-white hover:bg-[#2ED15C]',
-    brick: 'bg-[#B84418] text-white hover:bg-[#D9531E]',
+    gold: 'bg-[#FFCC00] text-[#102040] hover:bg-[#f5c400]',
+    green: 'bg-[#22B14C] text-white hover:bg-[#1fa145]',
+    brick: 'bg-[#B84418] text-white hover:bg-[#9E350F]',
   }[variant];
 
   return (
@@ -27,18 +27,18 @@ export const WoodenActionButton: React.FC<WoodenActionButtonProps> = ({
       disabled={disabled || isLoading}
       className={`
         group relative inline-flex items-center justify-center font-pixel text-xs sm:text-sm tracking-wider uppercase
-        py-3.5 px-6 border-3 sm:border-4 border-[#102040] select-none transition-transform duration-75 cursor-pointer
+        py-3.5 px-6 border-3 sm:border-4 border-[#102040] select-none transition-all duration-75 ease-out cursor-pointer
+        motion-reduce:transition-none motion-reduce:transform-none motion-reduce:hover:transform-none motion-reduce:active:transform-none
         ${bgStyles}
         ${fullWidth ? 'w-full' : ''}
         ${
           disabled
-            ? 'opacity-85 cursor-not-allowed'
-            : 'hover:translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none'
+            ? 'opacity-85 cursor-not-allowed shadow-[2px_2px_0px_#102040]'
+            : 'shadow-[4px_4px_0px_#102040] hover:-translate-y-[2px] hover:shadow-[6px_6px_0px_#102040] focus-visible:-translate-y-[2px] focus-visible:shadow-[6px_6px_0px_#102040] active:translate-y-[2px] active:shadow-[2px_2px_0px_#102040] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FFCC00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#102040]'
         }
         ${className}
       `}
       style={{
-        boxShadow: disabled ? '2px 2px 0px #102040' : '4px 4px 0px #102040',
         textShadow: variant === 'gold' ? '1px 1px 0px rgba(255, 255, 255, 0.6)' : '1px 1px 0px #102040',
       }}
       {...props}
