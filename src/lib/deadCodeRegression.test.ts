@@ -13,6 +13,18 @@ describe('Dead Code & Dependency Hygiene (Phase 1 Regression)', () => {
     expect(allDeps['lucide-react']).toBeUndefined();
     expect(allDeps['tailwind-merge']).toBeUndefined();
     expect(allDeps['clsx']).toBeUndefined();
+    expect(allDeps['autoprefixer']).toBeUndefined();
+  });
+
+  it('confirms vercel.json production CSP does not contain loopback or localhost origins', () => {
+    const vercelPath = path.join(rootDir, 'vercel.json');
+    const vercel = JSON.parse(fs.readFileSync(vercelPath, 'utf-8'));
+    const headers = vercel.headers?.[0]?.headers || [];
+    const cspHeader = headers.find((h: any) => h.key === 'Content-Security-Policy')?.value || '';
+
+    expect(cspHeader).not.toContain('127.0.0.1');
+    expect(cspHeader).not.toContain('localhost');
+    expect(cspHeader).toContain("connect-src 'self' https://*.supabase.co wss://*.supabase.co;");
   });
 
   it('confirms PixelMascot is removed from src/ui/pixel/index.ts and filesystem', () => {

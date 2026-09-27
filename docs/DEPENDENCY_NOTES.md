@@ -11,15 +11,27 @@ This document tracks suspicious or implausible package version declarations iden
 
 ---
 
-## 2. Suspicious Version Pins to Investigate in Phase 4
+## 2. Investigated Version Pins (Phase 4 Resolution)
 
-| Package | Declared Version | Known Stable Line | Notes |
+| Package | Declared Version | Installed in node_modules | Resolution & Notes |
 |---|---|---|---|
-| `typescript` | `^7.0.2` | `5.7.x / 5.8.x` | TypeScript official releases are on `5.x`. `7.0.2` does not exist on npm registry. |
-| `@types/node` | `^26.6.2` | `20.x / 22.x` | Node LTS is 20/22. `@types/node` 26.x is ahead of current Node release line. |
-| `vite` | `^8.3.0` | `6.x` | Vite official major version is 6.x. Version `8.3.0` appears ahead of official line. |
-| `@vitejs/plugin-react` | `^6.1.1` | `4.x` | Vite React plugin major version is 4.x. |
-| `@supabase/supabase-js` | `^2.116.0` | `2.48.x / 2.49.x` | Version `2.116.0` appears ahead of known npm release line for supabase-js. |
-| `tailwindcss` | `^4.3.3` | `4.0.x` | Tailwind v4 was launched at 4.0; investigate exact available releases. |
+| `typescript` | `^7.0.2` | `7.0.2` | **Preserved**. Confirmed installed and active in `node_modules` and `package-lock.json`. Typechecking succeeds without errors. |
+| `@types/node` | `^26.6.2` | `26.6.2` | **Preserved**. Typings match installed project environment and tsconfig. |
+| `vite` | `^8.3.0` | `8.3.0` | **Preserved**. Rolldown-backed Vite release present in `node_modules`. Builds cleanly in < 1 second. |
+| `@vitejs/plugin-react` | `^6.1.1` | `6.1.1` | **Preserved**. Compatible with Vite 8 and React 19.3.0. |
+| `@supabase/supabase-js` | `^2.116.0` | `2.116.0` | **Preserved**. Active package installed and communicating properly with database/realtime client. |
+| `tailwindcss` | `^4.3.3` | `4.3.3` | **Preserved**. Tailwind CSS v4 pipeline working seamlessly with `@tailwindcss/postcss`. |
 
-*Phase 4 will audit each against the active npm registry and safely normalize versions without breaking the build.*
+---
+
+## 3. Pruned Unused Dependencies (Phase 4)
+- **`autoprefixer`**: Was declared as `^10.6.1`. In Tailwind CSS v4, `@tailwindcss/postcss` handles vendor prefixing natively. Verified `postcss.config.js` does not reference autoprefixer and no build/runtime dependency exists. Removed from `package.json` and pruned 10 packages from `package-lock.json`.
+
+---
+
+## 4. Content Security Policy Hardening (Phase 4)
+- `vercel.json` `connect-src` previously contained `http://127.0.0.1:*`, `ws://127.0.0.1:*`, `http://localhost:*`, `ws://localhost:*`.
+- Removed all loopback and local development origins from `connect-src`.
+- Production CSP `connect-src` is now strictly: `'self' https://*.supabase.co wss://*.supabase.co`.
+- Verified that local development via `vite` dev server is unaffected, as Vercel platform headers are only enforced on deployed Vercel environments.
+
