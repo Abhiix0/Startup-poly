@@ -20,15 +20,21 @@ interface Fragment {
   initialY: number;
 }
 
+/**
+ * Sprite-local art color for mushroom face tone.
+ * Documented sprite art exception per docs/COLOR_SYSTEM.md Section 6.
+ */
+const SPRITE_SKIN_TONE = '#FFC49A';
+
 const FRAGMENT_COLORS = [
-  { fill: '#FFCC00', border: '#B84418' }, // Gold letter face
-  { fill: '#EA580C', border: '#102040' }, // Orange 3D letter bevel
-  { fill: '#E52521', border: '#102040' }, // Mushroom Red
-  { fill: '#FFFFFF', border: '#E52521' }, // Mushroom White Spot
-  { fill: '#FFC49A', border: '#102040' }, // Mushroom Face
-  { fill: '#FFD700', border: '#102040' }, // Bright yellow spark
-  { fill: '#102040', border: '#FFCC00' }, // Dark navy outline
-  { fill: '#FFFBEB', border: '#B84418' }, // Cream highlight
+  { fill: 'var(--color-nes-gold)', border: 'var(--color-nes-brick)' }, // Gold letter face
+  { fill: 'var(--color-block-orange)', border: 'var(--color-nes-navy)' }, // Orange 3D letter bevel
+  { fill: 'var(--color-team-1)', border: 'var(--color-nes-navy)' }, // Mushroom Red
+  { fill: 'var(--color-nes-white)', border: 'var(--color-team-1)' }, // Mushroom White Spot
+  { fill: SPRITE_SKIN_TONE, border: 'var(--color-nes-navy)' }, // Mushroom Face
+  { fill: 'var(--color-gold-coin)', border: 'var(--color-nes-navy)' }, // Bright yellow spark
+  { fill: 'var(--color-nes-navy)', border: 'var(--color-nes-gold)' }, // Dark navy outline
+  { fill: 'var(--color-parchment-base)', border: 'var(--color-nes-brick)' }, // Cream highlight
 ];
 
 export const LogoShatter: React.FC<LogoShatterProps> = ({
@@ -85,8 +91,8 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
           <StartupolyLogo size="hero" glow={true} />
 
           {/* Subtitle Badge: ✦ DREAM • BUILD • GROW ✦ */}
-          <div className="mt-2.5 sm:mt-3.5 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-[#102040] border-2 sm:border-[3px] border-[#FFCC00] rounded-sm shadow-[3px_3px_0px_#B84418]">
-            <span className="font-pixel text-[9px] sm:text-xs md:text-sm text-[#FFFBEB] tracking-widest font-bold">
+          <div className="mt-2.5 sm:mt-3.5 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-nes-navy border-2 sm:border-[3px] border-nes-gold rounded-sm shadow-[3px_3px_0px_var(--color-nes-brick)]">
+            <span className="font-pixel text-[9px] sm:text-xs md:text-sm text-parchment-light tracking-widest font-bold">
               ✦ DREAM • BUILD • GROW ✦
             </span>
           </div>
@@ -109,13 +115,13 @@ export const LogoShatter: React.FC<LogoShatterProps> = ({
               className="anim-impact-burst-flash"
               shapeRendering="crispEdges"
             >
-              <rect x="14" y="0" width="4" height="32" fill="#FFCC00" />
-              <rect x="0" y="14" width="32" height="4" fill="#FFCC00" />
-              <rect x="5" y="5" width="7" height="7" fill="#FFFBEB" />
-              <rect x="20" y="5" width="7" height="7" fill="#FFFBEB" />
-              <rect x="5" y="20" width="7" height="7" fill="#FFFBEB" />
-              <rect x="20" y="20" width="7" height="7" fill="#FFFBEB" />
-              <rect x="11" y="11" width="10" height="10" fill="#FFFFFF" />
+              <rect x="14" y="0" width="4" height="32" fill="var(--color-nes-gold)" />
+              <rect x="0" y="14" width="32" height="4" fill="var(--color-nes-gold)" />
+              <rect x="5" y="5" width="7" height="7" fill="var(--color-parchment-base)" />
+              <rect x="20" y="5" width="7" height="7" fill="var(--color-parchment-base)" />
+              <rect x="5" y="20" width="7" height="7" fill="var(--color-parchment-base)" />
+              <rect x="20" y="20" width="7" height="7" fill="var(--color-parchment-base)" />
+              <rect x="11" y="11" width="10" height="10" fill="var(--color-nes-white)" />
             </svg>
           </div>
 

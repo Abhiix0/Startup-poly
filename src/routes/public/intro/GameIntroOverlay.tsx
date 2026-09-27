@@ -237,7 +237,7 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ onComplete }
       {/* CAMERA BACKDROP: Solid retro blue that dissolves to reveal world    */}
       {/* =================================================================== */}
       <div
-        className={`absolute inset-0 bg-[#5C94FC] pointer-events-auto ${
+        className={`absolute inset-0 bg-nes-sky pointer-events-auto ${
           isBackdropFading ? 'anim-intro-backdrop-fade' : ''
         }`}
       />

@@ -189,8 +189,8 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
               <div className="flex flex-col items-center">
                 <PixelBug size={24} className="mb-0.5 anim-critter-crawl" />
                 <div className="flex">
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#B84418] border-2 border-[#102040]" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-nes-brick border-2 border-nes-navy" />
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-nes-brick border-2 border-nes-navy" />
                 </div>
               </div>
             </div>
@@ -266,8 +266,8 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
       {/* ========================================================================= */}
       <div data-layer="6-ground" className="w-full relative z-10">
         <PixelBrickTile hasGrass={true} className="h-7 sm:h-8 w-full" />
-        <div className="bg-[#102040] pt-1.5 sm:pt-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-[#FFCC00]">
-          <p className="font-pixel text-[8px] sm:text-[9px] text-[#FFCC00] tracking-wider">
+        <div className="bg-nes-navy pt-1.5 sm:pt-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-nes-gold">
+          <p className="font-pixel text-[8px] sm:text-[9px] text-nes-gold tracking-wider">
             ★ &nbsp; WORLD 01 · STARTUPOLY © 2026 &nbsp; ★
           </p>
         </div>

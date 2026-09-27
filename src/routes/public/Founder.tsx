@@ -55,28 +55,28 @@ export const Founder: React.FC<FounderProps> = ({
         {/* Speech Bubble Anchor (moves with Poly, upright orientation) */}
         <div className="founder-bubble-anchor absolute bottom-full left-1/2 -translate-x-1/2 mb-2 flex flex-col items-center pointer-events-none">
           {/* Intro speech bubble ("Let's build!") */}
-          <div className="founder-bubble-intro bg-white border-2 border-[#102040] shadow-[2px_2px_0px_#102040] px-2.5 py-1 text-center whitespace-nowrap">
-            <span className="font-pixel text-[10px] text-[#102040] font-bold">
+          <div className="founder-bubble-intro bg-white border-2 border-nes-navy shadow-[2px_2px_0px_var(--color-nes-navy)] px-2.5 py-1 text-center whitespace-nowrap">
+            <span className="font-pixel text-[10px] text-nes-navy font-bold">
               Let's build!
             </span>
           </div>
 
           {/* Join reaction speech bubble ("Let's go!") */}
-          <div className="founder-bubble-join bg-white border-2 border-[#102040] shadow-[2px_2px_0px_#102040] px-2.5 py-1 text-center whitespace-nowrap">
-            <span className="font-pixel text-[10px] text-[#102040] font-bold">
+          <div className="founder-bubble-join bg-white border-2 border-nes-navy shadow-[2px_2px_0px_var(--color-nes-navy)] px-2.5 py-1 text-center whitespace-nowrap">
+            <span className="font-pixel text-[10px] text-nes-navy font-bold">
               Let's go!
             </span>
           </div>
 
           {/* Admin reaction speech bubble ("Control room") */}
-          <div className="founder-bubble-admin bg-white border-2 border-[#102040] shadow-[2px_2px_0px_#102040] px-2.5 py-1 text-center whitespace-nowrap">
-            <span className="font-pixel text-[10px] text-[#102040] font-bold">
+          <div className="founder-bubble-admin bg-white border-2 border-nes-navy shadow-[2px_2px_0px_var(--color-nes-navy)] px-2.5 py-1 text-center whitespace-nowrap">
+            <span className="font-pixel text-[10px] text-nes-navy font-bold">
               Control room
             </span>
           </div>
 
           {/* Bubble Speech Tail */}
-          <div className="founder-bubble-tail w-2 h-1 bg-[#102040]" />
+          <div className="founder-bubble-tail w-2 h-1 bg-nes-navy" />
         </div>
 
         {/* Character Facing Direction & Sprite Container */}

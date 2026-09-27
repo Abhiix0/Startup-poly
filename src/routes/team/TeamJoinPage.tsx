@@ -124,12 +124,12 @@ export const TeamJoinPage: React.FC = () => {
       <header className="p-3 sm:p-4 flex items-center justify-between z-20">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 font-pixel text-xs bg-[#102040] text-[#FFCC00] px-3 sm:px-4 py-2 border-2 border-[#102040] shadow-[3px_3px_0px_#102040] hover:bg-[#22B14C] hover:text-white transition-transform active:translate-x-0.5 active:translate-y-0.5"
+          className="inline-flex items-center gap-2 font-pixel text-xs bg-nes-navy text-nes-gold px-3 sm:px-4 py-2 border-2 border-nes-navy shadow-[3px_3px_0px_var(--color-nes-navy)] hover:bg-nes-green hover:text-white transition-transform active:translate-x-0.5 active:translate-y-0.5"
         >
           <span className="text-sm">🗺️</span>
           <span>WORLD MAP</span>
         </Link>
-        <span className="inline-flex items-center gap-1.5 font-pixel text-[10px] sm:text-xs text-[#102040] bg-[#FFCC00] px-3 sm:px-4 py-1.5 border-2 border-[#102040] shadow-[3px_3px_0px_#102040] font-black tracking-wider">
+        <span className="inline-flex items-center gap-1.5 font-pixel text-[10px] sm:text-xs text-nes-navy bg-nes-gold px-3 sm:px-4 py-1.5 border-2 border-nes-navy shadow-[3px_3px_0px_var(--color-nes-navy)] font-black tracking-wider">
           <span>🚩</span>
           <span>CHECKPOINT</span>
         </span>
@@ -139,8 +139,8 @@ export const TeamJoinPage: React.FC = () => {
       <main className="flex-1 flex flex-col items-center justify-center p-3 sm:p-4 z-10 relative">
         {/* Redirect Notice Parchment */}
         {redirectNotice && (
-          <div className="w-full max-w-md mb-3 bg-[#FFFBEB] border-3 border-[#102040] p-3 shadow-[4px_4px_0px_#102040]">
-            <p className="font-mono text-xs text-[#92400E] font-bold text-center">
+          <div className="w-full max-w-md mb-3 bg-warning-surface border-3 border-nes-navy p-3 shadow-[4px_4px_0px_var(--color-nes-navy)]">
+            <p className="font-mono text-xs text-warning-text font-bold text-center">
               ⚠ {redirectNotice}
             </p>
           </div>
@@ -161,8 +161,8 @@ export const TeamJoinPage: React.FC = () => {
                 <PixelCoin size={32} className="anim-pop-coins" />
                 <PixelCoin size={28} className="anim-coin-idle" />
               </div>
-              <div className="bg-[#22B14C] text-white border-3 border-[#102040] px-4 py-2 shadow-[4px_4px_0px_#102040] text-center">
-                <p className="font-pixel text-sm sm:text-base text-[#FFCC00]">
+              <div className="bg-nes-green text-white border-3 border-nes-navy px-4 py-2 shadow-[4px_4px_0px_var(--color-nes-navy)] text-center">
+                <p className="font-pixel text-sm sm:text-base text-nes-gold">
                   MATCH FOUND!
                 </p>
                 <p className="font-mono text-xs text-white mt-1">
@@ -197,8 +197,8 @@ export const TeamJoinPage: React.FC = () => {
 
                 {/* Step 2: Team Tiles (Embedded Wooden Badges) */}
                 {lobbyTeams.length > 0 && (
-                  <div className="flex flex-col gap-1.5 pt-1 border-t-2 border-[#102040]/20">
-                    <label className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-[#FFF5D6] drop-shadow-[1px_1px_0px_#102040]">
+                  <div className="flex flex-col gap-1.5 pt-1 border-t-2 border-nes-navy/20">
+                    <label className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-parchment-light drop-shadow-[1px_1px_0px_var(--color-nes-navy)]">
                       CHOOSE YOUR TEAM
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -211,32 +211,32 @@ export const TeamJoinPage: React.FC = () => {
                             key={t.slot}
                             onClick={() => setSelectedSlot(t.slot)}
                             className={`
-                              min-h-[48px] p-2 text-left border-3 border-[#102040] cursor-pointer flex items-center justify-between gap-2
+                              min-h-[48px] p-2 text-left border-3 border-nes-navy cursor-pointer flex items-center justify-between gap-2
                               transition-transform duration-75 select-none
                               ${
                                 isSelected
-                                  ? 'bg-[#FFCC00] shadow-[3px_3px_0px_#102040] scale-[1.02]'
-                                  : 'bg-[#FFFBEB] hover:bg-white shadow-[2px_2px_0px_#102040]'
+                                  ? 'bg-nes-gold shadow-[3px_3px_0px_var(--color-nes-navy)] scale-[1.02]'
+                                  : 'bg-warning-surface hover:bg-white shadow-[2px_2px_0px_var(--color-nes-navy)]'
                               }
                             `}
                           >
                             <div className="flex items-center gap-2 truncate">
                               <span
-                                className="w-4 h-4 border-2 border-[#102040] flex-shrink-0"
+                                className="w-4 h-4 border-2 border-nes-navy flex-shrink-0"
                                 style={{ backgroundColor: t.color }}
                               />
                               <div className="truncate">
-                                <span className="font-pixel text-[10px] text-[#102040] block truncate font-bold">
+                                <span className="font-pixel text-[10px] text-nes-navy block truncate font-bold">
                                   {t.name}
                                 </span>
-                                <span className="font-mono text-[9px] text-[#475569]">
+                                <span className="font-mono text-[9px] text-neutral-500">
                                   Slot #{t.slot}
                                 </span>
                               </div>
                             </div>
 
                             {isSelected && (
-                              <span className="font-pixel text-xs text-[#102040]">
+                              <span className="font-pixel text-xs text-nes-navy">
                                 ✓
                               </span>
                             )}
@@ -249,15 +249,15 @@ export const TeamJoinPage: React.FC = () => {
 
                 {/* Step 3: 4-Digit Secret PIN */}
                 {lobbyTeams.length > 0 && (
-                  <div className="pt-1 border-t-2 border-[#102040]/20">
+                  <div className="pt-1 border-t-2 border-nes-navy/20">
                     <div className="flex items-center justify-between mb-1">
                       <label
                         htmlFor="secret-pin"
-                        className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-[#FFF5D6] drop-shadow-[1px_1px_0px_#102040]"
+                        className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-parchment-light drop-shadow-[1px_1px_0px_var(--color-nes-navy)]"
                       >
                         SECRET TEAM PIN
                       </label>
-                      <span className="font-mono text-[10px] text-[#FFF5D6]/80">
+                      <span className="font-mono text-[10px] text-parchment-light/80">
                         4 Digits
                       </span>
                     </div>
@@ -275,10 +275,10 @@ export const TeamJoinPage: React.FC = () => {
                         value={pin}
                         onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
                         disabled={isJoining}
-                        className="w-full bg-[#FFFBEB] border-3 sm:border-4 border-[#102040] px-4 py-2.5 font-pixel text-center text-lg sm:text-xl text-[#102040] shadow-[inset_2px_2px_0px_rgba(0,0,0,0.2)] focus:outline-none focus:ring-2 focus:ring-[#FFCC00]"
+                        className="w-full bg-warning-surface border-3 sm:border-4 border-nes-navy px-4 py-2.5 font-pixel text-center text-lg sm:text-xl text-nes-navy shadow-[inset_2px_2px_0px_rgba(0,0,0,0.2)] focus:outline-none focus:ring-2 focus:ring-nes-gold"
                       />
                     </div>
-                    <p className="font-mono text-[10px] text-[#FFFBEB] mt-1 text-center font-medium drop-shadow-[1px_1px_0px_#102040]">
+                    <p className="font-mono text-[10px] text-warning-surface mt-1 text-center font-medium drop-shadow-[1px_1px_0px_var(--color-nes-navy)]">
                       Provided by your game organizer
                     </p>
                   </div>
