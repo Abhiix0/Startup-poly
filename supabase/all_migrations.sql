@@ -2668,8 +2668,10 @@ GRANT EXECUTE ON FUNCTION public.admin_abort_game(uuid, text) TO authenticated;
 -- Reverts match to LOBBY, resets team cash/cv/bankrupt/tiebreak to baseline, deletes businesses,
 -- increments team versions, records audit events, and requires a non-empty note.
 
+DROP FUNCTION IF EXISTS public.admin_abort_game(uuid, text);
+
 CREATE OR REPLACE FUNCTION public.admin_abort_game(
-  room_id uuid,
+  p_room_id uuid,
   note text DEFAULT NULL
 )
 RETURNS jsonb
@@ -2692,7 +2694,7 @@ BEGIN
 
   SELECT status INTO v_status
   FROM public.rooms
-  WHERE id = room_id
+  WHERE id = p_room_id
   FOR UPDATE;
 
   IF NOT FOUND THEN
@@ -2706,7 +2708,7 @@ BEGIN
   -- Lock teams in deterministic ID order to prevent deadlocks
   PERFORM 1
   FROM public.teams
-  WHERE room_id = admin_abort_game.room_id
+  WHERE room_id = p_room_id
   ORDER BY id ASC
   FOR UPDATE;
 
@@ -2715,14 +2717,14 @@ BEGIN
   SET status = 'LOBBY',
       started_at = NULL,
       ends_at = NULL
-  WHERE id = room_id;
+  WHERE id = p_room_id;
 
   -- Record audit events for removed businesses
   FOR v_biz IN
     SELECT tb.team_id, tb.business_key, tb.level
     FROM public.team_businesses tb
     JOIN public.teams t ON tb.team_id = t.id
-    WHERE t.room_id = admin_abort_game.room_id
+    WHERE t.room_id = p_room_id
   LOOP
     INSERT INTO public.activity_events (
       room_id,
@@ -2736,7 +2738,7 @@ BEGIN
       actor_id,
       created_at
     ) VALUES (
-      room_id,
+      p_room_id,
       v_biz.team_id,
       'BUSINESS_REMOVED',
       v_biz.business_key,
@@ -2752,7 +2754,7 @@ BEGIN
   -- Delete all team businesses for this room
   DELETE FROM public.team_businesses
   WHERE team_id IN (
-    SELECT id FROM public.teams WHERE room_id = admin_abort_game.room_id
+    SELECT id FROM public.teams WHERE room_id = p_room_id
   );
 
   -- Reset all teams in the room back to LOBBY baseline and increment version
@@ -2762,7 +2764,7 @@ BEGIN
       is_bankrupt = false,
       tiebreak_order = NULL,
       version = version + 1
-  WHERE room_id = admin_abort_game.room_id;
+  WHERE room_id = p_room_id;
 
   -- Log the abort event with reset details
   INSERT INTO public.activity_events (
@@ -2775,7 +2777,7 @@ BEGIN
     actor_id,
     created_at
   ) VALUES (
-    room_id,
+    p_room_id,
     'GAME_ABORTED',
     trim(note),
     jsonb_build_object('status', 'ACTIVE'),
@@ -2785,7 +2787,7 @@ BEGIN
     public.app_now()
   );
 
-  SELECT to_jsonb(r.*) INTO v_room FROM public.rooms r WHERE r.id = room_id;
+  SELECT to_jsonb(r.*) INTO v_room FROM public.rooms r WHERE r.id = p_room_id;
   RETURN v_room;
 END;
 $$;

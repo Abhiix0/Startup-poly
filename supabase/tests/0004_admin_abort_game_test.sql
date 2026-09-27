@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(15);
+SELECT plan(16);
 
 -- Set test environment and simulated clock
 SELECT set_config('app.env', 'test', true);
@@ -16,6 +16,10 @@ SELECT set_config('app.test_now', '2026-03-01 10:00:00+00', true);
 \set player1_uid 'b0000000-0000-0000-0000-000000000001'
 
 -- Seed admin
+INSERT INTO auth.users (id, email, created_at, updated_at)
+VALUES (:'admin_uid', 'abort-admin@test.local', now(), now())
+ON CONFLICT DO NOTHING;
+
 INSERT INTO public.admins (user_id) VALUES (:'admin_uid') ON CONFLICT DO NOTHING;
 
 -- Authenticate as admin
@@ -58,10 +62,10 @@ SELECT lives_ok(
 
 SELECT lives_ok(
   $$
-  SELECT public.admin_add_business(t.id, 'food_truck', true, t.version, gen_random_uuid(), NULL)
+  SELECT public.admin_add_business(t.id, 'saas', true, t.version, gen_random_uuid(), NULL)
   FROM public.teams t WHERE t.slot = 1
   $$,
-  'Team 1 buys food_truck business'
+  'Team 1 buys saas business'
 );
 
 -- Verify Team 1 has business and modified cash/CV
