@@ -111,6 +111,11 @@ All schema definitions, triggers, RLS policies, and seed data are version-contro
 - `0008_functions_admin.sql`: Authenticated admin stored procedures with optimistic locking and idempotency.
 - `0009_functions_team.sql`: Team endpoints (`get_lobby()`, `join_team()` with rate limiting, `get_my_state()`).
 - `0010_standings_finalize.sql`: Standings calculation, tiebreak ordering, and finalization.
+- `0011_perf_indexes.sql`: Performance indexes on hot foreign keys and query paths.
+- `0012_admin_abort_game.sql`: Admin game abort stored procedure.
+
+> [!IMPORTANT]
+> Ad-hoc SQL patches are not used going forward — every change goes through a numbered migration in `supabase/migrations/`, and any future hotfix must be added as a new numbered migration (and reflected in `all_migrations.sql`) rather than a standalone patch file.
 
 ---
 

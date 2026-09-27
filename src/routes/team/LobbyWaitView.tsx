@@ -9,7 +9,7 @@ interface LobbyWaitViewProps {
 }
 
 export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
-  const { team, room } = state;
+  const { team } = state;
 
   return (
     <div className="flex flex-col gap-4">

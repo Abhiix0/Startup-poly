@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Countdown, StatusPill, ConnectionPill, PixelButton } from '../../../ui';
+import { Countdown, StatusPill, ConnectionPill } from '../../../ui';
 import { ConnectionStatus } from '../../../ui/ConnectionPill';
 
 export interface ConsoleTopBarProps {

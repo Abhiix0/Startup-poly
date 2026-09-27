@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   PlainsBackground,
@@ -21,7 +21,6 @@ interface LobbyTeam {
 
 export const TeamJoinPage: React.FC = () => {
   const [roomCode, setRoomCode] = useState('');
-  const [lobbyStatus, setLobbyStatus] = useState<string | null>(null);
   const [lobbyTeams, setLobbyTeams] = useState<LobbyTeam[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [pin, setPin] = useState('');
@@ -50,7 +49,6 @@ export const TeamJoinPage: React.FC = () => {
     } else {
       setLobbyTeams([]);
       setSelectedSlot(null);
-      setLobbyStatus(null);
     }
   };
 
@@ -60,7 +58,6 @@ export const TeamJoinPage: React.FC = () => {
       setErrorMessage(null);
       const data = await rpcGetLobby(code);
       setLobbyTeams(data.teams);
-      setLobbyStatus(data.status);
       if (data.teams.length > 0 && selectedSlot === null) {
         setSelectedSlot(data.teams[0].slot);
       }
@@ -68,7 +65,6 @@ export const TeamJoinPage: React.FC = () => {
       setErrorMessage("Code, team or PIN didn't match");
       setLobbyTeams([]);
       setSelectedSlot(null);
-      setLobbyStatus(null);
     } finally {
       setIsLoadingLobby(false);
     }

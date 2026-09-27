@@ -10,7 +10,7 @@ export interface LeaderboardTableProps {
 export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   standings,
   highlightTeamName,
-  presentationMode = false,
+  presentationMode: _presentationMode = false,
 }) => {
   return (
     <div className="w-full border-4 border-[#102040] shadow-[4px_4px_0px_#102040] overflow-x-auto bg-white">

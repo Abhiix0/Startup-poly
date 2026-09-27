@@ -1,4 +1,4 @@
-import React, { useState, useId } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { PixelButton, PixelCard, TextField, ErrorBanner, useToast } from '../../ui';
 import { TEAM_COLOR_PALETTE, TeamDraft, getDefaultTeams, validateTeamDrafts } from '../../domain/teams';

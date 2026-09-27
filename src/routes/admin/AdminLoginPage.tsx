@@ -15,9 +15,8 @@ export const AdminLoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
   const { login, role } = useAuth();
+  const isSuccess = role === 'admin';
   const navigate = useNavigate();
   const location = useLocation();
 
