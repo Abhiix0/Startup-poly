@@ -501,7 +501,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   if (!selectedTeam) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#5C94FC] text-[#102040]">
+    <div className="flex flex-col min-h-screen bg-brand-sky text-brand-navy">
       {/* 1. TOP BAR */}
       <ConsoleTopBar
         roomCode={snapshot.room.code}
@@ -516,7 +516,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       />
 
       {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-[#FFCC00] text-[#102040] px-4 py-2.5 text-center border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+      <div className="lg:hidden bg-brand-gold text-brand-navy px-4 py-2.5 text-center border-b-4 border-brand-navy shadow-pixel-sm">
         <p className="font-pixel text-[11px] leading-relaxed">
           💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
         </p>
@@ -524,19 +524,19 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
       {/* 2. FULL-WIDTH SYSTEM ALERTS */}
       {isOffline && (
-        <div className="bg-[#D32F2F] text-white px-4 py-2 text-center font-pixel text-xs border-b-2 border-[#102040]">
+        <div className="bg-brand-red text-brand-white px-4 py-2 text-center font-pixel text-xs border-b-2 border-brand-navy">
           ⚠ OFFLINE — Edits disabled until internet connection is restored.
         </div>
       )}
 
       {!isOffline && isStaleData && (
-        <div className="bg-[#FEF9C3] text-[#854D0E] px-4 py-2 text-center font-pixel text-xs border-b-2 border-[#102040]">
+        <div className="bg-status-warning-bg text-status-warning-dark px-4 py-2 text-center font-pixel text-xs border-b-2 border-brand-navy">
           ⚠ SCOREBOARD DATA IS STALE ({staleAgeSeconds}s old) — Edits disabled until connection is restored to prevent conflicts.
         </div>
       )}
 
       {lastFailedAction && (
-        <div className="bg-[#FEE2E2] text-[#991B1B] border-b-2 border-[#102040] p-2.5 px-4 font-mono text-xs font-bold flex items-center justify-between shadow-[0_2px_0px_#102040]">
+        <div className="bg-status-danger-bg text-status-danger-dark border-b-2 border-brand-navy p-2.5 px-4 font-mono text-xs font-bold flex items-center justify-between shadow-pixel-sm">
           <div className="flex items-center gap-2">
             <span>⚠ Not saved ({lastFailedAction.label}): {lastFailedAction.error}</span>
           </div>
@@ -544,14 +544,14 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
             <button
               type="button"
               onClick={lastFailedAction.retry}
-              className="bg-[#D32F2F] text-white px-2.5 py-1 font-pixel text-[10px] uppercase border border-[#102040] hover:bg-[#B71C1C] cursor-pointer"
+              className="bg-brand-red text-brand-white px-2.5 py-1 font-pixel text-[10px] uppercase border border-brand-navy hover:bg-interactive-red-hover cursor-pointer"
             >
               RETRY
             </button>
             <button
               type="button"
               onClick={() => setLastFailedAction(null)}
-              className="font-pixel text-[10px] text-[#102040] hover:underline cursor-pointer"
+              className="font-pixel text-[10px] text-brand-navy hover:underline cursor-pointer"
             >
               DISMISS
             </button>
@@ -560,16 +560,16 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       )}
 
       {isTimeExpired && (
-        <div className="bg-[#FFCC00] text-[#102040] px-4 py-2 text-center font-pixel text-xs border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+        <div className="bg-brand-gold text-brand-navy px-4 py-2 text-center font-pixel text-xs border-b-4 border-brand-navy shadow-pixel-sm">
           ⚠ GAME OVER — scores frozen. Post-match corrections require a mandatory note.
         </div>
       )}
 
       {insufficientCashShortfall !== null && (
-        <div className="bg-[#FEECEB] border-b-3 border-[#D32F2F] p-3 flex items-center justify-between gap-2">
+        <div className="bg-status-danger-bg border-b-3 border-brand-red p-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-pixel text-xs text-[#D32F2F]">⚠ INSUFFICIENT CASH</span>
-            <span className="font-mono text-xs text-[#102040]">
+            <span className="font-pixel text-xs text-brand-red">⚠ INSUFFICIENT CASH</span>
+            <span className="font-mono text-xs text-brand-navy">
               Shortfall of <strong>₹{insufficientCashShortfall.toLocaleString('en-IN')}</strong>. Team must perform a forced sale first.
             </span>
           </div>
@@ -582,8 +582,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 setIsForcedSaleOpen(true);
               }}
               className="
-                font-pixel text-[11px] uppercase px-3 py-1 bg-[#D32F2F] text-white
-                border border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#B71C1C] cursor-pointer
+                font-pixel text-[11px] uppercase px-3 py-1 bg-brand-red text-brand-white
+                border border-brand-navy shadow-pixel-sm hover:bg-interactive-red-hover cursor-pointer
               "
             >
               DO FORCED SALE FIRST
@@ -828,15 +828,15 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         }
       >
         <div className="flex flex-col gap-3">
-          <p className="font-mono text-sm leading-relaxed text-[#102040]">
+          <p className="font-mono text-sm leading-relaxed text-brand-navy">
             This will <strong>reset the match back to LOBBY</strong>, stop the countdown timer, and <strong>reset all teams to baseline</strong>.
           </p>
-          <div className="bg-[#FEF2F2] border-2 border-[#102040] p-3 text-xs text-[#991B1B] font-mono flex flex-col gap-1">
+          <div className="bg-status-danger-bg border-2 border-brand-navy p-3 text-xs text-status-danger-dark font-mono flex flex-col gap-1">
             <span className="font-bold">⚠ FULL TEAM RESET:</span>
             <span>All team cash resets to ₹1,000, CV resets to ₹0, all purchased businesses are removed, and bankruptcy flags are cleared.</span>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="font-pixel text-[10px] uppercase text-[#102040] font-bold">
+            <label className="font-pixel text-[10px] uppercase text-brand-navy font-bold">
               Mandatory Reason Note *
             </label>
             <input
@@ -849,24 +849,24 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 if (abortError) setAbortError(null);
               }}
               className="
-                w-full px-2.5 py-1.5 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040]
-                focus:outline-none focus:ring-2 focus:ring-[#FFCC00]
+                w-full px-2.5 py-1.5 font-sans text-xs text-brand-navy bg-brand-white border-2 border-brand-navy
+                focus:outline-none focus:ring-2 focus:ring-brand-gold
               "
             />
           </div>
           {abortError && (
-            <span className="font-mono text-xs text-[#D32F2F] font-bold">
+            <span className="font-mono text-xs text-brand-red font-bold">
               ⚠ {abortError}
             </span>
           )}
-          <p className="font-mono text-xs text-[#64748B]">
+          <p className="font-mono text-xs text-neutral-500">
             Use this if the match was started by mistake. You can start again from the lobby once ready.
           </p>
         </div>
       </Modal>
 
       {/* 5. NES Ground Pattern */}
-      <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />
+      <div className="h-8 nes-brick-pattern border-t-4 border-brand-navy" />
     </div>
   );
 };

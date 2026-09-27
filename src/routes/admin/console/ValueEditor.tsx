@@ -114,14 +114,14 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
   };
 
   return (
-    <div className="bg-white border-3 border-[#102040] p-3 shadow-[2px_2px_0px_#102040] flex flex-col gap-2.5">
+    <div className="bg-white border-3 border-brand-navy p-3 shadow-pixel-sm flex flex-col gap-2.5">
       {/* Label and current display */}
       <div className="flex items-center justify-between">
-        <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+        <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
           {label}
         </label>
-        <span className="font-mono text-xs text-[#64748B]">
-          Current: <strong className="text-[#102040]">{unit}{currentValue.toLocaleString('en-IN')}</strong>
+        <span className="font-mono text-xs text-neutral-500">
+          Current: <strong className="text-brand-navy">{unit}{currentValue.toLocaleString('en-IN')}</strong>
         </span>
       </div>
 
@@ -130,7 +130,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-[#64748B]">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-neutral-500">
                 {unit}
               </span>
               <input
@@ -148,9 +148,9 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
                   }
                 }}
                 className="
-                  w-full pl-7 pr-3 py-2 font-tabular font-bold text-sm sm:text-base text-[#102040]
-                  bg-[#FAF8F5] border-2 border-[#102040] shadow-[inset_2px_2px_0px_rgba(0,0,0,0.06)]
-                  focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FFCC00]
+                  w-full pl-7 pr-3 py-2 font-tabular font-bold text-sm sm:text-base text-brand-navy
+                  bg-brand-cream border-2 border-brand-navy shadow-[inset_2px_2px_0px_rgba(0,0,0,0.06)]
+                  focus:bg-brand-white focus:outline-none focus:ring-2 focus:ring-brand-gold
                   disabled:opacity-60 disabled:cursor-not-allowed
                 "
               />
@@ -167,7 +167,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
 
           {/* Quick Delta Chips */}
           <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-            <span className="font-pixel text-[9px] text-[#64748B] uppercase select-none mr-0.5">
+            <span className="font-pixel text-[9px] text-neutral-500 uppercase select-none mr-0.5">
               QUICK:
             </span>
             {[
@@ -182,8 +182,8 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
                 disabled={disabled}
                 onClick={() => applyDelta(chip.val)}
                 className="
-                  font-mono text-xs font-bold px-2 py-1 bg-[#EAE5D9] text-[#102040]
-                  border border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#FFCC00]
+                  font-mono text-xs font-bold px-2 py-1 bg-neutral-200 text-brand-navy
+                  border border-brand-navy shadow-pixel-sm hover:bg-brand-gold
                   active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
                   transition-colors
                 "
@@ -197,18 +197,18 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
         /* Inline Confirmation Strip */
         <div
           onKeyDown={handleStripKeyDown}
-          className="bg-[#FFFBEB] border-2 border-[#102040] p-3 shadow-[2px_2px_0px_#102040] flex flex-col gap-2.5 animate-in fade-in duration-100"
+          className="bg-brand-cream-light border-2 border-brand-navy p-3 shadow-pixel-sm flex flex-col gap-2.5 animate-in fade-in duration-100"
         >
           {/* Diff Preview */}
           <div className="flex items-center justify-between font-mono text-xs sm:text-sm font-bold">
-            <span className="text-[#64748B]">
+            <span className="text-neutral-500">
               {unit}{currentValue.toLocaleString('en-IN')} → {unit}{targetValue.toLocaleString('en-IN')}
             </span>
             <span
               className={`px-1.5 py-0.5 border ${
                 delta >= 0
-                  ? 'bg-[#E8F8EE] text-[#22B14C] border-[#22B14C]'
-                  : 'bg-[#FEECEB] text-[#D32F2F] border-[#D32F2F]'
+                  ? 'bg-status-success-bg text-brand-green border-brand-green'
+                  : 'bg-status-danger-bg text-brand-red border-brand-red'
               }`}
             >
               {delta >= 0 ? `+${unit}${delta.toLocaleString('en-IN')}` : `−${unit}${Math.abs(delta).toLocaleString('en-IN')}`}
@@ -218,7 +218,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
           {/* Post-match Note Requirement */}
           {isTimeExpired && (
             <div className="flex flex-col gap-1">
-              <label className="font-pixel text-[10px] uppercase text-[#D32F2F] font-bold flex items-center gap-1">
+              <label className="font-pixel text-[10px] uppercase text-brand-red font-bold flex items-center gap-1">
                 <span>⚠ NOTE REQUIRED (GAME OVER CORRECTION)</span>
               </label>
               <input
@@ -229,8 +229,8 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 className="
-                  w-full px-2.5 py-1.5 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040]
-                  focus:outline-none focus:ring-2 focus:ring-[#D32F2F]
+                  w-full px-2.5 py-1.5 font-sans text-xs text-brand-navy bg-brand-white border-2 border-brand-navy
+                  focus:outline-none focus:ring-2 focus:ring-brand-red
                 "
               />
             </div>
@@ -243,8 +243,8 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
               onClick={handleCancelConfirm}
               disabled={isSubmitting}
               className="
-                font-pixel text-[11px] uppercase px-3 py-1.5 bg-white text-[#102040]
-                border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9]
+                font-pixel text-[11px] uppercase px-3 py-1.5 bg-brand-white text-brand-navy
+                border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200
                 cursor-pointer active:translate-y-0.5 disabled:opacity-50
               "
             >
@@ -255,8 +255,8 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
               onClick={handleConfirmSubmit}
               disabled={isSubmitting || (isTimeExpired && !note.trim())}
               className="
-                font-pixel text-[11px] uppercase px-4 py-1.5 bg-[#22B14C] text-white
-                border-2 border-[#102040] shadow-[2px_2px_0px_#102040] hover:bg-[#1C8D3D]
+                font-pixel text-[11px] uppercase px-4 py-1.5 bg-brand-green text-brand-white
+                border-2 border-brand-navy shadow-pixel-sm hover:bg-interactive-green-hover
                 cursor-pointer active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed
               "
             >
@@ -267,7 +267,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
       )}
 
       {error && (
-        <span className="font-mono text-xs text-[#D32F2F] font-bold">
+        <span className="font-mono text-xs text-brand-red font-bold">
           ⚠ {error}
         </span>
       )}

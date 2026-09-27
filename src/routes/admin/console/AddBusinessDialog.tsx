@@ -93,8 +93,8 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {isCapReached && (
-          <div className="bg-[#FEECEB] border-2 border-[#D32F2F] p-2 text-center">
-            <p className="font-mono text-xs text-[#D32F2F] font-bold">
+          <div className="bg-status-danger-bg border-2 border-brand-red p-2 text-center">
+            <p className="font-mono text-xs text-brand-red font-bold">
               ⚠ Team has reached the business cap (3/3). Forced sale or removal required before adding.
             </p>
           </div>
@@ -102,7 +102,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
 
         {/* 10 Catalog Businesses Picker */}
         <div className="flex flex-col gap-2">
-          <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+          <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
             Select Catalog Business ({team.businesses.length}/3 Owned)
           </label>
 
@@ -126,29 +126,29 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
                     p-2.5 text-left border-2 transition-all flex flex-col justify-between gap-1
                     ${
                       disabled
-                        ? 'bg-[#F1F5F9] border-[#CBD5E1] opacity-60 cursor-not-allowed'
+                        ? 'bg-neutral-100 border-neutral-300 opacity-60 cursor-not-allowed'
                         : isSelected
-                        ? 'bg-[#FFCC00] border-[#102040] shadow-[2px_2px_0px_#102040]'
-                        : 'bg-white border-[#102040] hover:bg-[#FAF8F5] cursor-pointer'
+                        ? 'bg-brand-gold border-brand-navy shadow-pixel-sm'
+                        : 'bg-brand-white border-brand-navy hover:bg-brand-cream cursor-pointer'
                     }
                   `}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <span className="font-pixel text-xs text-[#102040] truncate">
+                    <span className="font-pixel text-xs text-brand-navy truncate">
                       {b.name}
                     </span>
                     {isSelected && (
-                      <span className="font-pixel text-xs text-[#102040]">✓</span>
+                      <span className="font-pixel text-xs text-brand-navy">✓</span>
                     )}
                   </div>
 
                   <div className="flex items-center justify-between font-mono text-[11px]">
-                    <span className="text-[#64748B]">Cost: ₹{b.cost}</span>
-                    <span className="text-[#102040] font-bold">+₹{b.initial_cv} CV</span>
+                    <span className="text-neutral-500">Cost: ₹{b.cost}</span>
+                    <span className="text-brand-navy font-bold">+₹{b.initial_cv} CV</span>
                   </div>
 
                   {isOwned && (
-                    <span className="font-mono text-[10px] text-[#D32F2F] font-bold truncate">
+                    <span className="font-mono text-[10px] text-brand-red font-bold truncate">
                       Owned by {ownerName}
                     </span>
                   )}
@@ -160,19 +160,19 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
 
         {/* Apply Purchase Financial Side-Effect Checkbox */}
         {selectedBiz && (
-          <div className="bg-[#FAF8F5] border-2 border-[#102040] p-3 flex flex-col gap-2">
+          <div className="bg-brand-cream border-2 border-brand-navy p-3 flex flex-col gap-2">
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={applyPurchase}
                 onChange={(e) => setApplyPurchase(e.target.checked)}
-                className="w-4 h-4 accent-[#22B14C] cursor-pointer"
+                className="w-4 h-4 accent-brand-green cursor-pointer"
               />
-              <span className="font-sans text-xs font-bold text-[#102040]">
+              <span className="font-sans text-xs font-bold text-brand-navy">
                 Apply purchase (−₹{selectedBiz.cost.toLocaleString('en-IN')}, +{selectedBiz.initial_cv.toLocaleString('en-IN')} CV)
               </span>
             </label>
-            <p className="font-mono text-[11px] text-[#64748B] pl-6">
+            <p className="font-mono text-[11px] text-neutral-500 pl-6">
               {applyPurchase
                 ? `Will deduct ₹${selectedBiz.cost} from team cash and credit ₹${selectedBiz.initial_cv} to CV.`
                 : 'Manual entry only: does not modify team cash or CV.'}
@@ -183,7 +183,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         {/* Note requirement for post-match adjustments */}
         {isTimeExpired && (
           <div className="flex flex-col gap-1">
-            <label className="font-pixel text-[10px] uppercase text-[#D32F2F] font-bold">
+            <label className="font-pixel text-[10px] uppercase text-brand-red font-bold">
               ⚠ NOTE REQUIRED (GAME OVER ADJUSTMENT)
             </label>
             <input
@@ -194,28 +194,28 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="
-                w-full px-2.5 py-1.5 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040]
-                focus:outline-none focus:ring-2 focus:ring-[#D32F2F]
+                w-full px-2.5 py-1.5 font-sans text-xs text-brand-navy bg-brand-white border-2 border-brand-navy
+                focus:outline-none focus:ring-2 focus:ring-brand-red
               "
             />
           </div>
         )}
 
         {error && (
-          <span className="font-mono text-xs text-[#D32F2F] font-bold">
+          <span className="font-mono text-xs text-brand-red font-bold">
             ⚠ {error}
           </span>
         )}
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
             className="
-              font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040]
-              border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9]
+              font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy
+              border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200
               cursor-pointer active:translate-y-0.5 disabled:opacity-50
             "
           >

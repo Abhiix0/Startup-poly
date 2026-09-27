@@ -74,15 +74,15 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-pixel text-xs text-[#102040]">ROOM CODE:</span>
-              <span className="font-mono font-bold text-sm bg-[#FFCC00] px-2 py-0.5 border border-[#102040]">
+              <span className="font-pixel text-xs text-brand-navy">ROOM CODE:</span>
+              <span className="font-mono font-bold text-sm bg-brand-gold px-2 py-0.5 border border-brand-navy">
                 {room.code}
               </span>
-              <span className="font-mono text-xs text-[#64748B]">
+              <span className="font-mono text-xs text-neutral-500">
                 ({room.team_count} Teams)
               </span>
             </div>
-            <p className="font-mono text-xs text-[#64748B]">
+            <p className="font-mono text-xs text-neutral-500">
               Review team names and colors below before opening the lobby. Once opened, players can
               enter the room code on their phones.
             </p>
@@ -110,12 +110,12 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
             return (
               <div
                 key={team.id}
-                className="border-3 border-[#102040] bg-white p-4 shadow-[2px_2px_0px_#102040] flex flex-col justify-between gap-3"
+                className="border-3 border-brand-navy bg-brand-white p-4 shadow-pixel-sm flex flex-col justify-between gap-3"
               >
                 {isEditing ? (
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between border-b-2 border-[#102040] pb-2">
-                      <span className="font-pixel text-xs text-[#102040]">
+                    <div className="flex items-center justify-between border-b-2 border-brand-navy pb-2">
+                      <span className="font-pixel text-xs text-brand-navy">
                         EDIT SLOT #{team.slot}
                       </span>
                     </div>
@@ -129,7 +129,7 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
                     />
 
                     <div>
-                      <label className="font-pixel text-[10px] uppercase text-[#102040] block mb-1">
+                      <label className="font-pixel text-[10px] uppercase text-brand-navy block mb-1">
                         Select Color
                       </label>
                       <div className="flex items-center gap-2 flex-wrap">
@@ -144,8 +144,8 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
                               disabled={inUse || isSavingTeam}
                               onClick={() => setDraftColor(c.hex)}
                               className={`
-                                w-7 h-7 border-2 border-[#102040] cursor-pointer flex items-center justify-center font-pixel text-[9px] text-white
-                                ${isSelected ? 'ring-2 ring-[#102040] scale-110 shadow-[2px_2px_0px_#102040]' : ''}
+                                w-7 h-7 border-2 border-brand-navy cursor-pointer flex items-center justify-center font-pixel text-[9px] text-brand-white
+                                ${isSelected ? 'ring-2 ring-brand-navy scale-110 shadow-pixel-sm' : ''}
                                 ${inUse ? 'opacity-20 cursor-not-allowed' : 'hover:scale-105'}
                               `}
                               style={{ backgroundColor: c.hex }}
@@ -178,13 +178,13 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
                   </div>
                 ) : (
                   <div>
-                    <div className="flex items-center justify-between border-b-2 border-[#102040] pb-2 mb-2">
+                    <div className="flex items-center justify-between border-b-2 border-brand-navy pb-2 mb-2">
                       <div className="flex items-center gap-2">
                         <span
-                          className="w-4 h-4 border-2 border-[#102040] shadow-[1px_1px_0px_#102040]"
+                          className="w-4 h-4 border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)]"
                           style={{ backgroundColor: team.color }}
                         />
-                        <span className="font-pixel text-xs text-[#102040]">
+                        <span className="font-pixel text-xs text-brand-navy">
                           SLOT #{team.slot}
                         </span>
                       </div>
@@ -198,10 +198,10 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
                       </PixelButton>
                     </div>
 
-                    <h3 className="font-pixel text-sm text-[#102040] truncate mb-1">
+                    <h3 className="font-pixel text-sm text-brand-navy truncate mb-1">
                       {team.name}
                     </h3>
-                    <p className="font-mono text-xs text-[#64748B]">
+                    <p className="font-mono text-xs text-neutral-500">
                       Color: {team.color}
                     </p>
                   </div>
@@ -239,11 +239,11 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
         }
       >
         <div className="flex flex-col gap-3">
-          <p className="font-mono text-sm leading-relaxed text-[#102040]">
+          <p className="font-mono text-sm leading-relaxed text-brand-navy">
             Are you ready to open the lobby for <strong>Room {room.code}</strong>?
           </p>
-          <div className="bg-[#FFFBEB] border-2 border-[#102040] p-3">
-            <p className="font-mono text-xs text-[#92400E]">
+          <div className="bg-status-warning-bg border-2 border-brand-navy p-3">
+            <p className="font-mono text-xs text-status-warning-text">
               ★ Once the lobby opens, the 6-character room code becomes active for player phones.
               Each team can enter their designated 4-digit PIN to connect.
             </p>

@@ -42,8 +42,8 @@ export const RequireAdmin: React.FC<RequireAdminProps> = ({ children }) => {
   return (
     <>
       {roleStatus === 'unverified' && (
-        <div className="fixed top-2 left-1/2 -translate-x-1/2 z-50 bg-[#FEF9C3] text-[#854D0E] border-2 border-[#102040] shadow-pixel-sm px-4 py-2 flex items-center gap-2 font-pixel text-[10px]">
-          <span className="w-2 h-2 rounded-full bg-[#EAB308] animate-ping" />
+        <div className="fixed top-2 left-1/2 -translate-x-1/2 z-50 bg-status-warning-bg text-status-warning-text border-2 border-brand-navy shadow-pixel-sm px-4 py-2 flex items-center gap-2 font-pixel text-[10px]">
+          <span className="w-2 h-2 rounded-full bg-status-warning animate-ping" />
           <span>Reconnecting… verifying admin session</span>
         </div>
       )}

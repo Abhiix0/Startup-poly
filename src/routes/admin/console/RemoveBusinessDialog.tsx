@@ -91,21 +91,21 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Business summary */}
-        <div className="bg-[#FAF8F5] border-2 border-[#102040] p-3 flex items-center justify-between">
+        <div className="bg-brand-cream border-2 border-brand-navy p-3 flex items-center justify-between">
           <div>
-            <span className="font-pixel text-xs text-[#102040]">{catalogBiz.name}</span>
-            <span className="font-mono text-xs text-[#64748B] block">
+            <span className="font-pixel text-xs text-brand-navy">{catalogBiz.name}</span>
+            <span className="font-mono text-xs text-neutral-500 block">
               Current Level: {ownedBiz.level} • Base cost: ₹{catalogBiz.cost}
             </span>
           </div>
-          <span className="font-mono text-xs font-bold text-[#D32F2F] bg-[#FEECEB] px-2 py-1 border border-[#D32F2F]">
+          <span className="font-mono text-xs font-bold text-brand-red bg-status-danger-bg px-2 py-1 border border-brand-red">
             Removal
           </span>
         </div>
 
         {/* Reason choice: Forced sale vs Correction */}
         <div className="flex flex-col gap-2">
-          <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+          <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
             Removal Reason
           </label>
 
@@ -115,8 +115,8 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
                 p-3 border-2 flex items-start gap-2.5 cursor-pointer transition-all
                 ${
                   reason === 'FORCED_SALE'
-                    ? 'bg-[#FFFBEB] border-[#102040] shadow-[2px_2px_0px_#102040]'
-                    : 'bg-white border-[#CBD5E1] hover:bg-[#FAF8F5]'
+                    ? 'bg-brand-cream-light border-brand-navy shadow-pixel-sm'
+                    : 'bg-brand-white border-neutral-300 hover:bg-brand-cream'
                 }
               `}
             >
@@ -126,13 +126,13 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
                 value="FORCED_SALE"
                 checked={reason === 'FORCED_SALE'}
                 onChange={() => setReason('FORCED_SALE')}
-                className="mt-0.5 accent-[#102040]"
+                className="mt-0.5 accent-brand-navy"
               />
               <div className="flex flex-col">
-                <span className="font-sans text-xs font-bold text-[#102040]">
+                <span className="font-sans text-xs font-bold text-brand-navy">
                   Forced Sale (Rulebook debt relief)
                 </span>
-                <span className="font-mono text-[11px] text-[#64748B]">
+                <span className="font-mono text-[11px] text-neutral-500">
                   Team surrendered business back to the bank to pay a debt or shortfall.
                 </span>
               </div>
@@ -143,8 +143,8 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
                 p-3 border-2 flex items-start gap-2.5 cursor-pointer transition-all
                 ${
                   reason === 'CORRECTION'
-                    ? 'bg-[#FFFBEB] border-[#102040] shadow-[2px_2px_0px_#102040]'
-                    : 'bg-white border-[#CBD5E1] hover:bg-[#FAF8F5]'
+                    ? 'bg-brand-cream-light border-brand-navy shadow-pixel-sm'
+                    : 'bg-brand-white border-neutral-300 hover:bg-brand-cream'
                 }
               `}
             >
@@ -154,13 +154,13 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
                 value="CORRECTION"
                 checked={reason === 'CORRECTION'}
                 onChange={() => setReason('CORRECTION')}
-                className="mt-0.5 accent-[#102040]"
+                className="mt-0.5 accent-brand-navy"
               />
               <div className="flex flex-col">
-                <span className="font-sans text-xs font-bold text-[#102040]">
+                <span className="font-sans text-xs font-bold text-brand-navy">
                   Correction (Mistake entry)
                 </span>
-                <span className="font-mono text-[11px] text-[#64748B]">
+                <span className="font-mono text-[11px] text-neutral-500">
                   Business was entered accidentally. No resale payout is credited.
                 </span>
               </div>
@@ -170,19 +170,19 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
 
         {/* Credit resale value checkbox (only for forced sale) */}
         {reason === 'FORCED_SALE' && (
-          <div className="bg-[#FAF8F5] border-2 border-[#102040] p-3 flex flex-col gap-1.5">
+          <div className="bg-brand-cream border-2 border-brand-navy p-3 flex flex-col gap-1.5">
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={creditResale}
                 onChange={(e) => setCreditResale(e.target.checked)}
-                className="w-4 h-4 accent-[#22B14C] cursor-pointer"
+                className="w-4 h-4 accent-brand-green cursor-pointer"
               />
-              <span className="font-sans text-xs font-bold text-[#102040]">
+              <span className="font-sans text-xs font-bold text-brand-navy">
                 Credit resale value (+₹{catalogBiz.cost.toLocaleString('en-IN')})
               </span>
             </label>
-            <p className="font-mono text-[11px] text-[#64748B] pl-6">
+            <p className="font-mono text-[11px] text-neutral-500 pl-6">
               {creditResale
                 ? `Adds base cost ₹${catalogBiz.cost} to team cash upon return to bank.`
                 : 'Does not credit cash.'}
@@ -193,7 +193,7 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
         {/* Note input (required if TIME_EXPIRED or CORRECTION) */}
         {(isTimeExpired || reason === 'CORRECTION') && (
           <div className="flex flex-col gap-1">
-            <label className="font-pixel text-[10px] uppercase text-[#D32F2F] font-bold">
+            <label className="font-pixel text-[10px] uppercase text-brand-red font-bold">
               ⚠ Note Required *
             </label>
             <input
@@ -208,28 +208,28 @@ export const RemoveBusinessDialog: React.FC<RemoveBusinessDialogProps> = ({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="
-                w-full px-2.5 py-1.5 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040]
-                focus:outline-none focus:ring-2 focus:ring-[#D32F2F]
+                w-full px-2.5 py-1.5 font-sans text-xs text-brand-navy bg-brand-white border-2 border-brand-navy
+                focus:outline-none focus:ring-2 focus:ring-brand-red
               "
             />
           </div>
         )}
 
         {error && (
-          <span className="font-mono text-xs text-[#D32F2F] font-bold">
+          <span className="font-mono text-xs text-brand-red font-bold">
             ⚠ {error}
           </span>
         )}
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
             className="
-              font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040]
-              border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9]
+              font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy
+              border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200
               cursor-pointer active:translate-y-0.5 disabled:opacity-50
             "
           >

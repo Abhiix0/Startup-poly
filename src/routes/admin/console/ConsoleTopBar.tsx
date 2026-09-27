@@ -27,12 +27,12 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
   onAbortGame,
 }) => {
   return (
-    <header className="bg-[#102040] text-white border-b-4 border-[#102040] px-4 py-3 flex flex-wrap items-center justify-between gap-4 shadow-[0_4px_0px_#102040]">
+    <header className="bg-brand-navy text-white border-b-4 border-brand-navy px-4 py-3 flex flex-wrap items-center justify-between gap-4 shadow-pixel">
       {/* Left section: Back navigation & Room status */}
       <div className="flex items-center gap-3">
         <Link
           to="/admin"
-          className="font-pixel text-xs text-[#FFCC00] hover:underline flex items-center gap-1"
+          className="font-pixel text-xs text-brand-gold hover:underline flex items-center gap-1"
         >
           ◄ CONSOLE
         </Link>
@@ -44,7 +44,7 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
           <div className="border-l-2 border-white/20 pl-3">
             <button
               onClick={onAbortGame}
-              className="font-pixel text-[10px] bg-[#D32F2F] text-white px-3 py-1.5 border-2 border-white/30 hover:bg-[#B71C1C] active:translate-y-0.5 transition-colors cursor-pointer uppercase tracking-wider"
+              className="font-pixel text-[10px] bg-brand-red text-white px-3 py-1.5 border-2 border-white/30 hover:bg-interactive-red-hover active:translate-y-0.5 transition-colors cursor-pointer uppercase tracking-wider"
               title="Abort game and return to lobby"
             >
               ✕ ABORT GAME
@@ -67,7 +67,7 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
 
       {/* Right section: Connection & sync status */}
       <div className="flex items-center gap-3">
-        <span className="hidden lg:inline font-mono text-[11px] text-[#94A3B8]">
+        <span className="hidden lg:inline font-mono text-[11px] text-neutral-400">
           Updated: {lastUpdated}
         </span>
         <ConnectionPill status={connection} lastUpdated={lastUpdated} />
@@ -76,7 +76,7 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
             onClick={onRefetch}
             disabled={isRefetching}
             title="Refresh snapshot now"
-            className="w-8 h-8 flex items-center justify-center bg-[#FAF8F5] text-[#102040] border-2 border-[#102040] font-pixel text-xs hover:bg-[#FFCC00] transition-colors cursor-pointer disabled:opacity-50 active:translate-y-0.5"
+            className="w-8 h-8 flex items-center justify-center bg-brand-cream text-brand-navy border-2 border-brand-navy font-pixel text-xs hover:bg-brand-gold transition-colors cursor-pointer disabled:opacity-50 active:translate-y-0.5"
           >
             {isRefetching ? '…' : '↻'}
           </button>

@@ -53,7 +53,7 @@ export const AdminDashboardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-nes-sky flex flex-col justify-between">
       {/* Admin Top Navigation */}
-      <header className="bg-nes-navy text-white border-b-4 border-nes-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_#102040]">
+      <header className="bg-nes-navy text-white border-b-4 border-nes-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_var(--color-brand-navy)]">
         <div className="flex items-center gap-3">
           <span className="font-pixel text-sm text-nes-gold">STARTUPOLY</span>
           <span className="hidden sm:inline font-mono text-xs text-nes-gray border-l-2 border-white/20 pl-3">
@@ -62,7 +62,7 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="hidden md:inline font-mono text-xs text-[#94A3B8]">
+          <span className="hidden md:inline font-mono text-xs text-neutral-400">
             {user?.email}
           </span>
           <Link to="/admin/history">
@@ -77,7 +77,7 @@ export const AdminDashboardPage: React.FC = () => {
       </header>
 
       {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-nes-gold text-nes-navy px-4 py-2 text-center border-b-4 border-nes-navy shadow-[0_2px_0px_#102040]">
+      <div className="lg:hidden bg-nes-gold text-nes-navy px-4 py-2 text-center border-b-4 border-nes-navy shadow-[0_2px_0px_var(--color-brand-navy)]">
         <p className="font-pixel text-[11px] leading-relaxed">
           💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
         </p>

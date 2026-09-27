@@ -61,17 +61,17 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
   const tiedTeamMap = new Map(tiedTeams.map((t) => [t.team_id, t]));
 
   return (
-    <div className="bg-[#FFFBEB] border-4 border-[#B45309] p-4 shadow-[4px_4px_0px_#B45309] flex flex-col gap-3">
+    <div className="bg-brand-cream-light border-4 border-amber-700 p-4 shadow-pixel flex flex-col gap-3">
       {/* Alert Header */}
       <div className="flex items-center gap-2">
-        <span className="w-6 h-6 bg-[#B45309] text-white flex items-center justify-center font-pixel text-xs">
+        <span className="w-6 h-6 bg-amber-700 text-white flex items-center justify-center font-pixel text-xs">
           !
         </span>
         <div>
-          <h3 className="font-pixel text-xs text-[#92400E] uppercase">
+          <h3 className="font-pixel text-xs text-amber-800 uppercase">
             Tied on CV, cash and businesses — record pitch result
           </h3>
-          <p className="font-mono text-xs text-[#102040]">
+          <p className="font-mono text-xs text-brand-navy">
             Rulebook §17: Conduct a 30-second physical pitch judged by the Game Master. Arrange the teams in winner order below.
           </p>
         </div>
@@ -86,20 +86,20 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
           return (
             <div
               key={id}
-              className="bg-white border-2 border-[#102040] p-2.5 flex items-center justify-between shadow-[2px_2px_0px_#102040]"
+              className="bg-brand-white border-2 border-brand-navy p-2.5 flex items-center justify-between shadow-pixel-sm"
             >
               <div className="flex items-center gap-3">
-                <span className="font-pixel text-xs text-[#B45309] w-8">
+                <span className="font-pixel text-xs text-amber-700 w-8">
                   #{index + 1}
                 </span>
                 <span
-                  className="w-3.5 h-3.5 border border-[#102040]"
-                  style={{ backgroundColor: team.is_bankrupt ? '#94A3B8' : '#22B14C' }}
+                  className="w-3.5 h-3.5 border border-brand-navy"
+                  style={{ backgroundColor: team.is_bankrupt ? 'var(--color-neutral-400)' : 'var(--color-brand-green)' }}
                 />
-                <span className="font-sans font-bold text-xs text-[#102040]">
+                <span className="font-sans font-bold text-xs text-brand-navy">
                   {team.name}
                 </span>
-                <span className="font-mono text-[11px] text-[#64748B]">
+                <span className="font-mono text-[11px] text-neutral-500">
                   (₹{team.cv.toLocaleString('en-IN')} CV, ₹{team.cash.toLocaleString('en-IN')} Cash)
                 </span>
               </div>
@@ -109,7 +109,7 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
                   type="button"
                   onClick={() => moveUp(index)}
                   disabled={index === 0 || isSubmitting}
-                  className="font-pixel text-xs px-2 py-1 bg-[#FAF8F5] border border-[#102040] hover:bg-[#EAE5D9] disabled:opacity-40 cursor-pointer"
+                  className="font-pixel text-xs px-2 py-1 bg-brand-cream border border-brand-navy hover:bg-neutral-200 disabled:opacity-40 cursor-pointer"
                   title="Move higher in tiebreak order"
                 >
                   ▲
@@ -118,7 +118,7 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
                   type="button"
                   onClick={() => moveDown(index)}
                   disabled={index === orderedIds.length - 1 || isSubmitting}
-                  className="font-pixel text-xs px-2 py-1 bg-[#FAF8F5] border border-[#102040] hover:bg-[#EAE5D9] disabled:opacity-40 cursor-pointer"
+                  className="font-pixel text-xs px-2 py-1 bg-brand-cream border border-brand-navy hover:bg-neutral-200 disabled:opacity-40 cursor-pointer"
                   title="Move lower in tiebreak order"
                 >
                   ▼
@@ -130,9 +130,9 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
       </div>
 
       {/* Form Submission */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2 border-t border-[#B45309]/30">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2 border-t border-amber-700/30">
         <div className="flex flex-col gap-1">
-          <label className="font-pixel text-[10px] uppercase text-[#92400E] font-bold">
+          <label className="font-pixel text-[10px] uppercase text-amber-800 font-bold">
             Judge Pitch Decision Note *
           </label>
           <input
@@ -141,12 +141,12 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
             placeholder="e.g. Winner decided by stronger customer acquisition pitch"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="w-full px-2.5 py-1.5 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040] focus:outline-none focus:ring-2 focus:ring-[#B45309]"
+            className="w-full px-2.5 py-1.5 font-sans text-xs text-brand-navy bg-brand-white border-2 border-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold"
           />
         </div>
 
         {error && (
-          <span className="font-mono text-xs text-[#D32F2F] font-bold">
+          <span className="font-mono text-xs text-brand-red font-bold">
             ⚠ {error}
           </span>
         )}

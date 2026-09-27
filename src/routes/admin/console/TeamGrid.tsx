@@ -58,10 +58,10 @@ export const TeamGrid: React.FC<TeamGridProps> = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <h2 className="font-pixel text-xs uppercase tracking-wider text-[#102040]">
+        <h2 className="font-pixel text-xs uppercase tracking-wider text-brand-navy">
           TOURNAMENT TEAMS ({teams.length})
         </h2>
-        <span className="hidden sm:inline font-mono text-[10px] text-[#64748B]">
+        <span className="hidden sm:inline font-mono text-[10px] text-neutral-500">
           Press 1–{teams.length} or Arrow keys to select
         </span>
       </div>

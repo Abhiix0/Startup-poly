@@ -68,29 +68,29 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
         className="text-center"
       >
         <div className="flex flex-col items-center justify-center gap-2 py-4">
-          <span className="font-pixel text-xs sm:text-sm uppercase tracking-widest text-[#102040] font-bold">
+          <span className="font-pixel text-xs sm:text-sm uppercase tracking-widest text-brand-navy font-bold">
             ROOM CODE TO JOIN ON PHONES
           </span>
 
           {/* Huge 3-meter readable room code */}
-          <div className="my-2 bg-[#FFCC00] border-4 border-[#102040] shadow-[6px_6px_0px_#102040] px-8 py-4 sm:py-6 inline-block">
-            <span className="font-mono text-5xl sm:text-7xl lg:text-8xl font-black tracking-[0.25em] text-[#102040] select-all">
+          <div className="my-2 bg-brand-gold border-4 border-brand-navy shadow-pixel-lg px-8 py-4 sm:py-6 inline-block">
+            <span className="font-mono text-5xl sm:text-7xl lg:text-8xl font-black tracking-[0.25em] text-brand-navy select-all">
               {room.code}
             </span>
           </div>
 
-          <p className="font-mono text-xs sm:text-sm text-[#102040] font-semibold mt-1">
+          <p className="font-mono text-xs sm:text-sm text-brand-navy font-semibold mt-1">
             Players navigate to <strong className="underline">/join</strong>, enter the code above, select their slot, and input their PIN
           </p>
         </div>
 
         {/* Live Joined Tracker Bar */}
-        <div className="mt-4 pt-4 border-t-3 border-[#102040] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-4 pt-4 border-t-3 border-brand-navy flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="font-pixel text-xs sm:text-sm text-[#102040]">
+            <span className="font-pixel text-xs sm:text-sm text-brand-navy">
               STATUS:
             </span>
-            <span className={`font-pixel text-xs sm:text-sm px-3 py-1 border-2 border-[#102040] ${allJoined ? 'bg-[#DCFCE7] text-[#166534]' : 'bg-[#FEF9C3] text-[#854D0E]'}`}>
+            <span className={`font-pixel text-xs sm:text-sm px-3 py-1 border-2 border-brand-navy ${allJoined ? 'bg-status-success-bg text-status-success-dark' : 'bg-status-warning-bg text-status-warning-text'}`}>
               {joinedTeams.length} / {teams.length} TEAMS CONNECTED
             </span>
           </div>
@@ -113,18 +113,18 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
             <div
               key={team.id}
               className={`
-                border-3 border-[#102040] p-4 shadow-[3px_3px_0px_#102040] flex flex-col justify-between gap-3
-                ${team.claimed ? 'bg-[#F0FDF4]' : 'bg-white'}
+                border-3 border-brand-navy p-4 shadow-[3px_3px_0px_var(--color-brand-navy)] flex flex-col justify-between gap-3
+                ${team.claimed ? 'bg-status-success-bg' : 'bg-brand-white'}
               `}
             >
               {/* Header: Slot & Connection Pill */}
-              <div className="flex items-center justify-between border-b-2 border-[#102040] pb-2">
+              <div className="flex items-center justify-between border-b-2 border-brand-navy pb-2">
                 <div className="flex items-center gap-2">
                   <span
-                    className="w-4 h-4 border-2 border-[#102040] shadow-[1px_1px_0px_#102040]"
+                    className="w-4 h-4 border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)]"
                     style={{ backgroundColor: team.color }}
                   />
-                  <span className="font-pixel text-xs text-[#102040]">
+                  <span className="font-pixel text-xs text-brand-navy">
                     SLOT #{team.slot}
                   </span>
                 </div>
@@ -138,18 +138,18 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
 
               {/* Team Name */}
               <div>
-                <h3 className="font-pixel text-sm text-[#102040] truncate mb-1">
+                <h3 className="font-pixel text-sm text-brand-navy truncate mb-1">
                   {team.name}
                 </h3>
               </div>
 
               {/* PIN and Release Action */}
-              <div className="bg-[#FAF8F5] border-2 border-[#102040] p-2.5 flex items-center justify-between">
+              <div className="bg-neutral-50 border-2 border-brand-navy p-2.5 flex items-center justify-between">
                 <div>
-                  <span className="font-pixel text-[9px] text-[#102040] font-bold block uppercase">
+                  <span className="font-pixel text-[9px] text-brand-navy font-bold block uppercase">
                     SECRET PIN:
                   </span>
-                  <span className="font-mono font-extrabold text-xl text-[#102040] tracking-widest">
+                  <span className="font-mono font-extrabold text-xl text-brand-navy tracking-widest">
                     {team.pin || '••••'}
                   </span>
                 </div>
@@ -199,11 +199,11 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
       >
         {releasingTeam && (
           <div className="flex flex-col gap-3">
-            <p className="font-mono text-sm leading-relaxed text-[#102040]">
+            <p className="font-mono text-sm leading-relaxed text-brand-navy">
               Are you sure you want to disconnect the active device for{' '}
               <strong>Slot #{releasingTeam.slot} ({releasingTeam.name})</strong>?
             </p>
-            <div className="bg-[#FEF2F2] border-2 border-[#102040] p-3 text-xs text-[#991B1B] font-mono">
+            <div className="bg-status-danger-bg border-2 border-brand-navy p-3 text-xs text-status-danger-dark font-mono">
               ⚠ The current phone session will be invalidated. The team will need to re-enter their PIN ({releasingTeam.pin}) to reconnect.
             </div>
           </div>
@@ -249,24 +249,24 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
       >
         {allJoined ? (
           <div className="flex flex-col gap-3">
-            <p className="font-mono text-sm leading-relaxed text-[#102040]">
+            <p className="font-mono text-sm leading-relaxed text-brand-navy">
               All <strong>{teams.length} teams</strong> have connected their phones!
             </p>
-            <div className="bg-[#DCFCE7] border-2 border-[#102040] p-3 text-xs text-[#166534] font-mono">
+            <div className="bg-status-success-bg border-2 border-brand-navy p-3 text-xs text-status-success-dark font-mono">
               ★ Starting the match will activate the 50-minute tournament clock for all players and project the live scoreboard.
             </div>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            <p className="font-mono text-sm leading-relaxed text-[#102040]">
+            <p className="font-mono text-sm leading-relaxed text-brand-navy">
               Warning: <strong>{unjoinedTeams.length} out of {teams.length} teams</strong> have not connected yet:
             </p>
 
-            <div className="bg-[#FEF2F2] border-2 border-[#102040] p-3 flex flex-col gap-1.5">
+            <div className="bg-status-danger-bg border-2 border-brand-navy p-3 flex flex-col gap-1.5">
               {unjoinedTeams.map((t) => (
-                <div key={t.id} className="flex items-center gap-2 font-mono text-xs text-[#991B1B] font-bold">
+                <div key={t.id} className="flex items-center gap-2 font-mono text-xs text-status-danger-dark font-bold">
                   <span
-                    className="w-3 h-3 border border-[#102040]"
+                    className="w-3 h-3 border border-brand-navy"
                     style={{ backgroundColor: t.color }}
                   />
                   <span>Slot #{t.slot}: {t.name} (PIN: {t.pin})</span>
@@ -274,7 +274,7 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
               ))}
             </div>
 
-            <p className="font-mono text-xs text-[#64748B]">
+            <p className="font-mono text-xs text-neutral-500">
               You can wait for players to connect, or click <strong>Start anyway (Force)</strong> to begin immediately. Unconnected teams can still join later with their PIN.
             </p>
           </div>

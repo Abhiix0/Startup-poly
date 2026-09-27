@@ -111,7 +111,7 @@ export const StealDialog: React.FC<StealDialogProps> = ({
         {/* Thief & Victim Pickers */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="flex flex-col gap-1">
-            <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+            <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
               Thief Team (Receives Cash)
             </label>
             <select
@@ -120,7 +120,7 @@ export const StealDialog: React.FC<StealDialogProps> = ({
                 setThiefId(e.target.value);
                 setCustomAmount(undefined);
               }}
-              className="p-2 border-2 border-[#102040] bg-white font-sans text-xs font-bold text-[#102040] focus:outline-none focus:ring-2 focus:ring-[#FFCC00]"
+              className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold"
             >
               {teams.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -131,7 +131,7 @@ export const StealDialog: React.FC<StealDialogProps> = ({
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+            <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
               Victim Team (Pays Cash)
             </label>
             <select
@@ -140,7 +140,7 @@ export const StealDialog: React.FC<StealDialogProps> = ({
                 setVictimId(e.target.value);
                 setCustomAmount(undefined);
               }}
-              className="p-2 border-2 border-[#102040] bg-white font-sans text-xs font-bold text-[#102040] focus:outline-none focus:ring-2 focus:ring-[#FFCC00]"
+              className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold"
             >
               {eligibleVictims.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -165,18 +165,18 @@ export const StealDialog: React.FC<StealDialogProps> = ({
         )}
 
         {error && (
-          <span className="font-mono text-xs text-[#D32F2F] font-bold">
+          <span className="font-mono text-xs text-brand-red font-bold">
             ⚠ {error}
           </span>
         )}
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040] border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9] cursor-pointer"
+            className="font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200 cursor-pointer"
           >
             CANCEL (Esc)
           </button>

@@ -73,25 +73,25 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
   };
 
   return (
-    <div className="bg-[#FAF8F5] border-4 border-[#102040] shadow-[4px_4px_0px_#102040] p-4 flex flex-col gap-4">
+    <div className="bg-brand-cream border-4 border-brand-navy shadow-pixel p-4 flex flex-col gap-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-[#102040] pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-brand-navy pb-3">
         <div>
-          <span className="font-pixel text-[10px] text-[#D32F2F] uppercase tracking-wider block">
+          <span className="font-pixel text-[10px] text-brand-red uppercase tracking-wider block">
             MATCH CONCLUSION & AUDIT RECONCILIATION
           </span>
-          <h2 className="font-pixel text-sm sm:text-base text-[#102040] uppercase">
+          <h2 className="font-pixel text-sm sm:text-base text-brand-navy uppercase">
             LIVE PROVISIONAL STANDINGS
           </h2>
         </div>
 
         <div className="flex items-center gap-2">
           {hasUnresolvedTie ? (
-            <span className="font-pixel text-[10px] bg-[#FEF3C7] text-[#B45309] border border-[#B45309] px-2.5 py-1 animate-pulse">
+            <span className="font-pixel text-[10px] bg-status-warning-bg text-status-warning-dark border border-brand-gold px-2.5 py-1 animate-pulse">
               ⚠ TIEBREAK REQUIRED BEFORE FINALIZING
             </span>
           ) : (
-            <span className="font-pixel text-[10px] bg-[#E8F8EE] text-[#22B14C] border border-[#22B14C] px-2.5 py-1">
+            <span className="font-pixel text-[10px] bg-status-success-bg text-brand-green border border-brand-green px-2.5 py-1">
               ✓ ALL TIES RESOLVED
             </span>
           )}
@@ -120,7 +120,7 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
       <StandingsTable standings={standings} teams={snapshot.teams} />
 
       {panelError && (
-        <div className="bg-[#FEECEB] border-2 border-[#D32F2F] p-2 text-xs font-mono text-[#D32F2F] font-bold">
+        <div className="bg-status-danger-bg border-2 border-brand-red p-2 text-xs font-mono text-brand-red font-bold">
           ⚠ {panelError}
         </div>
       )}
@@ -133,13 +133,13 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
         maxWidth="md"
       >
         <div className="flex flex-col gap-4">
-          <div className="bg-[#FEECEB] border-2 border-[#D32F2F] p-3 flex items-start gap-2.5 shadow-[2px_2px_0px_#D32F2F]">
+          <div className="bg-status-danger-bg border-2 border-brand-red p-3 flex items-start gap-2.5 shadow-pixel-sm">
             <span className="text-xl">⚠</span>
             <div>
-              <span className="font-pixel text-xs text-[#D32F2F] block">
+              <span className="font-pixel text-xs text-brand-red block">
                 PERMANENT & IRREVERSIBLE ACTION
               </span>
-              <p className="font-sans text-xs text-[#102040] mt-1">
+              <p className="font-sans text-xs text-brand-navy mt-1">
                 Final scores and standings will be locked forever into the immutable tournament history.
                 The official leaderboard will immediately publish to all team devices.
                 No further edits or corrections will be possible.
@@ -147,16 +147,16 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
             </div>
           </div>
 
-          <p className="font-mono text-xs text-[#64748B]">
+          <p className="font-mono text-xs text-neutral-500">
             Room Code: <strong>{snapshot.room.code}</strong> • Teams: <strong>{snapshot.teams.length}</strong>
           </p>
 
-          <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
             <button
               type="button"
               disabled={isFinalizing}
               onClick={() => setIsFinalizeModalOpen(false)}
-              className="font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040] border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9] cursor-pointer"
+              className="font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200 cursor-pointer"
             >
               CANCEL (Esc)
             </button>

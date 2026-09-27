@@ -67,12 +67,12 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
       maxWidth="md"
     >
       <form onSubmit={handleSignIn} className="flex flex-col gap-4">
-        <div className="bg-[#FEF9C3] text-[#854D0E] border-2 border-[#102040] p-3 text-xs font-mono font-bold">
+        <div className="bg-status-warning-bg text-status-warning-text border-2 border-brand-navy p-3 text-xs font-mono font-bold">
           ⚠ Your admin session timed out. Sign in below to continue without losing your current draft or match progress.
         </div>
 
         {error && (
-          <div className="bg-[#FEE2E2] text-[#991B1B] border-2 border-[#102040] p-2 text-xs font-mono font-bold">
+          <div className="bg-status-danger-bg text-status-danger-dark border-2 border-brand-navy p-2 text-xs font-mono font-bold">
             {error}
           </div>
         )}

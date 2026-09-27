@@ -76,14 +76,14 @@ export const AdminRoomHistoryPage: React.FC = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between">
+    <div className="min-h-screen bg-brand-sky flex flex-col justify-between">
       {/* Top Header */}
-      <header className="bg-[#102040] text-white border-b-4 border-[#102040] px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_#102040]">
+      <header className="bg-brand-navy text-brand-white border-b-4 border-brand-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_var(--color-brand-navy)]">
         <div className="flex items-center gap-3">
-          <Link to="/admin/history" className="font-pixel text-xs text-[#FFCC00] hover:underline flex items-center gap-1">
+          <Link to="/admin/history" className="font-pixel text-xs text-brand-gold hover:underline flex items-center gap-1">
             ◄ ARCHIVE
           </Link>
-          <span className="font-pixel text-xs text-white border-l-2 border-white/20 pl-3">
+          <span className="font-pixel text-xs text-brand-white border-l-2 border-white/20 pl-3">
             ROOM {data?.room.code || roomId?.slice(0, 6).toUpperCase()} • IMMUTABLE RECORD
           </span>
         </div>
@@ -93,14 +93,14 @@ export const AdminRoomHistoryPage: React.FC = () => {
             <button
               type="button"
               onClick={handleCopyText}
-              className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-white text-[#102040] border border-[#102040] hover:bg-[#FAF8F5] cursor-pointer shadow-[1px_1px_0px_#102040]"
+              className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-brand-white text-brand-navy border border-brand-navy hover:bg-neutral-50 cursor-pointer shadow-[1px_1px_0px_var(--color-brand-navy)]"
             >
               {copied ? '✓ COPIED!' : '📋 COPY TEXT'}
             </button>
             <button
               type="button"
               onClick={handleDownloadCsv}
-              className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-[#22B14C] text-white border border-[#102040] hover:bg-[#1fa145] cursor-pointer shadow-[1px_1px_0px_#102040]"
+              className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-brand-green text-brand-white border border-brand-navy hover:bg-interactive-green-hover cursor-pointer shadow-[1px_1px_0px_var(--color-brand-navy)]"
             >
               📥 CSV
             </button>
@@ -149,7 +149,7 @@ export const AdminRoomHistoryPage: React.FC = () => {
         )}
       </main>
 
-      <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />
+      <div className="h-8 nes-brick-pattern border-t-4 border-brand-navy" />
     </div>
   );
 };

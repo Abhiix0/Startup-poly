@@ -67,12 +67,12 @@ export const AdminLoginPage: React.FC = () => {
       <header className="p-3 sm:p-4 flex items-center justify-between z-20">
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 font-pixel text-xs bg-[#102040] text-[#FFCC00] px-3 py-1.5 border-2 border-[#102040] shadow-[3px_3px_0px_#102040] hover:bg-[#22B14C] hover:text-white transition-transform active:translate-x-0.5 active:translate-y-0.5"
+          className="inline-flex items-center gap-1.5 font-pixel text-xs bg-brand-navy text-brand-gold px-3 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-brand-green hover:text-brand-white transition-transform active:translate-x-0.5 active:translate-y-0.5"
         >
           <span>◄</span>
           <span>START</span>
         </Link>
-        <span className="font-pixel text-[10px] text-white bg-[#102040] px-3 py-1 border-2 border-[#FFCC00] shadow-[2px_2px_0px_#102040]">
+        <span className="font-pixel text-[10px] text-brand-white bg-brand-navy px-3 py-1 border-2 border-brand-gold shadow-pixel-sm">
           🏰 EVENT CASTLE
         </span>
       </header>
@@ -80,8 +80,8 @@ export const AdminLoginPage: React.FC = () => {
       {/* Main Single-Column Game World Scene */}
       <main className="flex-1 flex flex-col items-center justify-center p-3 sm:p-4 z-10 relative">
         {/* Responsive Laptop Advisory Styled as Royal Decree Scroll (< 1024px) */}
-        <div className="lg:hidden w-full max-w-md mb-3 bg-[#FFFBEB] border-3 border-[#102040] p-2.5 shadow-[4px_4px_0px_#102040] text-center">
-          <p className="font-pixel text-[10px] sm:text-[11px] text-[#102040] leading-relaxed">
+        <div className="lg:hidden w-full max-w-md mb-3 bg-status-warning-bg border-3 border-brand-navy p-2.5 shadow-pixel text-center">
+          <p className="font-pixel text-[10px] sm:text-[11px] text-brand-navy leading-relaxed">
             💻 Use a laptop for the admin console (≥ 1024px)
           </p>
         </div>
@@ -106,7 +106,7 @@ export const AdminLoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="admin-email"
-                className="block font-pixel text-[11px] uppercase tracking-wider text-[#FFCC00] drop-shadow-[1px_1px_0px_#102040] mb-1.5"
+                className="block font-pixel text-[11px] uppercase tracking-wider text-brand-gold drop-shadow-[1px_1px_0px_var(--color-brand-navy)] mb-1.5"
               >
                 OPERATOR / USERNAME
               </label>
@@ -120,7 +120,7 @@ export const AdminLoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting || isSuccess}
-                className="w-full bg-[#1E293B] border-3 sm:border-4 border-[#102040] px-3.5 py-2.5 font-mono text-xs sm:text-sm text-[#FFFBEB] placeholder:text-slate-400 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-2 focus:ring-[#FFCC00]"
+                className="w-full bg-neutral-800 border-3 sm:border-4 border-brand-navy px-3.5 py-2.5 font-mono text-xs sm:text-sm text-status-warning-bg placeholder:text-neutral-400 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-2 focus:ring-brand-gold"
               />
             </div>
 
@@ -128,7 +128,7 @@ export const AdminLoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="admin-password"
-                className="block font-pixel text-[11px] uppercase tracking-wider text-[#FFCC00] drop-shadow-[1px_1px_0px_#102040] mb-1.5"
+                className="block font-pixel text-[11px] uppercase tracking-wider text-brand-gold drop-shadow-[1px_1px_0px_var(--color-brand-navy)] mb-1.5"
               >
                 PASSWORD
               </label>
@@ -142,7 +142,7 @@ export const AdminLoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isSubmitting || isSuccess}
-                className="w-full bg-[#1E293B] border-3 sm:border-4 border-[#102040] px-3.5 py-2.5 font-mono text-xs sm:text-sm text-[#FFFBEB] placeholder:text-slate-400 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-2 focus:ring-[#FFCC00]"
+                className="w-full bg-neutral-800 border-3 sm:border-4 border-brand-navy px-3.5 py-2.5 font-mono text-xs sm:text-sm text-status-warning-bg placeholder:text-neutral-400 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-2 focus:ring-brand-gold"
               />
             </div>
 
