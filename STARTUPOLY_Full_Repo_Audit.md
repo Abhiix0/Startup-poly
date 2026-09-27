@@ -1,212 +1,126 @@
-# STARTUPOLY — Full Repo Audit + Remediation Plan
+# STARTUPOLY — RPC Fix & Palette Unification Plan (revised)
 
-Scope: the whole repository (frontend, `supabase/**`, scripts, config) — not just the landing page. Everything below was verified against the actual code in this zip: `npm ci` + `npm run build` (`tsc && vite build`) succeed, `npm run typecheck` passes, `npm test` baseline is green. Nothing was modified while auditing.
+Same underlying audit as before, with the Mario-removal phase dropped — the Mario/mushroom art is being kept intentionally, so the earlier IP-cleanup phase is no longer part of this plan. Everything else carries over, renumbered.
 
-## Findings
+## Findings this plan addresses
 
-### A. Dead code
+### A. High — the admin "Abort Game" RPC is broken in production
 
-| # | Finding | Evidence |
-|---|---|---|
-| A1 | `lucide-react`, `tailwind-merge`, `clsx` are declared dependencies with **zero usages anywhere in `src/`** (all icons/scenery are hand-built inline SVG; class merging is done with template literals). | `grep -rn "lucide-react\|tailwind-merge\|from 'clsx'" src` → no hits. |
-| A2 | `src/ui/pixel/PixelMascot.tsx` is exported from `src/ui/pixel/index.ts` but never imported/rendered anywhere else in the app. | `grep -rn "PixelMascot" src` → only its own file + the barrel export. |
-| A3 | `supabase/patches/001_fix_standings_add_abort.sql` is a manually-run hotfix whose entire contents (rewritten `room_standings`, the status-transition trigger, the `GAME_ABORTED` constraint value, and `admin_abort_game`) are **already present** in `0001_schema.sql` / `0011_perf_indexes.sql` / `0012_admin_abort_game.sql` and rolled into `all_migrations.sql`. It's stale and dangerous if anyone re-runs it: it would silently redefine `room_standings`/`admin_abort_game` from an older, uncoordinated copy that doesn't know about anything added after it. | Content diff between the patch file and migrations 0001/0011/0012 — same functions, same constraint list, already superseded. |
-| A4 | `tsconfig.json` sets `noUnusedLocals: false` and `noUnusedParameters: false`. This is exactly why A1/A2-style dead code can accumulate invisibly — the compiler is configured not to flag it. | `tsconfig.json`. |
+`supabase/migrations/0013_fix_admin_abort_reset.sql` renamed the function's parameter `room_id` → `p_room_id`. `src/data/rpc.ts`'s `rpcAdminAbortGame` still calls `callRpc('admin_abort_game', { room_id, note })` — a named-parameter mismatch that PostgREST will reject. Every real call from the browser fails; the console's Abort button is non-functional. The existing pgTAP test calls the function positionally, so it passed anyway and hid the break.
 
-### B. Inconsistencies
+### B. Color system — sprawling tokens, near-zero adoption
 
-| # | Finding | Evidence |
-|---|---|---|
-| B1 | `PixelLogo.tsx` animates its two `PixelStar` sprites with Tailwind's built-in `animate-bounce` utility — a **constant** loop. Every other decorative animation in the app is a custom `.anim-*` class specifically enumerated in the shared `prefers-reduced-motion` block; `animate-bounce` is a different Tailwind-generated class name and is not part of that inventory, so it breaks both the project's own "no constant bouncing" convention and its reduced-motion guarantee. | `src/ui/pixel/PixelLogo.tsx` uses `className="... animate-bounce"`; the custom keyframe/reduced-motion inventories elsewhere never mention it. |
-| B2 | Two unrelated visual-art systems exist side by side: the landing page's own scenery stack (`SkyLayer`, `PixelWorld`, `DistantHillsAndCastle`, `FloatingPlatforms`), and a completely different "wooden sign / castle / plains / roaming character" system used only on `AdminLoginPage` and `TeamJoinPage` (`WoodenSignboard`, `WoodenActionButton`, `CastleBackground`, `PlainsBackground`, `RoamingCharacter`). Nothing shares components between them. | File usage grep across `src/routes/public/**` vs `AdminLoginPage.tsx`/`TeamJoinPage.tsx`. |
-| B3 | `admin_abort_game` is called from the UI with a **hardcoded** note (`'Game aborted — accidental start'`) instead of an admin-entered reason — every other correction-style admin action in the app requires the admin to type their own note. | `src/routes/admin/console/AdminConsoleView.tsx` abort-confirm handler. |
-| B4 | Inconsistent test file casing/organization: `woodenSignboard.test.tsx` (lowercase) next to a `WoodenSignboard.tsx` component, and `pixelSprites.test.tsx` as one catch-all file rather than the per-component pattern used everywhere else. | File listing. |
-| B5 | `package.json` pins dependency versions that don't correspond to any real release line for that package — most notably `"lucide-react": "^1.46.0"` (lucide-react has only ever shipped a `0.x` line). Combined with A1 (it's unused anyway) this is low-impact today, but if someone later actually imports it, or runs a clean install against the real registry, this version range may not resolve at all. | `package.json` dependencies block. |
+`index.css`'s `@theme` block defines 60+ color tokens across ad hoc "zones" (`sky-*`, `navy-*`, `gold-*`, `pipe-*`, `brick-*`, `block-*`, `parchment-*`, `metal-*`, `wood-*`, `castle-*`, `mountain-*`, `team-1..6`) — many of them near-duplicates of each other or of the 7 real brand colors (e.g. `castle-stone` and `metal-deep` are both `#334155`; `green-retro` duplicates `nes-green`; `flag-red` duplicates `nes-red`). Despite the block's own comment claiming this is *"Unified across Landing, Join & Admin pages,"* a repo-wide grep found raw hex literals in **116 files** — components paste colors directly instead of referencing any token. The 7 official brand hexes (`#102040`, `#FFCC00`, `#22B14C`, `#D32F2F`, `#FFFFFF`, `#B84418`, `#5C94FC`) are the most-used values by count, but they're diluted among dozens of off-palette grays/ambers/blues/greens/reds and skin tones that no design decision ever approved. This is what you're asking to fix: the landing page's palette should be the one and only palette used everywhere.
 
-### C. Bugs
-
-| # | Finding | Severity | Evidence |
-|---|---|---|---|
-| C1 | **`admin_abort_game` does not reset team state.** It flips `rooms.status` back to `LOBBY` and clears `started_at`/`ends_at`, but never touches `teams.cash`, `teams.cv`, or `team_businesses`. `admin_start_game` (the function that starts the *next* attempt) also never resets team rows — it only checks room status/claims and sets the clock. So any cash/CV/business edits an admin recorded during the mistakenly-started window (rent, purchases, upgrades…) **silently survive** into the real match once it's actually started. This defeats the entire stated purpose of the abort feature. | High | `supabase/migrations/0012_admin_abort_game.sql` (no team mutation) + `admin_start_game` in `0008_functions_admin.sql` (no team reset on LOBBY→ACTIVE). |
-| C2 | Unverified, needs a fresh look: whether `GAME_ABORTED` activity events are handled correctly everywhere the activity log/history UI enumerates or filters event types, since it's a later addition layered on top of the original event-type list. | To verify | Flagged for Phase 1's audit; not yet independently reproduced as broken. |
-
-### D. Security / loopholes
-
-| # | Finding | Severity | Evidence |
-|---|---|---|---|
-| D1 | `vercel.json`'s Content-Security-Policy — the header actually deployed to production — permanently whitelists `http://127.0.0.1:*`, `ws://127.0.0.1:*`, `http://localhost:*`, `ws://localhost:*` in `connect-src`. That's local-dev scaffolding shipped into every real user's browser CSP, unnecessarily widening what a compromised script on the page could talk to. | Medium | `vercel.json` `Content-Security-Policy` header. |
-| D2 | Everything else re-checked this pass still holds up: RLS is deny-by-default, admin authorization runs through the `admins` table via `is_admin()` (not client claims), team access is PIN-gated and isolated via `team_claims`, no service-role key appears anywhere in `src/`, and the previously-identified admin-auth races (logout/expired-session handling, `is_admin` RPC-failure fallback) have been fixed in the current `src/data/{auth.tsx,client.ts}`. | — | Re-inspected `resolveRole`/`onAuthStateChange`/`intentionalSignOutRef` in `src/data/auth.tsx`. |
+Note: `--color-team-1: #E52521` (one of the six default team-color swatches) happens to be Mario's exact red. Since Mario is being kept intentionally, this is left as-is in this plan rather than flagged for change — mention it if you want it swapped later, otherwise no action needed.
 
 ---
 
 ## Phases
 
 ```text
-P1  Dead-code & dependency cleanup (A1–A4) — low risk, mechanical
+P1  Fix the broken admin_abort_game RPC call (production regression)
  ↓
-P2  Fix the game-breaking abort bug (C1) + verify C2 + fix B3
+P2  Consolidate the color system into one real token set
  ↓
-P3  Animation/reduced-motion consistency pass (B1)
+P3  Migrate the shared UI library (src/ui/**) onto the tokens
  ↓
-P4  Security & config hardening (D1) + dependency version audit (B5)
+P4  Migrate the Admin routes onto the tokens
  ↓
-P5  Cross-page visual-language decision + consistency fixes (B2, B4)
+P5  Migrate Team + Public/Landing routes onto the tokens; character skin-tone reconciliation
  ↓
-P6  Full regression, stricter tsconfig, final report
+P6  Full regression, permanent guardrail tests, final report
 ```
 
-Work on a branch. After each phase: `npm run typecheck && npm test && npm run build`, then move on. Do not start a phase until the previous one is green.
+Work on a branch. After each phase: `npm run typecheck && npm test && npm run build`, visual check, then move on. Do not start a phase until the previous one is green.
 
 ---
 
-### PHASE 1 PROMPT — Dead-code & dependency cleanup
+### PHASE 1 PROMPT — Fix the broken admin_abort_game RPC call
 
 ```text
 OBJECTIVE
-Remove verified dead code and unused dependencies from the STARTUPOLY repo, retire a stale/dangerous SQL hotfix file, and tighten tsconfig so this class of dead code can't silently reaccumulate. Low-risk, mechanical changes only — no feature work.
+Fix the parameter-name mismatch that currently makes the admin "Abort Game" feature fail every time it's actually used from the browser, and add a test that would have caught this class of bug (a real client→RPC call, not just a positional SQL call).
 
 CONTEXT
-STARTUPOLY is a physical board game's live-scoreboard website (Vite + React 19 + TS + Tailwind 4 + Supabase). An audit found: (1) lucide-react, tailwind-merge, clsx declared in package.json dependencies with zero usages anywhere in src/; (2) src/ui/pixel/PixelMascot.tsx exported from src/ui/pixel/index.ts but never rendered anywhere; (3) supabase/patches/001_fix_standings_add_abort.sql is a manually-run hotfix whose entire content (room_standings rewrite, a status-transition trigger, the GAME_ABORTED constraint value, and admin_abort_game) is already present in supabase/migrations/0001_schema.sql, 0011_perf_indexes.sql, 0012_admin_abort_game.sql, and rolled into supabase/all_migrations.sql — it is now stale and re-running it risks overwriting those functions with an older, uncoordinated definition; (4) tsconfig.json has noUnusedLocals: false and noUnusedParameters: false, which is why this kind of dead code can hide.
+supabase/migrations/0013_fix_admin_abort_reset.sql defines: CREATE OR REPLACE FUNCTION public.admin_abort_game(p_room_id uuid, note text DEFAULT NULL). src/data/rpc.ts's rpcAdminAbortGame calls callRpc('admin_abort_game', { room_id, note }) — a named-parameter object using the OLD parameter name room_id, which no longer matches the function signature. Supabase's PostgREST RPC endpoint matches JSON keys to the Postgres function's actual parameter names; a mismatch causes the call to fail (typically a "function not found" or schema-cache error) even though the function exists. The existing pgTAP test (supabase/tests/0004_admin_abort_game_test.sql) calls the function positionally (admin_abort_game(id, note)), which works regardless of parameter naming and is why this was never caught.
 
 EXACT REQUIREMENTS
-1. Independently re-verify each finding before acting (grep the actual current source — do not trust this description blindly):
-   - Confirm zero real usages of lucide-react, tailwind-merge, clsx in src/ (check imports, not just the word).
-   - Confirm PixelMascot has no import/usage outside its own file and the barrel export.
-   - Diff supabase/patches/001_fix_standings_add_abort.sql's three logical pieces (room_standings function body, the status-transition trigger, the activity_events type constraint list, admin_abort_game function body) against the current versions in 0001_schema.sql/0011_perf_indexes.sql/0012_admin_abort_game.sql/all_migrations.sql to confirm they are indeed superseded (identical or the patch is strictly older/less complete). If you find the patch file's room_standings or admin_abort_game body actually differs meaningfully from what's in the numbered migrations (e.g. a fix that was never carried forward), STOP and report the discrepancy instead of deleting — do not silently keep an unapplied fix.
-2. If confirmed: remove lucide-react, tailwind-merge, and clsx from package.json dependencies; run npm install to update package-lock.json; grep once more afterward to be sure nothing broke.
-3. If confirmed unused: delete src/ui/pixel/PixelMascot.tsx and PixelMascot.test.tsx if one exists, and remove its export line from src/ui/pixel/index.ts.
-4. If confirmed superseded: delete supabase/patches/001_fix_standings_add_abort.sql and the now-empty supabase/patches/ directory if nothing else lives there. Add one line to supabase/README.md documenting that ad-hoc SQL patches are not used going forward — every change goes through a numbered migration in supabase/migrations/, and any future hotfix must be added as a new numbered migration (and reflected in all_migrations.sql) rather than a standalone patch file.
-5. Enable noUnusedLocals: true and noUnusedParameters: true in tsconfig.json (use the `_`-prefix convention for intentionally-unused parameters if the codebase doesn't already have one — check first). Run npm run typecheck and fix every resulting error by removing the actual unused local/import/parameter (or prefixing intentionally-unused parameters with `_`) — do NOT silence errors with @ts-ignore or by re-disabling the flag. If the number of resulting errors is large, fix them all in this phase (it's mechanical, not a design decision) rather than deferring — this phase exists specifically to surface and clear this backlog once.
-6. Double-check package.json's declared dependency versions for anything else that looks like an implausible/nonexistent release line for that package (beyond the three already removed) — if npm install is currently working against the existing lockfile, don't force any other version change in this phase, but list anything suspicious in a short docs/DEPENDENCY_NOTES.md for Phase 4 to properly investigate (that phase owns deliberate version auditing/upgrades; this phase only removes what's provably unused).
+1. Fix the mismatch at whichever end is correct for this codebase's conventions: check how every OTHER admin_* RPC wrapper in src/data/rpc.ts names its first parameter (e.g. do they use team_id, room_id as their JS-side keys matching the SQL parameter names exactly, or is there an established p_-prefix convention elsewhere in the SQL functions that the JS layer already matches?). If the SQL layer's other functions do NOT use a p_ prefix convention, prefer reverting the SQL parameter name back to room_id (via a new migration, e.g. 0014_fix_abort_game_param_name.sql, using CREATE OR REPLACE FUNCTION with DROP FUNCTION IF EXISTS first exactly like 0013 did) for consistency with the rest of the codebase, rather than changing the JS call site — but if 0013's p_room_id rename was made for a real reason (e.g. to avoid an ambiguous-column-reference bug inside the function body against a table column also named room_id — check the function body for exactly this), keep the SQL name as p_room_id and instead fix ONLY the JS call site in rpc.ts to send { p_room_id: room_id, note } (keeping the exported TypeScript function's own parameter name room_id for callers, just fixing the key sent over the wire). Choose whichever fix is correct and least likely to reintroduce the ambiguous-reference bug 0013 may have been solving — inspect the function body's internal column references before deciding.
+2. After fixing, re-verify the entire function body of admin_abort_game for any other internal ambiguous-reference risk (a plpgsql function with a parameter and a table column sharing a name is a classic source of "column reference is ambiguous" errors at runtime) — if you keep the p_ prefix, confirm it was applied consistently to avoid the exact bug it was meant to prevent; if you revert to room_id, use a fully-qualified table alias (e.g. rooms.id = admin_abort_game.room_id or an explicit table alias throughout) to avoid reintroducing that ambiguity.
+3. Update supabase/all_migrations.sql to reflect the final, correct function definition (per this project's own documented convention from the prior audit's README note: every change goes through a numbered migration and is kept in sync in all_migrations.sql).
+4. Add a real integration-level test that exercises the actual RPC call path the browser uses — not just a positional SQL call. If this repo has a mechanism for testing against a real local Supabase instance from the JS test suite (check for an existing pattern — e.g. a Playwright/E2E setup, or a vitest test that spins up/connects to a local Supabase and calls supabase.rpc(...) the same way the app does), add a test there that calls rpcAdminAbortGame(...) exactly as the frontend does and asserts it succeeds against a local Supabase instance. If no such integration-test mechanism exists yet, add the smallest reasonable one for this specific case (a vitest test file that, when run against a locally running `supabase start` instance, signs in a real admin and calls the actual exported rpcAdminAbortGame function) and document in the test file's header how to run it (env vars needed, that it requires a local Supabase instance) — this is worth establishing now specifically because this bug class (named-parameter drift between a Postgres migration and the JS RPC wrapper) is exactly what pgTAP's positional calls cannot catch.
+5. Double-check every OTHER admin_* and public-facing RPC wrapper in src/data/rpc.ts against its corresponding SQL function signature in supabase/migrations/**, to make sure no other function has drifted in the same way (parameter renamed in a later migration without the JS wrapper being updated). Fix any other mismatch found using the same reasoning as step 1.
 
 FILES TO INSPECT
-package.json, package-lock.json, src/ui/pixel/{PixelMascot.tsx,index.ts}, supabase/patches/001_fix_standings_add_abort.sql, supabase/migrations/{0001_schema,0011_perf_indexes,0012_admin_abort_game}.sql, supabase/all_migrations.sql, supabase/README.md, tsconfig.json, full src/ tree (for the noUnusedLocals/Parameters cleanup).
+supabase/migrations/{0008_functions_admin,0012_admin_abort_game,0013_fix_admin_abort_reset}.sql, supabase/all_migrations.sql, src/data/rpc.ts (every admin_* wrapper), supabase/tests/0004_admin_abort_game_test.sql, any existing E2E/integration test setup.
 
 FILES LIKELY TO MODIFY/CREATE
-package.json, package-lock.json, src/ui/pixel/index.ts, delete src/ui/pixel/PixelMascot.tsx (+ its test if present), delete supabase/patches/001_fix_standings_add_abort.sql, supabase/README.md, tsconfig.json, any file touched by the noUnusedLocals/Parameters cleanup, docs/DEPENDENCY_NOTES.md (new).
+A new migration (e.g. supabase/migrations/0014_fix_abort_game_param_name.sql) OR a targeted edit to src/data/rpc.ts (per the decision in step 1), supabase/all_migrations.sql, a new integration test file, supabase/tests/0004_admin_abort_game_test.sql (extend if needed to also verify the parameter name matches what the client sends, e.g. via an explicit named-argument call in addition to the positional one already there).
 
 DATA MODEL CHANGES
-None (this phase deletes a redundant, already-superseded SQL file — it does not change the live schema, since its content is already applied via the numbered migrations).
+Only the admin_abort_game function signature/body, via a new numbered migration if that's the chosen fix — never edit an already-applied migration file in place.
 
 UI REQUIREMENTS
-None — zero visible change expected anywhere in the app.
+None — this is purely a bug fix, the Abort Game UI itself (built in the prior round) is presumably already correct and just needs its RPC call to actually succeed.
 
 STATE-MANAGEMENT REQUIREMENTS
 None.
 
 SECURITY REQUIREMENTS
-None new; do not weaken anything while cleaning up.
+No change to is_admin() enforcement or the NOTE_REQUIRED validation — preserve exactly, only fix the parameter-name plumbing.
 
 ERROR HANDLING
-N/A.
+Confirm the frontend's existing error handling for this RPC call (toast/message on failure) still works correctly now that the call itself succeeds — verify the success path is what actually gets exercised, not just that errors are handled gracefully.
 
 TESTS
-Run the full existing suite unchanged and confirm 100% pass after every deletion/edit. Add a small grep-based regression test (or a one-off script step run manually and reported, if a test is awkward here) confirming lucide-react/tailwind-merge/clsx/PixelMascot no longer appear anywhere in src/ or package.json.
+The new integration test from step 4 (calling the real exported rpcAdminAbortGame against a local Supabase instance and asserting success + the expected team-reset side effects from the prior round's fix). Extend the pgTAP suite with a named-argument call form as well as the existing positional one, so a future rename is caught by pgTAP too, not just the new integration test. Re-run the full existing pgTAP suite (supabase test db) to confirm no other test relied on the old parameter name in a way that breaks.
 
 ACCEPTANCE CRITERIA
-- The three unused dependencies are removed and npm ci still works cleanly.
-- PixelMascot and the stale patch file are deleted (or, if a real discrepancy was found instead, it is clearly reported and NOT silently discarded).
-- noUnusedLocals/noUnusedParameters are true and npm run typecheck is clean.
-- npm run typecheck && npm test && npm run build all pass; app behavior/visuals are unchanged.
+Calling Abort Game from the actual admin console UI against a real local Supabase instance succeeds and correctly resets team state (cash/CV/businesses back to baseline, room back to LOBBY). Every other admin_* RPC wrapper in rpc.ts is confirmed to match its SQL function's actual current parameter names. npm run typecheck && npm test && npm run build pass; supabase db reset && supabase test db passes.
 
 MUST NOT CHANGE
-Any visible behavior or visual output of the app. Any migration's actual applied schema (only a redundant unapplied patch file is removed). Any route, RPC signature, or game logic.
-
-VERIFICATION STEPS
-1. rm -rf node_modules && npm ci
-2. npm run typecheck && npm test && npm run build
-3. grep -rn "lucide-react\|tailwind-merge\|from 'clsx'\|PixelMascot" src package.json → no matches.
-4. ls supabase/patches → confirm removed (or directory gone).
-```
-
----
-
-### PHASE 2 PROMPT — Fix the abort-game state-reset bug
-
-```text
-OBJECTIVE
-Fix the confirmed bug where aborting an accidentally-started match does not reset team state, so restarting the real match no longer inherits stale cash/CV/business data from the aborted attempt. Also require an admin-entered note for the abort action (consistency with every other correction-style action), and verify GAME_ABORTED is handled correctly everywhere the activity log/history UI processes event types.
-
-CONTEXT
-STARTUPOLY's admin_abort_game RPC (supabase/migrations/0012_admin_abort_game.sql) reverts an ACTIVE room back to LOBBY and clears started_at/ends_at, but does not touch teams.cash, teams.cv, or team_businesses. admin_start_game (supabase/migrations/0008_functions_admin.sql) also never resets team rows when transitioning LOBBY→ACTIVE — it only validates status/claims and sets the timer. Teams start a match at cash=1000, cv=0, zero businesses (see the teams table defaults and business rules already enforced elsewhere in the schema). The admin console calls rpcAdminAbortGame with a hardcoded note string today (src/routes/admin/console/AdminConsoleView.tsx) instead of letting the admin type one, unlike every other correction/destructive action in the console (which use a note-required modal pattern — check FinalizePanel/BankruptDialog/RemoveBusinessDialog for the existing pattern to reuse). Activity event types are enumerated with a CHECK constraint (public.activity_events, see 0001_schema.sql) and consumed by src/domain/activityText.ts and the admin activity log UI (src/routes/admin/console/{ActivityLog,ActivityRow}.tsx) and the history views (src/routes/admin/{AdminHistoryPage,AdminRoomHistoryPage}.tsx) — GAME_ABORTED was added after the original event-type list and needs verifying end to end.
-
-EXACT REQUIREMENTS
-1. Decide and implement the correct reset behavior for admin_abort_game: since an abort is defined as reverting "an accidentally started match" (i.e. treating the ACTIVE period as if it never happened), reset every team in the room back to its LOBBY-entry baseline as part of the same transaction: cash = 1000, cv = 0, is_bankrupt = false, tiebreak_order = NULL, and delete all team_businesses rows for that room. Increment each team's version column (the existing optimistic-concurrency column used by other admin_* functions) so any in-flight client edit referencing the old version correctly gets VERSION_CONFLICT rather than silently succeeding against stale state. Do this athomically in the same function/transaction as the status change (lock the room row FOR UPDATE first, as the function already does; also lock/update the team rows in a deterministic order, e.g. ORDER BY id, consistent with how other multi-row admin functions in this codebase avoid deadlocks — check admin_adjust in 0008_functions_admin.sql for the established pattern and follow it).
-2. Write one BUSINESS_REMOVED-equivalent audit trail entry per removed business (reason 'CORRECTION', matching the pattern used elsewhere for corrections) OR, if that would be noisy for a full-team-wipe abort, a single grouped event is acceptable — check how other bulk actions in this codebase (e.g. bankruptcy) group their audit events and follow the same convention rather than inventing a new one. In addition to (or instead of, if it fully covers it) the existing single GAME_ABORTED event, ensure the log clearly reflects that team state was reset, not just that the room status changed.
-3. Require a real note: change the admin_abort_game SQL function's note parameter to have no meaningful default (or keep a DEFAULT NULL and reject NULL/empty with an existing NOTE_REQUIRED-style error code, consistent with how other correction actions in this codebase enforce mandatory notes — check the established pattern, e.g. in edit functions that require a note after time-expiry corrections, and reuse the same error code/convention). Update the frontend: replace the hardcoded note string in AdminConsoleView.tsx's abort handler with a real text input in the existing abort confirmation modal (reuse the app's existing note-input UI pattern from another correction dialog rather than building a new one), disable the confirm button until a non-empty note is entered, and surface the NOTE_REQUIRED-equivalent error clearly if the backend rejects an empty one.
-4. Verify GAME_ABORTED end to end: confirm src/domain/activityText.ts produces a sensible human-readable sentence for a GAME_ABORTED event (and for whatever new reset-related event type/shape you added in step 2, if you introduced one); confirm the admin activity log (ActivityLog/ActivityRow) renders it correctly with any relevant filter chips; confirm the admin history views don't choke on a room that was aborted-then-restarted (i.e. a room can go LOBBY→ACTIVE→LOBBY→ACTIVE→...→FINALIZED — check that nothing downstream assumes started_at is only ever set once, and that room_standings/finalize logic isn't affected by the intermediate abort). Fix anything broken found during this verification; if everything already handles it correctly, state that explicitly in your phase report rather than making speculative changes.
-5. Add a pgTAP test (supabase/tests/) that: starts a room, joins the required teams, records a cash change, a CV change, and a business purchase for at least one team, calls admin_abort_game with a note, and asserts every team in the room is back to cash=1000/cv=0/zero businesses/not bankrupt, room status is LOBBY, started_at/ends_at are NULL, and calling admin_abort_game with an empty/NULL note is rejected. Also test that calling admin_start_game again afterward correctly starts a fresh match with the reset values still in place (i.e. starting doesn't need to do the resetting — aborting already did it).
-
-FILES TO INSPECT
-supabase/migrations/{0001_schema,0008_functions_admin,0012_admin_abort_game}.sql, supabase/all_migrations.sql, supabase/tests/*.sql, src/routes/admin/console/AdminConsoleView.tsx, src/routes/admin/console/{FinalizePanel,BankruptDialog,RemoveBusinessDialog}.tsx (for the existing note-input pattern), src/domain/activityText.ts, src/routes/admin/console/{ActivityLog,ActivityRow}.tsx, src/routes/admin/{AdminHistoryPage,AdminRoomHistoryPage}.tsx, src/data/rpc.ts.
-
-FILES LIKELY TO MODIFY/CREATE
-A new migration supabase/migrations/0013_fix_admin_abort_reset.sql (do NOT edit 0012 in place — this project's convention is additive numbered migrations; add a new one that CREATE OR REPLACE FUNCTIONs admin_abort_game with the corrected body), supabase/all_migrations.sql (append the same content, keeping it in sync per the convention you documented in Phase 1's README note), supabase/tests/ (new test file or addition to an existing one), src/routes/admin/console/AdminConsoleView.tsx (real note input, wired to the RPC), src/data/rpc.ts (update rpcAdminAbortGame's signature if the note parameter handling changes), src/domain/activityText.ts (only if step 4 finds a gap), tests.
-
-DATA MODEL CHANGES
-admin_abort_game's body changes (via a new migration) to reset team_businesses/teams as described; no table schema changes are anticipated (version/cash/cv/is_bankrupt/tiebreak_order columns already exist) — if you find the version column doesn't exist or doesn't behave as described, verify against the actual schema before assuming and adjust the plan accordingly, reporting the discrepancy.
-
-UI REQUIREMENTS
-The abort confirmation modal gets a required note textarea/input (reuse the existing pixel-styled input component used elsewhere, e.g. TextField), consistent with the visual language of other admin confirmation dialogs. No other UI changes.
-
-STATE-MANAGEMENT REQUIREMENTS
-No new client state beyond the note-input's local value and its validity for enabling/disabling the confirm button.
-
-SECURITY REQUIREMENTS
-admin_abort_game remains admin-only (is_admin() check unchanged); the note requirement is enforced server-side, not just client-side (a client bypass must still be rejected by the RPC).
-
-ERROR HANDLING
-NOTE_REQUIRED (or the equivalent existing error code) surfaces a clear message in the abort modal if somehow submitted empty; existing VERSION_CONFLICT semantics are preserved for any other in-flight team edit racing the abort.
-
-TESTS
-pgTAP as described in step 5. Vitest/Testing Library: abort modal's confirm button is disabled with an empty note and enabled once text is entered; submitting calls the RPC with the typed note (not the old hardcoded string); a NOTE_REQUIRED-style error from the RPC is displayed to the admin.
-
-ACCEPTANCE CRITERIA
-Aborting a match fully resets every team in that room to its starting baseline (cash/cv/businesses/bankrupt/tiebreak) in the same transaction as the status change; a note is required both client- and server-side; GAME_ABORTED (and any new event) render correctly in the activity log and don't break history views; a room that goes through LOBBY→ACTIVE→LOBBY→ACTIVE→FINALIZED works correctly end to end. npm run typecheck && npm test && npm run build pass; supabase db reset && supabase test db passes.
-
-MUST NOT CHANGE
-Any other admin_* function's behavior, RLS policies, the general shape of the activity log UI beyond what step 4 requires fixing, unrelated routes/UI.
+The NOTE_REQUIRED validation, is_admin() checks, the team-reset logic itself, any unrelated RPC.
 
 VERIFICATION STEPS
 1. supabase db reset && supabase test db
 2. npm run typecheck && npm test && npm run build
-3. Manual: create a room, join teams, start it, record a cash change + a business purchase for one team, abort with a note, confirm in Studio/psql that every team is back to 1000/0/no businesses, restart the room, confirm the fresh match starts clean.
-4. Manual: try to abort with an empty note — confirm it's blocked both in the UI and if you bypass the UI and call the RPC directly with an empty note.
+3. Manual, end-to-end: run the app against a local Supabase instance, start a match, click Abort Game with a note, and confirm — in the actual browser, not just SQL — that it succeeds and the room returns to LOBBY with team state reset.
+4. Re-grep every admin_* wrapper in rpc.ts against its migration-defined signature to confirm no other drift exists.
 ```
 
 ---
 
-### PHASE 3 PROMPT — Animation / reduced-motion consistency pass
+### PHASE 2 PROMPT — Consolidate the color token system
 
 ```text
 OBJECTIVE
-Bring every decorative animation in the app under the same reduced-motion guarantee and the same "no constant bouncing" convention already established for the app's custom .anim-* classes — starting with the confirmed gap (PixelLogo's use of Tailwind's animate-bounce) and then auditing for any other Tailwind animate-* utility usage that isn't covered the same way.
+Replace the current sprawling, ~60-token color system in index.css with one small, deliberate, well-named set of tokens built from STARTUPOLY's actual 7-color brand palette plus only the semantic/utility extensions the app genuinely needs — producing the single source of truth that later phases will migrate every component onto. This phase changes the token definitions only; it does not yet touch component usage (that's Phases 3–5).
 
 CONTEXT
-STARTUPOLY's decorative motion is built as custom .anim-* CSS classes in src/index.css, all covered by a shared prefers-reduced-motion: reduce block that disables them and shows final states instantly. PixelLogo.tsx uses Tailwind's built-in animate-bounce utility on its two PixelStar sprites instead of a custom class — this loops constantly and is not part of the existing reduced-motion inventory (verify precisely: check whether the current global reduced-motion rule's selector list happens to already include .animate-bounce or any Tailwind-generated animation utility; if it does, this may be a smaller fix than expected — verify first, don't assume).
+STARTUPOLY's official brand palette (used on the landing page, and the standard everyone should converge on) is exactly 7 colors: Sky Blue #5C94FC, Arcade Green #22B14C, Coin Gold #FFCC00, Brick Brown #B84418, Card White #FFFFFF, Dark Navy #102040, Expense Red #D32F2F. index.css's current @theme block additionally defines 60+ tokens across ad hoc "zones" — sky-deep/mid/base/light/horizon, navy-deep/base/mid/surface, gold-base/hover/active/coin/sparkle/dark, pipe-green/body/dark/highlight/light, brick-base/dark/light, block-orange/gold/dark, parchment-base/light/card/border/text/muted, metal-surface/light/plate/border/mid/dark/deep, wood-dark/base/border/light/bright, castle-stone/shadow, flag-red/dark, mountain-front/mid/dark/deep, team-1..6 — many of which duplicate each other or the 7 base colors under different names (e.g. castle-stone and metal-deep are both #334155; green-retro duplicates nes-green; flag-red duplicates nes-red). A separate repo-wide grep found 116 files using raw hex literals instead of any of these tokens, across categories including: neutral grays (used for disabled states, borders, muted text — Tailwind-slate-style values like #64748B, #CBD5E1, #334155, #475569, #94A3B8, #1E293B, #F1F5F9), status/semantic colors (success greens like #4ADE80/#22C55E/#15803D, warning ambers like #FFFBEB/#92400E/#B45309/#D97706/#FEF3C7, danger/error reds like #FEECEB/#B91C1C/#991B1B/#F87171/#FEF2F2/#EF4444, info blues like #0B4FD7/#1E3A8A/#1E40AF/#0284C7/#3B82F6), and a handful of character/skin-tone colors used by pixel sprites (e.g. #FFD1A4, #FFC49A, #8B2500, #451A03 — these are legitimate sprite-art colors, not brand colors, and should remain as sprite-local constants rather than becoming global design tokens; do not try to force skin tones into the brand palette). Note: the character/mascot art (currently a Mario-style pixel character) and its signature colors, including the --color-team-1 team-color swatch, are being kept as-is intentionally — this phase is about the app's UI-chrome color system (backgrounds, borders, text, buttons, status indicators), not about the character art itself.
 
 EXACT REQUIREMENTS
-1. Grep the entire src/ tree for every Tailwind animate-* utility class (animate-bounce, animate-spin, animate-pulse, animate-ping, or any custom Tailwind 4 @theme animation utility) used anywhere, not just PixelLogo — list every occurrence with its file and component.
-2. For each occurrence found: decide whether the motion is (a) intentional and appropriate to keep as a rare/low-key accent (per the app's established "ambient motion should be slow, sparse, and reduced-motion-safe" convention seen elsewhere in the codebase — e.g. LiveIndicator's pulse, coin idle-spin) — if so, replace the Tailwind utility with a custom .anim-* class matching the existing naming/behavior convention (so it's covered by the shared reduced-motion block and any tab-visibility pausing mechanism already in place, e.g. data-paused handling if that pattern exists — check src/lib/usePageVisibility.ts and where its data-paused attribute is consumed), or (b) too constant/attention-grabbing for a decorative pixel-icon accent — if so, tone it down (e.g. a slow, rare shimmer rather than a continuous bounce) using the same custom-class approach.
-3. Specifically for PixelLogo's two stars: replace animate-bounce with a custom class consistent with the rest of the app's sparse "twinkle"/"idle" style accents (do not remove the motion entirely unless the codebase's existing convention for similarly-decorative elements is fully static — check comparable elements like PixelSparkle for the established pattern to match, rather than inventing a new one).
-4. Ensure the shared prefers-reduced-motion block's selector list is updated to include every newly-added/renamed class from this phase, and that nothing from this phase relies on JavaScript to disable itself under reduced motion (CSS-only, matching the existing pattern).
-5. If the app has a tab-visibility pausing mechanism (data-paused or similar, from usePageVisibility), extend its selector coverage to include the same newly-touched classes if it's meant to be comprehensive for all ambient motion — verify what the existing coverage actually includes before assuming a gap, and only add what's genuinely missing.
-6. Do a final full-repo grep confirming no animate-bounce/animate-spin/animate-pulse/animate-ping (or any other un-vetted Tailwind animation utility) remains anywhere in src/ outside of a short allowlist you explicitly justify in your phase report (e.g. a loading spinner using animate-spin might be a legitimate, deliberate exception if the app has one and it's appropriately scoped/covered — check PixelLoader for whether it already has its own justified motion pattern before flagging it as a violation).
+1. Independently re-run the hex-usage grep across src/ to get the current authoritative list of every distinct color in active use and roughly how many files/call-sites use each (this phase's decisions must be grounded in actual usage, not guesswork) — group them into: (a) the 7 official brand colors — keep exactly as-is; (b) neutral/gray scale used for text/borders/backgrounds/disabled states — design ONE small neutral scale (e.g. 5–7 steps from near-white to near-black, tinted toward the brand Navy rather than a generic slate, since the app's shadows/borders are already Navy-based) that can replace every ad hoc gray currently in use; (c) semantic status colors — design ONE success/warning/danger/info set, each tied conceptually to (and where reasonable, derived as a tint/shade of) the closest brand color (success → Arcade Green tints, danger → Expense Red tints, warning → Coin Gold tints, info → Sky Blue tints) rather than importing generic Tailwind ambers/blues that have nothing to do with the brand; (d) sprite-local skin-tone/character colors — leave these as local constants inside their own sprite components, not global tokens, since they're implementation details of specific pixel art, not reusable design decisions.
+2. Rewrite index.css's @theme block: remove every "zone" token that is a pure duplicate of the 7 brand colors or of another zone token (document the exact list of removed tokens and what they map to going forward, in a comment block or docs/COLOR_SYSTEM.md — pick whichever this repo's convention favors, a codebase README/docs pattern already exists per prior phases, use it). Keep or introduce: the 7 brand tokens (name them clearly, e.g. --color-brand-sky, --color-brand-green, --color-brand-gold, --color-brand-brick, --color-brand-white, --color-brand-navy, --color-brand-red — or keep the existing --color-nes-* names if that's already the established convention other code might reference; check before renaming anything that's already in use, to minimize churn in this phase), the new neutral scale from step 1(b), the new semantic status set from step 1(c), and a small number of genuinely-necessary functional variants that aren't dead duplicates (e.g. a hover/active state of gold for buttons is a legitimate, non-duplicate need — keep functional variants like --color-gold-hover/--color-gold-active if they're actually consumed for interaction states, but rename/fold them under the new consolidated naming scheme rather than leaving them in their own disconnected "gold zone"). Leave the team-color swatch tokens (--color-team-1..6) untouched — they're out of scope for this phase.
+3. Do NOT delete a token in this phase if doing so would break currently-compiling code without a replacement ready — since Phases 3–5 do the actual component migration, this phase's job is to define the final, correct, minimal token set and leave EXPLICIT NOTES (in docs/COLOR_SYSTEM.md) mapping every old token name to its new equivalent, so the later phases have a precise find-and-replace guide. It's acceptable for this phase to temporarily keep old token names as deprecated aliases (clearly commented as "// DEPRECATED — migrate to --color-X, removed in a later phase") pointing to the new values, so that nothing currently referencing them breaks before Phase 3-5 land — remove the deprecated aliases only once Phase 5 confirms nothing references them anymore.
+4. Produce docs/COLOR_SYSTEM.md documenting: the final token list with hex values and intended usage for each; the full old-token-name → new-token-name mapping table; the neutral scale and semantic status set's derivation reasoning; an explicit note that sprite/character skin tones (including the mascot's own colors) are intentionally NOT part of the global token system and should stay local to their sprite components.
+5. Do not touch any component file in this phase — verify the build still passes purely because the deprecated aliases keep old references working, not because you edited call sites.
 
 FILES TO INSPECT
-Full src/ tree (grep for animate- utilities), src/index.css (existing reduced-motion block, existing .anim-* naming conventions, PixelSparkle/LiveIndicator/PixelCoin for the established "sparse accent" style), src/ui/pixel/{PixelLogo,PixelStar,PixelSparkle}.tsx, src/lib/usePageVisibility.ts and its consumers, src/ui/PixelLoader.tsx.
+src/index.css (full @theme block), a fresh repo-wide hex-usage grep across src/, any existing docs/*.md for this repo's documentation conventions/location.
 
 FILES LIKELY TO MODIFY/CREATE
-src/ui/pixel/PixelLogo.tsx (and any other component found using a Tailwind animate- utility), src/index.css (new/renamed custom classes + reduced-motion/pause coverage), tests.
+src/index.css (@theme block rewritten with the consolidated token set + deprecated aliases), docs/COLOR_SYSTEM.md (new).
 
 DATA MODEL CHANGES
 None.
 
 UI REQUIREMENTS
-Motion stays subtle and consistent with the app's existing sparse-accent style; nothing should look busier after this phase — if anything, PixelLogo's stars should read calmer than the constant Tailwind bounce did before.
+Zero visible change in this phase — every color must resolve to the exact same rendered hex value as before, since only token definitions change and deprecated aliases preserve old values until migrated.
 
 STATE-MANAGEMENT REQUIREMENTS
-None — CSS-only, matching the existing approach.
+None.
 
 SECURITY REQUIREMENTS
 None.
@@ -215,173 +129,227 @@ ERROR HANDLING
 N/A.
 
 TESTS
-Vitest: a grep-based test asserting no animate-bounce/animate-spin/animate-pulse/animate-ping (or the specific list you audit) appears anywhere in src/ outside your explicitly justified allowlist; a test confirming the reduced-motion CSS block's selector text includes every class this phase introduced or renamed (parse the stylesheet source or assert against a known list); a render test for PixelLogo confirming its stars use the new custom class, not the Tailwind utility.
+A test asserting the app still builds and renders identically (screenshot/DOM comparison if available, otherwise a careful manual check) since this phase is additive/aliasing only. A test verifying docs/COLOR_SYSTEM.md's mapping table covers every token that existed before this phase (nothing silently dropped without a documented replacement).
 
 ACCEPTANCE CRITERIA
-Every decorative animation in the app is a custom class covered by the shared reduced-motion rule; no unvetted Tailwind animate-* utility remains; PixelLogo's stars read as a subtle, sparse accent consistent with the rest of the app rather than a constant bounce; toggling OS reduced-motion now correctly stills the logo stars too. npm run typecheck && npm test && npm run build pass.
+index.css contains one clean, minimal, well-documented token set (7 brand colors + one neutral scale + one semantic status set + genuinely-necessary functional variants) plus temporary deprecated aliases for anything not yet migrated; docs/COLOR_SYSTEM.md fully documents the new system and the old→new mapping; the app is pixel-identical to before this phase; npm run typecheck && npm test && npm run build pass.
 
 MUST NOT CHANGE
-Any non-animation visual property, layout, routes, backend/game logic. Any animation this phase's audit confirms is already correctly handled (don't touch what isn't broken).
+Any component file. Any rendered pixel. The character/mascot art or its colors. Phase 1's RPC fix.
 
 VERIFICATION STEPS
 1. npm run typecheck && npm test && npm run build
-2. grep -rnE "animate-(bounce|spin|pulse|ping)" src — review every remaining hit against your documented allowlist.
-3. Toggle OS reduced-motion, reload the landing page and the login/join pages — confirm the logo stars (and anything else touched) go still along with everything else.
+2. Screenshot / and a couple of admin/team screens before and after — must be pixel-identical (deprecated aliases preserve the old values).
+3. Review docs/COLOR_SYSTEM.md for completeness before Phase 3 begins.
 ```
 
 ---
 
-### PHASE 4 PROMPT — Security & config hardening
+### PHASE 3 PROMPT — Migrate the shared UI library onto the tokens
 
 ```text
 OBJECTIVE
-Remove local-development scaffolding from the production Content-Security-Policy, and do a deliberate, careful audit of package.json's dependency version pins (following up on Phase 1's docs/DEPENDENCY_NOTES.md) to catch any other implausible/incorrect version range before it causes a broken install.
+Migrate every component under src/ui/** (the shared design-system layer used by admin, team, and public pages alike) off raw hex literals and onto the consolidated token set from docs/COLOR_SYSTEM.md. This is the highest-leverage phase — fixing colors here propagates everywhere these components are reused.
 
 CONTEXT
-STARTUPOLY's vercel.json defines the CSP header actually served to real users in production. Its connect-src currently includes http://127.0.0.1:*, ws://127.0.0.1:*, http://localhost:*, ws://localhost:* alongside the legitimate https://*.supabase.co / wss://*.supabase.co entries — the loopback entries are local-dev-only and should never reach production users' browsers. Phase 1 removed lucide-react/tailwind-merge/clsx (which had an implausible lucide-react version) and logged any other suspicious version pins it noticed into docs/DEPENDENCY_NOTES.md without changing them.
+Phase 2 produced docs/COLOR_SYSTEM.md: the final consolidated token set plus an old-token-name → new-token-name mapping, with deprecated aliases in index.css still keeping old values working during migration. A repo-wide hex grep previously found raw color literals in shared components including (at least) src/ui/{PixelButton,StatusPill,ConnectionPill,Countdown,Skeleton,ArcadeLink,Modal,ErrorBoundary,PixelLoader}.tsx and src/ui/Leaderboard/{Podium,LeaderboardTable}.tsx — re-verify the exact current list with a fresh grep rather than trusting this description, since Phase 2 may have already changed what's canonical.
 
 EXACT REQUIREMENTS
-1. Split the CSP so loopback/localhost entries in connect-src are never present in what's actually deployed to production. Since vercel.json's headers apply to the deployed site, remove the http://127.0.0.1:*, ws://127.0.0.1:*, http://localhost:*, ws://localhost:* entries from its connect-src, keeping only https://*.supabase.co and wss://*.supabase.co (plus 'self'). Verify separately (do not assume) whether local development actually needs any CSP relaxation to function — Vite's dev server typically isn't subject to vercel.json's headers at all (those are Vercel-platform-level headers, not something the Vite dev server enforces), so confirm whether removing these entries has any effect on `npm run dev` before finalizing; if local dev does break because of some other mechanism applying these headers, add a clearly-commented, environment-gated alternative (e.g. a separate local-only header config, or a documented note in README about why local dev is unaffected) rather than leaving the production policy permanently widened.
-2. Read docs/DEPENDENCY_NOTES.md from Phase 1 and, for every dependency it flagged as suspicious, independently verify against what you actually know about that package's real release history/line whether the pinned version range is plausible. For any confirmed-implausible pin: correct it to a real, appropriate version for this project's React 19 / Vite / TypeScript stack, run npm install, and run the full build+test suite to confirm nothing breaks from the version correction. If you cannot be confident whether a version is real (e.g. a very recent release you're unsure about), say so explicitly in your phase report rather than guessing — do not silently change a version you're not sure is wrong.
-3. While in package.json, do a final pass confirming every remaining dependency is still actually used (a quick repeat of Phase 1's zero-usage grep check, now that Phase 1's own changes have landed) — remove anything else found unused, following the same verify-before-delete discipline as Phase 1.
-4. Skim the rest of vercel.json's headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, Strict-Transport-Security) for correctness and completeness given this is a Supabase-backed SPA — note but do not over-engineer; only change something if it's clearly wrong or missing something standard for this kind of deployment (e.g. confirm frame-ancestors 'none' and X-Frame-Options: DENY aren't contradicting anything the app actually needs, like an embedded iframe use-case — check whether the app embeds anything or is ever meant to be embedded before assuming DENY is correct, though it almost certainly is for this kind of admin/team tool).
+1. Re-run a hex-literal grep scoped to src/ui/** to get the authoritative current list of every file/line using a raw hex color (via inline style={{...}} or Tailwind arbitrary-value classes like bg-[#XXXXXX]/text-[#XXXXXX]/border-[#XXXXXX]/shadow-[...#XXXXXX]).
+2. For each hit, replace it with the corresponding token from docs/COLOR_SYSTEM.md's mapping table — using Tailwind's theme-token class syntax (e.g. bg-nes-navy or whatever the actual configured token/utility naming convention is once Phase 2 lands — check how Tailwind 4's @theme tokens are consumed elsewhere in already-token-based code in this repo, e.g. any component that already correctly uses --color-nes-* tokens via Tailwind classes, and follow that exact same pattern) rather than inline CSS custom-property references, unless a case genuinely needs an inline style (e.g. a dynamically-computed color) — in which case use var(--color-token-name) in the inline style rather than a fresh hex literal.
+3. Where a raw hex value doesn't cleanly map to any token in docs/COLOR_SYSTEM.md (i.e. it's a genuinely new color nobody decided on), do NOT invent a new ad hoc token silently — instead pick the closest existing token that achieves the same visual intent (a warning color close to warning-amber, a border close to the neutral scale, etc.) and note in your phase report every case where you had to make this judgment call, so it can be reviewed. The goal is zero remaining raw hex in src/ui/**, not perfect pixel preservation of every arbitrary shade that was never a deliberate design decision in the first place.
+4. Confirm visually that the shared components still look correct and cohesive after the swap — small hue/shade shifts are expected and fine (that's the point of consolidating near-duplicate colors), but nothing should look broken (e.g. text becoming unreadable against its background — recheck contrast for any component where the token swap changed a text/background pairing).
+5. Do not touch src/routes/** in this phase (Phases 4–5 own that) — scope strictly to src/ui/**.
 
 FILES TO INSPECT
-vercel.json, docs/DEPENDENCY_NOTES.md (from Phase 1), package.json, README.md (for any documented local-dev CSP assumptions).
+docs/COLOR_SYSTEM.md, every file under src/ui/** (fresh grep for raw hex), src/index.css (to confirm the exact Tailwind-consumable token names/classes to use).
 
 FILES LIKELY TO MODIFY/CREATE
-vercel.json, package.json, package-lock.json, docs/DEPENDENCY_NOTES.md (update with resolution notes — what was fixed, what was left as uncertain and why).
+Every src/ui/** file found to contain a raw hex literal; no new files expected beyond a phase report/notes appended to docs/COLOR_SYSTEM.md if judgment calls were made per step 3.
 
 DATA MODEL CHANGES
 None.
 
 UI REQUIREMENTS
-None.
+Visually cohesive result using only the consolidated token set; no readability/contrast regressions; expected minor hue/shade convergence where near-duplicate colors were merged in Phase 2.
 
 STATE-MANAGEMENT REQUIREMENTS
 None.
 
 SECURITY REQUIREMENTS
-Production CSP no longer references loopback/localhost addresses. No functional regression to the app's actual Supabase connectivity (https/wss to *.supabase.co must remain intact and working).
+None.
 
 ERROR HANDLING
 N/A.
 
 TESTS
-No new automated tests are expected for a header config file, but manually verify the deployed/previewed app can still successfully connect to Supabase (a build+preview smoke test hitting a real or local Supabase instance) after the CSP change. Re-run the full existing suite after any dependency version corrections.
+A grep-based regression test scoped to src/ui/** asserting zero raw hex literals remain outside src/index.css (add this as a permanent test, not a one-off check — it should fail CI if a future PR reintroduces a hardcoded color in the shared UI library). Re-run existing component tests and fix any snapshot/assertion that hardcoded an old color value.
 
 ACCEPTANCE CRITERIA
-vercel.json's connect-src contains no loopback/localhost entries; the app still functions correctly against Supabase in a preview/build; any corrected dependency version installs cleanly and the app still builds/tests/passes; docs/DEPENDENCY_NOTES.md reflects the final, honest state of every flagged item (fixed, or explicitly left as "uncertain, needs manual verification against the npm registry"). npm run typecheck && npm test && npm run build pass.
+Zero raw hex literals remain in src/ui/**; every color there resolves through the consolidated token set; no visual/contrast regressions; the new grep-guardrail test is in place and passing. npm run typecheck && npm test && npm run build pass.
 
 MUST NOT CHANGE
-Legitimate Supabase connect-src entries; any other unrelated app behavior; any migration/game logic.
+src/routes/** (later phases), the token definitions themselves (Phase 2's output, other than noting judgment calls), Phase 1's fix.
 
 VERIFICATION STEPS
 1. npm run typecheck && npm test && npm run build
-2. npm run preview and confirm the app still successfully talks to Supabase (network tab shows successful requests to *.supabase.co, nothing blocked by CSP in the browser console).
-3. Review the final vercel.json header block for correctness.
-4. rm -rf node_modules && npm ci to confirm any corrected dependency versions install cleanly from a clean state.
+2. grep -rE "#[0-9A-Fa-f]{6}" src/ui — zero matches outside comments.
+3. Visual check of every shared component's rendered states (buttons idle/hover/press/disabled, status pills in each status, modal, skeleton loading state, leaderboard podium/table) at 360px and 1440px.
 ```
 
 ---
 
-### PHASE 5 PROMPT — Cross-page visual-language decision + consistency fixes
+### PHASE 4 PROMPT — Migrate Admin routes onto the tokens
 
 ```text
 OBJECTIVE
-Make a deliberate, documented decision about the two coexisting visual-art systems (the landing page's sky/world scenery vs. the admin-login/team-join "wooden sign + castle/plains + roaming character" system), and apply only the consistency fixes that decision calls for — without triggering a full redesign of either system.
+Migrate every component under src/routes/admin/** off raw hex literals and onto the consolidated token set from docs/COLOR_SYSTEM.md, following the same discipline as Phase 3's shared-library migration.
 
 CONTEXT
-STARTUPOLY's landing page uses one scenery system (SkyLayer, PixelWorld, DistantHillsAndCastle, FloatingPlatforms). AdminLoginPage and TeamJoinPage use a completely different one (WoodenSignboard, WoodenActionButton, CastleBackground/PlainsBackground, RoamingCharacter) that shares no components with the landing page. This may be entirely intentional — a login/join screen framed as "entering a specific room in the world" (a castle gate for admin, open plains for teams) is a reasonable game-world metaphor distinct from the open-world landing page — or it may simply be organic drift from being built in separate passes. This phase does NOT assume which; it investigates, decides, documents, and then applies only the smallest fixes the decision actually requires. Do not redesign either system wholesale in this phase.
+Phase 3 migrated src/ui/** onto the consolidated tokens from docs/COLOR_SYSTEM.md and added a permanent grep-guardrail test scoped to that directory. The same raw-hex problem exists throughout src/routes/admin/** — re-verify the current exact list with a fresh grep (Phase 3's changes may have already reduced how many admin files are affected, if they only used shared components correctly; re-check rather than assuming the original 116-file count still applies here).
 
 EXACT REQUIREMENTS
-1. Compare the two systems specifically on: color palette usage (do both stay within the official 7-color palette + any previously-approved small extension tokens, or has one drifted into ad hoc hex values?), button/press physics (do WoodenActionButton and the landing page's ArcadeLink feel like the same "arcade button" language, or noticeably different?), border/shadow style (pixel-chunky vs. something else), and animation conventions (does WoodenSignboard/RoamingCharacter/CastleBackground/PlainsBackground follow the same reduced-motion and "sparse ambient motion" conventions established elsewhere and reinforced in Phase 3, or do they have their own separate, possibly-uncovered animations?).
-2. Write a short docs/VISUAL_LANGUAGE_DECISION.md stating: (a) whether the two systems' divergence is being kept as an intentional "different room in the world" metaphor, or should be unified, with your reasoning; (b) a list of any objectively-wrong inconsistencies regardless of that decision (e.g. an off-palette hex value, a button that doesn't share the same press-physics timing/feel, an animation not covered by the reduced-motion block) that should be fixed either way.
-3. If keeping them intentionally distinct: fix only the objective inconsistencies from step 2(b) — e.g. bring any off-palette color back onto the token system, ensure WoodenActionButton's press feedback uses the same underlying timing/easing convention as ArcadeLink even if styled differently, ensure every animation in CastleBackground/PlainsBackground/RoamingCharacter/WoodenSignboard is covered by the shared reduced-motion rule (extending its selector list as needed, same pattern as Phase 3). Do not merge the component systems.
-4. If unifying: propose (in the doc) which system becomes the base for both contexts and roughly what would need to change — but only actually implement this in the current phase if the required change is small and low-risk (e.g. swapping one button component while keeping the surrounding scenery); if it's a substantial rebuild of either login/join page or the landing page, explicitly scope that as a follow-up phase/prompt in the doc rather than attempting it here, and instead apply only step 2(b)'s objective fixes in this phase.
-5. Fix the test-file casing inconsistency found in the audit (woodenSignboard.test.tsx vs WoodenSignboard.tsx component naming, and the single catch-all pixelSprites.test.tsx) by renaming to match the project's dominant convention (PascalCase matching the component, one test file per component where that's the norm) — verify what the dominant convention actually is across the existing test suite before renaming, and do it consistently.
-6. Fix the hardcoded-note admin_abort_game UI issue only if Phase 2 hasn't already addressed it (it should have — verify and skip if already done).
+1. Fresh grep for raw hex literals scoped to src/routes/admin/**.
+2. Replace each with the corresponding docs/COLOR_SYSTEM.md token, using the same Tailwind theme-token class pattern established in Phase 3 (consistency across phases matters — do not introduce a second convention).
+3. Same judgment-call discipline as Phase 3 step 3 for anything that doesn't cleanly map — document every judgment call.
+4. Pay particular attention to admin-specific status/semantic uses found in the original audit (e.g. StandingsTable's tie-break badge, FinalizePanel's warning badge, TeamCard's claimed/unclaimed indicator dot, RequireAdmin's session-status dot, ConsoleTopBar) — these are exactly the kind of ad hoc amber/warning colors the new semantic token set (from Phase 2) was designed to replace; use the warning/success/danger/info tokens deliberately here rather than defaulting to the neutral scale.
+5. Visually confirm the admin console (the highest-stakes, most information-dense screen in the app) remains fully readable and clearly organized after the swap — this is used live during a real event, so a contrast or clarity regression here is more costly than elsewhere; specifically recheck any badge/pill/status-indicator color for continued clear distinguishability between states (claimed vs unclaimed, tie vs resolved, correction vs normal, etc.).
 
 FILES TO INSPECT
-src/routes/public/{LandingPage,SkyLayer,PixelWorld,DistantHillsAndCastle,FloatingPlatforms}.tsx, src/routes/admin/AdminLoginPage.tsx, src/routes/team/TeamJoinPage.tsx, src/ui/pixel/{WoodenSignboard,WoodenActionButton,CastleBackground,PlainsBackground,RoamingCharacter}.tsx, src/ui/ArcadeLink.tsx, src/index.css (palette tokens, reduced-motion block), the full test file listing under src/ for naming-convention comparison.
+docs/COLOR_SYSTEM.md, every file under src/routes/admin/** (fresh grep for raw hex).
 
 FILES LIKELY TO MODIFY/CREATE
-docs/VISUAL_LANGUAGE_DECISION.md (new), targeted fixes in whichever files step 3/4 identify (likely small edits to WoodenActionButton/CastleBackground/PlainsBackground/RoamingCharacter/WoodenSignboard for palette/animation/reduced-motion coverage), renamed test files per step 5, tests.
+Every src/routes/admin/** file found to contain a raw hex literal.
 
 DATA MODEL CHANGES
 None.
 
 UI REQUIREMENTS
-No visible redesign unless step 4's small-and-low-risk bar is met and explicitly chosen; otherwise, fixes are corrective only (palette/animation/consistency), not aesthetic changes.
+Full readability and clear state-distinguishability preserved on the admin console specifically; consistent token usage with Phase 3's established pattern.
+
+STATE-MANAGEMENT REQUIREMENTS
+None.
+
+SECURITY REQUIREMENTS
+None.
+
+ERROR HANDLING
+N/A.
+
+TESTS
+Extend the grep-guardrail pattern from Phase 3 to cover src/routes/admin/** as well (either broaden the existing test's scope or add a matching one for this directory). Re-run existing admin component/route tests and fix any hardcoded-color assertions.
+
+ACCEPTANCE CRITERIA
+Zero raw hex literals remain in src/routes/admin/**; admin console remains fully readable with clear state-distinguishability; guardrail test covers this directory. npm run typecheck && npm test && npm run build pass.
+
+MUST NOT CHANGE
+src/ui/** (already done), src/routes/team/** and src/routes/public/** (next phase), any admin logic/behavior — visuals only.
+
+VERIFICATION STEPS
+1. npm run typecheck && npm test && npm run build
+2. grep -rE "#[0-9A-Fa-f]{6}" src/routes/admin — zero matches outside comments.
+3. Full visual walkthrough of the admin console (lobby, team grid, team editor, quick actions, activity log, finalize panel, standings, history) at 1280–1920px.
+```
+
+---
+
+### PHASE 5 PROMPT — Migrate Team + Public routes onto the tokens; sprite skin-tone reconciliation
+
+```text
+OBJECTIVE
+Migrate every component under src/routes/team/** and src/routes/public/** off raw hex literals and onto the consolidated token set, and reconcile sprite/character skin-tone colors as the intentional, documented exception to the global token system per docs/COLOR_SYSTEM.md.
+
+CONTEXT
+Phases 3–4 migrated src/ui/** and src/routes/admin/** onto the consolidated color tokens with permanent grep-guardrail tests. The same work remains for src/routes/team/** (team join/dashboard/lobby-wait/game-over/final-board) and src/routes/public/** (the landing page and its scenery/character system, which per docs/COLOR_SYSTEM.md's Phase 2 decision intentionally keeps sprite/character skin-tone colors as local constants rather than global tokens — this explicitly includes the mascot character's own art colors, which are being kept as-is by product decision, not touched by this migration). Since the landing page is the source of the brand palette in the first place, it should already be closest to compliant — this phase's job there is mostly verification plus fixing any drift (e.g. any leftover wooden-sign/castle/plains styling from the admin-login/team-join pages that used off-palette browns/grays per the earlier visual-language audit) in the surrounding UI chrome, not the character art itself.
+
+EXACT REQUIREMENTS
+1. Fresh grep for raw hex literals scoped to src/routes/team/** and src/routes/public/**.
+2. For UI chrome (backgrounds, borders, text, buttons, cards, status indicators) in both directories: replace with the consolidated tokens exactly as in Phases 3–4.
+3. For sprite/character art specifically (the mascot character and any other creature sprite — skin tones, hair, clothing detail colors that are legitimately part of a specific piece of pixel art rather than app-wide UI chrome): per docs/COLOR_SYSTEM.md's explicit exception, these stay as local hex constants WITHIN their own sprite component file, but must be clearly marked as sprite-local art colors (e.g. a comment block or a locally-scoped constants object named something like SPRITE_COLORS at the top of the file) so they're unambiguously excluded from the "no raw hex" guardrail rather than looking like an oversight. Do NOT change the character's actual appearance/colors in this phase — this is a labeling/organization task for the guardrail test, not a redesign. Update the guardrail test approach from Phases 3–4 to allow this specific, clearly-marked exception (e.g. exclude files matching a naming pattern, or exclude hex literals inside a specifically-named constants block) rather than either wrongly flagging legitimate sprite art or accidentally creating a loophole that lets real UI-chrome hex literals sneak back in under the same exemption — be precise about the exemption's boundary.
+4. Specifically verify (per the earlier visual-language audit) whether WoodenSignboard/WoodenActionButton/CastleBackground/PlainsBackground (used on admin-login/team-join per the prior "keep as intentionally distinct room-metaphor" decision, if that's what was decided — check docs/VISUAL_LANGUAGE_DECISION.md from the prior round) use colors that are either (a) legitimate sprite/prop-local art colors (acceptable per step 3's exception) or (b) actual UI-chrome colors like text/border/background that should be tokenized like everything else — tokenize (b), leave (a) as documented local art constants.
+5. Confirm the landing page itself is now fully token-based for its UI chrome (backgrounds, cards, buttons, text) — it should require the least change, being the palette's origin — fix anything found. The character/mascot art and the team-color swatches are explicitly out of scope for any color change in this phase.
+
+FILES TO INSPECT
+docs/COLOR_SYSTEM.md, docs/VISUAL_LANGUAGE_DECISION.md (from the prior round, if present), every file under src/routes/team/** and src/routes/public/** (fresh grep for raw hex).
+
+FILES LIKELY TO MODIFY/CREATE
+Every affected file in src/routes/team/** and src/routes/public/**; the grep-guardrail test(s) from Phases 3–4, extended/adjusted to correctly scope the sprite-art exception.
+
+DATA MODEL CHANGES
+None.
+
+UI REQUIREMENTS
+Team dashboard remains huge/readable/mobile-first as previously established; landing page's visual identity is preserved (it's the source of the palette, so this should mostly be verification); sprite art keeps its actual appearance unchanged (skin tones, mascot colors etc. are an intentional exception, not a bug, and are not being redesigned in this phase).
+
+STATE-MANAGEMENT REQUIREMENTS
+None.
+
+SECURITY REQUIREMENTS
+None.
+
+ERROR HANDLING
+N/A.
+
+TESTS
+Extend/finalize the grep-guardrail test to cover the entire src/ tree (src/ui, src/routes/admin, src/routes/team, src/routes/public all included) in one comprehensive final check, with a precisely-scoped exception for documented sprite-local color constants. Re-run existing team/public route tests and fix any hardcoded-color assertions.
+
+ACCEPTANCE CRITERIA
+Zero raw hex literals remain in src/routes/team/** and src/routes/public/** outside clearly-documented sprite-local art constants; the comprehensive repo-wide guardrail test passes; landing page visual identity unchanged; team dashboard remains fully readable; mascot/character art is visually unchanged. npm run typecheck && npm test && npm run build pass.
+
+MUST NOT CHANGE
+src/ui/** and src/routes/admin/** (already done); the actual visual identity/content of the landing page and sprite/character art; any game/backend logic.
+
+VERIFICATION STEPS
+1. npm run typecheck && npm test && npm run build
+2. grep -rE "#[0-9A-Fa-f]{6}" src/routes/team src/routes/public — every remaining match must be inside a clearly-documented sprite-local constants block, verified by hand.
+3. Full visual walkthrough: landing page, team join, team dashboard (lobby-wait/active/game-over/final-board) at 360–430px and desktop — confirm the mascot character looks exactly the same as before.
+```
+
+---
+
+### PHASE 6 PROMPT — Full regression, permanent guardrails, final report
+
+```text
+OBJECTIVE
+Run a full regression pass across the whole app after Phases 1–5, remove the temporary deprecated color-token aliases from Phase 2 now that nothing references them, confirm every permanent guardrail test is in place and correctly scoped, and produce a final written report.
+
+CONTEXT
+Phase 1 fixed the broken admin_abort_game RPC call; Phase 2 consolidated the color token system with temporary deprecated aliases; Phases 3–5 migrated src/ui, src/routes/admin, src/routes/team, and src/routes/public onto the consolidated tokens with grep-guardrail tests along the way, while explicitly leaving the mascot character's art and team-color swatches untouched by product decision. This phase is verification, cleanup of the now-unneeded deprecated aliases, and a final report — no new features.
+
+EXACT REQUIREMENTS
+1. Grep the entire src/ tree for any remaining reference to a deprecated token alias name from Phase 2's docs/COLOR_SYSTEM.md mapping table; if truly zero references remain, delete the deprecated aliases from index.css's @theme block. If any reference remains, migrate it (same discipline as Phases 3–5) before removing the alias — do not delete an alias that's still in use.
+2. Run the complete test suite (unit + any Playwright/E2E present) and confirm 100% pass, including: the Phase 1 RPC integration test and the final comprehensive color-guardrail test from Phase 5.
+3. Re-run supabase test db against a fresh supabase db reset to confirm the full pgTAP suite (including the abort-game fixes) passes.
+4. Full-repo final grep sweep confirming: zero raw hex literals outside src/index.css and clearly-documented sprite-local constants; the admin_abort_game RPC call path matches its current SQL signature; no other admin_* RPC has drifted (re-check, since Phase 1 already did this once — confirm nothing regressed since).
+5. Manual end-to-end click-through: / (confirm the mascot renders correctly and the palette-consistent visual identity) → /join → team dashboard; / → /admin/login → create room → lobby → start → console (cash/CV/business edits, a quick action, activity log) → abort a test room (confirm it now actually works and resets team state) → restart → finalize → leaderboard → history. Confirm visual consistency of the palette across every one of these screens as you go.
+6. Write docs/AUDIT_ROUND_2_SUMMARY.md: a table of every finding from this round (A, B plus their sub-items), its resolution and which phase addressed it, before/after color-token count, before/after raw-hex-literal file count.
+
+FILES TO INSPECT
+Everything touched across Phases 1–5; the full test suite; docs/COLOR_SYSTEM.md; docs/AUDIT_REMEDIATION_SUMMARY.md (from the prior round, for consistency of reporting format).
+
+FILES LIKELY TO MODIFY/CREATE
+docs/AUDIT_ROUND_2_SUMMARY.md (new), src/index.css (deprecated-alias removal, if clean), any file this phase's regression testing finds genuinely broken.
+
+DATA MODEL CHANGES
+None expected, only if regression testing surfaces a real defect from an earlier phase, fixed via a new migration with a test, same discipline as before.
+
+UI REQUIREMENTS
+None beyond fixing anything genuinely broken.
 
 STATE-MANAGEMENT REQUIREMENTS
 None new.
 
 SECURITY REQUIREMENTS
-None.
+Final confirmation the RLS/admin-auth/CSP posture from the prior round is still intact after this round's changes.
 
 ERROR HANDLING
 N/A.
 
 TESTS
-Grep-based test confirming no off-palette hex values remain in the touched components (reuse the pattern from earlier phases if one exists, or add a scoped version for these specific files); reduced-motion coverage test extended to any newly-covered animation classes; test file renames carry their existing test content forward unchanged (no test logic should change, only file names/paths).
+Full suite run, 100% pass, including every guardrail test added across this round. Any gap found gets a new targeted test, not just a manual note.
 
 ACCEPTANCE CRITERIA
-docs/VISUAL_LANGUAGE_DECISION.md clearly states the decision and reasoning; every objective inconsistency identified in step 2(b) is fixed; test file naming is consistent across the whole suite; no unintended visual redesign occurred. npm run typecheck && npm test && npm run build pass.
-
-MUST NOT CHANGE
-The core identity/content of either visual system beyond the specific objective fixes decided in this phase; routes; backend/game logic.
-
-VERIFICATION STEPS
-1. npm run typecheck && npm test && npm run build
-2. Visual check of /, /admin/login, /join at 360px and 1440px — confirm only the intended small fixes changed anything, nothing else shifted.
-3. Toggle OS reduced-motion on /admin/login and /join specifically — confirm CastleBackground/PlainsBackground/RoamingCharacter/WoodenSignboard now correctly go still if they weren't already covered.
-```
-
----
-
-### PHASE 6 PROMPT — Full regression, stricter checks, final report
-
-```text
-OBJECTIVE
-Run a full regression pass across the whole app after Phases 1–5, confirm nothing was missed, and produce a final written summary of everything found and fixed in this audit cycle.
-
-CONTEXT
-Phases 1–5 removed dead code and an unused/dangerous SQL patch file, fixed the admin_abort_game team-state-reset bug and required a real note for it, unified animation/reduced-motion handling (including PixelLogo's stars), hardened the production CSP and reviewed dependency versions, and made a documented decision about the two visual-language systems plus fixed the objective inconsistencies between them. This phase is verification and small fixes only — no new features, no further redesign.
-
-EXACT REQUIREMENTS
-1. Run the complete test suite (unit + any Playwright/E2E present) and confirm 100% pass. Re-run supabase test db against a fresh supabase db reset to confirm every pgTAP test (including the new one from Phase 2) passes.
-2. Full-repo re-grep for every category from the original audit to confirm nothing regressed or was missed: unused imports of the removed dependencies; any remaining reference to PixelMascot or the deleted patch file; any remaining unvetted Tailwind animate-* utility; any remaining loopback/localhost entry in vercel.json; any off-palette hex value in the components touched by Phase 5.
-3. Click through the full user journey manually end to end at least once: /  → /join → team dashboard (as a team), and / → /admin/login → create room → lobby → start → console (cash/CV/business edits, a quick action, the activity log) → abort a test room and confirm the reset behavior from Phase 2 → start again → finalize → leaderboard → history. Confirm nothing from Phases 1–5 broke any part of this flow.
-4. Confirm the build output size hasn't regressed unexpectedly (removing three unused dependencies in Phase 1 should keep it flat or slightly smaller; report the before/after if you have Phase 1's original numbers, otherwise just report the current numbers).
-5. Write docs/AUDIT_REMEDIATION_SUMMARY.md: a table of every finding from the original audit (A1–A4, B1–B5, C1–C2, D1–D2), its resolution (fixed / decided-to-keep-as-is with reasoning / needs-further-follow-up), and which phase addressed it. Call out explicitly anything that was intentionally NOT changed and why (e.g. the visual-language decision from Phase 5 if it chose to keep the systems distinct).
-
-FILES TO INSPECT
-Everything touched across Phases 1–5; the full test suite; docs/{DEPENDENCY_NOTES,VISUAL_LANGUAGE_DECISION}.md.
-
-FILES LIKELY TO MODIFY/CREATE
-docs/AUDIT_REMEDIATION_SUMMARY.md (new). Only fix genuinely broken things this phase's testing surfaces — no new features.
-
-DATA MODEL CHANGES
-None expected; only if this phase's regression testing surfaces a real defect from an earlier phase, fixed via a new migration with a test, same discipline as Phase 2.
-
-UI REQUIREMENTS
-None beyond fixing anything broken.
-
-STATE-MANAGEMENT REQUIREMENTS
-None new.
-
-SECURITY REQUIREMENTS
-Final confirmation that RLS/admin-auth/CSP are all still correct after every phase's changes.
-
-ERROR HANDLING
-N/A.
-
-TESTS
-Full suite run, 100% pass. Any gap found gets a new targeted test, not just a manual note.
-
-ACCEPTANCE CRITERIA
-Full test suite green; full pgTAP suite green; the complete manual user journey works end to end with no regressions; docs/AUDIT_REMEDIATION_SUMMARY.md is complete and honest about what was fixed vs. deliberately left as-is. npm run typecheck && npm test && npm run build pass.
+Full test suite green; full pgTAP suite green; zero deprecated color aliases remain (or a documented reason why one still must); the complete manual user journey works end to end with correct palette consistency and a working Abort Game feature; docs/AUDIT_ROUND_2_SUMMARY.md complete. npm run typecheck && npm test && npm run build pass.
 
 MUST NOT CHANGE
 Nothing beyond fixes genuinely required by this phase's regression testing.
@@ -389,6 +357,6 @@ Nothing beyond fixes genuinely required by this phase's regression testing.
 VERIFICATION STEPS
 1. supabase db reset && supabase test db
 2. npm run typecheck && npm test && npm run build
-3. Full manual click-through of the end-to-end journey described in step 3.
-4. Final grep sweep per step 2.
+3. Full manual click-through of the end-to-end journey described in step 5.
+4. Final grep sweeps per step 4.
 ```

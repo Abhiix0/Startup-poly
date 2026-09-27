@@ -93,7 +93,7 @@ export async function rpcAdminStartGame(room_id: string, force = false) {
 }
 
 export async function rpcAdminAbortGame(room_id: string, note: string) {
-  return callRpc<any>('admin_abort_game', { room_id, note });
+  return callRpc<any>('admin_abort_game', { p_room_id: room_id, note });
 }
 
 // 4. Admin Edits

@@ -90,10 +90,10 @@ SELECT throws_ok(
   'admin_abort_game rejects whitespace-only note with NOTE_REQUIRED'
 );
 
--- 4. Calling admin_abort_game with valid note succeeds
+-- 4. Calling admin_abort_game with valid note succeeds (named parameters test)
 SELECT lives_ok(
-  $$SELECT public.admin_abort_game(id, 'Accidental match start by organizer') FROM public.rooms$$,
-  'admin_abort_game succeeds with valid note'
+  $$SELECT public.admin_abort_game(p_room_id := id, note := 'Accidental match start by organizer') FROM public.rooms$$,
+  'admin_abort_game succeeds with named parameters (p_room_id, note)'
 );
 
 -- 5. Assert room state reverted to LOBBY with NULL timers
