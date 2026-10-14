@@ -35,7 +35,7 @@ describe('useMyTeam', () => {
     room: { status: 'ACTIVE', started_at: null, ends_at: null, server_now: new Date().toISOString() },
     team: { slot: 1, name: 'Alpha Rockets', color: '#E52521', cash: 1000, cv: 500, is_bankrupt: false },
     businesses: [],
-    leaderboard: null,
+    final_result: null,
   };
 
   it('fetches initial state and marks status ready', async () => {

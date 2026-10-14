@@ -76,15 +76,13 @@ export async function rpcGetMyState() {
       initial_cv: number;
       cv_contribution: number;
     }>;
-    leaderboard: Array<{
+    final_result: {
       rank: number;
-      name: string;
-      color: string;
       cv: number;
       cash: number;
       business_count: number;
       is_bankrupt: boolean;
-    }> | null;
+    } | null;
   } | null>('get_my_state');
 }
 

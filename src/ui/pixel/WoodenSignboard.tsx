@@ -116,7 +116,7 @@ export const WoodenSignboard: React.FC<WoodenSignboardProps> = ({
           className={`relative border-b-4 border-[#102040] px-4 sm:px-6 py-4 text-center ${
             isCastle
               ? 'bg-[#1E293B] text-white'
-              : 'bg-[#9E521D] text-[#FFFBEB]'
+              : 'bg-[#78350F] text-[#FFFBEB]'
           }`}
         >
           {/* Plank wood bevel highlight */}

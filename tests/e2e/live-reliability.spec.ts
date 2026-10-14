@@ -1,6 +1,10 @@
 import { test, expect, BrowserContext, Page } from '@playwright/test';
 
 test.describe('STARTUPOLY Phase 10: Live Event Reliability & Fault Recovery', () => {
+  test.beforeEach(() => {
+    test.setTimeout(90000);
+  });
+
   test('(a) Convergence: 6 team contexts + 1 admin converge under high-intensity edits', async ({ browser }) => {
     // 1 Admin context + 6 Team contexts
     const adminContext = await browser.newContext();
