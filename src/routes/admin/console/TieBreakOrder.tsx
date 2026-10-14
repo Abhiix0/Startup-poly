@@ -45,14 +45,11 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!note.trim()) {
-      setError('A judge pitch note is required explaining the tie-break decision.');
-      return;
-    }
+    const decisionNote = note.trim() || 'Physical pitch judged and recorded by Game Master';
 
     try {
       setError(null);
-      await onSubmit(orderedIds, note.trim());
+      await onSubmit(orderedIds, decisionNote);
     } catch (err: any) {
       setError(err?.message || 'Failed to record tie-break order.');
     }
@@ -133,11 +130,10 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 pt-2 border-t border-[#B45309]/30">
         <div className="flex flex-col gap-1">
           <label className="font-pixel text-[10px] uppercase text-[#92400E] font-bold">
-            Judge Pitch Decision Note *
+            Judge Pitch Decision Note (Optional)
           </label>
           <input
             type="text"
-            required
             placeholder="e.g. Winner decided by stronger customer acquisition pitch"
             value={note}
             onChange={(e) => setNote(e.target.value)}
@@ -151,13 +147,23 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
           </span>
         )}
 
-        <div className="flex justify-end pt-1">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={() => onSubmit(orderedIds, 'Auto-resolved tie in current provisional standings order')}
+            className="font-pixel text-[10px] bg-[#22B14C] text-[#102040] font-bold px-3 py-2 border-2 border-[#102040] shadow-[2px_2px_0px_#102040] hover:bg-[#16A34A] hover:text-white cursor-pointer active:translate-y-0.5"
+            title="Auto-resolve tie in current standings order"
+          >
+            ⚡ AUTO-RESOLVE IN THIS ORDER
+          </button>
+
           <PixelButton
             type="submit"
             variant="secondary"
             size="sm"
             isLoading={isSubmitting}
-            disabled={isSubmitting || !note.trim()}
+            disabled={isSubmitting}
           >
             RECORD PITCH RESULT
           </PixelButton>
