@@ -13,7 +13,7 @@ export interface PlainsBackgroundProps {
 
 export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between relative overflow-hidden select-none anim-scene-transition">
+    <div className="min-h-screen bg-nes-sky flex flex-col justify-between relative overflow-hidden select-none anim-scene-transition">
       {/* ======================================================================= */}
       {/* LAYER 1: Distant Background Hills & Misty Castle Silhouette            */}
       {/* ======================================================================= */}
@@ -228,8 +228,8 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
 
         {/* Full-width Pixel Brick Turf Tile */}
         <PixelBrickTile hasGrass={true} className="h-7 sm:h-8 w-full" />
-        <div className="bg-[#102040] pt-1.5 sm:pt-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-[#FFCC00]">
-          <p className="font-pixel text-[8px] sm:text-[9px] text-[#FFCC00] tracking-wider">
+        <div className="bg-nes-navy pt-1.5 sm:pt-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-nes-gold">
+          <p className="font-pixel text-[8px] sm:text-[9px] text-nes-gold tracking-wider">
             ★ &nbsp; STARTUPOLY © 2026 &nbsp; ★
           </p>
         </div>

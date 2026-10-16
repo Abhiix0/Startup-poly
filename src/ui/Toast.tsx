@@ -57,23 +57,23 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const styles: Record<ToastType, { bg: string; border: string; icon: string }> = {
     success: {
-      bg: 'bg-[#22B14C] text-white',
-      border: 'border-[#102040]',
+      bg: 'bg-brand-green text-brand-white',
+      border: 'border-brand-navy',
       icon: '✓',
     },
     error: {
-      bg: 'bg-[#D32F2F] text-white',
-      border: 'border-[#102040]',
+      bg: 'bg-brand-red text-brand-white',
+      border: 'border-brand-navy',
       icon: '✕',
     },
     warning: {
-      bg: 'bg-[#FFCC00] text-[#102040]',
-      border: 'border-[#102040]',
+      bg: 'bg-brand-gold text-brand-navy',
+      border: 'border-brand-navy',
       icon: '⚠',
     },
     info: {
-      bg: 'bg-[#5C94FC] text-white',
-      border: 'border-[#102040]',
+      bg: 'bg-brand-sky text-brand-white',
+      border: 'border-brand-navy',
       icon: 'ℹ',
     },
   };
@@ -92,7 +92,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               key={toast.id}
               className={`
                 pointer-events-auto flex items-start justify-between gap-3 p-3.5
-                border-3 ${s.border} ${s.bg} shadow-[4px_4px_0px_#102040]
+                border-3 ${s.border} ${s.bg} shadow-pixel
                 animate-in slide-in-from-bottom-2 duration-150
               `}
             >

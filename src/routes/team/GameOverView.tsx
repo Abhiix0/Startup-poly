@@ -17,21 +17,21 @@ export const GameOverView: React.FC<GameOverViewProps> = ({ state }) => {
       {/* Game Over Banner Card */}
       <PixelCard title="MATCH TIME EXPIRED" headerBg="brick" padding="lg">
         <div className="flex flex-col items-center justify-center gap-3 py-4">
-          <div className="w-14 h-14 bg-[#D32F2F] text-white border-3 border-[#102040] shadow-[3px_3px_0px_#102040] flex items-center justify-center font-pixel text-2xl mx-auto">
+          <div className="w-14 h-14 bg-nes-red text-white border-3 border-nes-navy shadow-[3px_3px_0px_var(--color-nes-navy)] flex items-center justify-center font-pixel text-2xl mx-auto">
             ⌛
           </div>
 
-          <h2 className="font-pixel text-lg sm:text-xl text-[#102040] uppercase">
+          <h2 className="font-pixel text-lg sm:text-xl text-nes-navy uppercase">
             GAME OVER
           </h2>
 
-          <div className="inline-block bg-[#FFFBEB] border-2 border-[#102040] px-4 py-1.5 shadow-[2px_2px_0px_#102040]">
-            <span className="font-pixel text-xs text-[#92400E] uppercase tracking-wider">
+          <div className="inline-block bg-warning-surface border-2 border-nes-navy px-4 py-1.5 shadow-[2px_2px_0px_var(--color-nes-navy)]">
+            <span className="font-pixel text-xs text-warning-text uppercase tracking-wider">
               ★ FINAL SCORES PENDING ★
             </span>
           </div>
 
-          <p className="font-mono text-xs text-[#64748B] max-w-xs leading-relaxed">
+          <p className="font-mono text-xs text-neutral-500 max-w-xs leading-relaxed">
             The 50-minute match has concluded! The game organizer is verifying final board transactions,
             resolving any ties, and snapshotting the official leaderboard.
           </p>
@@ -56,18 +56,18 @@ export const GameOverView: React.FC<GameOverViewProps> = ({ state }) => {
           />
         </div>
 
-        <div className="bg-[#FFCC00] border-3 border-[#102040] p-3 shadow-[2px_2px_0px_#102040] flex items-center justify-between mb-3">
-          <span className="font-pixel text-xs text-[#102040]">TOTAL VALUATION:</span>
-          <span className="font-tabular font-extrabold text-lg text-[#102040]">
+        <div className="bg-nes-gold border-3 border-nes-navy p-3 shadow-[2px_2px_0px_var(--color-nes-navy)] flex items-center justify-between mb-3">
+          <span className="font-pixel text-xs text-nes-navy">TOTAL VALUATION:</span>
+          <span className="font-tabular font-extrabold text-lg text-nes-navy">
             {formatINR(totalAssets)}
           </span>
         </div>
 
-        <div className="bg-white border-2 border-[#102040] p-3 text-center">
-          <span className="font-pixel text-[10px] text-[#64748B] block uppercase mb-1">
+        <div className="bg-white border-2 border-nes-navy p-3 text-center">
+          <span className="font-pixel text-[10px] text-neutral-500 block uppercase mb-1">
             PORTFOLIO SUMMARY
           </span>
-          <span className="font-mono font-bold text-xs text-[#102040]">
+          <span className="font-mono font-bold text-xs text-nes-navy">
             {businesses.length} of 3 Businesses Held at Match End
           </span>
         </div>

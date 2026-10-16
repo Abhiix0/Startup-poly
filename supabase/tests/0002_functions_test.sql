@@ -104,11 +104,10 @@ SELECT set_config('request.jwt.claims', '{"sub": "b0000000-0000-0000-0000-000000
 SET LOCAL ROLE authenticated;
 
 -- Wrong PIN gives BAD_CODE_OR_PIN
-SELECT throws_ok(
-  format('SELECT public.join_team(%L, 1, %L)', current_setting('app.test_room_code'), '0000'),
-  'P0001',
+SELECT is(
+  public.join_team(current_setting('app.test_room_code'), 1, '0000')->>'error',
   'BAD_CODE_OR_PIN',
-  'Wrong PIN fails with BAD_CODE_OR_PIN'
+  'Wrong PIN returns BAD_CODE_OR_PIN (committed so the throttle can count it)'
 );
 
 -- 9. Correct PIN joins successfully

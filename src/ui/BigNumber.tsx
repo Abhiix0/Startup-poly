@@ -20,11 +20,11 @@ export const BigNumber: React.FC<BigNumberProps> = ({
   className = '',
 }) => {
   const valueColorStyles = {
-    navy: 'text-[#102040]',
-    green: 'text-[#22B14C]',
-    gold: 'text-[#D48800]',
-    red: 'text-[#D32F2F]',
-    blue: 'text-[#1E40AF]',
+    navy: 'text-brand-navy',
+    green: 'text-brand-green',
+    gold: 'text-status-warning-dark',
+    red: 'text-brand-red',
+    blue: 'text-status-info-dark',
   };
 
   const sizeStyles = {
@@ -45,12 +45,12 @@ export const BigNumber: React.FC<BigNumberProps> = ({
   return (
     <div
       className={`
-        border-3 border-[#102040] bg-white p-3 sm:p-4 shadow-[2px_2px_0px_#102040]
+        border-3 border-brand-navy bg-brand-white p-3 sm:p-4 shadow-pixel-sm
         flex flex-col justify-between
         ${className}
       `}
     >
-      <div className="flex items-center justify-between gap-1 text-[#64748B] mb-1">
+      <div className="flex items-center justify-between gap-1 text-neutral-500 mb-1">
         <span className={`font-pixel uppercase tracking-wide truncate ${sizeStyles[size].lbl}`}>
           {label}
         </span>
@@ -66,7 +66,7 @@ export const BigNumber: React.FC<BigNumberProps> = ({
         {value}
       </div>
       {subtext && (
-        <div className="mt-1 text-[11px] font-mono text-[#64748B] truncate">
+        <div className="mt-1 text-[11px] font-mono text-neutral-500 truncate">
           {subtext}
         </div>
       )}

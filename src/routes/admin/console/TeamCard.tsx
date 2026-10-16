@@ -17,9 +17,9 @@ export const TeamCard: React.FC<TeamCardProps> = ({
 }) => {
   const flashBg =
     flash === 'up'
-      ? 'bg-[#E8F8EE] ring-4 ring-[#22B14C]'
+      ? 'bg-status-success-bg ring-4 ring-brand-green'
       : flash === 'down'
-      ? 'bg-[#FEECEB] ring-4 ring-[#D32F2F]'
+      ? 'bg-status-danger-bg ring-4 ring-brand-red'
       : '';
 
   return (
@@ -30,28 +30,28 @@ export const TeamCard: React.FC<TeamCardProps> = ({
       aria-label={`Select team ${team.slot}: ${team.name}`}
       className={`
         relative text-left w-full transition-all duration-100 cursor-pointer select-none
-        border-4 border-[#102040] overflow-hidden flex flex-col justify-between
-        focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FFCC00] focus-visible:ring-offset-2
+        border-4 border-brand-navy overflow-hidden flex flex-col justify-between
+        focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold focus-visible:ring-offset-2
         ${flashBg}
         ${
           isSelected
-            ? 'bg-[#FFFBEB] shadow-[4px_4px_0px_#102040] ring-3 ring-[#FFCC00] scale-[1.01]'
-            : 'bg-[#FAF8F5] hover:bg-[#F1F5F9] shadow-[2px_2px_0px_#102040]'
+            ? 'bg-brand-cream-light shadow-pixel ring-3 ring-brand-gold scale-[1.01]'
+            : 'bg-brand-cream hover:bg-neutral-100 shadow-pixel-sm'
         }
       `}
     >
       {/* Top Team Color Stripe */}
       <div
-        className="h-2.5 w-full border-b-2 border-[#102040] relative"
+        className="h-2.5 w-full border-b-2 border-brand-navy relative"
         style={{ backgroundColor: team.color }}
       >
         {flash === 'up' && (
-          <span className="absolute right-1 -top-1 bg-[#22B14C] text-white font-pixel text-[8px] px-1 border border-[#102040]">
+          <span className="absolute right-1 -top-1 bg-brand-green text-brand-white font-pixel text-[8px] px-1 border border-brand-navy">
             ▲ +
           </span>
         )}
         {flash === 'down' && (
-          <span className="absolute right-1 -top-1 bg-[#D32F2F] text-white font-pixel text-[8px] px-1 border border-[#102040]">
+          <span className="absolute right-1 -top-1 bg-brand-red text-brand-white font-pixel text-[8px] px-1 border border-brand-navy">
             ▼ -
           </span>
         )}
@@ -62,26 +62,26 @@ export const TeamCard: React.FC<TeamCardProps> = ({
         <div className="flex items-center justify-between gap-1.5">
           <div className="flex items-center gap-1.5 truncate">
             <span
-              className="font-pixel text-[10px] text-white px-1.5 py-0.5 border border-[#102040] flex-shrink-0"
+              className="font-pixel text-[10px] text-white px-1.5 py-0.5 border border-brand-navy flex-shrink-0"
               style={{ backgroundColor: team.color }}
             >
               #{team.slot}
             </span>
-            <span className="font-pixel text-xs text-[#102040] truncate font-bold">
+            <span className="font-pixel text-xs text-brand-navy truncate font-bold">
               {team.name}
             </span>
           </div>
 
           <div className="flex items-center gap-1 flex-shrink-0">
             {team.is_bankrupt ? (
-              <span className="font-pixel text-[9px] bg-[#D32F2F] text-white px-1 py-0.5 border border-[#102040]">
+              <span className="font-pixel text-[9px] bg-brand-red text-brand-white px-1 py-0.5 border border-brand-navy">
                 ☠ ELIMINATED
               </span>
             ) : (
               <span
                 title={team.claimed ? 'Team phone connected' : 'Waiting for phone connection'}
-                className={`w-3 h-3 rounded-full border border-[#102040] ${
-                  team.claimed ? 'bg-[#22B14C] animate-pulse' : 'bg-[#94A3B8]'
+                className={`w-3 h-3 rounded-full border border-brand-navy ${
+                  team.claimed ? 'bg-brand-green animate-pulse' : 'bg-neutral-400'
                 }`}
               />
             )}
@@ -89,28 +89,28 @@ export const TeamCard: React.FC<TeamCardProps> = ({
         </div>
 
         {/* Metrics row: Cash & CV (≥ 32px numbers) */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 bg-white p-2.5 border-2 border-[#102040] shadow-[1px_1px_0px_#102040]">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 bg-brand-white p-2.5 border-2 border-brand-navy shadow-pixel-sm">
           <div>
             <div className="flex items-center justify-between mb-0.5">
-              <span className="font-pixel text-[9px] text-[#102040] block uppercase tracking-wider font-bold">
+              <span className="font-pixel text-[9px] text-brand-navy block uppercase tracking-wider font-bold">
                 CASH
               </span>
               <PixelCoin size={14} />
             </div>
-            <span className="font-tabular text-[32px] leading-tight font-black text-[#22B14C] block truncate tabular-nums">
+            <span className="font-tabular text-[32px] leading-tight font-black text-brand-green block truncate tabular-nums">
               ₹{team.cash.toLocaleString('en-IN')}
             </span>
           </div>
           <div>
             <div className="flex items-center justify-between mb-0.5">
-              <span className="font-pixel text-[9px] text-[#102040] block uppercase tracking-wider font-bold">
+              <span className="font-pixel text-[9px] text-brand-navy block uppercase tracking-wider font-bold">
                 CV
               </span>
-              <span className="font-pixel text-[8px] bg-[#102040] text-[#FFCC00] px-1 py-0.2">
+              <span className="font-pixel text-[8px] bg-brand-navy text-brand-gold px-1 py-0.2">
                 CV
               </span>
             </div>
-            <span className="font-tabular text-[32px] leading-tight font-black text-[#1E40AF] block truncate tabular-nums">
+            <span className="font-tabular text-[32px] leading-tight font-black text-brand-navy block truncate tabular-nums">
               ₹{team.cv.toLocaleString('en-IN')}
             </span>
           </div>
@@ -119,7 +119,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({
         {/* Businesses status row: n/3 count and level indicators */}
         <div className="flex items-center justify-between text-[11px] pt-0.5">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-pixel text-[9px] text-[#102040] font-bold">
+            <span className="font-pixel text-[9px] text-brand-navy font-bold">
               BIZ {team.businesses.length}/3:
             </span>
             <div className="flex items-center gap-1 flex-wrap">
@@ -127,16 +127,16 @@ export const TeamCard: React.FC<TeamCardProps> = ({
                 <div
                   key={biz.business_key}
                   title={`${biz.name} (Level ${biz.level})`}
-                  className="flex items-center bg-[#FAF8F5] px-1 py-0.5 border border-[#102040]"
+                  className="flex items-center bg-brand-cream px-1 py-0.5 border border-brand-navy"
                 >
-                  <span className="font-mono text-[9px] font-bold text-[#102040] mr-1">
+                  <span className="font-mono text-[9px] font-bold text-brand-navy mr-1">
                     {biz.name.slice(0, 3).toUpperCase()}
                   </span>
                   <PixelLevelPips level={biz.level as 0 | 1 | 2} size="sm" />
                 </div>
               ))}
               {team.businesses.length === 0 && (
-                <span className="font-mono text-[10px] text-[#64748B]">none</span>
+                <span className="font-mono text-[10px] text-neutral-500">none</span>
               )}
             </div>
           </div>

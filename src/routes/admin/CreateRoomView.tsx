@@ -76,10 +76,10 @@ export const CreateRoomView: React.FC = () => {
       {/* Top Banner with Navigation */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-pixel text-lg sm:text-xl text-[#102040] uppercase drop-shadow-[2px_2px_0px_#FFF]">
+          <h1 className="font-pixel text-lg sm:text-xl text-brand-navy uppercase drop-shadow-[2px_2px_0px_var(--color-brand-white)]">
             CREATE TOURNAMENT ROOM
           </h1>
-          <p className="font-mono text-xs text-[#102040] font-semibold mt-1">
+          <p className="font-mono text-xs text-brand-navy font-semibold mt-1">
             Configure 5 or 6 competing startup teams for the 50-minute physical board game
           </p>
         </div>
@@ -97,15 +97,15 @@ export const CreateRoomView: React.FC = () => {
         <PixelCard title="1. CHOOSE TEAM COUNT" headerBg="navy" padding="md">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p className="font-pixel text-xs text-[#102040] mb-1">
+              <p className="font-pixel text-xs text-brand-navy mb-1">
                 OFFICIAL MATCH SIZE
               </p>
-              <p className="font-mono text-xs text-[#64748B]">
+              <p className="font-mono text-xs text-neutral-500">
                 Startupoly rulebook mandates exactly 5 or 6 teams per board.
               </p>
             </div>
 
-            <div className="inline-flex border-4 border-[#102040] shadow-[3px_3px_0px_#102040] bg-white">
+            <div className="inline-flex border-4 border-brand-navy shadow-[3px_3px_0px_var(--color-brand-navy)] bg-brand-white">
               <button
                 type="button"
                 onClick={() => handleTeamCountChange(5)}
@@ -113,14 +113,14 @@ export const CreateRoomView: React.FC = () => {
                   min-h-[48px] px-6 font-pixel text-xs cursor-pointer select-none transition-all
                   ${
                     teamCount === 5
-                      ? 'bg-[#FFCC00] text-[#102040] font-extrabold'
-                      : 'bg-white text-[#64748B] hover:bg-[#F1F5F9]'
+                      ? 'bg-brand-gold text-brand-navy font-extrabold'
+                      : 'bg-brand-white text-neutral-500 hover:bg-neutral-100'
                   }
                 `}
               >
                 5 TEAMS
               </button>
-              <div className="w-1 bg-[#102040]" />
+              <div className="w-1 bg-brand-navy" />
               <button
                 type="button"
                 onClick={() => handleTeamCountChange(6)}
@@ -128,8 +128,8 @@ export const CreateRoomView: React.FC = () => {
                   min-h-[48px] px-6 font-pixel text-xs cursor-pointer select-none transition-all
                   ${
                     teamCount === 6
-                      ? 'bg-[#FFCC00] text-[#102040] font-extrabold'
-                      : 'bg-white text-[#64748B] hover:bg-[#F1F5F9]'
+                      ? 'bg-brand-gold text-brand-navy font-extrabold'
+                      : 'bg-brand-white text-neutral-500 hover:bg-neutral-100'
                   }
                 `}
               >
@@ -150,19 +150,19 @@ export const CreateRoomView: React.FC = () => {
               return (
                 <div
                   key={team.slot}
-                  className="border-3 border-[#102040] bg-white p-4 shadow-[2px_2px_0px_#102040] flex flex-col gap-3"
+                  className="border-3 border-brand-navy bg-brand-white p-4 shadow-pixel-sm flex flex-col gap-3"
                 >
-                  <div className="flex items-center justify-between border-b-2 border-[#102040] pb-2">
+                  <div className="flex items-center justify-between border-b-2 border-brand-navy pb-2">
                     <div className="flex items-center gap-2">
                       <span
-                        className="w-4 h-4 border-2 border-[#102040] inline-block shadow-[1px_1px_0px_#102040]"
+                        className="w-4 h-4 border-2 border-brand-navy inline-block shadow-[1px_1px_0px_var(--color-brand-navy)]"
                         style={{ backgroundColor: team.color }}
                       />
-                      <span className="font-pixel text-xs uppercase text-[#102040]">
+                      <span className="font-pixel text-xs uppercase text-brand-navy">
                         SLOT #{team.slot}
                       </span>
                     </div>
-                    <span className="font-mono text-[10px] text-[#64748B] font-bold">
+                    <span className="font-mono text-[10px] text-neutral-500 font-bold">
                       {team.color}
                     </span>
                   </div>
@@ -180,7 +180,7 @@ export const CreateRoomView: React.FC = () => {
                   />
 
                   <div>
-                    <label className="font-pixel text-[10px] uppercase tracking-wider text-[#102040] block mb-1.5">
+                    <label className="font-pixel text-[10px] uppercase tracking-wider text-brand-navy block mb-1.5">
                       Assign Color Swatch
                     </label>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -196,9 +196,9 @@ export const CreateRoomView: React.FC = () => {
                             disabled={inUse || isSubmitting}
                             onClick={() => handleColorChange(team.slot, c.hex)}
                             className={`
-                              w-8 h-8 rounded-none border-2 border-[#102040] cursor-pointer flex items-center justify-center font-pixel text-[10px] text-white
+                              w-8 h-8 rounded-none border-2 border-brand-navy cursor-pointer flex items-center justify-center font-pixel text-[10px] text-brand-white
                               transition-all
-                              ${isSelected ? 'ring-2 ring-offset-1 ring-[#102040] scale-110 shadow-[2px_2px_0px_#102040]' : ''}
+                              ${isSelected ? 'ring-2 ring-offset-1 ring-brand-navy scale-110 shadow-pixel-sm' : ''}
                               ${inUse ? 'opacity-20 cursor-not-allowed' : 'hover:scale-105'}
                             `}
                             style={{ backgroundColor: c.hex }}
@@ -209,7 +209,7 @@ export const CreateRoomView: React.FC = () => {
                       })}
                     </div>
                     {teamErrors?.color && (
-                      <p className="font-mono text-xs text-[#D32F2F] mt-1 font-semibold">
+                      <p className="font-mono text-xs text-brand-red mt-1 font-semibold">
                         ⚠ {teamErrors.color}
                       </p>
                     )}

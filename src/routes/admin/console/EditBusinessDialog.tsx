@@ -78,7 +78,7 @@ export const EditBusinessDialog: React.FC<EditBusinessDialogProps> = ({
       maxWidth="md"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="bg-[#FFFBEB] border-2 border-[#102040] p-3 text-xs text-[#92400E]">
+        <div className="bg-brand-cream-light border-2 border-brand-navy p-3 text-xs text-amber-800">
           <p className="font-bold">⚠ Manual Level Correction</p>
           <p className="mt-0.5">
             This bypasses standard purchase calculations and changes the upgrade level directly. Team cash and CV will NOT be adjusted automatically. A mandatory note is required for the audit log.
@@ -87,7 +87,7 @@ export const EditBusinessDialog: React.FC<EditBusinessDialogProps> = ({
 
         {/* Level Choice Radios */}
         <div className="flex flex-col gap-2">
-          <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+          <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
             Target Upgrade Level
           </label>
           <div className="grid grid-cols-3 gap-2">
@@ -100,8 +100,8 @@ export const EditBusinessDialog: React.FC<EditBusinessDialogProps> = ({
                   p-3 font-pixel text-xs border-2 text-center transition-all cursor-pointer
                   ${
                     level === lvl
-                      ? 'bg-[#FFCC00] border-[#102040] shadow-[2px_2px_0px_#102040]'
-                      : 'bg-white border-[#CBD5E1] hover:bg-[#FAF8F5]'
+                      ? 'bg-brand-gold border-brand-navy shadow-pixel-sm'
+                      : 'bg-brand-white border-neutral-300 hover:bg-brand-cream'
                   }
                 `}
               >
@@ -113,7 +113,7 @@ export const EditBusinessDialog: React.FC<EditBusinessDialogProps> = ({
 
         {/* Mandatory Note Input */}
         <div className="flex flex-col gap-1">
-          <label className="font-pixel text-[10px] uppercase text-[#102040] font-bold">
+          <label className="font-pixel text-[10px] uppercase text-brand-navy font-bold">
             Mandatory Correction Note *
           </label>
           <input
@@ -124,27 +124,27 @@ export const EditBusinessDialog: React.FC<EditBusinessDialogProps> = ({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             className="
-              w-full px-2.5 py-2 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040]
-              focus:outline-none focus:ring-2 focus:ring-[#FFCC00]
+              w-full px-2.5 py-2 font-sans text-xs text-brand-navy bg-brand-white border-2 border-brand-navy
+              focus:outline-none focus:ring-2 focus:ring-brand-gold
             "
           />
         </div>
 
         {error && (
-          <span className="font-mono text-xs text-[#D32F2F] font-bold">
+          <span className="font-mono text-xs text-brand-red font-bold">
             ⚠ {error}
           </span>
         )}
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
             className="
-              font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040]
-              border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9]
+              font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy
+              border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200
               cursor-pointer active:translate-y-0.5 disabled:opacity-50
             "
           >

@@ -14,7 +14,15 @@
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > src/data/database.types.ts"
+    "db:types": "supabase gen types typescript --local > supabase/.temp/database.generated.ts",
+    "test:concurrency": "vitest run --config supabase/tests/concurrency/vitest.config.ts",
+    "test:security": "vitest run --config supabase/tests/concurrency/vitest.config.ts security",
+    "test:contract": "vitest run --config supabase/tests/concurrency/vitest.config.ts contract",
+    "check:bundle": "tsx scripts/check-bundle.ts",
+    "test:upgrade": "tsx scripts/test-upgrade-path.ts",
+    "test:db-suites": "tsx scripts/run-db-suites.ts",
+    "verify:prod": "tsx scripts/verify-prod.ts",
+    "build:migrations": "tsx scripts/build-all-migrations.ts"
   },
   "keywords": [],
   "author": "",

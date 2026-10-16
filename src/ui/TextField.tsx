@@ -17,16 +17,16 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="font-pixel text-[11px] uppercase tracking-wider text-[#102040] select-none"
+            className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy select-none"
           >
             {label}
-            {props.required && <span className="text-[#D32F2F] ml-1">*</span>}
+            {props.required && <span className="text-brand-red ml-1">*</span>}
           </label>
         )}
 
         <div className="relative flex items-center w-full">
           {prefixText && (
-            <span className="absolute left-3.5 font-mono font-bold text-[#64748B] select-none pointer-events-none text-sm">
+            <span className="absolute left-3.5 font-mono font-bold text-neutral-500 select-none pointer-events-none text-sm">
               {prefixText}
             </span>
           )}
@@ -36,32 +36,32 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             id={inputId}
             disabled={disabled}
             className={`
-              w-full min-h-[48px] px-3.5 py-2.5 font-mono text-sm bg-white text-[#102040]
-              border-3 border-[#102040] shadow-[2px_2px_0px_#102040]
-              placeholder:text-[#94A3B8] placeholder:font-sans
-              focus:outline-hidden focus:bg-[#FFFBEB] focus:border-[#22B14C] focus:shadow-[3px_3px_0px_#102040]
-              disabled:bg-[#F1F5F9] disabled:text-[#94A3B8] disabled:cursor-not-allowed
+              w-full min-h-[48px] px-3.5 py-2.5 font-mono text-sm bg-brand-white text-brand-navy
+              border-3 border-brand-navy shadow-pixel-sm
+              placeholder:text-neutral-400 placeholder:font-sans
+              focus:outline-hidden focus:bg-status-warning-bg focus:border-brand-green focus:shadow-[3px_3px_0px_var(--color-brand-navy)]
+              disabled:bg-neutral-100 disabled:text-neutral-400 disabled:cursor-not-allowed
               ${prefixText ? 'pl-8' : ''}
               ${suffixText ? 'pr-8' : ''}
-              ${error ? 'border-[#D32F2F] bg-[#FEF2F2]' : ''}
+              ${error ? 'border-brand-red bg-status-danger-bg' : ''}
               ${className}
             `}
             {...props}
           />
 
           {suffixText && (
-            <span className="absolute right-3.5 font-mono font-bold text-[#64748B] select-none pointer-events-none text-sm">
+            <span className="absolute right-3.5 font-mono font-bold text-neutral-500 select-none pointer-events-none text-sm">
               {suffixText}
             </span>
           )}
         </div>
 
         {error ? (
-          <p className="font-mono text-xs text-[#D32F2F] font-semibold flex items-center gap-1">
+          <p className="font-mono text-xs text-brand-red font-semibold flex items-center gap-1">
             <span>⚠</span> {error}
           </p>
         ) : helperText ? (
-          <p className="font-mono text-[11px] text-[#334155]">{helperText}</p>
+          <p className="font-mono text-[11px] text-neutral-700">{helperText}</p>
         ) : null}
       </div>
     );

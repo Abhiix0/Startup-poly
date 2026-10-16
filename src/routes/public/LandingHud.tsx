@@ -51,13 +51,13 @@ export const LandingHud: React.FC<{ className?: string }> = ({ className = '' })
           <li
             key={chip.id}
             aria-label={chip.fullText}
-            className="bg-[#102040] border-2 border-[#FFCC00] shadow-[3px_3px_0px_#102040] px-2 sm:px-2.5 py-1.5 flex items-center justify-center gap-2 rounded-sm select-none min-h-[40px] max-h-[48px] transition-transform duration-75 hover:scale-[1.03] hover:border-[#FFFBEB]"
+            className="bg-nes-navy border-2 border-nes-gold shadow-[3px_3px_0px_var(--color-nes-navy)] px-2 sm:px-2.5 py-1.5 flex items-center justify-center gap-2 rounded-sm select-none min-h-[40px] max-h-[48px] transition-transform duration-75 hover:scale-[1.03] hover:border-parchment-light"
           >
             <span className="shrink-0 flex items-center justify-center" aria-hidden="true">
               {chip.icon}
             </span>
             <div className="flex flex-col items-start leading-none">
-              <span className="font-mono text-[7.5px] sm:text-[8.5px] text-[#FFFBEB]/70 font-semibold tracking-wider uppercase">
+              <span className="font-mono text-[7.5px] sm:text-[8.5px] text-parchment-light/70 font-semibold tracking-wider uppercase">
                 {chip.title}
               </span>
               <span className="font-pixel text-[10px] sm:text-[11px] text-white font-bold tracking-tight mt-0.5">

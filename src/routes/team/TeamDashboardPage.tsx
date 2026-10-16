@@ -47,8 +47,8 @@ export const TeamDashboardPage: React.FC = () => {
   // If initial load in progress, show skeleton (never flash join screen)
   if (status === 'loading' && !state) {
     return (
-      <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between p-4">
-        <header className="bg-[#102040] p-3 border-4 border-[#102040] shadow-[3px_3px_0px_#102040] flex items-center justify-between">
+      <div className="min-h-screen bg-nes-sky flex flex-col justify-between p-4">
+        <header className="bg-nes-navy p-3 border-4 border-nes-navy shadow-[3px_3px_0px_var(--color-nes-navy)] flex items-center justify-between">
           <Skeleton height={20} width={120} />
           <Skeleton height={20} width={60} />
         </header>
@@ -66,7 +66,7 @@ export const TeamDashboardPage: React.FC = () => {
           </PixelCard>
         </main>
 
-        <div className="h-6 nes-brick-pattern border-t-4 border-[#102040]" />
+        <div className="h-6 nes-brick-pattern border-t-4 border-nes-navy" />
       </div>
     );
   }
@@ -83,19 +83,19 @@ export const TeamDashboardPage: React.FC = () => {
   const { team, room } = state;
 
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between selection:bg-[#FFCC00] selection:text-[#102040]">
+    <div className="min-h-screen bg-nes-sky flex flex-col justify-between selection:bg-nes-gold selection:text-nes-navy">
       {/* Mobile Top Navigation */}
-      <header className="bg-[#102040] text-white border-b-4 border-[#102040] p-3 shadow-[0_3px_0px_#102040] flex items-center justify-between sticky top-0 z-20">
+      <header className="bg-nes-navy text-white border-b-4 border-nes-navy p-3 shadow-[0_3px_0px_var(--color-nes-navy)] flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center gap-2 truncate">
           <span
-            className="w-4 h-4 border-2 border-white shadow-[1px_1px_0px_#102040] flex-shrink-0"
+            className="w-4 h-4 border-2 border-white shadow-[1px_1px_0px_var(--color-nes-navy)] flex-shrink-0"
             style={{ backgroundColor: team.color }}
           />
           <div className="truncate">
-            <span className="font-pixel text-xs text-[#FFCC00] block truncate">
+            <span className="font-pixel text-xs text-nes-gold block truncate">
               {team.name}
             </span>
-            <span className="font-mono text-[10px] text-[#94A3B8]">
+            <span className="font-mono text-[10px] text-neutral-400">
               SLOT #{team.slot}
             </span>
           </div>
@@ -109,7 +109,7 @@ export const TeamDashboardPage: React.FC = () => {
 
       {/* Offline / Reconnecting Banner (> 20s stale) */}
       {isStale && (
-        <div className="bg-[#FEF9C3] text-[#854D0E] border-b-3 border-[#102040] px-3 py-1.5 text-center font-mono text-xs font-bold animate-pulse">
+        <div className="bg-warning-surface text-warning-text border-b-3 border-nes-navy px-3 py-1.5 text-center font-mono text-xs font-bold animate-pulse">
           ⚠ Reconnecting… last update {staleAgeSeconds}s ago (values preserved)
         </div>
       )}
@@ -133,7 +133,7 @@ export const TeamDashboardPage: React.FC = () => {
       </main>
 
       {/* Brick Ground Base Strip */}
-      <div className="h-6 nes-brick-pattern border-t-4 border-[#102040]" />
+      <div className="h-6 nes-brick-pattern border-t-4 border-nes-navy" />
     </div>
   );
 };

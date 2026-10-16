@@ -78,38 +78,38 @@ export const BankruptDialog: React.FC<BankruptDialogProps> = ({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {mode === 'declare' ? (
           <>
-            <div className="bg-[#FEECEB] border-2 border-[#D32F2F] p-3 flex flex-col gap-2">
-              <span className="font-pixel text-xs text-[#D32F2F] font-bold">
+            <div className="bg-status-danger-bg border-2 border-brand-red p-3 flex flex-col gap-2">
+              <span className="font-pixel text-xs text-brand-red font-bold">
                 ⚠ CRITICAL GAME ACTION
               </span>
-              <p className="font-sans text-xs text-[#102040]">
+              <p className="font-sans text-xs text-brand-navy">
                 Declaring bankruptcy immediately eliminates <strong>{team.name}</strong> from active gameplay.
               </p>
-              <ul className="list-disc list-inside font-mono text-xs text-[#64748B] flex flex-col gap-1">
+              <ul className="list-disc list-inside font-mono text-xs text-neutral-500 flex flex-col gap-1">
                 <li>All <strong>{team.businesses.length}</strong> owned businesses will be immediately liquidated back to the bank.</li>
                 <li>Other teams will become eligible to buy these businesses.</li>
                 <li>The team phone will display an ELIMINATED status.</li>
               </ul>
             </div>
 
-            <label className="flex items-start gap-2 bg-[#FAF8F5] border-2 border-[#102040] p-3 cursor-pointer select-none">
+            <label className="flex items-start gap-2 bg-brand-cream border-2 border-brand-navy p-3 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={doubleConfirmChecked}
                 onChange={(e) => setDoubleConfirmChecked(e.target.checked)}
-                className="mt-0.5 w-4 h-4 accent-[#D32F2F] cursor-pointer"
+                className="mt-0.5 w-4 h-4 accent-brand-red cursor-pointer"
               />
-              <span className="font-sans text-xs font-bold text-[#102040]">
+              <span className="font-sans text-xs font-bold text-brand-navy">
                 I confirm the team physically declared bankruptcy and cannot pay debts.
               </span>
             </label>
           </>
         ) : (
-          <div className="bg-[#FFFBEB] border-2 border-[#102040] p-3 flex flex-col gap-1.5">
-            <span className="font-pixel text-xs text-[#92400E] font-bold">
+          <div className="bg-brand-cream-light border-2 border-brand-navy p-3 flex flex-col gap-1.5">
+            <span className="font-pixel text-xs text-amber-800 font-bold">
               ⚠ REVOKE BANKRUPTCY CORRECTION
             </span>
-            <p className="font-sans text-xs text-[#102040]">
+            <p className="font-sans text-xs text-brand-navy">
               This restores <strong>{team.name}</strong> to active standing. Note: Any businesses liquidated upon bankruptcy are not restored automatically and must be re-added if necessary.
             </p>
           </div>
@@ -118,7 +118,7 @@ export const BankruptDialog: React.FC<BankruptDialogProps> = ({
         {/* Note input */}
         {(mode === 'undo' || isTimeExpired) && (
           <div className="flex flex-col gap-1">
-            <label className="font-pixel text-[10px] uppercase text-[#102040] font-bold">
+            <label className="font-pixel text-[10px] uppercase text-brand-navy font-bold">
               Mandatory Note *
             </label>
             <input
@@ -133,28 +133,28 @@ export const BankruptDialog: React.FC<BankruptDialogProps> = ({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="
-                w-full px-2.5 py-1.5 font-sans text-xs text-[#102040] bg-white border-2 border-[#102040]
-                focus:outline-none focus:ring-2 focus:ring-[#FFCC00]
+                w-full px-2.5 py-1.5 font-sans text-xs text-brand-navy bg-brand-white border-2 border-brand-navy
+                focus:outline-none focus:ring-2 focus:ring-brand-gold
               "
             />
           </div>
         )}
 
         {error && (
-          <span className="font-mono text-xs text-[#D32F2F] font-bold">
+          <span className="font-mono text-xs text-brand-red font-bold">
             ⚠ {error}
           </span>
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
             className="
-              font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040]
-              border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9]
+              font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy
+              border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200
               cursor-pointer active:translate-y-0.5 disabled:opacity-50
             "
           >

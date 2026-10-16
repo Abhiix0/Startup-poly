@@ -64,14 +64,14 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
     <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
       {/* Winner Banner */}
       {winner && (
-        <div className="bg-[#FFCC00] border-4 border-[#102040] shadow-[4px_4px_0px_#102040] p-4 sm:p-6 text-center select-none">
-          <span className="font-pixel text-xs sm:text-sm text-[#92400E] uppercase tracking-widest block mb-1">
+        <div className="bg-brand-gold border-4 border-brand-navy shadow-pixel p-4 sm:p-6 text-center select-none">
+          <span className="font-pixel text-xs sm:text-sm text-status-warning-text uppercase tracking-widest block mb-1">
             ★ STARTUPOLY CHAMPION ★
           </span>
-          <h1 className="font-pixel text-xl sm:text-3xl md:text-4xl text-[#102040] uppercase drop-shadow-[2px_2px_0px_#FFFFFF]">
+          <h1 className="font-pixel text-xl sm:text-3xl md:text-4xl text-brand-navy uppercase drop-shadow-[2px_2px_0px_var(--color-brand-white)]">
             {winner.name}
           </h1>
-          <p className="font-mono text-xs sm:text-sm text-[#102040] font-bold mt-2">
+          <p className="font-mono text-xs sm:text-sm text-brand-navy font-bold mt-2">
             Final Valuation: ₹{winner.cv.toLocaleString('en-IN')} Company Value • ₹{winner.cash.toLocaleString('en-IN')} Cash
           </p>
         </div>
@@ -87,7 +87,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
       {/* Full Leaderboard Table */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between px-1">
-          <span className="font-pixel text-xs sm:text-sm uppercase tracking-wider text-[#102040]">
+          <span className="font-pixel text-xs sm:text-sm uppercase tracking-wider text-brand-navy">
             OFFICIAL FINAL STANDINGS
           </span>
           {allowPresentationMode && !isPresentation && (
@@ -95,8 +95,8 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
               type="button"
               onClick={() => setIsPresentation(true)}
               className="
-                font-pixel text-[10px] sm:text-xs uppercase px-3 py-1.5 bg-[#102040] text-[#FFCC00]
-                border-2 border-[#102040] shadow-[2px_2px_0px_#102040] hover:bg-[#1E293B] cursor-pointer
+                font-pixel text-[10px] sm:text-xs uppercase px-3 py-1.5 bg-brand-navy text-brand-gold
+                border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-800 cursor-pointer
               "
             >
               📽 PRESENTATION MODE
@@ -115,11 +115,11 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
 
   if (isPresentation) {
     return (
-      <div className="fixed inset-0 z-50 bg-[#102040] overflow-y-auto p-4 sm:p-8 flex flex-col justify-between animate-in fade-in duration-150">
+      <div className="fixed inset-0 z-50 bg-brand-navy overflow-y-auto p-4 sm:p-8 flex flex-col justify-between animate-in fade-in duration-150">
         {/* Presentation Top Bar */}
         <div className="w-full max-w-6xl mx-auto flex items-center justify-between border-b-2 border-white/20 pb-4 mb-4">
           <div className="flex items-center gap-3">
-            <span className="font-pixel text-lg sm:text-xl text-[#FFCC00]">
+            <span className="font-pixel text-lg sm:text-xl text-brand-gold">
               STARTUPOLY SCOREBOARD
             </span>
             {roomCode && (
@@ -132,7 +132,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           <button
             type="button"
             onClick={() => setIsPresentation(false)}
-            className="font-pixel text-xs uppercase px-4 py-2 bg-[#D32F2F] text-white border-2 border-white hover:bg-[#B71C1C] cursor-pointer shadow-[2px_2px_0px_#000000]"
+            className="font-pixel text-xs uppercase px-4 py-2 bg-brand-red text-brand-white border-2 border-brand-white hover:bg-interactive-red-hover cursor-pointer shadow-pixel-sm"
           >
             EXIT (Esc)
           </button>

@@ -35,4 +35,3 @@ STARTUPOLY is a physical startup board game played live (one board, 5–6 teams,
 - `npm run typecheck`: Run TypeScript compiler check without emitting files
 - `npm test`: Run tests via Vitest
 - `npm run test:legacy`: Run legacy game engine test script
-

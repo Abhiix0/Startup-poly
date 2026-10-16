@@ -35,6 +35,34 @@ export const ERROR_MAP: Record<string, ErrorMeta> = {
     message: 'Invalid room status transition requested.',
     retryable: false,
   },
+  NOTE_REQUIRED: {
+    message: 'A note explaining this change is required.',
+    retryable: false,
+  },
+  TEAMS_NOT_JOINED: {
+    message: 'Some teams have not joined yet. Use Force Start to proceed.',
+    retryable: false,
+  },
+  ROOM_FINALIZED: {
+    message: 'This match is finalized and can no longer change.',
+    retryable: false,
+  },
+  IMMUTABLE: {
+    message: 'This record is permanent and cannot be changed.',
+    retryable: false,
+  },
+  ROOM_ALREADY_EXPIRED: {
+    message: 'The match clock has run out. Finalize the result instead of aborting.',
+    retryable: false,
+  },
+  REQUEST_ID_REUSED: {
+    message: 'This action was already used for a different change. Please try again.',
+    retryable: false,
+  },
+  INVALID_INITIAL_STATE: {
+    message: 'The lobby is not in its starting state. Reset the room before starting.',
+    retryable: false,
+  },
   ROOM_NOT_EDITABLE: {
     message: 'Edits are not permitted in the current room status.',
     retryable: false,
@@ -163,3 +191,60 @@ export function isBusinessError(err: unknown): boolean {
   return false;
 }
 
+/**
+ * What a failed RPC means for the caller. COMMITTED is not an error class: it is what a successful call or a
+ * request_id replay returns, listed so UI code can name all outcomes in one place.
+ *  DEFINITELY_FAILED  the server rejected it and nothing was written
+ *  CONFLICT           someone else changed the data first (refetch, then retry with fresh values)
+ *  SESSION_EXPIRED    sign in again
+ *  NOT_ADMIN          this account may not do that
+ *  ROOM_NOT_ACTIVE    the room's status no longer allows it (the state may already be the one you wanted)
+ *  OUTCOME_UNKNOWN    no trustworthy answer (network drop, timeout, 5xx): it may or may not have been applied
+ */
+export type RpcFailureClass =
+  | 'DEFINITELY_FAILED'
+  | 'CONFLICT'
+  | 'SESSION_EXPIRED'
+  | 'NOT_ADMIN'
+  | 'ROOM_NOT_ACTIVE'
+  | 'OUTCOME_UNKNOWN';
+export type RpcOutcome = RpcFailureClass | 'COMMITTED';
+
+// Every code the migrations raise must appear here (errors.test.ts greps the migrations and fails otherwise).
+export const CODE_CLASS: Record<string, RpcFailureClass> = {
+  BAD_CODE_OR_PIN: 'DEFINITELY_FAILED',
+  BUSINESS_CAP: 'DEFINITELY_FAILED',
+  BUSINESS_NOT_OWNED: 'DEFINITELY_FAILED',
+  BUSINESS_OWNED: 'CONFLICT',
+  INSUFFICIENT_CASH: 'DEFINITELY_FAILED',
+  INVALID_INITIAL_STATE: 'DEFINITELY_FAILED',
+  INVALID_TRANSITION: 'ROOM_NOT_ACTIVE',
+  INVALID_VALUE: 'DEFINITELY_FAILED',
+  NON_FINAL_ROOM_EXISTS: 'DEFINITELY_FAILED',
+  NOT_ADMIN: 'NOT_ADMIN',
+  NOT_AUTHENTICATED: 'SESSION_EXPIRED',
+  NOTE_REQUIRED: 'DEFINITELY_FAILED',
+  REQUEST_ID_REUSED: 'DEFINITELY_FAILED',
+  ROOM_ALREADY_EXPIRED: 'ROOM_NOT_ACTIVE',
+  ROOM_NOT_EDITABLE: 'ROOM_NOT_ACTIVE',
+  ROOM_NOT_FOUND: 'DEFINITELY_FAILED',
+  TEAM_ALREADY_CLAIMED: 'DEFINITELY_FAILED',
+  TEAM_BANKRUPT: 'DEFINITELY_FAILED',
+  TEAMS_NOT_JOINED: 'DEFINITELY_FAILED',
+  TOO_MANY_ATTEMPTS: 'DEFINITELY_FAILED',
+  UNRESOLVED_TIE: 'DEFINITELY_FAILED',
+  VERSION_CONFLICT: 'CONFLICT',
+  IMMUTABLE: 'ROOM_NOT_ACTIVE',
+  ROOM_FINALIZED: 'ROOM_NOT_ACTIVE',
+  OUTCOME_UNKNOWN: 'OUTCOME_UNKNOWN',
+  PGRST301: 'SESSION_EXPIRED', // PostgREST: JWT expired
+};
+
+export function classifyRpcError(err: unknown): RpcFailureClass {
+  // The server's raise_error code arrives as the message; read it directly so a code the client has no
+  // friendly text for is still classified (parseRpcError would report the SQLSTATE P0001 instead).
+  const raw = (err as { message?: unknown } | null | undefined)?.message;
+  if (typeof raw === 'string' && raw in CODE_CLASS) return CODE_CLASS[raw];
+  // Anything else (network drop, timeout, 5xx, unknown) could have committed.
+  return CODE_CLASS[parseRpcError(err).code] ?? 'OUTCOME_UNKNOWN';
+}

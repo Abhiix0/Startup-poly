@@ -137,7 +137,7 @@ export const CardDialog: React.FC<CardDialogProps> = ({
     >
       <div className="flex flex-col gap-4">
         {/* Mode Toggle: BONUS vs CRISIS */}
-        <div className="flex border-2 border-[#102040] shadow-[2px_2px_0px_#102040]">
+        <div className="flex border-2 border-brand-navy shadow-pixel-sm">
           <button
             type="button"
             onClick={() => {
@@ -147,8 +147,8 @@ export const CardDialog: React.FC<CardDialogProps> = ({
             }}
             className={`flex-1 py-2 font-pixel text-xs uppercase cursor-pointer transition-colors ${
               mode === 'BONUS'
-                ? 'bg-[#22B14C] text-white font-bold'
-                : 'bg-white text-[#102040] hover:bg-[#FAF8F5]'
+                ? 'bg-brand-green text-brand-white font-bold'
+                : 'bg-brand-white text-brand-navy hover:bg-brand-cream'
             }`}
           >
             ★ BONUS CARD
@@ -160,10 +160,10 @@ export const CardDialog: React.FC<CardDialogProps> = ({
               setCustomCash(undefined);
               setCustomCv(undefined);
             }}
-            className={`flex-1 py-2 font-pixel text-xs uppercase cursor-pointer border-l-2 border-[#102040] transition-colors ${
+            className={`flex-1 py-2 font-pixel text-xs uppercase cursor-pointer border-l-2 border-brand-navy transition-colors ${
               mode === 'CRISIS'
-                ? 'bg-[#D32F2F] text-white font-bold'
-                : 'bg-white text-[#102040] hover:bg-[#FAF8F5]'
+                ? 'bg-brand-red text-brand-white font-bold'
+                : 'bg-brand-white text-brand-navy hover:bg-brand-cream'
             }`}
           >
             ⚠ CRISIS CARD
@@ -172,7 +172,7 @@ export const CardDialog: React.FC<CardDialogProps> = ({
 
         {/* Team Selector */}
         <div className="flex flex-col gap-1">
-          <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+          <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
             Target Team
           </label>
           <select
@@ -182,7 +182,7 @@ export const CardDialog: React.FC<CardDialogProps> = ({
               setCustomCash(undefined);
               setCustomCv(undefined);
             }}
-            className="p-2 border-2 border-[#102040] bg-white font-sans text-xs font-bold text-[#102040] focus:outline-none focus:ring-2 focus:ring-[#5C94FC]"
+            className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-sky"
           >
             {teams.map((t) => (
               <option key={t.id} value={t.id}>
@@ -194,7 +194,7 @@ export const CardDialog: React.FC<CardDialogProps> = ({
 
         {/* Card Number Selector (1 to 6) */}
         <div className="flex flex-col gap-1">
-          <label className="font-pixel text-[11px] uppercase tracking-wider text-[#102040]">
+          <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
             Card Number (1–6)
           </label>
           <div className="grid grid-cols-6 gap-1">
@@ -207,17 +207,17 @@ export const CardDialog: React.FC<CardDialogProps> = ({
                   setCustomCash(undefined);
                   setCustomCv(undefined);
                 }}
-                className={`py-2 border-2 border-[#102040] font-pixel text-xs cursor-pointer shadow-[1px_1px_0px_#102040] ${
+                className={`py-2 border-2 border-brand-navy font-pixel text-xs cursor-pointer shadow-pixel-sm ${
                   cardNo === num
-                    ? 'bg-[#FFCC00] text-[#102040] font-bold ring-2 ring-[#102040]'
-                    : 'bg-white text-[#102040] hover:bg-[#FAF8F5]'
+                    ? 'bg-brand-gold text-brand-navy font-bold ring-2 ring-brand-navy'
+                    : 'bg-brand-white text-brand-navy hover:bg-brand-cream'
                 }`}
               >
                 #{num}
               </button>
             ))}
           </div>
-          <span className="font-sans text-xs text-[#64748B] italic mt-0.5">
+          <span className="font-sans text-xs text-neutral-500 italic mt-0.5">
             {mode === 'BONUS'
               ? BONUS_CARD_DESCRIPTIONS[cardNo]
               : CRISIS_CARD_DESCRIPTIONS[cardNo]}
@@ -226,8 +226,8 @@ export const CardDialog: React.FC<CardDialogProps> = ({
 
         {/* Lucky Break Die Roll selector for Bonus #6 */}
         {mode === 'BONUS' && cardNo === 6 && (
-          <div className="bg-[#FFFBEB] border-2 border-[#102040] p-2.5 flex items-center justify-between gap-2 shadow-[1px_1px_0px_#102040]">
-            <span className="font-pixel text-[11px] uppercase text-[#92400E] font-bold">
+          <div className="bg-brand-cream-light border-2 border-brand-navy p-2.5 flex items-center justify-between gap-2 shadow-pixel-sm">
+            <span className="font-pixel text-[11px] uppercase text-amber-800 font-bold">
               Physical Die Roll (1–6):
             </span>
             <div className="flex items-center gap-1">
@@ -240,10 +240,10 @@ export const CardDialog: React.FC<CardDialogProps> = ({
                     setCustomCash(undefined);
                     setCustomCv(undefined);
                   }}
-                  className={`w-7 h-7 border border-[#102040] font-pixel text-xs cursor-pointer ${
+                  className={`w-7 h-7 border border-brand-navy font-pixel text-xs cursor-pointer ${
                     rewardRoll === roll
-                      ? 'bg-[#22B14C] text-white font-bold'
-                      : 'bg-white text-[#102040] hover:bg-[#EAE5D9]'
+                      ? 'bg-brand-green text-brand-white font-bold'
+                      : 'bg-brand-white text-brand-navy hover:bg-neutral-200'
                   }`}
                 >
                   {roll}
@@ -267,18 +267,18 @@ export const CardDialog: React.FC<CardDialogProps> = ({
         )}
 
         {error && (
-          <span className="font-mono text-xs text-[#D32F2F] font-bold">
+          <span className="font-mono text-xs text-brand-red font-bold">
             ⚠ {error}
           </span>
         )}
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040] border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9] cursor-pointer"
+            className="font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200 cursor-pointer"
           >
             CANCEL (Esc)
           </button>

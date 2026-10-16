@@ -435,7 +435,7 @@ export interface Database {
         Returns: Json;
       };
       admin_open_lobby: {
-        Args: { room_id: string };
+        Args: { room_id: string; request_id?: string | null };
         Returns: Json;
       };
       admin_release_team: {
@@ -443,7 +443,7 @@ export interface Database {
         Returns: Json;
       };
       admin_start_game: {
-        Args: { room_id: string; force?: boolean };
+        Args: { room_id: string; force?: boolean; request_id?: string | null };
         Returns: Json;
       };
       admin_set_team_values: {
@@ -563,11 +563,11 @@ export interface Database {
         Returns: Json;
       };
       admin_finalize: {
-        Args: { p_room_id: string };
+        Args: { p_room_id: string; request_id?: string | null };
         Returns: Json;
       };
       admin_abort_game: {
-        Args: { room_id: string; note?: string | null };
+        Args: { p_room_id: string; note?: string | null; request_id?: string | null };
         Returns: Json;
       };
     };

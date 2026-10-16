@@ -17,18 +17,18 @@ export const ActiveSummaryView: React.FC<ActiveSummaryViewProps> = ({ snapshot }
     <div className="flex flex-col gap-6">
       {/* Top Match Clock & Overview Card */}
       <PixelCard title={`MATCH IN PROGRESS • ROOM ${room.code}`} headerBg="navy" padding="lg">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b-3 border-[#102040]">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b-3 border-brand-navy">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <StatusPill status={room.status} pulse={room.status === 'ACTIVE'} />
-              <span className="font-pixel text-xs text-[#102040]">
+              <span className="font-pixel text-xs text-brand-navy">
                 {room.team_count} TEAMS
               </span>
             </div>
-            <h2 className="font-pixel text-base uppercase text-[#102040]">
+            <h2 className="font-pixel text-base uppercase text-brand-navy">
               LIVE MATCH OVERVIEW
             </h2>
-            <p className="font-mono text-xs text-[#64748B]">
+            <p className="font-mono text-xs text-neutral-500">
               Phase 7 adds live board recording controls (cash edits, acquisitions, upgrades, forced sales).
             </p>
           </div>
@@ -72,7 +72,7 @@ export const ActiveSummaryView: React.FC<ActiveSummaryViewProps> = ({ snapshot }
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse font-mono text-xs">
             <thead>
-              <tr className="bg-[#102040] text-white font-pixel text-[10px] uppercase border-b-3 border-[#102040]">
+              <tr className="bg-brand-navy text-brand-white font-pixel text-[10px] uppercase border-b-3 border-brand-navy">
                 <th className="p-3">SLOT</th>
                 <th className="p-3">TEAM NAME</th>
                 <th className="p-3 text-right">CASH</th>
@@ -82,46 +82,46 @@ export const ActiveSummaryView: React.FC<ActiveSummaryViewProps> = ({ snapshot }
                 <th className="p-3 text-center">STATUS</th>
               </tr>
             </thead>
-            <tbody className="divide-y-2 divide-[#102040] bg-white">
+            <tbody className="divide-y-2 divide-brand-navy bg-brand-white">
               {teams.map((t) => {
                 const total = t.cash + t.cv;
                 return (
-                  <tr key={t.id} className="hover:bg-[#FFFBEB] transition-colors">
-                    <td className="p-3 font-pixel text-xs text-[#102040]">
+                  <tr key={t.id} className="hover:bg-brand-cream-light transition-colors">
+                    <td className="p-3 font-pixel text-xs text-brand-navy">
                       #{t.slot}
                     </td>
                     <td className="p-3">
                       <div className="flex items-center gap-2">
                         <span
-                          className="w-3.5 h-3.5 border border-[#102040] shadow-[1px_1px_0px_#102040]"
+                          className="w-3.5 h-3.5 border border-brand-navy shadow-pixel-sm"
                           style={{ backgroundColor: t.color }}
                         />
-                        <span className="font-pixel text-xs text-[#102040]">
+                        <span className="font-pixel text-xs text-brand-navy">
                           {t.name}
                         </span>
                       </div>
                     </td>
-                    <td className="p-3 text-right font-tabular font-bold text-[#22B14C]">
+                    <td className="p-3 text-right font-tabular font-bold text-brand-green">
                       {formatINR(t.cash)}
                     </td>
-                    <td className="p-3 text-right font-tabular font-bold text-[#1E40AF]">
+                    <td className="p-3 text-right font-tabular font-bold text-brand-navy">
                       {formatINR(t.cv)}
                     </td>
-                    <td className="p-3 text-right font-tabular font-extrabold text-[#102040]">
+                    <td className="p-3 text-right font-tabular font-extrabold text-brand-navy">
                       {formatINR(total)}
                     </td>
                     <td className="p-3 text-center">
-                      <span className="font-mono bg-[#FAF8F5] px-2 py-0.5 border border-[#102040] text-[11px]">
+                      <span className="font-mono bg-brand-cream px-2 py-0.5 border border-brand-navy text-[11px]">
                         {t.businesses.length}/3
                       </span>
                     </td>
                     <td className="p-3 text-center">
                       {t.is_bankrupt ? (
-                        <span className="font-pixel text-[9px] bg-[#D32F2F] text-white px-2 py-0.5 border border-[#102040]">
+                        <span className="font-pixel text-[9px] bg-brand-red text-brand-white px-2 py-0.5 border border-brand-navy">
                           BANKRUPT
                         </span>
                       ) : (
-                        <span className="font-pixel text-[9px] bg-[#22B14C] text-white px-2 py-0.5 border border-[#102040]">
+                        <span className="font-pixel text-[9px] bg-brand-green text-brand-white px-2 py-0.5 border border-brand-navy">
                           ACTIVE
                         </span>
                       )}

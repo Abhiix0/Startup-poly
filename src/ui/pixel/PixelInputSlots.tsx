@@ -71,18 +71,18 @@ export const PixelInputSlots: React.FC<PixelInputSlotsProps> = ({
             key={index}
             className={`
               relative w-10 h-12 sm:w-13 sm:h-16 flex items-center justify-center
-              border-3 sm:border-4 border-[#102040] select-none transition-all duration-75
+              border-3 sm:border-4 border-brand-navy select-none transition-all duration-75
               ${
                 hasError
-                  ? 'bg-[#FEE2E2] border-[#D32F2F]'
-                  : 'bg-[#FFFBEB] border-[#102040]'
+                  ? 'bg-status-danger-bg border-brand-red'
+                  : 'bg-status-warning-bg border-brand-navy'
               }
-              ${isActive ? 'anim-slot-active ring-2 ring-[#FFCC00]' : ''}
+              ${isActive ? 'anim-slot-active ring-2 ring-brand-gold' : ''}
             `}
             style={{
               boxShadow: isFilled
-                ? '3px 3px 0px #102040'
-                : '2px 2px 0px #102040',
+                ? '3px 3px 0px var(--color-brand-navy)'
+                : '2px 2px 0px var(--color-brand-navy)',
             }}
           >
             {/* Top Inset Highlight */}
@@ -90,16 +90,16 @@ export const PixelInputSlots: React.FC<PixelInputSlotsProps> = ({
 
             {/* Character or Centered Dash */}
             {char ? (
-              <span className="font-pixel text-base sm:text-xl md:text-2xl text-[#102040] font-black drop-shadow-[1px_1px_0px_rgba(255,255,255,0.8)]">
+              <span className="font-pixel text-base sm:text-xl md:text-2xl text-brand-navy font-black drop-shadow-[1px_1px_0px_rgba(255,255,255,0.8)]">
                 {char}
               </span>
             ) : (
-              <span className="font-pixel text-sm sm:text-base text-[#102040]/30 font-bold select-none">-</span>
+              <span className="font-pixel text-sm sm:text-base text-brand-navy/30 font-bold select-none">-</span>
             )}
 
             {/* Blinking typing underline indicator on empty active slot */}
             {isActive && !char && (
-              <div className="absolute bottom-1.5 inset-x-2 h-1 bg-[#FFCC00] anim-blink" />
+              <div className="absolute bottom-1.5 inset-x-2 h-1 bg-brand-gold anim-blink" />
             )}
           </div>
         );

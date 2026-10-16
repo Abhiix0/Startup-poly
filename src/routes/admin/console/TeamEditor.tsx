@@ -30,14 +30,10 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
   onOpenBankruptModal,
 }) => {
   return (
-    <div className="bg-[#FAF8F5] border-4 border-[#102040] shadow-[4px_4px_0px_#102040] flex flex-col overflow-hidden">
+    <div className="bg-brand-cream border-4 border-brand-navy shadow-pixel flex flex-col overflow-hidden">
       {/* Team Header Banner */}
       <div
-        className="p-3 border-b-4 border-[#102040] flex flex-wrap items-center justify-between gap-2"
-        style={{
-          backgroundColor: '#102040',
-          color: '#FFFFFF',
-        }}
+        className="p-3 border-b-4 border-brand-navy flex flex-wrap items-center justify-between gap-2 bg-brand-navy text-brand-white"
       >
         <div className="flex items-center gap-2.5">
           <span
@@ -50,11 +46,11 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="bg-[#1E293B] text-[#94A3B8] px-2 py-0.5 border border-white/20">
+          <span className="bg-neutral-800 text-neutral-400 px-2 py-0.5 border border-white/20">
             v{team.version}
           </span>
           {team.is_bankrupt && (
-            <span className="bg-[#D32F2F] text-white font-pixel text-[10px] px-2 py-0.5 border border-white">
+            <span className="bg-brand-red text-brand-white font-pixel text-[10px] px-2 py-0.5 border border-white">
               BANKRUPT
             </span>
           )}
@@ -65,12 +61,12 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
       <div className="p-3 sm:p-4 flex flex-col gap-4">
         {/* Bankrupt banner & Undo button if bankrupt */}
         {team.is_bankrupt ? (
-          <div className="bg-[#FEECEB] border-3 border-[#D32F2F] p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[2px_2px_0px_#D32F2F]">
+          <div className="bg-status-danger-bg border-3 border-brand-red p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-pixel-sm">
             <div>
-              <span className="font-pixel text-xs text-[#D32F2F] block">
+              <span className="font-pixel text-xs text-brand-red block">
                 TEAM IS CURRENTLY ELIMINATED (BANKRUPT)
               </span>
-              <p className="font-mono text-xs text-[#64748B] mt-0.5">
+              <p className="font-mono text-xs text-neutral-500 mt-0.5">
                 All business assets were liquidated back to the bank. Regular edits are locked.
               </p>
             </div>
@@ -116,8 +112,8 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
 
         {/* Team Status / Danger Zone */}
         {!team.is_bankrupt && (
-          <div className="pt-2 border-t-2 border-[#CBD5E1] flex items-center justify-between">
-            <span className="font-mono text-xs text-[#64748B]">
+          <div className="pt-2 border-t-2 border-neutral-300 flex items-center justify-between">
+            <span className="font-mono text-xs text-neutral-500">
               If team physically cannot pay debt after forced sales:
             </span>
             <button
@@ -125,8 +121,8 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
               disabled={disabled}
               onClick={() => onOpenBankruptModal('declare')}
               className="
-                font-pixel text-xs uppercase px-3 py-2 bg-[#D32F2F] text-white
-                border-2 border-[#102040] shadow-[2px_2px_0px_#102040] hover:bg-[#B71C1C]
+                font-pixel text-xs uppercase px-3 py-2 bg-brand-red text-brand-white
+                border-2 border-brand-navy shadow-pixel-sm hover:bg-interactive-red-hover
                 active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
               "
             >

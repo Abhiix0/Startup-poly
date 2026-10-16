@@ -159,3 +159,68 @@ npm run admin:revoke
 
 ---
 *End of Operations Manual.*
+
+## Database lock order (migration 0016)
+Every mutating RPC takes locks in this order, so concurrent calls queue instead of deadlocking (`40P01`):
+1. `rooms` row (`FOR UPDATE`, taken by `expire_if_due`)
+2. `teams` rows of that room, ascending id
+3. `team_businesses` / `activity_events` writes (no explicit locks)
+
+A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock the room, then lock the team and re-read its columns. Race tests: `npm run test:concurrency` (local DB only).
+
+## Lifecycle rules (migration 0017)
+- `admin_open_lobby`, `admin_start_game`, `admin_abort_game`, `admin_finalize` accept an optional `request_id`. Retrying with the same id after a lost response returns the first call's result. The same id on another room or action raises `REQUEST_ID_REUSED`.
+- Abort is ACTIVE to LOBBY with a team reset. Once the deadline has passed the game is finished: use `admin_finalize`; abort raises `ROOM_ALREADY_EXPIRED`.
+- Start refuses a lobby that is not pristine (`INVALID_INITIAL_STATE`).
+
+## Money RPC rules (migration 0018)
+- `request_id` replay is decided after the room and team locks. A retry of an in-flight call waits, then gets the first call's result. Reusing an id for another team, action or admin raises `REQUEST_ID_REUSED` and changes nothing. `admin_adjust` replays as the array of team snapshots.
+- Cash and CV are capped at `public.max_money()` (1,000,000,000). Out-of-range input or results raise `INVALID_VALUE` with the field, never a raw `22003`.
+- `admin_adjust` requires an array of 1 to 6 items with a uuid `team_id`, integer deltas, a required `expected_version`, no duplicate team, one room.
+- After TIME_EXPIRED these remain editable as corrections (note required): set values, adjust, add/level/remove business, bankruptcy. After FINALIZED all raise `ROOM_NOT_EDITABLE`.
+
+## Joining and PIN abuse (migration 0019)
+- `join_team` now **returns** `{"error": "BAD_CODE_OR_PIN" | "TEAM_ALREADY_CLAIMED"}` for failed joins instead of raising. A raise rolled back the attempt row, so the old throttle never counted anything. `rpcJoinTeam` converts the payload to the same `AppError` code. `TOO_MANY_ATTEMPTS` and `NOT_AUTHENTICATED` still raise.
+- Limits per 60 s: 5 failures per user, 10 per team (a team under attack rejects even the right PIN), 30 per room, 60 for unknown room codes (stored as a SHA-256 hash). Six phones with up to 4 typos each stay under every limit.
+- Residual risk: someone who knows the room code can lock joins for that room for 60 s at a time. PINs are plaintext in `team_secrets` on purpose (organisers read them out); anyone with admin access can read them.
+- A late first-time join to a TIME_EXPIRED room is still allowed (the dashboard shows the game-over view). Owner decision pending.
+- **Manual checklist (do not script):** in the Supabase dashboard, Authentication, Rate Limits, confirm "Anonymous sign-ins" per hour per IP. Locally it is 30 (`config.toml`). The throttle above does not depend on it, but it caps how many sessions one IP can mint.
+
+## Security surface (migration 0020)
+- `anon` (no session) may execute only `server_time`, `get_lobby`, `join_team`, `get_my_state`, `is_admin`. Anonymous sign-in players are role `authenticated`, not `anon`.
+- Internal helpers (`room_standings`, `get_team_snapshot`, `app_now`, `raise_error`, the replay checks) are not executable by any client; SECURITY DEFINER callers reach them as the owner.
+- `supabase/tests/0011_security_matrix_test.sql` fails when a function or table is added without being classified, or when a SECURITY DEFINER function lacks a pinned `search_path`. Add new objects to its expected lists deliberately.
+- Realtime: a claimed player receives only its own team row, its own businesses and its room (checked with a real subscription in `security/security.test.ts`). Right after `supabase db reset` Realtime needs a few seconds before it delivers anything.
+
+## Client error handling (Phase 8)
+`classifyRpcError()` in `src/lib/errors.ts` sorts every failed RPC into one class. `CODE_CLASS` must list every code the migrations raise; `classifyRpcError.test.ts` greps the migrations and fails on a missing one.
+
+| Class | Meaning | Codes |
+|-------|---------|-------|
+| DEFINITELY_FAILED | Rejected, nothing written | BAD_CODE_OR_PIN, BUSINESS_CAP, BUSINESS_NOT_OWNED, INSUFFICIENT_CASH, INVALID_INITIAL_STATE, INVALID_VALUE, NON_FINAL_ROOM_EXISTS, NOTE_REQUIRED, REQUEST_ID_REUSED, ROOM_NOT_FOUND, TEAM_ALREADY_CLAIMED, TEAM_BANKRUPT, TEAMS_NOT_JOINED, TOO_MANY_ATTEMPTS, UNRESOLVED_TIE |
+| CONFLICT | Someone changed it first: refetch and retry | VERSION_CONFLICT, BUSINESS_OWNED |
+| SESSION_EXPIRED | Sign in again | NOT_AUTHENTICATED, PGRST301 |
+| NOT_ADMIN | Account may not do this | NOT_ADMIN |
+| ROOM_NOT_ACTIVE | Room status no longer allows it; the room may already be where you wanted | INVALID_TRANSITION, ROOM_NOT_EDITABLE, ROOM_ALREADY_EXPIRED, ROOM_FINALIZED, IMMUTABLE |
+| OUTCOME_UNKNOWN | No trustworthy answer (network, timeout, 5xx): it may have been applied | anything else |
+
+`COMMITTED` (success or a request_id replay) is the non-error outcome.
+
+- One `request_id` per user intent (`src/lib/intent.ts`): the same function with the same arguments reuses its id until the outcome is known, so a double-click, a retry or a resend replays on the server instead of applying twice. An unknown outcome keeps the id; success or a definite failure drops it. Quick-action dialogs still mint their own id on open and pass it through.
+- Lifecycle buttons (open lobby, start, abort, finalize) now carry a `request_id` and are retried once automatically after a dropped response. If the call still errors with ROOM_NOT_ACTIVE or an unknown outcome, the UI asks the server for the room status and shows success when the room is already in the target state.
+- On an unknown outcome the console shows a neutral message, reloads the snapshot and never says "saved". Check the refreshed values before repeating the action.
+
+## Match lifecycle at a glance (final behaviour)
+
+| Status | Entered by | Allowed next | Notes |
+|--------|-----------|--------------|-------|
+| CREATED | `admin_create_room` | LOBBY | Only one non-finalized room exists at a time. |
+| LOBBY | `admin_open_lobby` (or abort from ACTIVE) | ACTIVE | Phones join with room code + slot + PIN. Start refuses a lobby that is not pristine. |
+| ACTIVE | `admin_start_game` | TIME_EXPIRED (clock), LOBBY (abort) | Money edits allowed. Abort resets teams to baseline and returns to LOBBY; the old events stay in the audit log. |
+| TIME_EXPIRED | the first call after `ends_at` (lazy, exactly once) | FINALIZED | Corrections need a note and are flagged. **Abort is refused (`ROOM_ALREADY_EXPIRED`): finalize instead.** |
+| FINALIZED | `admin_finalize` | none | Rooms, teams, businesses, results and events are immutable. History keeps the businesses and catalog numbers as they were. |
+
+- Open lobby, start, abort and finalize accept an optional `request_id`; the same id replays the first call's result. Reusing an id elsewhere raises `REQUEST_ID_REUSED`.
+- Every mutating RPC takes locks in one order (room, then teams ascending id); see "Database lock order".
+- Error codes and how the client treats them: "Client error handling".
+- Scoring and tiebreaks: `docs/SCORING_RULES.md`. Deploys: `docs/DEPLOY_CHECKLIST.md`.

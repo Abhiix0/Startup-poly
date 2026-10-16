@@ -40,4 +40,10 @@ describe('Dead Code & Dependency Hygiene (Phase 1 Regression)', () => {
     const patchPath = path.join(rootDir, 'supabase/patches/001_fix_standings_add_abort.sql');
     expect(fs.existsSync(patchPath)).toBe(false);
   });
+
+  it('confirms the unused rpc aliases and formatTime stay deleted (docs/CLEANUP_LOG.md)', () => {
+    const rpc = fs.readFileSync(path.join(rootDir, 'src/data/rpc.ts'), 'utf-8');
+    for (const name of ['getMyStateRpc', 'joinTeamRpc', 'getLobbyRpc']) expect(rpc).not.toContain(name);
+    expect(fs.readFileSync(path.join(rootDir, 'src/lib/format.ts'), 'utf-8')).not.toContain('formatTime');
+  });
 });

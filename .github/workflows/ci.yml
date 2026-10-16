@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_BIN: supabase
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Reset database from migrations
+        run: supabase db reset
+
+      - name: pgTAP tests
+        run: supabase test db
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+      - name: Bundle secret scan
+        run: npm run check:bundle
+
+      - name: Database suites (races, security over HTTP, RPC contract)
+        run: npm run test:db-suites
+
+      - name: Upgrade path (live 0015 game to latest)
+        run: npm run test:upgrade

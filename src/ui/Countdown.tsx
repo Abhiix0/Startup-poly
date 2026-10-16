@@ -37,22 +37,22 @@ export const Countdown: React.FC<CountdownProps> = ({
   };
 
   const colorStyles = isExpired
-    ? 'bg-[#FEF2F2] text-[#D32F2F] border-[#D32F2F]'
+    ? 'bg-status-danger-bg text-brand-red border-brand-red'
     : isLowTime
-    ? 'bg-[#FFFBEB] text-[#D32F2F] border-[#D32F2F] animate-pulse'
-    : 'bg-[#102040] text-[#FFCC00] border-[#102040]';
+    ? 'bg-status-warning-bg text-brand-red border-brand-red animate-pulse'
+    : 'bg-brand-navy text-brand-gold border-brand-navy';
 
   return (
     <div className={`inline-flex flex-col items-center select-none ${className}`}>
       {showLabel && (
-        <span className="font-pixel text-[10px] text-[#64748B] uppercase tracking-widest mb-1">
+        <span className="font-pixel text-[10px] text-neutral-500 uppercase tracking-widest mb-1">
           {isExpired ? 'MATCH ENDED' : isRunning ? 'TIME REMAINING' : 'GAME TIMER'}
         </span>
       )}
       <div
         className={`
           font-tabular font-extrabold tracking-widest tabular-nums
-          border-4 shadow-[4px_4px_0px_#102040]
+          border-4 shadow-pixel
           ${colorStyles}
           ${sizeStyles[size]}
         `}

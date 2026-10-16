@@ -26,53 +26,53 @@ export const StatusPill: React.FC<StatusPillProps> = ({
 
   const styles: Record<string, { bg: string; text: string; dot: string; label: string }> = {
     CREATED: {
-      bg: 'bg-[#FFFBEB]',
-      text: 'text-[#92400E]',
-      dot: 'bg-[#F59E0B]',
+      bg: 'bg-status-warning-bg',
+      text: 'text-status-warning-text',
+      dot: 'bg-status-warning',
       label: 'CREATED',
     },
     LOBBY: {
-      bg: 'bg-[#EFF6FF]',
-      text: 'text-[#1E40AF]',
-      dot: 'bg-[#3B82F6]',
+      bg: 'bg-status-info-bg',
+      text: 'text-status-info-dark',
+      dot: 'bg-status-info',
       label: 'LOBBY',
     },
     ACTIVE: {
-      bg: 'bg-[#DCFCE7]',
-      text: 'text-[#166534]',
-      dot: 'bg-[#22C55E]',
+      bg: 'bg-status-success-bg',
+      text: 'text-status-success-dark',
+      dot: 'bg-status-success',
       label: 'ACTIVE',
     },
     TIME_EXPIRED: {
-      bg: 'bg-[#FEF2F2]',
-      text: 'text-[#991B1B]',
-      dot: 'bg-[#EF4444]',
+      bg: 'bg-status-danger-bg',
+      text: 'text-status-danger-dark',
+      dot: 'bg-status-danger',
       label: 'TIME UP',
     },
     FINALIZED: {
-      bg: 'bg-[#F1F5F9]',
-      text: 'text-[#334155]',
-      dot: 'bg-[#64748B]',
+      bg: 'bg-neutral-100',
+      text: 'text-neutral-700',
+      dot: 'bg-neutral-500',
       label: 'FINALIZED',
     },
     BANKRUPT: {
-      bg: 'bg-[#450A0A]',
-      text: 'text-[#FEF2F2]',
-      dot: 'bg-[#EF4444]',
+      bg: 'bg-neutral-950',
+      text: 'text-status-danger-light',
+      dot: 'bg-status-danger',
       label: 'BANKRUPT',
     },
     WAITING: {
-      bg: 'bg-[#FFF7ED]',
-      text: 'text-[#9A3412]',
-      dot: 'bg-[#F97316]',
+      bg: 'bg-status-warning-bg',
+      text: 'text-status-warning-text',
+      dot: 'bg-status-warning',
       label: 'WAITING',
     },
   };
 
   const current = styles[normalized] || {
-    bg: 'bg-[#F8FAFC]',
-    text: 'text-[#475569]',
-    dot: 'bg-[#94A3B8]',
+    bg: 'bg-neutral-50',
+    text: 'text-neutral-600',
+    dot: 'bg-neutral-400',
     label: normalized,
   };
 
@@ -82,13 +82,13 @@ export const StatusPill: React.FC<StatusPillProps> = ({
     <span
       className={`
         inline-flex items-center gap-1.5 font-pixel font-bold uppercase select-none
-        border-2 border-[#102040] shadow-[1px_1px_0px_#102040]
+        border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)]
         ${current.bg} ${current.text} ${sizeClass}
         ${className}
       `}
     >
       <span
-        className={`w-2 h-2 rounded-none border border-[#102040] ${current.dot} ${
+        className={`w-2 h-2 rounded-none border border-brand-navy ${current.dot} ${
           pulse || normalized === 'ACTIVE' ? 'animate-pulse' : ''
         }`}
       />

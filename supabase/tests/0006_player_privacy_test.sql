@@ -10,7 +10,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(9);
+SELECT plan(10);
 SELECT set_config('app.env', 'test', true);
 SELECT set_config('app.test_now', '2026-03-01 10:00:00+00', true);
 
@@ -45,21 +45,19 @@ SELECT lives_ok(
 
 SELECT public.admin_open_lobby(id) FROM public.rooms WHERE status = 'CREATED';
 
--- 2. Player 1 claims Slot 1
+-- 2. Capture code and PINs as admin (RLS hides rooms/team_secrets from players)
+SELECT r.code AS room_code,
+       (SELECT ts.join_pin FROM public.team_secrets ts JOIN public.teams t ON t.id = ts.team_id WHERE t.room_id = r.id AND t.slot = 1) AS pin1,
+       (SELECT ts.join_pin FROM public.team_secrets ts JOIN public.teams t ON t.id = ts.team_id WHERE t.room_id = r.id AND t.slot = 2) AS pin2
+FROM public.rooms r WHERE r.status = 'LOBBY' \gset
+
+-- Player 1 claims Slot 1
 SELECT set_config('request.jwt.claims', '{"sub": "b5000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
-SELECT public.join_team(
-  r.code,
-  1,
-  (SELECT ts.join_pin FROM public.team_secrets ts JOIN public.teams t ON t.id = ts.team_id WHERE t.room_id = r.id AND t.slot = 1)
-) FROM public.rooms r WHERE r.status = 'LOBBY';
+SELECT public.join_team(:'room_code', 1, :'pin1');
 
 -- 3. Player 2 claims Slot 2
 SELECT set_config('request.jwt.claims', '{"sub": "b5000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
-SELECT public.join_team(
-  r.code,
-  2,
-  (SELECT ts.join_pin FROM public.team_secrets ts JOIN public.teams t ON t.id = ts.team_id WHERE t.room_id = r.id AND t.slot = 2)
-) FROM public.rooms r WHERE r.status = 'LOBBY';
+SELECT public.join_team(:'room_code', 2, :'pin2');
 
 -- 4. Admin starts game, gives Team 1 more CV, advances to expiration, and finalizes
 SELECT set_config('request.jwt.claims', '{"sub": "a5000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
@@ -77,6 +75,11 @@ SELECT public.admin_set_team_values(
 -- Advance clock past 50 minutes and finalize
 SELECT set_config('app.test_now', '2026-03-01 10:55:00+00', true);
 SELECT public.expire_if_due(id) FROM public.rooms;
+-- Slots 2-5 tie on cash/CV; resolve explicitly so finalize does not raise UNRESOLVED_TIE.
+SELECT public.admin_set_tiebreak(
+  (SELECT id FROM public.rooms),
+  ARRAY(SELECT id FROM public.teams WHERE slot > 1 ORDER BY slot)
+);
 SELECT public.admin_finalize(id) FROM public.rooms;
 
 -- 5. Test Player 1 Privacy as claimed anonymous/authenticated role

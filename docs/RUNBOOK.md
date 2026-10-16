@@ -131,6 +131,23 @@ The system automatically detects ties according to the official tournament tie-b
 | **Venue Wi-Fi drops completely** | Router/ISP failure. | 1. Admin turns on phone cellular hotspot.<br>2. Reconnect laptop to hotspot.<br>3. Admin console displays red `OFFLINE` banner until reconnected, then syncs live snapshot automatically. |
 | **Wrong transaction amount entered** | Scorer typo during rapid entry. | 1. Select the affected team.<br>2. In the Cash or CV editor, type the corrected balance.<br>3. Provide an audit note describing the correction.<br>4. Click **UPDATE**. |
 | **Version Mismatch / Conflict Dialog appears** | Two admins tried editing the same team simultaneously. | The Conflict Dialog shows: *"Server was modified by another operator"*. Click **"DISCARD MY CHANGES"** to inspect current values, then re-apply if appropriate. |
+| **Phone says "Too many tries — wait N seconds"** | The join throttle tripped: more than 5 wrong PINs from one phone, 10 for one team, or 30 for one room in a minute. | Wait for the countdown (60 s). Read the PIN again from the Admin Lobby grid before retrying. A team under attack rejects even the right PIN until the minute passes. |
+| **Phone says "This team is already connected"** | Another phone already holds the slot (or the captain's old session still does). | Click **RELEASE** on that team's card, then have the captain rejoin with the PIN. |
+| **Console says "Connection lost. This may or may not have been saved"** | The network dropped while a change was in flight; the outcome is unknown. | Do not re-type it blindly. Read the refreshed values: if the change is there, you are done. If not, repeat the same action: the console reuses the same request id, so it cannot apply twice. |
+| **Abort says the clock has run out** | The 50:00 deadline passed, so the match is finished. | Do not abort. Use the reconciliation window, then **FINALIZE MATCH**. Abort only works while the match is ACTIVE and resets the room to LOBBY. |
+| **Start / Finalize pressed twice, or the page reloaded mid-click** | Double click or a lost response. | Safe. Repeating the same action returns success; it never starts or finalizes twice. If the room is already in the target state the console treats it as done. |
+
+---
+
+## Event-Day Safety Checklist
+
+- [ ] Latest `main` deployed and `npm run verify:prod` is green (docs/DEPLOY_CHECKLIST.md). No deploys or migrations on event day.
+- [ ] Supabase dashboard: anonymous sign-ins on, per-IP hourly limit noted, backup taken that morning.
+- [ ] One rehearsal match end to end on the event laptop and Wi-Fi: create room, 6 phones join, start, a rent, a purchase, an upgrade, a bankruptcy, let the clock run out, tie-break, finalize, next match.
+- [ ] Two admins logged in on separate laptops; both can open the room. Only one edits at a time (the second sees a conflict dialog, not a double edit).
+- [ ] Phone hotspot ready as the Wi-Fi fallback; paper scoreboard template printed (section 5).
+- [ ] Every captain knows: PIN is 4 digits, a wrong PIN five times locks that phone for a minute.
+- [ ] Rules in hand: highest CV wins; ties go to cash, then business count, then the 30-second pitch; a bankrupt team is eliminated (docs/SCORING_RULES.md).
 
 ---
 

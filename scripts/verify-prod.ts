@@ -1,4 +1,11 @@
 /**
+ * READ-ONLY BY DESIGN: this script performs no mutating RPC calls and writes no data.
+ * It issues SELECTs and a few negative probes (admin_create_room as anon / non-admin)
+ * that are expected to be REJECTED; it also opens one anonymous auth session.
+ * Because it never mutates, it is the only script exempt from scripts/lib/assertLocal.
+ */
+
+/**
  * ⚠️ SECURITY WARNING:
  * This verification script operates solely using the public Anon Key.
  * NEVER supply or hardcode SUPABASE_SERVICE_ROLE_KEY into this script or client files.
@@ -171,11 +178,12 @@ async function runVerification() {
   // Check 4: Anon cannot invoke admin RPCs
   try {
     const { error } = await client.rpc('admin_create_room', {
-      p_team_count: 5,
-      p_teams: [{ name: 'Hackers', color: '#FF0000' }],
+      team_count: 5,
+      teams: [{ name: 'Hackers', color: '#FF0000' }],
     });
 
-    if (error) {
+    // Must be an authorization rejection. A "function not found" (PGRST202, e.g. wrong argument names) proves nothing.
+    if (error && (error.code === '42501' || error.message.includes('NOT_ADMIN'))) {
       results.push({
         name: 'Block anonymous admin RPC calls',
         passed: true,
@@ -185,7 +193,9 @@ async function runVerification() {
       results.push({
         name: 'Block anonymous admin RPC calls',
         passed: false,
-        message: 'VULNERABILITY DETECTED: Anonymous caller executed admin_create_room!',
+        message: error
+          ? `Unexpected error (not an authorization rejection): ${error.message} (${error.code})`
+          : 'VULNERABILITY DETECTED: Anonymous caller executed admin_create_room!',
       });
     }
   } catch (err: any) {
@@ -257,8 +267,8 @@ async function runVerification() {
   if (anonUserClient) {
     try {
       const { error: anonRpcError } = await anonUserClient.rpc('admin_create_room', {
-        p_team_count: 5,
-        p_teams: [{ name: 'Team1', color: '#FF0000' }],
+        team_count: 5,
+        teams: [{ name: 'Team1', color: '#FF0000' }],
       });
       if (anonRpcError && anonRpcError.message.includes('NOT_ADMIN')) {
         results.push({
@@ -269,8 +279,8 @@ async function runVerification() {
       } else if (anonRpcError) {
         results.push({
           name: 'Anonymous user rejected by admin RPC with NOT_ADMIN',
-          passed: true,
-          message: `Rejected with error: ${anonRpcError.message}`,
+          passed: false,
+          message: `Unexpected error (expected NOT_ADMIN): ${anonRpcError.message} (${anonRpcError.code})`,
         });
       } else {
         results.push({

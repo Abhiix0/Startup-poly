@@ -26,14 +26,14 @@ export const AdminHistoryPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between">
+    <div className="min-h-screen bg-brand-sky flex flex-col justify-between">
       {/* Top Navigation */}
-      <header className="bg-[#102040] text-white border-b-4 border-[#102040] px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_#102040]">
+      <header className="bg-brand-navy text-brand-white border-b-4 border-brand-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_var(--color-brand-navy)]">
         <div className="flex items-center gap-3">
-          <Link to="/admin" className="font-pixel text-xs text-[#FFCC00] hover:underline flex items-center gap-1">
+          <Link to="/admin" className="font-pixel text-xs text-brand-gold hover:underline flex items-center gap-1">
             ◄ CONSOLE
           </Link>
-          <span className="font-pixel text-xs text-white border-l-2 border-white/20 pl-3">
+          <span className="font-pixel text-xs text-brand-white border-l-2 border-white/20 pl-3">
             MATCH ARCHIVE
           </span>
         </div>
@@ -77,49 +77,49 @@ export const AdminHistoryPage: React.FC = () => {
                     key={room.room_id}
                     to={`/admin/history/${room.room_id}`}
                     className="
-                      bg-white border-3 border-[#102040] p-3.5 sm:p-4
-                      shadow-[3px_3px_0px_#102040] hover:shadow-[1px_1px_0px_#102040] hover:translate-x-0.5 hover:translate-y-0.5
+                      bg-brand-white border-3 border-brand-navy p-3.5 sm:p-4
+                      shadow-[3px_3px_0px_var(--color-brand-navy)] hover:shadow-[1px_1px_0px_var(--color-brand-navy)] hover:translate-x-0.5 hover:translate-y-0.5
                       transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3
                     "
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-[#FFCC00] border-2 border-[#102040] flex items-center justify-center font-pixel text-xs text-[#102040] shadow-[1px_1px_0px_#102040] flex-shrink-0">
+                      <div className="w-12 h-12 bg-brand-gold border-2 border-brand-navy flex items-center justify-center font-pixel text-xs text-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)] flex-shrink-0">
                         🏆
                       </div>
 
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <span className="font-pixel text-sm text-[#102040]">
+                          <span className="font-pixel text-sm text-brand-navy">
                             ROOM {room.code}
                           </span>
-                          <span className="font-mono text-[11px] text-[#64748B] bg-[#FAF8F5] px-1.5 py-0.5 border border-[#CBD5E1]">
+                          <span className="font-mono text-[11px] text-neutral-500 bg-neutral-50 px-1.5 py-0.5 border border-neutral-300">
                             {room.team_count} Teams
                           </span>
                         </div>
 
-                        <span className="font-mono text-xs text-[#64748B]">
+                        <span className="font-mono text-xs text-neutral-500">
                           Finalized: {dateStr}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#CBD5E1]">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-neutral-300">
                       {room.winner_name ? (
                         <div className="flex items-center gap-1.5">
-                          <span className="font-pixel text-[10px] text-[#92400E] uppercase">Winner:</span>
+                          <span className="font-pixel text-[10px] text-status-warning-text uppercase">Winner:</span>
                           <span
-                            className="w-3 h-3 border border-[#102040]"
-                            style={{ backgroundColor: room.winner_color || '#22B14C' }}
+                            className="w-3 h-3 border border-brand-navy"
+                            style={{ backgroundColor: room.winner_color || 'var(--color-brand-green)' }}
                           />
-                          <span className="font-sans font-bold text-xs text-[#102040]">
+                          <span className="font-sans font-bold text-xs text-brand-navy">
                             {room.winner_name}
                           </span>
                         </div>
                       ) : (
-                        <span className="font-mono text-xs text-[#64748B] italic">No winner declared</span>
+                        <span className="font-mono text-xs text-neutral-500 italic">No winner declared</span>
                       )}
 
-                      <span className="font-pixel text-xs text-[#5C94FC] ml-2">
+                      <span className="font-pixel text-xs text-brand-sky ml-2">
                         VIEW ►
                       </span>
                     </div>
@@ -131,7 +131,7 @@ export const AdminHistoryPage: React.FC = () => {
         </PixelCard>
       </main>
 
-      <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />
+      <div className="h-8 nes-brick-pattern border-t-4 border-brand-navy" />
     </div>
   );
 };

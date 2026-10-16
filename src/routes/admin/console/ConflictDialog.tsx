@@ -27,40 +27,40 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
       maxWidth="sm"
     >
       <div className="flex flex-col gap-4">
-        <div className="bg-[#FFFBEB] border-2 border-[#102040] p-3 flex flex-col gap-2">
-          <p className="font-pixel text-xs text-[#92400E] font-bold">
+        <div className="bg-brand-cream-light border-2 border-brand-navy p-3 flex flex-col gap-2">
+          <p className="font-pixel text-xs text-amber-800 font-bold">
             ⚠ CONCURRENCY CONFLICT DETECTED
           </p>
-          <p className="font-sans text-xs text-[#102040]">
+          <p className="font-sans text-xs text-brand-navy">
             Another referee or device modified this team while your draft was open. To prevent accidental data loss, your changes were not applied.
           </p>
         </div>
 
         {conflictDetails && (
-          <div className="bg-[#FAF8F5] border-2 border-[#102040] p-3 font-mono text-xs flex flex-col gap-1 text-[#64748B]">
+          <div className="bg-brand-cream border-2 border-brand-navy p-3 font-mono text-xs flex flex-col gap-1 text-neutral-500">
             <div>
-              Latest Version: <strong className="text-[#102040]">v{conflictDetails.currentVersion}</strong> (your draft was on v{conflictDetails.expectedVersion})
+              Latest Version: <strong className="text-brand-navy">v{conflictDetails.currentVersion}</strong> (your draft was on v{conflictDetails.expectedVersion})
             </div>
             {conflictDetails.cash !== undefined && (
               <div>
-                Latest Cash on server: <strong className="text-[#102040]">₹{conflictDetails.cash.toLocaleString('en-IN')}</strong>
+                Latest Cash on server: <strong className="text-brand-navy">₹{conflictDetails.cash.toLocaleString('en-IN')}</strong>
               </div>
             )}
             {conflictDetails.cv !== undefined && (
               <div>
-                Latest CV on server: <strong className="text-[#102040]">₹{conflictDetails.cv.toLocaleString('en-IN')}</strong>
+                Latest CV on server: <strong className="text-brand-navy">₹{conflictDetails.cv.toLocaleString('en-IN')}</strong>
               </div>
             )}
           </div>
         )}
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#102040]">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-brand-navy">
           <button
             type="button"
             onClick={onClose}
             className="
-              font-pixel text-xs uppercase px-3 py-1.5 bg-white text-[#102040]
-              border-2 border-[#102040] shadow-[1px_1px_0px_#102040] hover:bg-[#EAE5D9]
+              font-pixel text-xs uppercase px-3 py-1.5 bg-brand-white text-brand-navy
+              border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-200
               cursor-pointer active:translate-y-0.5
             "
           >

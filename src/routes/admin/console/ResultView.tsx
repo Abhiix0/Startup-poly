@@ -30,7 +30,7 @@ export const ResultView: React.FC<ResultViewProps> = ({
   const leaderboardEntries: LeaderboardEntry[] = standings.map((s) => ({
     rank: s.rank,
     name: s.name,
-    color: teamColorMap.get(s.team_id) || '#64748B',
+    color: teamColorMap.get(s.team_id) || 'var(--color-neutral-500)',
     cv: s.cv,
     cash: s.cash,
     business_count: s.business_count,
@@ -56,7 +56,7 @@ export const ResultView: React.FC<ResultViewProps> = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#5C94FC] text-[#102040]">
+    <div className="flex flex-col min-h-screen bg-brand-sky text-brand-navy">
       {/* 1. TOP BAR */}
       <ConsoleTopBar
         roomCode={snapshot.room.code}
@@ -70,20 +70,20 @@ export const ResultView: React.FC<ResultViewProps> = ({
       />
 
       {/* 2. MATCH FINALIZED STATUS BANNER */}
-      <div className="bg-[#FFCC00] text-[#102040] px-4 py-2 text-center font-pixel text-xs border-b-4 border-[#102040] shadow-[0_2px_0px_#102040] flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div className="bg-brand-gold text-brand-navy px-4 py-2 text-center font-pixel text-xs border-b-4 border-brand-navy shadow-pixel-sm flex flex-col sm:flex-row items-center justify-between gap-2">
         <span>★ MATCH FINALIZED — Results are permanent and immutable.</span>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleCopyText}
-            className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-white text-[#102040] border border-[#102040] hover:bg-[#FAF8F5] cursor-pointer shadow-[1px_1px_0px_#102040]"
+            className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-brand-white text-brand-navy border border-brand-navy hover:bg-brand-cream cursor-pointer shadow-pixel-sm"
           >
             {copied ? '✓ COPIED!' : '📋 COPY RESULTS'}
           </button>
           <button
             type="button"
             onClick={handleDownloadCsv}
-            className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-white text-[#102040] border border-[#102040] hover:bg-[#FAF8F5] cursor-pointer shadow-[1px_1px_0px_#102040]"
+            className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-brand-white text-brand-navy border border-brand-navy hover:bg-brand-cream cursor-pointer shadow-pixel-sm"
           >
             📥 CSV EXPORT
           </button>
@@ -114,7 +114,7 @@ export const ResultView: React.FC<ResultViewProps> = ({
       </main>
 
       {/* 4. NES Ground Pattern */}
-      <div className="h-8 nes-brick-pattern border-t-4 border-[#102040]" />
+      <div className="h-8 nes-brick-pattern border-t-4 border-brand-navy" />
     </div>
   );
 };

@@ -31,23 +31,23 @@ export const AdminRoomPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#5C94FC] flex flex-col justify-between">
+    <div className="min-h-screen bg-brand-sky flex flex-col justify-between">
       {/* Top Navbar */}
-      <header className="bg-[#102040] text-white border-b-4 border-[#102040] px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_#102040]">
+      <header className="bg-brand-navy text-brand-white border-b-4 border-brand-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_var(--color-brand-navy)]">
         <div className="flex items-center gap-3">
           <Link
             to="/admin"
-            className="font-pixel text-xs text-[#FFCC00] hover:underline flex items-center gap-1"
+            className="font-pixel text-xs text-brand-gold hover:underline flex items-center gap-1"
           >
             ◄ CONSOLE
           </Link>
-          <span className="font-pixel text-xs text-white border-l-2 border-white/20 pl-3">
+          <span className="font-pixel text-xs text-brand-white border-l-2 border-white/20 pl-3">
             ROOM {snapshot?.room.code || roomId?.slice(0, 6).toUpperCase()}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline font-mono text-[11px] text-[#94A3B8]">
+          <span className="hidden sm:inline font-mono text-[11px] text-neutral-400">
             Updated: {lastUpdated}
           </span>
           <ConnectionPill status={connection} />
@@ -56,7 +56,7 @@ export const AdminRoomPage: React.FC = () => {
       </header>
 
       {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-[#FFCC00] text-[#102040] px-4 py-2 text-center border-b-4 border-[#102040] shadow-[0_2px_0px_#102040]">
+      <div className="lg:hidden bg-brand-gold text-brand-navy px-4 py-2 text-center border-b-4 border-brand-navy shadow-[0_2px_0px_var(--color-brand-navy)]">
         <p className="font-pixel text-[11px] leading-relaxed">
           💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
         </p>

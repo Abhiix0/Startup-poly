@@ -14,8 +14,3 @@ export function formatMMSS(totalSeconds: number): string {
   const seconds = safeSeconds % 60;
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
-
-export function formatTime(input: string | Date | number): string {
-  const date = new Date(input);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-}

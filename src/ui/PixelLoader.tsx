@@ -21,16 +21,16 @@ export const PixelLoader: React.FC<PixelLoaderProps> = ({
 
   return (
     <div
-      className={`min-h-screen bg-nes-sky flex items-center justify-center p-4 selection:bg-[#FFCC00] selection:text-[#102040] ${className}`}
+      className={`min-h-screen bg-brand-sky flex items-center justify-center p-4 selection:bg-brand-gold selection:text-brand-navy ${className}`}
       role="status"
       aria-live="polite"
     >
-      <div className="bg-[#FAF8F5] border-4 border-[#102040] shadow-[6px_6px_0px_#102040] p-6 max-w-sm w-full text-center flex flex-col items-center">
+      <div className="bg-neutral-50 border-4 border-brand-navy shadow-pixel-lg p-6 max-w-sm w-full text-center flex flex-col items-center">
         {/* Header Wordmark */}
         <span
-          className="font-pixel text-xs sm:text-sm text-[#FFCC00] uppercase tracking-wider mb-3 select-none"
+          className="font-pixel text-xs sm:text-sm text-brand-gold uppercase tracking-wider mb-3 select-none"
           style={{
-            textShadow: '2px 2px 0 #B84418, 3px 3px 0 #102040',
+            textShadow: '2px 2px 0 var(--color-brand-brick), 3px 3px 0 var(--color-brand-navy)',
           }}
         >
           STARTUPOLY
@@ -46,13 +46,13 @@ export const PixelLoader: React.FC<PixelLoaderProps> = ({
 
         {/* Stepped 10-Segment Indeterminate Progress Bar */}
         <div
-          className="w-full max-w-[200px] h-5 bg-[#102040] border-2 border-[#102040] p-0.5 mb-3 flex gap-0.5 overflow-hidden"
+          className="w-full max-w-[200px] h-5 bg-brand-navy border-2 border-brand-navy p-0.5 mb-3 flex gap-0.5 overflow-hidden"
           aria-hidden="true"
         >
           {Array.from({ length: 10 }).map((_, idx) => (
             <div
               key={idx}
-              className="flex-1 h-full bg-[#FFCC00] anim-progress-segment"
+              className="flex-1 h-full bg-brand-gold anim-progress-segment"
               style={{
                 animationDelay: `${idx * 120}ms`,
               }}
@@ -61,7 +61,7 @@ export const PixelLoader: React.FC<PixelLoaderProps> = ({
         </div>
 
         {/* Label */}
-        <p className="font-pixel text-[10px] text-[#102040] uppercase tracking-wider loader-label">
+        <p className="font-pixel text-[10px] text-brand-navy uppercase tracking-wider loader-label">
           {label}
         </p>
       </div>
