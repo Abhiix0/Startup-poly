@@ -1,9 +1,11 @@
 import React from 'react';
-import { PixelCard, Countdown, EmptyState } from '../../ui';
-import { PixelCoin, PixelLevelPips, PixelBusinessIcon } from '../../ui/pixel';
+import { Countdown } from '../../ui';
+import { PixelCoin } from '../../ui/pixel';
 import { formatINR } from '../../lib/format';
 import { TeamStateResponse } from '../../data/rpc';
 import { FlashDirection } from '../../data/useMyTeam';
+import { Panel, Metric } from './TeamScene';
+import { TeamBusinessList } from './TeamBusinessList';
 
 interface ActiveDashboardViewProps {
   state: TeamStateResponse;
@@ -12,6 +14,24 @@ interface ActiveDashboardViewProps {
   cvFlash: FlashDirection;
 }
 
+const flashSurface = (dir: FlashDirection, upClass: string) =>
+  dir === 'up'
+    ? `${upClass} ring-2`
+    : dir === 'down'
+    ? 'bg-status-danger-bg border-status-danger-dark ring-status-danger ring-2'
+    : 'bg-white';
+
+const FlashBadge: React.FC<{ dir: FlashDirection }> = ({ dir }) =>
+  dir ? (
+    <span
+      className={`font-pixel text-[10px] font-bold px-1.5 py-0.5 rounded border border-brand-navy text-white ${
+        dir === 'up' ? 'bg-brand-green' : 'bg-brand-red'
+      }`}
+    >
+      {dir === 'up' ? '▲ UP' : '▼ DOWN'}
+    </span>
+  ) : null;
+
 export const ActiveDashboardView: React.FC<ActiveDashboardViewProps> = ({
   state,
   onExpire,
@@ -19,173 +39,75 @@ export const ActiveDashboardView: React.FC<ActiveDashboardViewProps> = ({
   cvFlash,
 }) => {
   const { team, room, businesses } = state;
-  const totalAssets = team.cash + team.cv;
-
-  const cashFlashClass =
-    cashFlash === 'up'
-      ? 'bg-success-surface border-success-text ring-4 ring-success-text transition-colors duration-300'
-      : cashFlash === 'down'
-      ? 'bg-danger-surface border-danger-text ring-4 ring-danger-text transition-colors duration-300'
-      : 'bg-white border-nes-navy';
-
-  const cvFlashClass =
-    cvFlash === 'up'
-      ? 'bg-info-surface border-info-text ring-4 ring-info-text transition-colors duration-300'
-      : cvFlash === 'down'
-      ? 'bg-danger-surface border-danger-text ring-4 ring-danger-text transition-colors duration-300'
-      : 'bg-white border-nes-navy';
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Bankrupt Eliminated Banner */}
       {team.is_bankrupt && (
-        <div className="bg-nes-red text-white border-4 border-nes-navy shadow-[4px_4px_0px_var(--color-nes-navy)] p-3.5 text-center">
-          <span className="font-pixel text-sm sm:text-base tracking-wider block">
-            ☠ ELIMINATED • TEAM IS BANKRUPT ☠
+        <div
+          role="status"
+          className="bg-brand-red text-white border-2 border-brand-navy rounded-lg shadow-pixel-sm p-4 text-center"
+        >
+          <span className="font-pixel text-base font-extrabold tracking-wider block">
+            <span aria-hidden="true">☠ </span>ELIMINATED • TEAM IS BANKRUPT<span aria-hidden="true"> ☠</span>
           </span>
-          <span className="font-mono text-xs opacity-90 block mt-0.5">
+          <span className="font-mono text-xs opacity-90 block mt-1">
             Unable to settle board obligations. Financial assets frozen.
           </span>
         </div>
       )}
 
-      {/* Authoritative Server Countdown Clock Card */}
-      <div className="text-center">
-        <div className="bg-nes-navy text-white border-4 border-nes-navy shadow-[4px_4px_0px_var(--color-nes-navy)] p-3 sm:p-4">
-          <Countdown
-            endsAt={room.ends_at}
-            status={room.status}
-            serverNow={room.server_now}
-            onExpire={onExpire}
-            size="lg"
-            showLabel={false}
-          />
-          <span className="font-pixel text-[10px] text-nes-gold uppercase tracking-widest block mt-1">
-            GAME TIME LEFT
-          </span>
-        </div>
-      </div>
-
-      {/* HUGE Financial Metrics: Cash & CV (≥ 44px on mobile) */}
-      <div className="flex flex-col gap-3">
-        {/* HUGE Cash Card */}
-        <div
-          className={`
-            border-4 shadow-[4px_4px_0px_var(--color-nes-navy)] p-4 flex flex-col justify-between relative
-            ${cashFlashClass}
-          `}
-        >
-          <div className="flex items-center justify-between mb-1">
-            <span className="font-pixel text-[11px] uppercase tracking-wider text-nes-navy font-bold">
-              AVAILABLE CASH
-            </span>
-            <div className="flex items-center gap-1.5">
-              {cashFlash === 'up' && (
-                <span className="bg-nes-green text-white font-pixel text-[9px] px-1.5 py-0.5 border border-nes-navy">
-                  ▲ +
-                </span>
-              )}
-              {cashFlash === 'down' && (
-                <span className="bg-nes-red text-white font-pixel text-[9px] px-1.5 py-0.5 border border-nes-navy">
-                  ▼ -
-                </span>
-              )}
-              <PixelCoin size={24} />
-            </div>
-          </div>
-          <div className="font-tabular font-black text-[44px] leading-tight sm:text-5xl text-nes-green tracking-tight tabular-nums">
-            {formatINR(team.cash)}
-          </div>
-        </div>
-
-        {/* HUGE Company Value Card */}
-        <div
-          className={`
-            border-4 shadow-[4px_4px_0px_var(--color-nes-navy)] p-4 flex flex-col justify-between relative
-            ${cvFlashClass}
-          `}
-        >
-          <div className="flex items-center justify-between mb-1">
-            <span className="font-pixel text-[11px] uppercase tracking-wider text-nes-navy font-bold">
-              COMPANY VALUE
-            </span>
-            <div className="flex items-center gap-1.5">
-              {cvFlash === 'up' && (
-                <span className="bg-info-text text-white font-pixel text-[9px] px-1.5 py-0.5 border border-nes-navy">
-                  ▲ +
-                </span>
-              )}
-              {cvFlash === 'down' && (
-                <span className="bg-nes-red text-white font-pixel text-[9px] px-1.5 py-0.5 border border-nes-navy">
-                  ▼ -
-                </span>
-              )}
-              <span className="font-pixel text-[10px] bg-nes-navy text-nes-gold px-2 py-0.5 border border-nes-navy">
-                CV
-              </span>
-            </div>
-          </div>
-          <div className="font-tabular font-black text-[44px] leading-tight sm:text-5xl text-info-text tracking-tight tabular-nums">
-            {team.cv.toLocaleString()} <span className="text-2xl sm:text-3xl text-neutral-600">CV</span>
-          </div>
-        </div>
-
-        {/* Total Assets Summary Banner */}
-        <div className="bg-nes-gold border-4 border-nes-navy p-3 shadow-[4px_4px_0px_var(--color-nes-navy)] flex items-center justify-between">
-          <span className="font-pixel text-xs text-nes-navy uppercase font-bold">
-            TOTAL VALUATION:
-          </span>
-          <span className="font-tabular font-black text-2xl text-nes-navy tabular-nums">
-            {formatINR(totalAssets)}
-          </span>
-        </div>
-      </div>
-
-      {/* Owned Businesses List */}
-      <PixelCard
-        title={`PORTFOLIO (${businesses.length}/3)`}
-        headerBg="navy"
-        padding="sm"
+      {/* Server-backed clock: Countdown owns all timing, do not add another timer here. */}
+      <Panel
+        label="Match timer"
+        className="flex flex-col items-center gap-1 bg-brand-navy! text-white"
       >
-        {businesses.length === 0 ? (
-          <EmptyState
-            title="NO BUSINESSES YET"
-            description="Acquire unowned businesses when landing on them around the physical board."
-            className="border-none bg-transparent p-4"
-          />
-        ) : (
-          <div className="flex flex-col gap-2.5">
-            {businesses.map((biz) => (
-              <div
-                key={biz.business_key}
-                className="border-3 border-nes-navy bg-white p-3 shadow-[2px_2px_0px_var(--color-nes-navy)] flex flex-col gap-2"
-              >
-                <div className="flex items-center justify-between border-b-2 border-neutral-200 pb-2">
-                  <div className="flex items-center gap-2">
-                    <PixelBusinessIcon businessKey={biz.business_key} size={24} />
-                    <h4 className="font-pixel text-xs text-nes-navy truncate font-bold">
-                      {biz.name}
-                    </h4>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-pixel text-[10px] text-neutral-600 font-bold">
-                      LVL {biz.level}
-                    </span>
-                    <PixelLevelPips level={biz.level} />
-                  </div>
-                </div>
+        <span className="font-pixel text-[11px] font-bold uppercase tracking-widest text-brand-gold">
+          GAME TIME LEFT
+        </span>
+        <Countdown
+          endsAt={room.ends_at}
+          status={room.status}
+          serverNow={room.server_now}
+          onExpire={onExpire}
+          size="lg"
+          showLabel={false}
+        />
+      </Panel>
 
-                <div className="flex items-center justify-between font-mono text-xs text-neutral-600">
-                  <span>Initial Cost: ₹{biz.cost}</span>
-                  <span className="font-bold text-info-text">
-                    CV contribution: ₹{biz.cv_contribution}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </PixelCard>
+      <section aria-label="Financial summary" className="grid gap-4 md:grid-cols-2">
+        <Metric
+          label="Available cash"
+          value={formatINR(team.cash)}
+          valueClass="text-status-success-dark"
+          className={flashSurface(cashFlash, 'bg-status-success-bg border-status-success-dark ring-status-success')}
+          badge={
+            <span className="flex items-center gap-1.5">
+              <FlashBadge dir={cashFlash} />
+              <PixelCoin size={22} />
+            </span>
+          }
+        />
+        <Metric
+          label="Company value (CV)"
+          value={
+            <>
+              {team.cv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
+            </>
+          }
+          valueClass="text-status-info-dark"
+          className={flashSurface(cvFlash, 'bg-status-info-bg border-status-info-dark ring-status-info')}
+          badge={<FlashBadge dir={cvFlash} />}
+        />
+      </section>
+
+      <TeamBusinessList
+        businesses={businesses}
+        emptyText="Your portfolio is empty. Businesses you acquire on the physical board will appear here."
+      />
+
+      <p className="text-center font-mono text-xs text-neutral-700">
+        Game progress is managed by the organizer. This screen is read-only.
+      </p>
     </div>
   );
 };

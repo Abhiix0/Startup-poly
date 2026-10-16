@@ -134,7 +134,8 @@ describe('TeamDashboardPage', () => {
     expect(screen.getByText('₹1,450')).toBeInTheDocument();
     expect(screen.getByText(/1,850/)).toBeInTheDocument();
     expect(screen.getByText('HyperDrive Labs')).toBeInTheDocument();
-    expect(screen.getByText(/CV contribution: ₹750/i)).toBeInTheDocument();
+    expect(screen.getByText('+750 CV')).toBeInTheDocument();
+    expect(screen.getByText('1/3 businesses')).toBeInTheDocument();
   });
 
   it('renders ELIMINATED banner when team is bankrupt', () => {
@@ -166,7 +167,7 @@ describe('TeamDashboardPage', () => {
 
     renderWithRouter();
 
-    expect(screen.getByText('GAME OVER')).toBeInTheDocument();
+    expect(screen.getByText("Time's up")).toBeInTheDocument();
     expect(screen.getByText(/FINAL SCORES PENDING/i)).toBeInTheDocument();
   });
 
@@ -194,6 +195,19 @@ describe('TeamDashboardPage', () => {
     expect(screen.getByText('OFFICIAL FINAL RESULT')).toBeInTheDocument();
     expect(screen.getByText('YOU')).toBeInTheDocument();
     expect(screen.getByText(/YOUR FINAL METRICS/i)).toBeInTheDocument();
+  });
+
+  it('does not invent a rank when FINALIZED but final_result is missing', () => {
+    vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
+      state: { ...baseState, room: { ...baseState.room, status: 'FINALIZED' } } as any,
+    });
+
+    renderWithRouter();
+
+    expect(screen.getByText('MATCH COMPLETE')).toBeInTheDocument();
+    expect(screen.queryByText(/RANK #/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/CHAMPION/)).not.toBeInTheDocument();
   });
 
   it('renders reconnecting warning bar when connection is stale (> 20s)', () => {

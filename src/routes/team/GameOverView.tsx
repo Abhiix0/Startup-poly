@@ -1,8 +1,8 @@
 import React from 'react';
-import { PixelCard, BigNumber } from '../../ui';
-import { PixelCoin } from '../../ui/pixel';
+import { PixelClockIcon, PixelCoin } from '../../ui/pixel';
 import { formatINR } from '../../lib/format';
 import { TeamStateResponse } from '../../data/rpc';
+import { Panel, Metric, MAX_BUSINESSES } from './TeamScene';
 
 interface GameOverViewProps {
   state: TeamStateResponse;
@@ -10,68 +10,47 @@ interface GameOverViewProps {
 
 export const GameOverView: React.FC<GameOverViewProps> = ({ state }) => {
   const { team, businesses } = state;
-  const totalAssets = team.cash + team.cv;
 
   return (
-    <div className="flex flex-col gap-4 text-center">
-      {/* Game Over Banner Card */}
-      <PixelCard title="MATCH TIME EXPIRED" headerBg="brick" padding="lg">
-        <div className="flex flex-col items-center justify-center gap-3 py-4">
-          <div className="w-14 h-14 bg-nes-red text-white border-3 border-nes-navy shadow-[3px_3px_0px_var(--color-nes-navy)] flex items-center justify-center font-pixel text-2xl mx-auto">
-            ⌛
-          </div>
+    <div className="flex flex-col gap-4">
+      <Panel label="Match status" className="flex flex-col items-center text-center gap-3 py-6 sm:py-8">
+        <PixelClockIcon size={44} />
+        <h1 className="font-pixel text-3xl sm:text-4xl font-extrabold text-brand-navy uppercase">
+          Time's up
+        </h1>
+        <span className="inline-block rounded-md border-2 border-brand-navy bg-status-warning-bg px-3 py-1 font-pixel text-xs font-bold uppercase tracking-wider text-status-warning-text">
+          Final scores pending
+        </span>
+        <p className="font-mono text-sm text-neutral-700 max-w-md leading-relaxed">
+          The match clock has run out. The organizer is checking the final board and will publish official
+          results. This screen updates on its own, so keep it open.
+        </p>
+      </Panel>
 
-          <h2 className="font-pixel text-lg sm:text-xl text-nes-navy uppercase">
-            GAME OVER
-          </h2>
+      <section aria-label="Latest balances" className="grid gap-4 sm:grid-cols-2">
+        <Metric
+          label="Latest cash"
+          value={formatINR(team.cash)}
+          valueClass="text-status-success-dark"
+          className="bg-white"
+          badge={<PixelCoin size={22} />}
+        />
+        <Metric
+          label="Latest company value"
+          value={
+            <>
+              {team.cv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
+            </>
+          }
+          valueClass="text-status-info-dark"
+          className="bg-white"
+        />
+      </section>
 
-          <div className="inline-block bg-warning-surface border-2 border-nes-navy px-4 py-1.5 shadow-[2px_2px_0px_var(--color-nes-navy)]">
-            <span className="font-pixel text-xs text-warning-text uppercase tracking-wider">
-              ★ FINAL SCORES PENDING ★
-            </span>
-          </div>
-
-          <p className="font-mono text-xs text-neutral-500 max-w-xs leading-relaxed">
-            The 50-minute match has concluded! The game organizer is verifying final board transactions,
-            resolving any ties, and snapshotting the official leaderboard.
-          </p>
-        </div>
-      </PixelCard>
-
-      {/* Team Final Snapshot Metrics */}
-      <PixelCard title="YOUR MATCH RESULTS" headerBg="navy" padding="md">
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          <BigNumber
-            label="FINAL CASH"
-            value={formatINR(team.cash)}
-            variant="green"
-            size="sm"
-            icon={<PixelCoin size={20} />}
-          />
-          <BigNumber
-            label="FINAL CV"
-            value={`${team.cv.toLocaleString()} CV`}
-            variant="navy"
-            size="sm"
-          />
-        </div>
-
-        <div className="bg-nes-gold border-3 border-nes-navy p-3 shadow-[2px_2px_0px_var(--color-nes-navy)] flex items-center justify-between mb-3">
-          <span className="font-pixel text-xs text-nes-navy">TOTAL VALUATION:</span>
-          <span className="font-tabular font-extrabold text-lg text-nes-navy">
-            {formatINR(totalAssets)}
-          </span>
-        </div>
-
-        <div className="bg-white border-2 border-nes-navy p-3 text-center">
-          <span className="font-pixel text-[10px] text-neutral-500 block uppercase mb-1">
-            PORTFOLIO SUMMARY
-          </span>
-          <span className="font-mono font-bold text-xs text-nes-navy">
-            {businesses.length} of 3 Businesses Held at Match End
-          </span>
-        </div>
-      </PixelCard>
+      <p className="text-center font-mono text-xs text-neutral-700">
+        {team.name} · {businesses.length}/{MAX_BUSINESSES} businesses held. Figures are not official until the
+        organizer finalizes the match.
+      </p>
     </div>
   );
 };
