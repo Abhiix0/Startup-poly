@@ -14,7 +14,7 @@ SELECT set_config('app.test_now', '2026-03-01 10:00:00+00', true);
 CREATE TEMP TABLE exp_tables (t text, anon_select bool, auth_select bool) ON COMMIT DROP;
 INSERT INTO exp_tables VALUES
   ('activity_events', false, true), ('admins', false, true), ('business_catalog', true, true),
-  ('final_results', true, true), ('join_attempts', false, false), ('rooms', true, true),
+  ('final_results', true, true), ('final_result_businesses', false, true), ('join_attempts', false, false), ('rooms', true, true),
   ('team_businesses', true, true), ('team_claims', true, true), ('team_secrets', false, true),
   ('teams', true, true);
 
