@@ -34,19 +34,19 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
     <div className="flex flex-col gap-4 pb-6">
       {/* Trophy / Result Banner Card */}
       <div
-        className={`border-4 border-[#102040] p-4 sm:p-5 shadow-[4px_4px_0px_#102040] flex flex-col items-center text-center relative overflow-hidden ${
+        className={`border-4 border-brand-navy p-4 sm:p-5 shadow-[4px_4px_0px] shadow-brand-navy flex flex-col items-center text-center relative overflow-hidden ${
           isWinner
-            ? 'bg-[#FFCC00] text-[#102040]'
+            ? 'bg-brand-gold text-brand-navy'
             : isPodium
-            ? 'bg-[#FAF8F5] text-[#102040]'
-            : 'bg-[#1E3A5F] text-[#FFFBEB]'
+            ? 'bg-neutral-50 text-brand-navy'
+            : 'bg-neutral-800 text-neutral-50'
         }`}
       >
         <div className="flex items-center gap-2 mb-2">
-          <span className="font-pixel text-[9px] uppercase tracking-widest px-2 py-0.5 border border-[#102040] bg-white text-[#102040]">
+          <span className="font-pixel text-[9px] uppercase tracking-widest px-2 py-0.5 border border-brand-navy bg-white text-brand-navy">
             OFFICIAL FINAL RESULT
           </span>
-          <span className="font-pixel text-[9px] uppercase tracking-wider px-2 py-0.5 bg-[#22B14C] text-white border border-[#102040]">
+          <span className="font-pixel text-[9px] uppercase tracking-wider px-2 py-0.5 bg-brand-green text-white border border-brand-navy">
             YOU
           </span>
         </div>
@@ -59,7 +59,7 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
           {podiumHeading}
         </h2>
 
-        <div className="inline-flex items-center gap-2 mt-2 px-3 py-1 bg-[#102040] text-[#FFCC00] border-2 border-[#102040] font-pixel text-xs">
+        <div className="inline-flex items-center gap-2 mt-2 px-3 py-1 bg-brand-navy text-brand-gold border-2 border-brand-navy font-pixel text-xs">
           <span>★</span>
           <span>{titleBadge}</span>
           <span>★</span>
@@ -74,27 +74,27 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
       <PixelCard title="YOUR FINAL METRICS" headerBg="navy" padding="md">
         <div className="flex flex-col gap-4">
           {/* Team Tag Bar */}
-          <div className="flex items-center justify-between border-b-2 border-[#CBD5E1] pb-3">
+          <div className="flex items-center justify-between border-b-2 border-neutral-300 pb-3">
             <div className="flex items-center gap-2.5">
               <span
-                className="w-5 h-5 border-2 border-[#102040] shadow-[1px_1px_0px_#102040] shrink-0"
+                className="w-5 h-5 border-2 border-brand-navy shadow-[1px_1px_0px] shadow-brand-navy shrink-0"
                 style={{ backgroundColor: team.color }}
               />
               <div>
-                <span className="font-pixel text-xs text-[#102040] block">
+                <span className="font-pixel text-xs text-brand-navy block">
                   {team.name}
                 </span>
-                <span className="font-mono text-[10px] text-[#64748B]">
+                <span className="font-mono text-[10px] text-neutral-500">
                   Team Slot #{team.slot}
                 </span>
               </div>
             </div>
 
             <span
-              className={`font-pixel text-[9px] px-2 py-1 border border-[#102040] ${
+              className={`font-pixel text-[9px] px-2 py-1 border border-brand-navy ${
                 isBankrupt
-                  ? 'bg-[#D32F2F] text-white'
-                  : 'bg-[#22B14C] text-white'
+                  ? 'bg-brand-red text-white'
+                  : 'bg-brand-green text-white'
               }`}
             >
               {isBankrupt ? 'BANKRUPT' : 'SOLVENT'}
@@ -103,38 +103,38 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
 
           {/* Metric Stats Grid */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-[#FAF8F5] border-2 border-[#102040] p-3 shadow-[2px_2px_0px_#102040]">
-              <span className="font-pixel text-[9px] text-[#64748B] block uppercase">
+            <div className="bg-neutral-50 border-2 border-brand-navy p-3 shadow-[2px_2px_0px] shadow-brand-navy">
+              <span className="font-pixel text-[9px] text-neutral-500 block uppercase">
                 COMPANY VALUE
               </span>
-              <span className="font-pixel text-base sm:text-lg text-[#102040] mt-1 block">
+              <span className="font-pixel text-base sm:text-lg text-brand-navy mt-1 block">
                 {finalCv.toLocaleString('en-IN')} CV
               </span>
             </div>
 
-            <div className="bg-[#FAF8F5] border-2 border-[#102040] p-3 shadow-[2px_2px_0px_#102040]">
-              <span className="font-pixel text-[9px] text-[#64748B] block uppercase">
+            <div className="bg-neutral-50 border-2 border-brand-navy p-3 shadow-[2px_2px_0px] shadow-brand-navy">
+              <span className="font-pixel text-[9px] text-neutral-500 block uppercase">
                 FINAL CASH
               </span>
-              <span className="font-pixel text-base sm:text-lg text-[#22B14C] mt-1 block">
+              <span className="font-pixel text-base sm:text-lg text-brand-green mt-1 block">
                 {formatINR(finalCash)}
               </span>
             </div>
           </div>
 
           {/* Owned Businesses Portfolio */}
-          <div className="border-t-2 border-[#CBD5E1] pt-3">
+          <div className="border-t-2 border-neutral-300 pt-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-pixel text-[10px] text-[#102040] uppercase">
+              <span className="font-pixel text-[10px] text-brand-navy uppercase">
                 PORTFOLIO ({businesses.length}/3)
               </span>
-              <span className="font-mono text-[10px] text-[#64748B]">
+              <span className="font-mono text-[10px] text-neutral-500">
                 Max 3 businesses
               </span>
             </div>
 
             {businesses.length === 0 ? (
-              <p className="font-mono text-xs text-[#64748B] italic py-2">
+              <p className="font-mono text-xs text-neutral-500 italic py-2">
                 No businesses owned at match conclusion.
               </p>
             ) : (
@@ -142,22 +142,22 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
                 {businesses.map((b) => (
                   <div
                     key={b.business_key}
-                    className="bg-white border-2 border-[#102040] px-3 py-2 flex items-center justify-between shadow-[1px_1px_0px_#102040]"
+                    className="bg-white border-2 border-brand-navy px-3 py-2 flex items-center justify-between shadow-[1px_1px_0px] shadow-brand-navy"
                   >
                     <div>
-                      <span className="font-pixel text-xs text-[#102040] block">
+                      <span className="font-pixel text-xs text-brand-navy block">
                         {b.name}
                       </span>
-                      <span className="font-mono text-[10px] text-[#64748B]">
+                      <span className="font-mono text-[10px] text-neutral-500">
                         Initial cost: {formatINR(b.cost)}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="font-pixel text-[9px] bg-[#FFCC00] text-[#102040] px-1.5 py-0.5 border border-[#102040]">
+                      <span className="font-pixel text-[9px] bg-brand-gold text-brand-navy px-1.5 py-0.5 border border-brand-navy">
                         {b.level === 0 ? 'BASE' : `UPGRADE ${b.level}`}
                       </span>
-                      <span className="font-mono text-xs font-bold text-[#102040]">
+                      <span className="font-mono text-xs font-bold text-brand-navy">
                         +{b.cv_contribution} CV
                       </span>
                     </div>
@@ -168,8 +168,8 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
           </div>
 
           {/* Official Privacy Notice */}
-          <div className="bg-[#FEF9C3] border-2 border-[#B45309] p-2.5 text-center shadow-[1px_1px_0px_#B45309]">
-            <p className="font-mono text-[11px] text-[#92400E] leading-relaxed">
+          <div className="bg-status-warning-light border-2 border-status-warning-dark p-2.5 text-center shadow-[1px_1px_0px] shadow-status-warning-dark">
+            <p className="font-mono text-[11px] text-status-warning-text leading-relaxed">
               🔒 Open-ground tournament rules: Team scores remain strictly private to your device. Complete tournament standings are displayed on the Game Master console.
             </p>
           </div>

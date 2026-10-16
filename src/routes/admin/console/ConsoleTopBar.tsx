@@ -64,7 +64,7 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
           className="scale-90 sm:scale-100"
         />
         {status === 'TIME_EXPIRED' && (
-          <span className="font-pixel text-[8px] sm:text-[9px] text-brand-gold mt-1 tracking-wider uppercase drop-shadow-[1px_1px_0px_#000]">
+          <span className="font-pixel text-[8px] sm:text-[9px] text-brand-gold mt-1 tracking-wider uppercase drop-shadow-[1px_1px_0px_rgba(0,0,0,1)]">
             TIME UP · SCORES FROZEN
           </span>
         )}

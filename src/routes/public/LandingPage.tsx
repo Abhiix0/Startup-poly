@@ -65,7 +65,7 @@ export const LandingPage: React.FC = () => {
 
       <a
         href="#rules"
-        className="absolute top-3 right-3 sm:top-5 sm:right-5 z-30 font-pixel text-[9px] sm:text-[10px] text-[#102040] bg-[#FFCC00] border-2 border-[#102040] px-2.5 py-2 shadow-[3px_3px_0_#102040] hover:bg-white transition-colors"
+        className="absolute top-3 right-3 sm:top-5 sm:right-5 z-30 font-pixel text-[9px] sm:text-[10px] text-brand-navy bg-brand-gold border-2 border-brand-navy px-2.5 py-2 shadow-[3px_3px_0] shadow-brand-navy hover:bg-white transition-colors"
       >
         RULES ↓
       </a>
