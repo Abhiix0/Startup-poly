@@ -561,7 +561,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
       {isTimeExpired && (
         <div className="bg-brand-gold text-brand-navy px-4 py-2 text-center font-pixel text-xs border-b-4 border-brand-navy shadow-pixel-sm">
-          ⚠ GAME OVER — scores frozen. Post-match corrections require a mandatory note.
+          🏁 GAME OVER — scores frozen (50:00 Time Up). Resolve any ties below and click FINALIZE MATCH to certify official winners.
         </div>
       )}
 

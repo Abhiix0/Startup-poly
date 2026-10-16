@@ -54,7 +54,7 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
       </div>
 
       {/* Center section: Authoritative Server-Clock Countdown */}
-      <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center">
         <Countdown
           endsAt={endsAt}
           status={status}
@@ -63,6 +63,11 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
           showLabel={false}
           className="scale-90 sm:scale-100"
         />
+        {status === 'TIME_EXPIRED' && (
+          <span className="font-pixel text-[8px] sm:text-[9px] text-brand-gold mt-1 tracking-wider uppercase drop-shadow-[1px_1px_0px_#000]">
+            TIME UP · SCORES FROZEN
+          </span>
+        )}
       </div>
 
       {/* Right section: Connection & sync status */}

@@ -12,7 +12,7 @@ STARTUPOLY is a **physical board game** featuring a real-time, server-authoritat
 
 - **Event Admin (Laptop)**: 1 operator per room operating on a laptop/desktop ($\ge 1024\text{ px}$). Authenticated with admin email/password. Records board transactions, controls the 50:00 match clock, resolves ties, and finalizes results.
 - **Team Scoreboards (Phones)**: 1 phone per team (5–6 teams per match). Anonymous, strictly read-only display showing authoritative cash, company value (CV), clock, and owned businesses.
-- **Projector Screen**: Displays the 3-meter legible 6-character room code during lobby, followed optionally by the live tournament standings or podium.
+- **Open-ground operation**: No projector or shared screen is required. The admin laptop runs the control room, while each team uses its own phone for its private scoreboard.
 
 ---
 
@@ -22,7 +22,7 @@ Complete this checklist at least 30 minutes before players enter the room:
 
 - [ ] **Venue Wi-Fi & Hotspot Verification**: Connect the admin laptop to venue Wi-Fi. Verify low-latency connection (< 150 ms) to Supabase. Ensure an organizer's mobile 5G hotspot is on standby as immediate failover.
 - [ ] **Admin Hardware**: Laptop plugged into AC mains power; display timeout disabled; external mouse connected for rapid data entry.
-- [ ] **Projector Setup**: Connect laptop HDMI/USB-C to the room projector. Test display duplication or extended monitor at 1080p ($1920 \times 1080$).
+- [ ] **Open-ground setup**: Confirm the admin laptop is charged and each team has a phone; no projector or shared screen is required.
 - [ ] **Team PIN Cards Prepared**: Print or handwrite 6 team index cards with:
   - Team Slot Number (#1 to #6)
   - Team Name
@@ -43,10 +43,10 @@ Complete this checklist at least 30 minutes before players enter the room:
 2. Select team count: **5 Teams** or **6 Teams** (official tournament formats).
 3. Confirm team names and distinct colors. Click **"CREATE TOURNAMENT ROOM"**.
 
-### Step 2: Open Lobby & Project Room Code
+### Step 2: Open Lobby & Share Room Code
 1. Click **"OPEN LOBBY"**.
 2. The large 6-character room code (e.g. `K9X2P4`) appears in the center card.
-3. Switch projector display to show this lobby screen so all teams can see the code clearly from 3+ meters away.
+3. Share the code directly with captains or on printed team cards; players do not depend on a projector or shared screen.
 
 ### Step 3: Distribute Secret PINs
 1. Look at the **"TEAM CONNECTIONS & SECRET PINS"** grid in the admin console.
@@ -112,7 +112,7 @@ The system automatically detects ties according to the official tournament tie-b
    - 🥈 **2nd Place (Silver)**
    - 🥉 **3rd Place (Bronze)**
    - Full standings table with CV, Cash, and owned business breakdown.
-4. Project this screen to the tournament hall for the closing ceremony.
+4. The Game Master announces the podium from the admin laptop; teams can view their own final result on their phones.
 
 ### Step 11: Start Next Match
 1. Click **"NEXT MATCH"** at the top right of the screen.
@@ -125,7 +125,7 @@ The system automatically detects ties according to the official tournament tie-b
 
 | Symptom | Probable Cause | Immediate Remediation |
 |---|---|---|
-| **Phone says "Code, team or PIN didn't match"** | Typo in 6-char code, wrong slot selected, or incorrect 4-digit PIN. | Verify code on projector. Check the team's PIN in the Admin Lobby grid. Ensure team didn't choose a slot already claimed by another phone. |
+| **Phone says "Code, team or PIN didn't match"** | Typo in 6-char code, wrong slot selected, or incorrect 4-digit PIN. | Verify the room code from the admin laptop or the team card. Check the team's PIN in the Admin Lobby grid. Ensure team didn't choose a slot already claimed by another phone. |
 | **Phone captain closed browser or lost session** | Mobile Safari / Chrome auto-refreshed or closed tab. | Have captain reopen `/join`. Anonymous Supabase session persists in `localStorage`; captain re-enters code, slot, and PIN to re-link immediately. |
 | **Admin laptop battery died or crashed** | Hardware or power failure. | Plug laptop into AC power. Re-open browser and log in at `/admin`. The system automatically redirects to `/admin/room/[id]` because all room state lives in PostgreSQL. No data is lost. |
 | **Venue Wi-Fi drops completely** | Router/ISP failure. | 1. Admin turns on phone cellular hotspot.<br>2. Reconnect laptop to hotspot.<br>3. Admin console displays red `OFFLINE` banner until reconnected, then syncs live snapshot automatically. |

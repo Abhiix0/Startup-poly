@@ -85,11 +85,27 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {hasUnresolvedTie ? (
-            <span className="font-pixel text-[10px] bg-status-warning-bg text-status-warning-dark border border-brand-gold px-2.5 py-1 animate-pulse">
-              ⚠ TIEBREAK REQUIRED BEFORE FINALIZING
-            </span>
+            <>
+              <span className="font-pixel text-[10px] bg-status-warning-bg text-status-warning-dark border border-brand-gold px-2.5 py-1 animate-pulse">
+                ⚠ TIEBREAK REQUIRED BEFORE FINALIZING
+              </span>
+              <button
+                type="button"
+                disabled={isFinalizing || isTiebreakSubmitting || isOffline}
+                onClick={async () => {
+                  await handleSetTiebreak(
+                    unresolvedTiedTeams.map((t) => t.team_id),
+                    'Auto-resolved ties in current provisional standings order'
+                  );
+                }}
+                className="font-pixel text-[10px] bg-brand-green text-brand-navy font-bold px-3 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-interactive-green-hover hover:text-brand-white cursor-pointer active:translate-y-0.5"
+                title="Auto-resolve ties in current order and unlock finalization"
+              >
+                ⚡ AUTO-RESOLVE TIES
+              </button>
+            </>
           ) : (
             <span className="font-pixel text-[10px] bg-status-success-bg text-brand-green border border-brand-green px-2.5 py-1">
               ✓ ALL TIES RESOLVED

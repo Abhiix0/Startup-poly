@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(31);
+SELECT plan(32);
 
 -- Set test environment and simulated clock
 SELECT set_config('app.env', 'test', true);
@@ -131,9 +131,14 @@ SELECT is(
 );
 
 SELECT is(
-  (SELECT public.get_my_state()->>'leaderboard'),
+  (SELECT public.get_my_state()->>'final_result'),
   NULL,
-  'get_my_state returns null leaderboard prior to FINALIZED'
+  'get_my_state returns null final_result prior to FINALIZED'
+);
+
+SELECT ok(
+  (SELECT (public.get_my_state() ? 'leaderboard') IS FALSE),
+  'get_my_state has no leaderboard property'
 );
 
 -- 12. Starting game without all teams joined fails unless force=true

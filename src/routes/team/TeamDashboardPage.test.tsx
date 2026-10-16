@@ -39,7 +39,7 @@ describe('TeamDashboardPage', () => {
         cv_contribution: 750,
       },
     ],
-    leaderboard: null,
+    final_result: null,
   };
 
   const defaultMockResult: teamHookModule.UseMyTeamResult = {
@@ -170,30 +170,17 @@ describe('TeamDashboardPage', () => {
     expect(screen.getByText(/FINAL SCORES PENDING/i)).toBeInTheDocument();
   });
 
-  it('renders FinalBoardView with podium standings when FINALIZED', () => {
+  it('renders FinalBoardView with team final result when FINALIZED', () => {
     const finalizedState = {
       ...baseState,
       room: { ...baseState.room, status: 'FINALIZED' },
-      leaderboard: [
-        {
-          rank: 1,
-          name: 'Alpha Rockets',
-          color: '#E52521',
-          cv: 1850,
-          cash: 1450,
-          business_count: 1,
-          is_bankrupt: false,
-        },
-        {
-          rank: 2,
-          name: 'Beta Builders',
-          color: '#0099FF',
-          cv: 1200,
-          cash: 900,
-          business_count: 1,
-          is_bankrupt: false,
-        },
-      ],
+      final_result: {
+        rank: 1,
+        cv: 1850,
+        cash: 1450,
+        business_count: 1,
+        is_bankrupt: false,
+      },
     };
 
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
@@ -204,8 +191,9 @@ describe('TeamDashboardPage', () => {
     renderWithRouter();
 
     expect(screen.getByText(/STARTUPOLY CHAMPION/i)).toBeInTheDocument();
-    expect(screen.getByText('OFFICIAL FINAL STANDINGS')).toBeInTheDocument();
+    expect(screen.getByText('OFFICIAL FINAL RESULT')).toBeInTheDocument();
     expect(screen.getByText('YOU')).toBeInTheDocument();
+    expect(screen.getByText(/YOUR FINAL METRICS/i)).toBeInTheDocument();
   });
 
   it('renders reconnecting warning bar when connection is stale (> 20s)', () => {

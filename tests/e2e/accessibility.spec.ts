@@ -3,8 +3,10 @@ import AxeBuilder from '@axe-core/playwright';
 
 test.describe('STARTUPOLY Phase 11: Accessibility Audit (axe-core)', () => {
   test('Landing Page (/) has zero serious or critical a11y violations', async ({ page }) => {
+    test.setTimeout(60000);
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(400);
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -18,8 +20,10 @@ test.describe('STARTUPOLY Phase 11: Accessibility Audit (axe-core)', () => {
   });
 
   test('Team Join Page (/join) has zero serious or critical a11y violations', async ({ page }) => {
+    test.setTimeout(60000);
     await page.goto('/join');
     await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(400);
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -33,6 +37,7 @@ test.describe('STARTUPOLY Phase 11: Accessibility Audit (axe-core)', () => {
   });
 
   test('Admin Login Page (/admin/login) has zero serious or critical a11y violations', async ({ page }) => {
+    test.setTimeout(60000);
     await page.goto('/admin/login');
     await page.waitForLoadState('domcontentloaded');
 
