@@ -38,6 +38,9 @@ export const ResultView: React.FC<ResultViewProps> = ({
     tiebreak_order: s.tiebreak_order,
   }));
 
+  const maxCv = Math.max(0, ...leaderboardEntries.map((e) => e.cv));
+  const maxCash = Math.max(0, ...leaderboardEntries.map((e) => e.cash));
+
   const handleCopyText = async () => {
     const text = formatStandingsAsText(
       snapshot.room.code,
@@ -69,31 +72,51 @@ export const ResultView: React.FC<ResultViewProps> = ({
         isRefetching={isLoading}
       />
 
-      {/* 2. MATCH FINALIZED STATUS BANNER */}
-      <div className="bg-brand-gold text-brand-navy px-4 py-2 text-center font-pixel text-xs border-b-4 border-brand-navy shadow-pixel-sm flex flex-col sm:flex-row items-center justify-between gap-2">
-        <span>★ MATCH FINALIZED — Results are permanent and immutable.</span>
-        <div className="flex items-center gap-2">
+      {/* 2. MATCH HEADER */}
+      <section
+        aria-labelledby="match-results-heading"
+        className="bg-brand-gold text-brand-navy px-4 py-4 sm:px-6 border-b-4 border-brand-navy shadow-pixel-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+      >
+        <div>
+          <span className="font-pixel text-[10px] sm:text-xs uppercase tracking-widest block">
+            ★ MATCH FINALIZED · ROOM {snapshot.room.code}
+          </span>
+          <h1 id="match-results-heading" className="font-pixel text-2xl sm:text-3xl font-extrabold uppercase">
+            Match Results
+          </h1>
+          <p className="font-mono text-xs sm:text-sm mt-1">
+            Results are permanent and immutable.
+            {snapshot.room.finalized_at &&
+              ` Finalized ${new Date(snapshot.room.finalized_at).toLocaleString()}.`}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={handleCopyText}
-            className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-brand-white text-brand-navy border border-brand-navy hover:bg-brand-cream cursor-pointer shadow-pixel-sm"
+            className="font-pixel text-[10px] sm:text-xs uppercase px-3 py-2 bg-brand-white text-brand-navy border-2 border-brand-navy hover:bg-brand-cream cursor-pointer shadow-pixel-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             {copied ? '✓ COPIED!' : '📋 COPY RESULTS'}
           </button>
           <button
             type="button"
             onClick={handleDownloadCsv}
-            className="font-pixel text-[10px] uppercase px-2.5 py-1 bg-brand-white text-brand-navy border border-brand-navy hover:bg-brand-cream cursor-pointer shadow-pixel-sm"
+            className="font-pixel text-[10px] sm:text-xs uppercase px-3 py-2 bg-brand-white text-brand-navy border-2 border-brand-navy hover:bg-brand-cream cursor-pointer shadow-pixel-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             📥 CSV EXPORT
           </button>
+          <Link to={`/admin/history/${snapshot.room.id}`}>
+            <PixelButton variant="secondary" size="sm">
+              MATCH HISTORY
+            </PixelButton>
+          </Link>
           <Link to="/admin">
             <PixelButton variant="primary" size="sm">
               + START NEW MATCH
             </PixelButton>
           </Link>
         </div>
-      </div>
+      </section>
 
       {/* 3. MAIN FINALIZED BODY */}
       <main className="flex-1 w-full max-w-[1700px] mx-auto p-3 sm:p-4 lg:p-6 flex flex-col xl:flex-row gap-5">
@@ -105,6 +128,38 @@ export const ResultView: React.FC<ResultViewProps> = ({
             finalizedAt={snapshot.room.finalized_at}
             allowPresentationMode={true}
           />
+
+          {/* Team performance: bars scale to the best team's backend value */}
+          {leaderboardEntries.length > 0 && (
+            <section aria-labelledby="team-performance-heading" className="w-full max-w-5xl mx-auto bg-brand-white border-4 border-brand-navy shadow-pixel p-4">
+              <h2 id="team-performance-heading" className="font-pixel text-xs sm:text-sm uppercase tracking-wider mb-3">
+                Team Performance
+              </h2>
+              <ul className="flex flex-col gap-4">
+                {leaderboardEntries.map((e) => (
+                  <li key={e.rank}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-3.5 h-3.5 border-2 border-brand-navy" style={{ backgroundColor: e.color }} />
+                      <span className="font-pixel text-xs font-bold truncate">#{e.rank} {e.name}</span>
+                      <span className="font-mono text-[11px] ml-auto">{e.business_count}/3 businesses</span>
+                    </div>
+                    {([['Company value', e.cv, maxCv], ['Cash', e.cash, maxCash]] as const).map(([label, v, max]) => (
+                      <div key={label} className="flex items-center gap-2 text-[11px] font-mono">
+                        <span className="w-24 shrink-0">{label}</span>
+                        <div className="flex-1 h-2.5 bg-neutral-200 border border-brand-navy">
+                          <div
+                            className={label === 'Cash' ? 'h-full bg-brand-green' : 'h-full bg-brand-navy'}
+                            style={{ width: `${max > 0 ? Math.max(0, (v / max) * 100) : 0}%` }}
+                          />
+                        </div>
+                        <span className="w-28 text-right font-bold">₹{v.toLocaleString('en-IN')}</span>
+                      </div>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
 
         {/* Right Column: Read-only Live Activity Log */}
