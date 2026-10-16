@@ -209,3 +209,18 @@ A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock
 - One `request_id` per user intent (`src/lib/intent.ts`): the same function with the same arguments reuses its id until the outcome is known, so a double-click, a retry or a resend replays on the server instead of applying twice. An unknown outcome keeps the id; success or a definite failure drops it. Quick-action dialogs still mint their own id on open and pass it through.
 - Lifecycle buttons (open lobby, start, abort, finalize) now carry a `request_id` and are retried once automatically after a dropped response. If the call still errors with ROOM_NOT_ACTIVE or an unknown outcome, the UI asks the server for the room status and shows success when the room is already in the target state.
 - On an unknown outcome the console shows a neutral message, reloads the snapshot and never says "saved". Check the refreshed values before repeating the action.
+
+## Match lifecycle at a glance (final behaviour)
+
+| Status | Entered by | Allowed next | Notes |
+|--------|-----------|--------------|-------|
+| CREATED | `admin_create_room` | LOBBY | Only one non-finalized room exists at a time. |
+| LOBBY | `admin_open_lobby` (or abort from ACTIVE) | ACTIVE | Phones join with room code + slot + PIN. Start refuses a lobby that is not pristine. |
+| ACTIVE | `admin_start_game` | TIME_EXPIRED (clock), LOBBY (abort) | Money edits allowed. Abort resets teams to baseline and returns to LOBBY; the old events stay in the audit log. |
+| TIME_EXPIRED | the first call after `ends_at` (lazy, exactly once) | FINALIZED | Corrections need a note and are flagged. **Abort is refused (`ROOM_ALREADY_EXPIRED`): finalize instead.** |
+| FINALIZED | `admin_finalize` | none | Rooms, teams, businesses, results and events are immutable. History keeps the businesses and catalog numbers as they were. |
+
+- Open lobby, start, abort and finalize accept an optional `request_id`; the same id replays the first call's result. Reusing an id elsewhere raises `REQUEST_ID_REUSED`.
+- Every mutating RPC takes locks in one order (room, then teams ascending id); see "Database lock order".
+- Error codes and how the client treats them: "Client error handling".
+- Scoring and tiebreaks: `docs/SCORING_RULES.md`. Deploys: `docs/DEPLOY_CHECKLIST.md`.
