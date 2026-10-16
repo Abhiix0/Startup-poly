@@ -159,3 +159,11 @@ npm run admin:revoke
 
 ---
 *End of Operations Manual.*
+
+## Database lock order (migration 0016)
+Every mutating RPC takes locks in this order, so concurrent calls queue instead of deadlocking (`40P01`):
+1. `rooms` row (`FOR UPDATE`, taken by `expire_if_due`)
+2. `teams` rows of that room, ascending id
+3. `team_businesses` / `activity_events` writes (no explicit locks)
+
+A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock the room, then lock the team and re-read its columns. Race tests: `npm run test:concurrency` (local DB only).
