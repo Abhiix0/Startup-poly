@@ -402,7 +402,7 @@ export const RulesSection: React.FC = () => {
         {/* 2-Column Rules Navigation & Panel */}
         <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-6 items-start">
           {/* Rules Tab Selector */}
-          <div className="flex flex-col gap-2 max-h-[620px] overflow-y-auto pr-1">
+          <div className="flex flex-col gap-2 max-h-155 overflow-y-auto pr-1">
             {RULE_SECTIONS.map((section, idx) => (
               <button
                 type="button"
@@ -435,7 +435,7 @@ export const RulesSection: React.FC = () => {
           </div>
 
           {/* Active Rule Details Card */}
-          <div className="bg-[neutral-50] text-[brand-navy] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-5 sm:p-7 min-h-[360px] flex flex-col justify-between">
+          <div className="bg-[neutral-50] text-[brand-navy] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-5 sm:p-7 min-h-90 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between border-b-2 border-[neutral-300] pb-3 mb-4">
                 <span className="font-pixel text-[10px] text-[brand-brick]">
@@ -491,7 +491,7 @@ export const RulesSection: React.FC = () => {
                   type="button"
                   key={space.num}
                   onClick={() => setSelectedSpace(space)}
-                  className={`min-h-[72px] sm:min-h-[84px] p-2 border-2 text-left flex flex-col justify-between transition-all cursor-pointer relative ${colorClass} ${
+                  className={`min-h-18 sm:min-h-21 p-2 border-2 text-left flex flex-col justify-between transition-all cursor-pointer relative ${colorClass} ${
                     isSelected ? 'ring-3 ring-[brand-gold] scale-[1.02] shadow-[2px_2px_0px_rgba(0,0,0,1)] z-10' : 'hover:opacity-95'
                   }`}
                 >

@@ -143,7 +143,7 @@ export const LandingPage: React.FC = () => {
             {/* ================================================================= */}
             {/* PRIMARY HERO CTA: TEAM PHONE (Wooden Checkpoint Signboard)       */}
             {/* ================================================================= */}
-            <div className={`relative flex flex-col items-center w-full max-w-[360px] ${isFirstVisit ? 'anim-card-arrival-phone' : ''}`}>
+            <div className={`relative flex flex-col items-center w-full max-w-90 ${isFirstVisit ? 'anim-card-arrival-phone' : ''}`}>
               {/* Phase 4: One-time section entrance coin accent on primary card arrival */}
               {isFirstVisit && !isReducedMotion && (
                 <div
@@ -157,7 +157,7 @@ export const LandingPage: React.FC = () => {
               <div
                 onPointerEnter={() => setActiveCta('join')}
                 onPointerLeave={() => setActiveCta(null)}
-                className="group relative w-full bg-wood-bright border-[4px] border-neutral-950 shadow-[6px_6px_0px_var(--color-nes-navy)] hover:shadow-[8px_8px_0px_var(--color-nes-navy)] hover:-translate-y-1 transition-all duration-100 ease-out p-3 sm:p-3.5 flex flex-col justify-between items-center text-center rounded-sm select-none"
+                className="group relative w-full bg-wood-bright border-4 border-neutral-950 shadow-[6px_6px_0px_var(--color-nes-navy)] hover:shadow-[8px_8px_0px_var(--color-nes-navy)] hover:-translate-y-1 transition-all duration-100 ease-out p-3 sm:p-3.5 flex flex-col justify-between items-center text-center rounded-sm select-none"
               >
                 {/* Left edge wood grain shadow */}
                 <div className="absolute top-0 bottom-0 left-0 w-2.5 bg-wood-base border-r-2 border-wood-border pointer-events-none" />
@@ -215,7 +215,7 @@ export const LandingPage: React.FC = () => {
                     ctaType="join"
                     onFocus={() => setActiveCta('join')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-nes-gold hover:!bg-gold-hover !border-[3px] !border-neutral-950 !text-neutral-950 font-black tracking-wider text-xs sm:text-sm py-2 sm:py-2.5 shadow-[0_4px_0_var(--color-gold-dark),3px_4px_0_var(--color-neutral-950)] hover:shadow-[0_5px_0_var(--color-gold-dark),4px_5px_0_var(--color-neutral-950)] active:translate-y-1 active:shadow-[0_0px_0_var(--color-gold-dark),1px_1px_0_var(--color-neutral-950)] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
+                    className="bg-nes-gold! hover:bg-gold-hover! border-[3px]! border-neutral-950! text-neutral-950! font-black tracking-wider text-xs sm:text-sm py-2 sm:py-2.5 shadow-[0_4px_0_var(--color-gold-dark),3px_4px_0_var(--color-neutral-950)] hover:shadow-[0_5px_0_var(--color-gold-dark),4px_5px_0_var(--color-neutral-950)] active:translate-y-1 active:shadow-[0_0px_0_var(--color-gold-dark),1px_1px_0_var(--color-neutral-950)] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
                   >
                     JOIN MATCH
                   </ArcadeLink>
@@ -240,7 +240,7 @@ export const LandingPage: React.FC = () => {
             {/* ================================================================= */}
             <div
               onAnimationEnd={handleEntranceEnd}
-              className={`flex flex-col items-center w-full max-w-[280px] opacity-90 hover:opacity-100 transition-opacity ${isFirstVisit ? 'anim-card-arrival-admin' : ''}`}
+              className={`flex flex-col items-center w-full max-w-70 opacity-90 hover:opacity-100 transition-opacity ${isFirstVisit ? 'anim-card-arrival-admin' : ''}`}
             >
               {/* Castle Battlements & Compact Waving Flag Header */}
               <div className="hidden sm:flex justify-between items-end w-full px-1 -mb-1 z-10 pointer-events-none">
@@ -317,7 +317,7 @@ export const LandingPage: React.FC = () => {
                     ctaType="admin"
                     onFocus={() => setActiveCta('admin')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-neutral-700 hover:!bg-neutral-800 !border-2 !border-neutral-950 !text-neutral-100 font-bold text-[10px] sm:text-xs py-1.5 shadow-[0_2px_0_var(--color-neutral-900),2px_2px_0_var(--color-neutral-950)] hover:-translate-y-[1px] hover:shadow-[0_3px_0_var(--color-neutral-900),2px_3px_0_var(--color-neutral-950)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-neutral-900),1px_1px_0_var(--color-neutral-950)] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
+                    className="bg-neutral-700! hover:bg-neutral-800! border-2! border-neutral-950! text-neutral-100! font-bold text-[10px] sm:text-xs py-1.5 shadow-[0_2px_0_var(--color-neutral-900),2px_2px_0_var(--color-neutral-950)] hover:-translate-y-px hover:shadow-[0_3px_0_var(--color-neutral-900),2px_3px_0_var(--color-neutral-950)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-neutral-900),1px_1px_0_var(--color-neutral-950)] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
                   >
                     ADMIN CONSOLE
                   </ArcadeLink>
