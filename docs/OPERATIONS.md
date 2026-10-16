@@ -191,3 +191,21 @@ A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock
 - Internal helpers (`room_standings`, `get_team_snapshot`, `app_now`, `raise_error`, the replay checks) are not executable by any client; SECURITY DEFINER callers reach them as the owner.
 - `supabase/tests/0011_security_matrix_test.sql` fails when a function or table is added without being classified, or when a SECURITY DEFINER function lacks a pinned `search_path`. Add new objects to its expected lists deliberately.
 - Realtime: a claimed player receives only its own team row, its own businesses and its room (checked with a real subscription in `security/security.test.ts`). Right after `supabase db reset` Realtime needs a few seconds before it delivers anything.
+
+## Client error handling (Phase 8)
+`classifyRpcError()` in `src/lib/errors.ts` sorts every failed RPC into one class. `CODE_CLASS` must list every code the migrations raise; `classifyRpcError.test.ts` greps the migrations and fails on a missing one.
+
+| Class | Meaning | Codes |
+|-------|---------|-------|
+| DEFINITELY_FAILED | Rejected, nothing written | BAD_CODE_OR_PIN, BUSINESS_CAP, BUSINESS_NOT_OWNED, INSUFFICIENT_CASH, INVALID_INITIAL_STATE, INVALID_VALUE, NON_FINAL_ROOM_EXISTS, NOTE_REQUIRED, REQUEST_ID_REUSED, ROOM_NOT_FOUND, TEAM_ALREADY_CLAIMED, TEAM_BANKRUPT, TEAMS_NOT_JOINED, TOO_MANY_ATTEMPTS, UNRESOLVED_TIE |
+| CONFLICT | Someone changed it first: refetch and retry | VERSION_CONFLICT, BUSINESS_OWNED |
+| SESSION_EXPIRED | Sign in again | NOT_AUTHENTICATED, PGRST301 |
+| NOT_ADMIN | Account may not do this | NOT_ADMIN |
+| ROOM_NOT_ACTIVE | Room status no longer allows it; the room may already be where you wanted | INVALID_TRANSITION, ROOM_NOT_EDITABLE, ROOM_ALREADY_EXPIRED, ROOM_FINALIZED, IMMUTABLE |
+| OUTCOME_UNKNOWN | No trustworthy answer (network, timeout, 5xx): it may have been applied | anything else |
+
+`COMMITTED` (success or a request_id replay) is the non-error outcome.
+
+- One `request_id` per user intent (`src/lib/intent.ts`): the same function with the same arguments reuses its id until the outcome is known, so a double-click, a retry or a resend replays on the server instead of applying twice. An unknown outcome keeps the id; success or a definite failure drops it. Quick-action dialogs still mint their own id on open and pass it through.
+- Lifecycle buttons (open lobby, start, abort, finalize) now carry a `request_id` and are retried once automatically after a dropped response. If the call still errors with ROOM_NOT_ACTIVE or an unknown outcome, the UI asks the server for the room status and shows success when the room is already in the target state.
+- On an unknown outcome the console shows a neutral message, reloads the snapshot and never says "saved". Check the refreshed values before repeating the action.

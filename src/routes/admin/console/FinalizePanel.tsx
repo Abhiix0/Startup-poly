@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { AdminRoomSnapshot, rpcAdminSetTiebreak, rpcAdminFinalize } from '../../../data/rpc';
+import { AdminRoomSnapshot, rpcAdminSetTiebreak, rpcAdminFinalize, rpcRoomStatus } from '../../../data/rpc';
+import { lifecycleAlreadyDone } from '../../../lib/lifecycle';
 import { useStandings } from '../../../data/useStandings';
 import { StandingsTable } from './StandingsTable';
 import { TieBreakOrder } from './TieBreakOrder';
@@ -64,6 +65,12 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
       setIsFinalizeModalOpen(false);
       await onRefetch();
     } catch (err: any) {
+      if (await lifecycleAlreadyDone(err, roomId, 'FINALIZED', rpcRoomStatus)) {
+        successToast('Match finalized successfully! Leaderboard is now permanent.');
+        setIsFinalizeModalOpen(false);
+        await onRefetch();
+        return;
+      }
       const msg = err?.message || 'Failed to finalize match.';
       setPanelError(msg);
       errorToast(msg);

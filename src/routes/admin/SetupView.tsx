@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { PixelButton, PixelCard, TextField, Modal, useToast } from '../../ui';
 import { TEAM_COLOR_PALETTE } from '../../domain/teams';
-import { rpcAdminUpdateTeamConfig, rpcAdminOpenLobby, AdminRoomSnapshot } from '../../data/rpc';
+import { rpcAdminUpdateTeamConfig, rpcAdminOpenLobby, rpcRoomStatus, AdminRoomSnapshot } from '../../data/rpc';
+import { lifecycleAlreadyDone } from '../../lib/lifecycle';
 
 interface SetupViewProps {
   snapshot: AdminRoomSnapshot;
@@ -61,6 +62,12 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
       setShowOpenLobbyModal(false);
       await onRefetch();
     } catch (err: any) {
+      if (await lifecycleAlreadyDone(err, room.id, 'LOBBY', rpcRoomStatus)) {
+        successToast('Lobby is now OPEN for team connections!');
+        setShowOpenLobbyModal(false);
+        await onRefetch();
+        return;
+      }
       errorToast(err.message || 'Failed to open lobby.');
     } finally {
       setIsOpeningLobby(false);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ConsoleTopBar } from './ConsoleTopBar';
+import { lifecycleAlreadyDone } from '../../../lib/lifecycle';
 import { TeamGrid } from './TeamGrid';
 import { TeamEditor } from './TeamEditor';
 import { ActivityLog } from './ActivityLog';
@@ -20,6 +21,7 @@ import {
   rpcAdminRemoveBusiness,
   rpcAdminSetBankrupt,
   rpcAdminAbortGame,
+  rpcRoomStatus,
 } from '../../../data/rpc';
 import {
   QuickActionsBar,
@@ -88,7 +90,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   } | null>(null);
   const [insufficientCashShortfall, setInsufficientCashShortfall] = useState<number | null>(null);
 
-  const { successToast, errorToast } = useToast();
+  const { successToast, errorToast, infoToast } = useToast();
 
   const isTimeExpired = snapshot.room.status === 'TIME_EXPIRED';
   const isActive = snapshot.room.status === 'ACTIVE';
@@ -138,6 +140,19 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const handleError = (err: any, expectedVer?: number, actionName = 'Action', retryFn?: () => void) => {
     const code = err?.code || '';
     const msg = err?.message || '';
+
+    if (code === 'OUTCOME_UNKNOWN') {
+      // Neither success nor failure: show the neutral message, reload the truth, never claim it saved.
+      infoToast(msg);
+      void onRefetch();
+      return;
+    }
+
+    if (code === 'ROOM_NOT_EDITABLE' || code === 'ROOM_ALREADY_EXPIRED' || code === 'INVALID_TRANSITION') {
+      errorToast(msg || 'The match no longer accepts this change.');
+      void onRefetch();
+      return;
+    }
 
     if (code === 'VERSION_CONFLICT' || msg.includes('VERSION_CONFLICT')) {
       setConflictDetails({
@@ -266,7 +281,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         reason: 'FORCED_SALE',
         credit_resale: true,
         expected_version: expectedVersion,
-        request_id: crypto.randomUUID(),
         note,
       });
       const t = snapshot.teams.find((tm) => tm.id === teamId);
@@ -306,7 +320,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         team_id: selectedTeam.id,
         cash: newCash,
         expected_version: selectedTeam.version,
-        request_id: crypto.randomUUID(),
         note,
       });
       successToast(`${selectedTeam.name} cash updated.`);
@@ -326,7 +339,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         team_id: selectedTeam.id,
         cv: newCv,
         expected_version: selectedTeam.version,
-        request_id: crypto.randomUUID(),
         note,
       });
       successToast(`${selectedTeam.name} CV updated.`);
@@ -354,7 +366,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         business_key: businessKey,
         apply_purchase: applyPurchase,
         expected_version: selectedTeam.version,
-        request_id: crypto.randomUUID(),
         note,
       });
       successToast(`Added business to ${selectedTeam.name}.`);
@@ -385,7 +396,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         new_level: newLevel,
         apply_upgrade: applyUpgrade,
         expected_version: selectedTeam.version,
-        request_id: crypto.randomUUID(),
         note,
       });
       successToast(`Upgraded ${businessKey} for ${selectedTeam.name}.`);
@@ -414,7 +424,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         new_level: newLevel,
         apply_upgrade: false,
         expected_version: selectedTeam.version,
-        request_id: crypto.randomUUID(),
         note,
       });
       successToast(`Corrected ${businessKey} level for ${selectedTeam.name}.`);
@@ -445,7 +454,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         reason,
         credit_resale: creditResale,
         expected_version: selectedTeam.version,
-        request_id: crypto.randomUUID(),
         note,
       });
       successToast(`Removed ${businessKey} from ${selectedTeam.name}.`);
@@ -471,7 +479,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         team_id: selectedTeam.id,
         value,
         expected_version: selectedTeam.version,
-        request_id: crypto.randomUUID(),
         note,
       });
       successToast(
@@ -813,6 +820,13 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                   setAbortNote('');
                   await onRefetch();
                 } catch (err: any) {
+                  if (await lifecycleAlreadyDone(err, snapshot.room.id, 'LOBBY', rpcRoomStatus)) {
+                    successToast('Game aborted. Room returned to LOBBY and teams reset.');
+                    setShowAbortModal(false);
+                    setAbortNote('');
+                    await onRefetch();
+                    return;
+                  }
                   const msg = err?.message || 'Failed to abort game.';
                   setAbortError(msg);
                   errorToast(msg);

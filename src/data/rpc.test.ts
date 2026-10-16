@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { supabase } from './client';
 import {
+  rpcAdminSetTeamValues,
   rpcAdminAbortGame,
   rpcGetStandings,
   rpcAdminFinalize,
@@ -29,6 +30,7 @@ describe('rpc.ts - RPC Client Wrapper Contract Tests', () => {
     expect(supabase.rpc).toHaveBeenCalledWith('admin_abort_game', {
       p_room_id: 'room-123',
       note: 'Accidental game start by organizer',
+      request_id: expect.any(String),
     });
     expect(result).toEqual({ status: 'LOBBY' });
   });
@@ -56,6 +58,7 @@ describe('rpc.ts - RPC Client Wrapper Contract Tests', () => {
 
     expect(supabase.rpc).toHaveBeenCalledWith('admin_finalize', {
       p_room_id: 'room-abc',
+      request_id: expect.any(String),
     });
   });
 
@@ -67,6 +70,7 @@ describe('rpc.ts - RPC Client Wrapper Contract Tests', () => {
     expect(supabase.rpc).toHaveBeenCalledWith('admin_start_game', {
       room_id: 'room-123',
       force: true,
+      request_id: expect.any(String),
     });
   });
 
@@ -77,6 +81,7 @@ describe('rpc.ts - RPC Client Wrapper Contract Tests', () => {
 
     expect(supabase.rpc).toHaveBeenCalledWith('admin_open_lobby', {
       room_id: 'room-123',
+      request_id: expect.any(String),
     });
   });
 
@@ -111,5 +116,66 @@ describe('rpc.ts - RPC Client Wrapper Contract Tests', () => {
     vi.mocked(supabase.rpc as any).mockResolvedValue({ data: { error: 'TEAM_ALREADY_CLAIMED' }, error: null });
 
     await expect(rpcJoinTeam('ROOM01', 2, '1234')).rejects.toMatchObject({ code: 'TEAM_ALREADY_CLAIMED' });
+  });
+
+  describe('request_id per user intent', () => {
+    const NET = { message: 'Failed to fetch' };
+    const params = { team_id: 't-1', cash: 900, expected_version: 3 };
+    const idsOf = (name: string) =>
+      vi.mocked(supabase.rpc as any).mock.calls.filter((c: any[]) => c[0] === name).map((c: any[]) => c[1].request_id);
+
+    it('a response lost after the server committed is retried with the SAME request_id and resolves', async () => {
+      vi.mocked(supabase.rpc as any)
+        .mockResolvedValueOnce({ data: null, error: NET }) // server committed, response dropped
+        .mockResolvedValueOnce({ data: { team: { cash: 900 } }, error: null }); // replay of the committed result
+
+      await expect(rpcAdminSetTeamValues(params)).resolves.toEqual({ team: { cash: 900 } });
+
+      const ids = idsOf('admin_set_team_values');
+      expect(ids).toHaveLength(2);
+      expect(ids[0]).toBe(ids[1]);
+    });
+
+    it('an unknown outcome surfaces as OUTCOME_UNKNOWN and a later retry of the same action reuses the id', async () => {
+      vi.mocked(supabase.rpc as any).mockResolvedValue({ data: null, error: NET });
+      await expect(rpcAdminSetTeamValues({ ...params, cash: 901 })).rejects.toMatchObject({ code: 'OUTCOME_UNKNOWN' });
+      const firstTries = idsOf('admin_set_team_values');
+
+      vi.mocked(supabase.rpc as any).mockClear();
+      vi.mocked(supabase.rpc as any).mockResolvedValue({ data: { ok: true }, error: null });
+      await rpcAdminSetTeamValues({ ...params, cash: 901 });
+
+      expect(idsOf('admin_set_team_values')).toEqual([firstTries[0]]);
+    });
+
+    it('double-submits of the same action share one request_id', async () => {
+      vi.mocked(supabase.rpc as any).mockResolvedValue({ data: { ok: true }, error: null });
+      await Promise.all([rpcAdminSetTeamValues({ ...params, cash: 902 }), rpcAdminSetTeamValues({ ...params, cash: 902 })]);
+      const ids = idsOf('admin_set_team_values');
+      expect(ids).toHaveLength(2);
+      expect(ids[0]).toBe(ids[1]);
+    });
+
+    it('after a success the next identical action is a new intent with a new request_id', async () => {
+      vi.mocked(supabase.rpc as any).mockResolvedValue({ data: { ok: true }, error: null });
+      await rpcAdminSetTeamValues({ ...params, cash: 903 });
+      await rpcAdminSetTeamValues({ ...params, cash: 903 });
+      const ids = idsOf('admin_set_team_values');
+      expect(ids[0]).not.toBe(ids[1]);
+    });
+
+    it('a definite failure does not keep the id either', async () => {
+      vi.mocked(supabase.rpc as any).mockResolvedValue({ data: null, error: { message: 'INSUFFICIENT_CASH', details: '{}' } });
+      await expect(rpcAdminSetTeamValues({ ...params, cash: 904 })).rejects.toMatchObject({ code: 'INSUFFICIENT_CASH' });
+      await expect(rpcAdminSetTeamValues({ ...params, cash: 904 })).rejects.toMatchObject({ code: 'INSUFFICIENT_CASH' });
+      const ids = idsOf('admin_set_team_values');
+      expect(ids[0]).not.toBe(ids[1]);
+    });
+
+    it('a caller-supplied request_id (quick-action dialogs) is passed through untouched', async () => {
+      vi.mocked(supabase.rpc as any).mockResolvedValue({ data: { ok: true }, error: null });
+      await rpcAdminSetTeamValues({ ...params, cash: 905, request_id: 'fixed-id' });
+      expect(idsOf('admin_set_team_values')).toEqual(['fixed-id']);
+    });
   });
 });

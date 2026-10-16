@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PixelButton, PixelCard, StatusPill, Modal, useToast } from '../../ui';
-import { rpcAdminReleaseTeam, rpcAdminStartGame, AdminRoomSnapshot } from '../../data/rpc';
+import { rpcAdminReleaseTeam, rpcAdminStartGame, rpcRoomStatus, AdminRoomSnapshot } from '../../data/rpc';
+import { lifecycleAlreadyDone } from '../../lib/lifecycle';
 
 interface LobbyViewProps {
   snapshot: AdminRoomSnapshot;
@@ -47,6 +48,12 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
       setShowStartModal(false);
       await onRefetch();
     } catch (err: any) {
+      if (await lifecycleAlreadyDone(err, room.id, ['ACTIVE', 'TIME_EXPIRED'], rpcRoomStatus)) {
+        successToast('Tournament match STARTED! 50-minute clock is ticking.');
+        setShowStartModal(false);
+        await onRefetch();
+        return;
+      }
       if (err.code === 'TEAMS_NOT_JOINED') {
         errorToast('Some teams have not joined yet. Use Force Start to proceed.');
       } else {
