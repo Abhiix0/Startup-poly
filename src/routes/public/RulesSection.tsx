@@ -67,13 +67,23 @@ export const CRISIS_CARDS_FULL = [
   { num: '6', title: 'Investor Pullout', effect: '−₹500 Cash', detail: 'Anchor investor retracts bridge round. Severe liquidity test.' },
 ];
 
+// Sprite colors for team token visualization (exempted from UI token rules)
+const SPRITE_COLORS = {
+  team1: '#E52521', // Crimson
+  team2: '#0099FF', // Cerulean
+  team3: '#22C55E', // Emerald
+  team4: '#FFCC00', // Gold
+  team5: '#A855F7', // Violet
+  team6: '#EC4899', // Rose
+} as const;
+
 export const TEMPORARY_TEAM_COLORS = [
-  { name: 'Team 1', color: '#E52521', label: 'Crimson' },
-  { name: 'Team 2', color: '#0099FF', label: 'Cerulean' },
-  { name: 'Team 3', color: '#22C55E', label: 'Emerald' },
-  { name: 'Team 4', color: '#FFCC00', label: 'Gold' },
-  { name: 'Team 5', color: '#A855F7', label: 'Violet' },
-  { name: 'Team 6', color: '#EC4899', label: 'Rose' },
+  { name: 'Team 1', color: SPRITE_COLORS.team1, label: 'Crimson' },
+  { name: 'Team 2', color: SPRITE_COLORS.team2, label: 'Cerulean' },
+  { name: 'Team 3', color: SPRITE_COLORS.team3, label: 'Emerald' },
+  { name: 'Team 4', color: SPRITE_COLORS.team4, label: 'Gold' },
+  { name: 'Team 5', color: SPRITE_COLORS.team5, label: 'Violet' },
+  { name: 'Team 6', color: SPRITE_COLORS.team6, label: 'Rose' },
 ];
 
 export const RULE_SECTIONS = [
@@ -86,8 +96,8 @@ export const RULE_SECTIONS = [
         <p>
           <strong>Tournament Objective:</strong> Build the highest Company Value (CV) portfolio while managing working cash before the 50:00 match clock expires.
         </p>
-        <div className="bg-[#102040] text-white p-3 border-2 border-[#181512] flex flex-col gap-1.5">
-          <p className="font-pixel text-[10px] text-[#FFCC00]">OFFICIAL SCHEDULE (60 MIN TOTAL)</p>
+        <div className="bg-[brand-navy] text-white p-3 border-2 border-[neutral-950] flex flex-col gap-1.5">
+          <p className="font-pixel text-[10px] text-[brand-gold]">OFFICIAL SCHEDULE (60 MIN TOTAL)</p>
           <p>• <strong>5 Min Setup:</strong> PIN cards handed to team captains; each team connects 1 mobile phone at <code>/join</code>.</p>
           <p>• <strong>50 Min Live Gameplay:</strong> Strict authoritative server timer. Physical dice rolls recorded on Game Master console.</p>
           <p>• <strong>5 Min Reset & Audit:</strong> Post-match reconciliation window. Notes mandatory for any adjustments; ties resolved; official results finalized.</p>
@@ -110,8 +120,8 @@ export const RULE_SECTIONS = [
         <p>
           <strong>Dice Movement:</strong> On your team&apos;s turn, roll one standard 6-sided physical die on the physical track. Move your team token forward by exactly that number of spaces and resolve the landing before the next team rolls.
         </p>
-        <div className="bg-[#FFFBEB] text-[#102040] p-3 border-2 border-[#B45309]">
-          <p className="font-pixel text-[10px] text-[#B45309] mb-1">DICE EXCEPTIONS</p>
+        <div className="bg-[status-warning-bg] text-[brand-navy] p-3 border-2 border-[status-warning-dark]">
+          <p className="font-pixel text-[10px] text-[status-warning-dark] mb-1">DICE EXCEPTIONS</p>
           <p>• <strong>Extra Roll on Six:</strong> Rolling a 6 awards an immediate additional roll after resolving the first space.</p>
           <p>• <strong>Three Sixes Rule:</strong> Rolling three consecutive 6s in a single turn cancels the entire turn immediately, undoing all transactions from that turn, and passes play to the next team.</p>
         </div>
@@ -131,11 +141,11 @@ export const RULE_SECTIONS = [
           <strong>Growth Scale Bonus:</strong> Founders who build diversified operations receive additional Company Value when passing START:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-          <div className="bg-[#E8F8EE] text-[#1B5E20] border-2 border-[#22B14C] p-2.5">
+          <div className="bg-[status-success-bg] text-[status-success-dark] border-2 border-[brand-green] p-2.5">
             <span className="font-pixel text-[9px] block">2 BUSINESSES OWNED</span>
             <span className="font-bold">+₹200 Cash & +200 CV bonus</span>
           </div>
-          <div className="bg-[#E8F8EE] text-[#1B5E20] border-2 border-[#22B14C] p-2.5">
+          <div className="bg-[status-success-bg] text-[status-success-dark] border-2 border-[brand-green] p-2.5">
             <span className="font-pixel text-[9px] block">3 BUSINESSES OWNED</span>
             <span className="font-bold">+₹200 Cash & +500 CV bonus</span>
           </div>
@@ -155,16 +165,16 @@ export const RULE_SECTIONS = [
         <p>
           <strong>The 10 Startup Sectors:</strong> Initial purchase deducts cash and permanently awards initial CV.
         </p>
-        <div className="bg-[#FAF8F5] text-[#102040] border-2 border-[#102040] p-2 text-xs">
-          <p className="font-pixel text-[9px] text-[#B84418] mb-1">SECTOR BREAKDOWN</p>
+        <div className="bg-[neutral-50] text-[brand-navy] border-2 border-[brand-navy] p-2 text-xs">
+          <p className="font-pixel text-[9px] text-[brand-brick] mb-1">SECTOR BREAKDOWN</p>
           <div className="grid grid-cols-2 gap-1.5">
             {BUSINESS_CATALOG_FULL.map((b) => (
-              <div key={b.name} className="border border-[#CBD5E1] bg-white p-1.5 flex items-center justify-between">
+              <div key={b.name} className="border border-[neutral-300] bg-white p-1.5 flex items-center justify-between">
                 <div>
-                  <span className="font-bold block">{b.name} {b.isProvisional && <span className="text-[9px] text-[#D97706]">[PROV]</span>}</span>
-                  <span className="text-[10px] text-[#64748B]">Cost: ₹{b.cost}</span>
+                  <span className="font-bold block">{b.name} {b.isProvisional && <span className="text-[9px] text-[status-warning-dark]">[PROV]</span>}</span>
+                  <span className="text-[10px] text-[neutral-500]">Cost: ₹{b.cost}</span>
                 </div>
-                <span className="font-bold text-[#1B5E20]">+{b.cv} CV</span>
+                <span className="font-bold text-[status-success-dark]">+{b.cv} CV</span>
               </div>
             ))}
           </div>
@@ -185,20 +195,20 @@ export const RULE_SECTIONS = [
           <strong>Rent on Rivals:</strong> When an opponent lands on your business, they pay Rent to you based on its upgrade level:
         </p>
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="bg-white border-2 border-[#102040] p-2">
-            <span className="font-pixel text-[9px] text-[#64748B] block">BASE (LEVEL 0)</span>
+          <div className="bg-white border-2 border-[brand-navy] p-2">
+            <span className="font-pixel text-[9px] text-[neutral-500] block">BASE (LEVEL 0)</span>
             <span className="font-bold text-sm block mt-1">50%</span>
-            <span className="text-[10px] text-[#64748B]">Owner gets 50% CV</span>
+            <span className="text-[10px] text-[neutral-500]">Owner gets 50% CV</span>
           </div>
-          <div className="bg-white border-2 border-[#102040] p-2">
-            <span className="font-pixel text-[9px] text-[#64748B] block">UPGRADE 1</span>
+          <div className="bg-white border-2 border-[brand-navy] p-2">
+            <span className="font-pixel text-[9px] text-[neutral-500] block">UPGRADE 1</span>
             <span className="font-bold text-sm block mt-1">75%</span>
-            <span className="text-[10px] text-[#64748B]">Owner gets 75% CV</span>
+            <span className="text-[10px] text-[neutral-500]">Owner gets 75% CV</span>
           </div>
-          <div className="bg-white border-2 border-[#102040] p-2">
-            <span className="font-pixel text-[9px] text-[#64748B] block">UPGRADE 2</span>
+          <div className="bg-white border-2 border-[brand-navy] p-2">
+            <span className="font-pixel text-[9px] text-[neutral-500] block">UPGRADE 2</span>
             <span className="font-bold text-sm block mt-1">100%</span>
-            <span className="text-[10px] text-[#64748B]">Owner gets 100% CV</span>
+            <span className="text-[10px] text-[neutral-500]">Owner gets 100% CV</span>
           </div>
         </div>
       </div>
@@ -210,24 +220,24 @@ export const RULE_SECTIONS = [
     icon: '⚡',
     body: (
       <div className="flex flex-col gap-3 font-mono text-xs sm:text-sm leading-relaxed">
-        <div className="bg-[#FFFBEB] text-[#102040] p-3 border-2 border-[#D97706]">
-          <span className="font-pixel text-[10px] text-[#D97706] block">ACTION B · SPACE 07</span>
+        <div className="bg-[status-warning-bg] text-[brand-navy] p-3 border-2 border-[status-warning-dark]">
+          <span className="font-pixel text-[10px] text-[status-warning-dark] block">ACTION B · SPACE 07</span>
           <p className="font-bold text-sm mt-0.5">Pitch to Investors</p>
-          <p className="text-xs text-[#64748B] mt-1">
+          <p className="text-xs text-[neutral-500] mt-1">
             The active team delivers a 30-second live physical pitch judged by the Game Master / Investors to win venture funding and strategic advantage.
           </p>
         </div>
-        <div className="bg-[#FEECEB] text-[#102040] p-3 border-2 border-[#D32F2F]">
-          <span className="font-pixel text-[10px] text-[#D32F2F] block">ACTION C · SPACE 13</span>
+        <div className="bg-[status-danger-bg] text-[brand-navy] p-3 border-2 border-[brand-red]">
+          <span className="font-pixel text-[10px] text-[brand-red] block">ACTION C · SPACE 13</span>
           <p className="font-bold text-sm mt-0.5">Lose the Feature (−200 CV Penalty)</p>
-          <p className="text-xs text-[#64748B] mt-1">
+          <p className="text-xs text-[neutral-500] mt-1">
             Technical debt or outage regression. Deducts −200 CV from the team. CV is strictly capped at floor 0 (never negative).
           </p>
         </div>
-        <div className="bg-[#FAF8F5] text-[#102040] p-3 border-2 border-[#102040]">
-          <span className="font-pixel text-[10px] text-[#102040] block">ACTION D · SPACE 19</span>
+        <div className="bg-[neutral-50] text-[brand-navy] p-3 border-2 border-[brand-navy]">
+          <span className="font-pixel text-[10px] text-[brand-navy] block">ACTION D · SPACE 19</span>
           <p className="font-bold text-sm mt-0.5">Steal Talent (Poach up to ₹100)</p>
-          <p className="text-xs text-[#64748B] mt-1">
+          <p className="text-xs text-[neutral-500] mt-1">
             The active team poaches key personnel from a chosen rival. The target team loses up to ₹100 cash (capped at what they actually hold), credited to the active team.
           </p>
         </div>
@@ -244,8 +254,8 @@ export const RULE_SECTIONS = [
           Landing on Bonus or Crisis spaces triggers a card draw. All 6 Bonus cards and all 6 Crisis cards are mathematically balanced:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-          <div className="bg-[#14532D] text-[#FFFBEB] p-2.5 border-2 border-[#181512]">
-            <span className="font-pixel text-[9px] block mb-1 text-[#FFCC00]">BONUS CARDS (1–6)</span>
+          <div className="bg-[status-success-dark] text-[status-warning-bg] p-2.5 border-2 border-[neutral-950]">
+            <span className="font-pixel text-[9px] block mb-1 text-[brand-gold]">BONUS CARDS (1–6)</span>
             <ul className="space-y-1 text-[11px]">
               <li>#1: Startup Grant (+₹300 Cash)</li>
               <li>#2: Viral Growth (+300 CV)</li>
@@ -255,8 +265,8 @@ export const RULE_SECTIONS = [
               <li>#6: Lucky Break (Roll die: ₹100 × roll)</li>
             </ul>
           </div>
-          <div className="bg-[#7F1D1D] text-[#FFFBEB] p-2.5 border-2 border-[#181512]">
-            <span className="font-pixel text-[9px] block mb-1 text-[#FCA5A5]">CRISIS CARDS (1–6)</span>
+          <div className="bg-[status-danger-dark] text-[status-warning-bg] p-2.5 border-2 border-[neutral-950]">
+            <span className="font-pixel text-[9px] block mb-1 text-[status-danger-light]">CRISIS CARDS (1–6)</span>
             <ul className="space-y-1 text-[11px]">
               <li>#1: Tax Raid (−₹300 Cash)</li>
               <li>#2: Market Crash (−300 CV, floor 0)</li>
@@ -285,7 +295,7 @@ export const RULE_SECTIONS = [
         <p>
           • Upgrade fees previously paid are foregone, but earned Company Value is permanent and never stripped.
         </p>
-        <div className="bg-[#FEECEB] text-[#D32F2F] border-2 border-[#D32F2F] p-3 font-bold">
+        <div className="bg-[status-danger-bg] text-[brand-red] border-2 border-[brand-red] p-3 font-bold">
           <p className="font-pixel text-[10px] uppercase">BANKRUPTCY CONDITION</p>
           <p className="font-mono text-xs mt-1">
             If a team has ₹0 cash, has liquidated all 3 businesses, and still has unpaid debt: The team is declared BANKRUPT and eliminated from the tournament.
@@ -306,7 +316,7 @@ export const RULE_SECTIONS = [
         <p>
           <strong>Official Tiebreaker Hierarchy:</strong> If two or more teams finish tied on Company Value:
         </p>
-        <ol className="list-decimal list-inside space-y-1 bg-[#FFFBEB] text-[#102040] p-3 border-2 border-[#102040] text-xs">
+        <ol className="list-decimal list-inside space-y-1 bg-[status-warning-bg] text-[brand-navy] p-3 border-2 border-[brand-navy] text-xs">
           <li><strong>Tiebreaker 1:</strong> Highest Cash balance.</li>
           <li><strong>Tiebreaker 2:</strong> Most Businesses Held in portfolio.</li>
           <li><strong>Tiebreaker 3:</strong> <strong>30-Second Physical Pitch</strong> judged live by the Game Master.</li>
@@ -320,13 +330,13 @@ export const RULE_SECTIONS = [
     icon: '✱',
     body: (
       <div className="flex flex-col gap-3 font-mono text-xs sm:text-sm leading-relaxed">
-        <div className="bg-[#FEF3C7] text-[#92400E] p-3 border-2 border-[#D97706]">
+        <div className="bg-[status-warning-light] text-[status-warning-text] p-3 border-2 border-[status-warning-dark]">
           <span className="font-pixel text-[10px] block">PROVISIONAL BUSINESS SECTORS</span>
           <p className="text-xs mt-1">
             DevTools / Infrastructure, Cybersecurity, CleanTech / Energy, and Robotics & IoT are labeled <strong>[PROVISIONAL]</strong>. The balance committee will confirm exact initial cost and upgrade CV parameters prior to tournament day.
           </p>
         </div>
-        <div className="bg-[#F3E8FF] text-[#6B21A8] p-3 border-2 border-[#8B5CF6]">
+        <div className="bg-[bg-purple-50] text-[text-purple-800] p-3 border-2 border-[border-purple-500]">
           <span className="font-pixel text-[10px] block">WILDCARD SPACES (12 & 24)</span>
           <p className="text-xs mt-1">
             Wildcard spaces represent unannounced venture events, angel challenges, and sponsor activations. Exact mechanics are announced live by the Game Master during the match.
@@ -344,46 +354,46 @@ export const RulesSection: React.FC = () => {
   const getCategoryColor = (cat: BoardSpace['category']) => {
     switch (cat) {
       case 'START':
-        return 'bg-[#22B14C] text-[#102040] font-bold border-[#181512]';
+        return 'bg-[brand-green] text-[brand-navy] font-bold border-[neutral-950]';
       case 'BUSINESS':
-        return 'bg-[#1E3A5F] text-[#FFFBEB] border-[#181512]';
+        return 'bg-[neutral-800] text-[status-warning-bg] border-[neutral-950]';
       case 'ACTION':
-        return 'bg-[#9A3412] text-white border-[#181512]';
+        return 'bg-[status-warning-dark] text-white border-[neutral-950]';
       case 'BONUS':
-        return 'bg-[#FFCC00] text-[#102040] border-[#181512]';
+        return 'bg-[brand-gold] text-[brand-navy] border-[neutral-950]';
       case 'CRISIS':
-        return 'bg-[#991B1B] text-white border-[#181512]';
+        return 'bg-[status-danger-dark] text-white border-[neutral-950]';
       case 'WILDCARD':
-        return 'bg-[#6D28D9] text-white border-[#181512]';
+        return 'bg-[bg-purple-700] text-white border-[neutral-950]';
       default:
-        return 'bg-[#1E3A5F] text-[#FFFBEB] border-[#181512]';
+        return 'bg-[neutral-800] text-[status-warning-bg] border-[neutral-950]';
     }
   };
 
   return (
-    <section id="rules" className="relative z-20 bg-[#102040] border-y-[6px] border-[#181512] text-[#FFFBEB] px-3 sm:px-4 py-10 sm:py-16 scroll-mt-4">
+    <section id="rules" className="relative z-20 bg-[brand-navy] border-y-[6px] border-[neutral-950] text-[status-warning-bg] px-3 sm:px-4 py-10 sm:py-16 scroll-mt-4">
       <div className="max-w-6xl mx-auto">
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
             <div className="inline-flex items-center gap-2 mb-2">
-              <span className="font-pixel text-[9px] bg-[#FFCC00] text-[#102040] px-2 py-0.5 border border-[#102040]">
+              <span className="font-pixel text-[9px] bg-[brand-gold] text-[brand-navy] px-2 py-0.5 border border-[brand-navy]">
                 OFFICIAL RULEBOOK
               </span>
-              <span className="font-pixel text-[9px] bg-[#22B14C] text-[#102040] font-bold px-2 py-0.5 border border-[#102040]">
+              <span className="font-pixel text-[9px] bg-[brand-green] text-[brand-navy] font-bold px-2 py-0.5 border border-[brand-navy]">
                 24 SPACES
               </span>
             </div>
-            <h2 className="font-pixel text-xl sm:text-3xl leading-relaxed text-[#FFFBEB]">
+            <h2 className="font-pixel text-xl sm:text-3xl leading-relaxed text-[status-warning-bg]">
               STARTUPOLY FIELD GUIDE
             </h2>
-            <p className="font-mono text-xs sm:text-sm text-[#CBD5E1] mt-2 max-w-2xl leading-relaxed">
+            <p className="font-mono text-xs sm:text-sm text-[neutral-300] mt-2 max-w-2xl leading-relaxed">
               Official live tournament rules for open-ground play. 24 physical spaces, 50-minute authoritative clock, 5–6 teams, 1 phone per team.
             </p>
           </div>
           <a
             href="#top"
-            className="self-start sm:self-auto font-pixel text-[10px] text-[#FFCC00] hover:text-white border-2 border-[#FFCC00] px-3 py-2 shadow-[3px_3px_0_#000] active:translate-y-0.5"
+            className="self-start sm:self-auto font-pixel text-[10px] text-[brand-gold] hover:text-white border-2 border-[brand-gold] px-3 py-2 shadow-[3px_3px_0_rgba(0,0,0,1)] active:translate-y-0.5"
           >
             BACK TO TOP ↑
           </a>
@@ -392,23 +402,23 @@ export const RulesSection: React.FC = () => {
         {/* 2-Column Rules Navigation & Panel */}
         <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-6 items-start">
           {/* Rules Tab Selector */}
-          <div className="flex flex-col gap-2 max-h-[620px] overflow-y-auto pr-1">
+          <div className="flex flex-col gap-2 max-h-155 overflow-y-auto pr-1">
             {RULE_SECTIONS.map((section, idx) => (
               <button
                 type="button"
                 key={section.id}
                 onClick={() => setActiveTab(idx)}
-                className={`text-left border-3 border-[#181512] px-3.5 py-2.5 shadow-[3px_3px_0_#000] transition-transform cursor-pointer ${
+                className={`text-left border-3 border-[neutral-950] px-3.5 py-2.5 shadow-[3px_3px_0_rgba(0,0,0,1)] transition-transform cursor-pointer ${
                   activeTab === idx
-                    ? 'bg-[#FFCC00] text-[#102040] -translate-y-0.5'
-                    : 'bg-[#1E3A5F] text-[#FFFBEB] hover:bg-[#2A4B75]'
+                    ? 'bg-[brand-gold] text-[brand-navy] -translate-y-0.5'
+                    : 'bg-[neutral-800] text-[status-warning-bg] hover:bg-[neutral-700]'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-pixel text-xs">
                     {section.icon} {section.title}
                   </span>
-                  <span className={`font-mono text-[10px] ${activeTab === idx ? 'text-[#102040] font-bold' : 'text-[#CBD5E1]'}`}>
+                  <span className={`font-mono text-[10px] ${activeTab === idx ? 'text-[brand-navy] font-bold' : 'text-[neutral-300]'}`}>
                     §{String(idx + 1).padStart(2, '0')}
                   </span>
                 </div>
@@ -416,8 +426,8 @@ export const RulesSection: React.FC = () => {
             ))}
 
             {/* Quick Match Specs Pill */}
-            <div className="bg-[#102040] text-white border-3 border-[#181512] p-3 shadow-[3px_3px_0_#000] mt-2">
-              <p className="font-pixel text-[10px] uppercase text-[#FFCC00]">MATCH FORMAT SUMMARY</p>
+            <div className="bg-[brand-navy] text-white border-3 border-[neutral-950] p-3 shadow-[3px_3px_0_rgba(0,0,0,1)] mt-2">
+              <p className="font-pixel text-[10px] uppercase text-[brand-gold]">MATCH FORMAT SUMMARY</p>
               <p className="font-mono text-xs mt-1.5 leading-relaxed">5 min setup · 50 min clock · 5 min audit reset</p>
               <p className="font-mono text-xs mt-0.5 leading-relaxed">5–6 teams · 4–5 players · 1 phone per team</p>
               <p className="font-mono text-xs mt-0.5 leading-relaxed">₹1,000 Starting Cash · 0 CV · Max 3 businesses</p>
@@ -425,23 +435,23 @@ export const RulesSection: React.FC = () => {
           </div>
 
           {/* Active Rule Details Card */}
-          <div className="bg-[#FAF8F5] text-[#102040] border-4 border-[#181512] shadow-[6px_6px_0_#000] p-5 sm:p-7 min-h-[360px] flex flex-col justify-between">
+          <div className="bg-[neutral-50] text-[brand-navy] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-5 sm:p-7 min-h-90 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between border-b-2 border-[#CBD5E1] pb-3 mb-4">
-                <span className="font-pixel text-[10px] text-[#B84418]">
+              <div className="flex items-center justify-between border-b-2 border-[neutral-300] pb-3 mb-4">
+                <span className="font-pixel text-[10px] text-[brand-brick]">
                   RULEBOOK SECTION {String(activeTab + 1).padStart(2, '0')} OF {RULE_SECTIONS.length}
                 </span>
-                <span className="font-pixel text-xs bg-[#102040] text-[#FFCC00] px-2 py-0.5">
+                <span className="font-pixel text-xs bg-[brand-navy] text-[brand-gold] px-2 py-0.5">
                   {RULE_SECTIONS[activeTab].icon}
                 </span>
               </div>
-              <h3 className="font-pixel text-base sm:text-xl text-[#102040] mb-4">
+              <h3 className="font-pixel text-base sm:text-xl text-[brand-navy] mb-4">
                 {RULE_SECTIONS[activeTab].title}
               </h3>
               {RULE_SECTIONS[activeTab].body}
             </div>
 
-            <div className="mt-6 pt-3 border-t border-[#CBD5E1] flex items-center justify-between text-[11px] font-mono text-[#334155] font-semibold">
+            <div className="mt-6 pt-3 border-t border-[neutral-300] flex items-center justify-between text-[11px] font-mono text-[neutral-700] font-semibold">
               <span>Official Startupoly Tournament Codex</span>
               <span>Rulebook §{String(activeTab + 1).padStart(2, '0')}</span>
             </div>
@@ -451,22 +461,22 @@ export const RulesSection: React.FC = () => {
         {/* ======================================================================= */}
         {/* AUTHORITATIVE 24-SPACE BOARD PLACEHOLDER                                */}
         {/* ======================================================================= */}
-        <div className="mt-12 bg-[#1E3A5F] border-4 border-[#181512] shadow-[6px_6px_0_#000] p-4 sm:p-6">
+        <div className="mt-12 bg-[neutral-800] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b-2 border-white/20">
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-pixel text-xs text-[#FFCC00]">24-SPACE PHYSICAL BOARD CIRCUIT</span>
-                <span className="font-pixel text-[9px] bg-[#9A3412] text-[#FFFBEB] font-bold px-2 py-0.5 border border-[#102040]">
+                <span className="font-pixel text-xs text-[brand-gold]">24-SPACE PHYSICAL BOARD CIRCUIT</span>
+                <span className="font-pixel text-[9px] bg-[status-warning-dark] text-[status-warning-bg] font-bold px-2 py-0.5 border border-[brand-navy]">
                   DESIGN PENDING
                 </span>
               </div>
-              <p className="font-mono text-xs text-[#CBD5E1] mt-1">
+              <p className="font-mono text-xs text-[neutral-300] mt-1">
                 Visual track structure for the outdoor game board: 1 START, 10 Businesses, 3 Actions, 4 Bonus, 4 Crisis, 2 Wildcards.
               </p>
             </div>
             <div className="text-right">
-              <span className="font-pixel text-[9px] text-[#FFCC00] block">INTERACTIVE PLACEHOLDER</span>
-              <span className="font-mono text-[10px] text-[#E2E8F0]">Click any tile to inspect</span>
+              <span className="font-pixel text-[9px] text-[brand-gold] block">INTERACTIVE PLACEHOLDER</span>
+              <span className="font-mono text-[10px] text-[neutral-200]">Click any tile to inspect</span>
             </div>
           </div>
 
@@ -481,15 +491,15 @@ export const RulesSection: React.FC = () => {
                   type="button"
                   key={space.num}
                   onClick={() => setSelectedSpace(space)}
-                  className={`min-h-[72px] sm:min-h-[84px] p-2 border-2 text-left flex flex-col justify-between transition-all cursor-pointer relative ${colorClass} ${
-                    isSelected ? 'ring-3 ring-[#FFCC00] scale-[1.02] shadow-[2px_2px_0px_#000] z-10' : 'hover:opacity-95'
+                  className={`min-h-18 sm:min-h-21 p-2 border-2 text-left flex flex-col justify-between transition-all cursor-pointer relative ${colorClass} ${
+                    isSelected ? 'ring-3 ring-[brand-gold] scale-[1.02] shadow-[2px_2px_0px_rgba(0,0,0,1)] z-10' : 'hover:opacity-95'
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
                     <span className="font-mono text-[10px] font-bold">
                       #{String(space.num).padStart(2, '0')}
                     </span>
-                    <span className="font-pixel text-[8px] uppercase tracking-wider px-1 py-0.2 bg-[#102040] text-white font-bold">
+                    <span className="font-pixel text-[8px] uppercase tracking-wider px-1 py-0.2 bg-[brand-navy] text-white font-bold">
                       {space.category}
                     </span>
                   </div>
@@ -506,7 +516,7 @@ export const RulesSection: React.FC = () => {
                   </div>
 
                   {space.isProvisional && (
-                    <span className="font-mono text-[8px] bg-[#102040] text-[#FFCC00] px-1 py-0.5 inline-block uppercase font-bold border border-[#102040]">
+                    <span className="font-mono text-[8px] bg-[brand-navy] text-[brand-gold] px-1 py-0.5 inline-block uppercase font-bold border border-[brand-navy]">
                       PROV
                     </span>
                   )}
@@ -517,9 +527,9 @@ export const RulesSection: React.FC = () => {
 
           {/* Selected Space Detailed Inspector */}
           {selectedSpace && (
-            <div className="mt-4 bg-[#102040] border-2 border-[#FFCC00] p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[2px_2px_0px_#000]">
+            <div className="mt-4 bg-[brand-navy] border-2 border-[brand-gold] p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center gap-3">
-                <span className="font-pixel text-sm bg-[#FFCC00] text-[#102040] w-9 h-9 flex items-center justify-center shrink-0 border border-[#102040]">
+                <span className="font-pixel text-sm bg-[brand-gold] text-[brand-navy] w-9 h-9 flex items-center justify-center shrink-0 border border-[brand-navy]">
                   #{String(selectedSpace.num).padStart(2, '0')}
                 </span>
                 <div>
@@ -527,30 +537,30 @@ export const RulesSection: React.FC = () => {
                     <span className="font-pixel text-xs text-white">
                       {selectedSpace.name}
                     </span>
-                    <span className="font-pixel text-[9px] text-[#FFCC00]">
+                    <span className="font-pixel text-[9px] text-[brand-gold]">
                       [{selectedSpace.category}]
                     </span>
                     {selectedSpace.isProvisional && (
-                      <span className="font-mono text-[9px] bg-[#D97706] text-white px-1.5 py-0.2">
+                      <span className="font-mono text-[9px] bg-[status-warning-dark] text-white px-1.5 py-0.2">
                         PROVISIONAL
                       </span>
                     )}
                   </div>
-                  <p className="font-mono text-xs text-[#CBD5E1] mt-0.5">
+                  <p className="font-mono text-xs text-[neutral-300] mt-0.5">
                     {selectedSpace.detail}
                   </p>
                 </div>
               </div>
 
-              <span className="font-pixel text-[9px] text-[#FFCC00] bg-white/10 px-2 py-1 shrink-0 self-start sm:self-center">
+              <span className="font-pixel text-[9px] text-[brand-gold] bg-white/10 px-2 py-1 shrink-0 self-start sm:self-center">
                 SPACE {selectedSpace.num} OF 24
               </span>
             </div>
           )}
 
           {/* Design Pending Notice Banner */}
-          <div className="mt-4 text-center border-2 border-[#FFCC00] bg-[#102040] py-2 px-3">
-            <span className="font-pixel text-[9px] sm:text-[10px] text-[#FFCC00] tracking-wide">
+          <div className="mt-4 text-center border-2 border-[brand-gold] bg-[brand-navy] py-2 px-3">
+            <span className="font-pixel text-[9px] sm:text-[10px] text-[brand-gold] tracking-wide">
               🎨 FINAL BOARD ARTWORK WILL REPLACE THIS PLACEHOLDER — Graphic design team is finalizing the outdoor tournament board print files.
             </span>
           </div>
@@ -559,15 +569,15 @@ export const RulesSection: React.FC = () => {
         {/* ======================================================================= */}
         {/* SECTORS TABLE & UPGRADE SUMMARY                                         */}
         {/* ======================================================================= */}
-        <div className="mt-8 bg-[#FAF8F5] text-[#102040] border-4 border-[#181512] shadow-[6px_6px_0_#000] p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b-2 border-[#CBD5E1]">
+        <div className="mt-8 bg-[neutral-50] text-[brand-navy] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b-2 border-[neutral-300]">
             <div>
-              <p className="font-pixel text-[10px] text-[#B84418]">STARTUP MARKET SPECS</p>
-              <h3 className="font-pixel text-sm sm:text-base text-[#102040]">
+              <p className="font-pixel text-[10px] text-[brand-brick]">STARTUP MARKET SPECS</p>
+              <h3 className="font-pixel text-sm sm:text-base text-[brand-navy]">
                 ALL 10 BUSINESSES & UPGRADE MATRICES
               </h3>
             </div>
-            <span className="font-mono text-xs text-[#334155] font-semibold">
+            <span className="font-mono text-xs text-[neutral-700] font-semibold">
               Rent: L0 = 50% · L1 = 75% · L2 = 100%
             </span>
           </div>
@@ -575,32 +585,32 @@ export const RulesSection: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left font-mono text-xs border-collapse">
               <thead>
-                <tr className="bg-[#102040] text-white font-pixel text-[9px]">
-                  <th className="p-2 border border-[#102040]">SECTOR</th>
-                  <th className="p-2 border border-[#102040]">COST</th>
-                  <th className="p-2 border border-[#102040]">BASE CV</th>
-                  <th className="p-2 border border-[#102040]">UPGRADE 1 (COST / CV)</th>
-                  <th className="p-2 border border-[#102040]">UPGRADE 2 (COST / CV)</th>
-                  <th className="p-2 border border-[#102040]">RENT (L0 / L1 / L2)</th>
-                  <th className="p-2 border border-[#102040]">STATUS</th>
+                <tr className="bg-[brand-navy] text-white font-pixel text-[9px]">
+                  <th className="p-2 border border-[brand-navy]">SECTOR</th>
+                  <th className="p-2 border border-[brand-navy]">COST</th>
+                  <th className="p-2 border border-[brand-navy]">BASE CV</th>
+                  <th className="p-2 border border-[brand-navy]">UPGRADE 1 (COST / CV)</th>
+                  <th className="p-2 border border-[brand-navy]">UPGRADE 2 (COST / CV)</th>
+                  <th className="p-2 border border-[brand-navy]">RENT (L0 / L1 / L2)</th>
+                  <th className="p-2 border border-[brand-navy]">STATUS</th>
                 </tr>
               </thead>
               <tbody>
                 {BUSINESS_CATALOG_FULL.map((b, i) => (
-                  <tr key={b.name} className={i % 2 === 0 ? 'bg-white' : 'bg-[#F1EFEA]'}>
-                    <td className="p-2 font-bold border border-[#CBD5E1]">{b.name}</td>
-                    <td className="p-2 border border-[#CBD5E1]">₹{b.cost}</td>
-                    <td className="p-2 border border-[#CBD5E1] text-[#1B5E20] font-bold">+{b.cv} CV</td>
-                    <td className="p-2 border border-[#CBD5E1]">₹{b.u1Cost} (+{b.u1Cv} CV)</td>
-                    <td className="p-2 border border-[#CBD5E1]">₹{b.u2Cost} (+{b.u2Cv} CV)</td>
-                    <td className="p-2 border border-[#CBD5E1] font-bold">₹{b.l0Rent} / ₹{b.l1Rent} / ₹{b.l2Rent}</td>
-                    <td className="p-2 border border-[#CBD5E1]">
+                  <tr key={b.name} className={i % 2 === 0 ? 'bg-white' : 'bg-[neutral-100]'}>
+                    <td className="p-2 font-bold border border-[neutral-300]">{b.name}</td>
+                    <td className="p-2 border border-[neutral-300]">₹{b.cost}</td>
+                    <td className="p-2 border border-[neutral-300] text-[status-success-dark] font-bold">+{b.cv} CV</td>
+                    <td className="p-2 border border-[neutral-300]">₹{b.u1Cost} (+{b.u1Cv} CV)</td>
+                    <td className="p-2 border border-[neutral-300]">₹{b.u2Cost} (+{b.u2Cv} CV)</td>
+                    <td className="p-2 border border-[neutral-300] font-bold">₹{b.l0Rent} / ₹{b.l1Rent} / ₹{b.l2Rent}</td>
+                    <td className="p-2 border border-[neutral-300]">
                       {b.isProvisional ? (
-                        <span className="font-pixel text-[8px] bg-[#FEF3C7] text-[#92400E] px-1.5 py-0.5 border border-[#D97706]">
+                        <span className="font-pixel text-[8px] bg-[status-warning-light] text-[status-warning-text] px-1.5 py-0.5 border border-[status-warning-dark]">
                           PROVISIONAL
                         </span>
                       ) : (
-                        <span className="font-pixel text-[8px] bg-[#E8F8EE] text-[#1B5E20] px-1.5 py-0.5 border border-[#22B14C]">
+                        <span className="font-pixel text-[8px] bg-[status-success-bg] text-[status-success-dark] px-1.5 py-0.5 border border-[brand-green]">
                           OFFICIAL
                         </span>
                       )}
@@ -617,21 +627,21 @@ export const RulesSection: React.FC = () => {
         {/* ======================================================================= */}
         <div className="mt-8 grid lg:grid-cols-2 gap-6">
           {/* Bonus Cards Card */}
-          <div className="bg-[#14532D] text-[#FFFBEB] border-4 border-[#181512] shadow-[6px_6px_0_#000] p-4 sm:p-5">
+          <div className="bg-[status-success-dark] text-[status-warning-bg] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-4 sm:p-5">
             <div className="flex items-center justify-between mb-3 border-b border-white/30 pb-2">
               <span className="font-pixel text-xs">BONUS CARDS (CARDS 1–6)</span>
-              <span className="font-pixel text-[9px] bg-[#FFCC00] text-[#102040] px-1.5 py-0.5">BENEFITS</span>
+              <span className="font-pixel text-[9px] bg-[brand-gold] text-[brand-navy] px-1.5 py-0.5">BENEFITS</span>
             </div>
             <div className="flex flex-col gap-2.5">
               {BONUS_CARDS_FULL.map((card) => (
-                <div key={card.num} className="bg-[#052E16] border border-white/25 p-2 flex gap-3 items-start">
-                  <span className="font-pixel text-xs bg-[#FFCC00] text-[#102040] w-6 h-6 flex items-center justify-center shrink-0 border border-[#102040]">
+                <div key={card.num} className="bg-[status-success-dark] border border-white/25 p-2 flex gap-3 items-start">
+                  <span className="font-pixel text-xs bg-[brand-gold] text-[brand-navy] w-6 h-6 flex items-center justify-center shrink-0 border border-[brand-navy]">
                     #{card.num}
                   </span>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-pixel text-[10px]">{card.title}</span>
-                      <span className="font-mono text-xs font-bold text-[#FFCC00]">({card.effect})</span>
+                      <span className="font-mono text-xs font-bold text-[brand-gold]">({card.effect})</span>
                     </div>
                     <p className="font-mono text-[11px] text-white/90 mt-0.5 leading-snug">
                       {card.detail}
@@ -643,21 +653,21 @@ export const RulesSection: React.FC = () => {
           </div>
 
           {/* Crisis Cards Card */}
-          <div className="bg-[#7F1D1D] text-[#FFFBEB] border-4 border-[#181512] shadow-[6px_6px_0_#000] p-4 sm:p-5">
+          <div className="bg-[status-danger-dark] text-[status-warning-bg] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-4 sm:p-5">
             <div className="flex items-center justify-between mb-3 border-b border-white/30 pb-2">
               <span className="font-pixel text-xs">CRISIS CARDS (CARDS 1–6)</span>
-              <span className="font-pixel text-[9px] bg-[#FFCC00] text-[#102040] px-1.5 py-0.5">PENALTIES</span>
+              <span className="font-pixel text-[9px] bg-[brand-gold] text-[brand-navy] px-1.5 py-0.5">PENALTIES</span>
             </div>
             <div className="flex flex-col gap-2.5">
               {CRISIS_CARDS_FULL.map((card) => (
-                <div key={card.num} className="bg-[#450A0A] border border-white/25 p-2 flex gap-3 items-start">
-                  <span className="font-pixel text-xs bg-[#FFCC00] text-[#102040] w-6 h-6 flex items-center justify-center shrink-0 border border-[#102040]">
+                <div key={card.num} className="bg-[status-danger-dark] border border-white/25 p-2 flex gap-3 items-start">
+                  <span className="font-pixel text-xs bg-[brand-gold] text-[brand-navy] w-6 h-6 flex items-center justify-center shrink-0 border border-[brand-navy]">
                     #{card.num}
                   </span>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-pixel text-[10px]">{card.title}</span>
-                      <span className="font-mono text-xs font-bold text-[#FFCC00]">({card.effect})</span>
+                      <span className="font-mono text-xs font-bold text-[brand-gold]">({card.effect})</span>
                     </div>
                     <p className="font-mono text-[11px] text-white/90 mt-0.5 leading-snug">
                       {card.detail}
@@ -672,24 +682,24 @@ export const RulesSection: React.FC = () => {
         {/* ======================================================================= */}
         {/* TEMPORARY TEAM COLORS REFERENCE                                         */}
         {/* ======================================================================= */}
-        <div className="mt-8 bg-[#FFCC00] text-[#102040] border-4 border-[#181512] shadow-[6px_6px_0_#000] p-4 sm:p-5">
-          <div className="flex items-center justify-between border-b-2 border-[#102040] pb-2 mb-3">
+        <div className="mt-8 bg-[brand-gold] text-[brand-navy] border-4 border-[neutral-950] shadow-[6px_6px_0_rgba(0,0,0,1)] p-4 sm:p-5">
+          <div className="flex items-center justify-between border-b-2 border-[brand-navy] pb-2 mb-3">
             <p className="font-pixel text-[10px] uppercase">TEMPORARY TEAM COLOR ASSIGNMENTS</p>
-            <span className="font-pixel text-[9px] bg-[#102040] text-white px-2 py-0.5">
+            <span className="font-pixel text-[9px] bg-[brand-navy] text-white px-2 py-0.5">
               SLOTS 1–6
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
             {TEMPORARY_TEAM_COLORS.map((tc) => (
-              <div key={tc.name} className="bg-white border-2 border-[#102040] p-2 flex items-center gap-2 shadow-[2px_2px_0px_#102040]">
+              <div key={tc.name} className="bg-white border-2 border-[brand-navy] p-2 flex items-center gap-2 shadow-[2px_2px_0px_brand-navy]">
                 <span
-                  className="w-5 h-5 border-2 border-[#102040] shrink-0"
+                  className="w-5 h-5 border-2 border-[brand-navy] shrink-0"
                   style={{ backgroundColor: tc.color }}
                 />
                 <div>
                   <span className="font-pixel text-[10px] block">{tc.name}</span>
-                  <span className="font-mono text-[10px] text-[#334155] font-semibold">{tc.label}</span>
+                  <span className="font-mono text-[10px] text-[neutral-700] font-semibold">{tc.label}</span>
                 </div>
               </div>
             ))}
