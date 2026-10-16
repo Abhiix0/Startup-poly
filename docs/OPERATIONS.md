@@ -172,3 +172,9 @@ A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock
 - `admin_open_lobby`, `admin_start_game`, `admin_abort_game`, `admin_finalize` accept an optional `request_id`. Retrying with the same id after a lost response returns the first call's result. The same id on another room or action raises `REQUEST_ID_REUSED`.
 - Abort is ACTIVE to LOBBY with a team reset. Once the deadline has passed the game is finished: use `admin_finalize`; abort raises `ROOM_ALREADY_EXPIRED`.
 - Start refuses a lobby that is not pristine (`INVALID_INITIAL_STATE`).
+
+## Money RPC rules (migration 0018)
+- `request_id` replay is decided after the room and team locks. A retry of an in-flight call waits, then gets the first call's result. Reusing an id for another team, action or admin raises `REQUEST_ID_REUSED` and changes nothing. `admin_adjust` replays as the array of team snapshots.
+- Cash and CV are capped at `public.max_money()` (1,000,000,000). Out-of-range input or results raise `INVALID_VALUE` with the field, never a raw `22003`.
+- `admin_adjust` requires an array of 1 to 6 items with a uuid `team_id`, integer deltas, a required `expected_version`, no duplicate team, one room.
+- After TIME_EXPIRED these remain editable as corrections (note required): set values, adjust, add/level/remove business, bankruptcy. After FINALIZED all raise `ROOM_NOT_EDITABLE`.

@@ -95,3 +95,4 @@ RLS policy bodies (for example that `teams` hides rivals from a claimed player) 
 | L2, L3 | Fixed in P3 (migration 0017): abort after the deadline raises `ROOM_ALREADY_EXPIRED`; lifecycle RPCs take `request_id` and replay. |
 | L10 | Partly fixed in P3: `anon` lost EXECUTE on `expire_if_due`. Any signed-in player (anonymous sign-in users have the `authenticated` role) can still call it. Decide in P6 whether to revoke from `authenticated` too (only SECURITY DEFINER callers need it). |
 | L15 | Test added (`concurrency/lifecycle.test.ts`): 20 concurrent callers, one `TIME_EXPIRED` event. |
+| L4, L8 | Fixed in P4 (migration 0018): replay under the lock with room/team/type/actor checks; `INVALID_VALUE` bounds; adjust shape validation. Tests: pgTAP 0009, `concurrency/money.test.ts` (incl. 200 seeded random ops). |
