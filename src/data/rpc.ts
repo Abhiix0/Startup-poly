@@ -1,5 +1,5 @@
 import { supabase } from './client';
-import { parseRpcError, isNetworkError, isBusinessError } from '../lib/errors';
+import { AppError, parseRpcError, isNetworkError, isBusinessError } from '../lib/errors';
 import { Database, Json } from './database.types';
 import { logger } from '../lib/logger';
 
@@ -61,7 +61,10 @@ export async function rpcGetLobby(code: string) {
 }
 
 export async function rpcJoinTeam(code: string, slot: number, pin: string) {
-  return callRpc<{ team_id: string; room_id: string }>('join_team', { code, slot, pin });
+  // join_team returns {error} for failed attempts (so the attempt row commits and the throttle counts it).
+  const res = await callRpc<{ team_id?: string; room_id?: string; error?: string }>('join_team', { code, slot, pin });
+  if (res.error) throw new AppError(res.error);
+  return res as { team_id: string; room_id: string };
 }
 
 export async function rpcGetMyState() {

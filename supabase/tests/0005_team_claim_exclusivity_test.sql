@@ -67,9 +67,8 @@ SELECT set_config(
   true
 );
 
-SELECT throws_ok(
-  format('SELECT public.join_team(%L, 1, %L)', :'room_code', :'pin1'),
-  'P0001',
+SELECT is(
+  public.join_team(:'room_code', 1, :'pin1')->>'error',
   'TEAM_ALREADY_CLAIMED',
   'Second phone cannot claim an already-connected team'
 );

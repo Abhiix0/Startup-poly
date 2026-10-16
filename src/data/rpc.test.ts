@@ -106,4 +106,10 @@ describe('rpc.ts - RPC Client Wrapper Contract Tests', () => {
       pin: '1234',
     });
   });
+
+  it('rpcJoinTeam turns a returned {error} payload into the matching AppError', async () => {
+    vi.mocked(supabase.rpc as any).mockResolvedValue({ data: { error: 'TEAM_ALREADY_CLAIMED' }, error: null });
+
+    await expect(rpcJoinTeam('ROOM01', 2, '1234')).rejects.toMatchObject({ code: 'TEAM_ALREADY_CLAIMED' });
+  });
 });

@@ -112,7 +112,8 @@ export const TeamJoinPage: React.FC = () => {
     } catch (err: any) {
       let message = "Code, team or PIN didn't match";
       if (err.code === 'TOO_MANY_ATTEMPTS') {
-        message = 'Too many tries — wait a minute';
+        const wait = err.detail?.retry_after_seconds;
+        message = typeof wait === 'number' ? `Too many tries — wait ${wait} seconds` : 'Too many tries — wait a minute';
       } else if (err.code === 'TEAM_ALREADY_CLAIMED') {
         message = 'This team is already connected. Ask the organiser to release it before rejoining.';
       } else if (isNetworkError(err)) {

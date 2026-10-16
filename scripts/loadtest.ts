@@ -140,11 +140,14 @@ async function runLoadTest() {
       // Anonymous sign-ins for team clients
       for (let i = 0; i < 6; i++) {
         await teamClients[i].auth.signInAnonymously();
-        await teamClients[i].rpc('join_team', {
+        const joined = await teamClients[i].rpc('join_team', {
           code: roomData.code,
           slot: i + 1,
           pin: roomData.teams[i].pin,
         });
+        if (joined.error || joined.data?.error) {
+          throw new Error(`join_team failed for slot ${i + 1}: ${joined.error?.message ?? joined.data.error}`);
+        }
       }
 
       // Start game

@@ -178,3 +178,10 @@ A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock
 - Cash and CV are capped at `public.max_money()` (1,000,000,000). Out-of-range input or results raise `INVALID_VALUE` with the field, never a raw `22003`.
 - `admin_adjust` requires an array of 1 to 6 items with a uuid `team_id`, integer deltas, a required `expected_version`, no duplicate team, one room.
 - After TIME_EXPIRED these remain editable as corrections (note required): set values, adjust, add/level/remove business, bankruptcy. After FINALIZED all raise `ROOM_NOT_EDITABLE`.
+
+## Joining and PIN abuse (migration 0019)
+- `join_team` now **returns** `{"error": "BAD_CODE_OR_PIN" | "TEAM_ALREADY_CLAIMED"}` for failed joins instead of raising. A raise rolled back the attempt row, so the old throttle never counted anything. `rpcJoinTeam` converts the payload to the same `AppError` code. `TOO_MANY_ATTEMPTS` and `NOT_AUTHENTICATED` still raise.
+- Limits per 60 s: 5 failures per user, 10 per team (a team under attack rejects even the right PIN), 30 per room, 60 for unknown room codes (stored as a SHA-256 hash). Six phones with up to 4 typos each stay under every limit.
+- Residual risk: someone who knows the room code can lock joins for that room for 60 s at a time. PINs are plaintext in `team_secrets` on purpose (organisers read them out); anyone with admin access can read them.
+- A late first-time join to a TIME_EXPIRED room is still allowed (the dashboard shows the game-over view). Owner decision pending.
+- **Manual checklist (do not script):** in the Supabase dashboard, Authentication, Rate Limits, confirm "Anonymous sign-ins" per hour per IP. Locally it is 30 (`config.toml`). The throttle above does not depend on it, but it caps how many sessions one IP can mint.
