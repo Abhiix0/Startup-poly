@@ -87,3 +87,11 @@ RLS policy bodies (for example that `teams` hides rivals from a claimed player) 
 2. (P5) Should a TIME_EXPIRED room accept a first-time claim from an unclaimed team?
 3. (P3) Assumed: abort after the deadline is rejected and expired games are finalized. Confirm.
 4. (P5) What is the production Supabase Auth anonymous sign-in rate limit? (manual dashboard check)
+
+## Fix status
+| ID | Status |
+|----|--------|
+| L1, L7 | Fixed in P2 (migration 0016). 250 race iterations, 0 deadlocks. |
+| L2, L3 | Fixed in P3 (migration 0017): abort after the deadline raises `ROOM_ALREADY_EXPIRED`; lifecycle RPCs take `request_id` and replay. |
+| L10 | Partly fixed in P3: `anon` lost EXECUTE on `expire_if_due`. Any signed-in player (anonymous sign-in users have the `authenticated` role) can still call it. Decide in P6 whether to revoke from `authenticated` too (only SECURITY DEFINER callers need it). |
+| L15 | Test added (`concurrency/lifecycle.test.ts`): 20 concurrent callers, one `TIME_EXPIRED` event. |

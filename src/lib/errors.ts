@@ -35,6 +35,18 @@ export const ERROR_MAP: Record<string, ErrorMeta> = {
     message: 'Invalid room status transition requested.',
     retryable: false,
   },
+  ROOM_ALREADY_EXPIRED: {
+    message: 'The match clock has run out. Finalize the result instead of aborting.',
+    retryable: false,
+  },
+  REQUEST_ID_REUSED: {
+    message: 'This action was already used for a different change. Please try again.',
+    retryable: false,
+  },
+  INVALID_INITIAL_STATE: {
+    message: 'The lobby is not in its starting state. Reset the room before starting.',
+    retryable: false,
+  },
   ROOM_NOT_EDITABLE: {
     message: 'Edits are not permitted in the current room status.',
     retryable: false,

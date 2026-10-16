@@ -167,3 +167,8 @@ Every mutating RPC takes locks in this order, so concurrent calls queue instead 
 3. `team_businesses` / `activity_events` writes (no explicit locks)
 
 A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock the room, then lock the team and re-read its columns. Race tests: `npm run test:concurrency` (local DB only).
+
+## Lifecycle rules (migration 0017)
+- `admin_open_lobby`, `admin_start_game`, `admin_abort_game`, `admin_finalize` accept an optional `request_id`. Retrying with the same id after a lost response returns the first call's result. The same id on another room or action raises `REQUEST_ID_REUSED`.
+- Abort is ACTIVE to LOBBY with a team reset. Once the deadline has passed the game is finished: use `admin_finalize`; abort raises `ROOM_ALREADY_EXPIRED`.
+- Start refuses a lobby that is not pristine (`INVALID_INITIAL_STATE`).
