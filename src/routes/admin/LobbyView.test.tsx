@@ -118,7 +118,8 @@ describe('LobbyView', () => {
     expect(screen.getByText('ABC890')).toBeInTheDocument();
     expect(screen.getByText('1111')).toBeInTheDocument();
     expect(screen.getByText('2222')).toBeInTheDocument();
-    expect(screen.getByText('1 / 5 TEAMS CONNECTED')).toBeInTheDocument();
+    expect(screen.getByText('Claimed').nextSibling).toHaveTextContent('1');
+    expect(screen.getByText('Unclaimed', { selector: 'dt' }).nextSibling).toHaveTextContent('4');
   });
 
   it('shows release button only on claimed teams and calls rpcAdminReleaseTeam on confirm', async () => {
@@ -148,7 +149,7 @@ describe('LobbyView', () => {
     vi.mocked(rpcModule.rpcAdminStartGame).mockResolvedValue({ id: 'room-lobby-1', status: 'ACTIVE' } as any);
     const { onRefetch } = renderComponent();
 
-    const startBtn = screen.getByRole('button', { name: /START GAME\.\.\./i });
+    const startBtn = screen.getByRole('button', { name: /START MATCH/i });
     fireEvent.click(startBtn);
 
     // Modal opens listing unjoined teams
@@ -176,13 +177,13 @@ describe('LobbyView', () => {
 
     renderComponent(allClaimedSnapshot);
 
-    expect(screen.getByText('5 / 5 TEAMS CONNECTED')).toBeInTheDocument();
+    expect(screen.getByText('Unclaimed', { selector: 'dt' }).nextSibling).toHaveTextContent('0');
 
-    const startBtn = screen.getByRole('button', { name: /START GAME \(50:00\)/i });
+    const startBtn = screen.getByRole('button', { name: /START MATCH/i });
     fireEvent.click(startBtn);
 
     expect(screen.getByText(/CONFIRM START GAME/i)).toBeInTheDocument();
-    expect(screen.getByText(/have connected their phones/i)).toBeInTheDocument();
+    expect(screen.getByText(/have claimed their slot/i)).toBeInTheDocument();
 
     const confirmStartBtn = screen.getByRole('button', { name: /START 50:00 MATCH/i });
     fireEvent.click(confirmStartBtn);
