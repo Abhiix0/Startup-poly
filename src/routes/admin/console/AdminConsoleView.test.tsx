@@ -150,6 +150,7 @@ describe('AdminConsoleView', () => {
     vi.mocked(rpcModule.rpcAdminSetTeamValues).mockResolvedValue({} as any);
     renderComponent();
 
+    fireEvent.click(screen.getByRole('button', { name: /Adjust Cash Balance/i }));
     // In Cash editor, click quick chip '+200' -> input becomes 1200
     const plus200Btn = screen.getAllByRole('button', { name: '+200' })[0];
     fireEvent.click(plus200Btn);
@@ -182,6 +183,7 @@ describe('AdminConsoleView', () => {
   it('blocks negative numbers in cash and CV input fields', () => {
     renderComponent();
 
+    fireEvent.click(screen.getByRole('button', { name: /Adjust Cash Balance/i }));
     const cashInputs = screen.getAllByDisplayValue('1000');
     const cashInput = cashInputs[0];
 
@@ -254,6 +256,7 @@ describe('AdminConsoleView', () => {
     renderComponent({ onRefetch: mockRefetch });
 
     // Try to update cash
+    fireEvent.click(screen.getByRole('button', { name: /Adjust Cash Balance/i }));
     const plus50Btn = screen.getAllByRole('button', { name: '+50' })[0];
     fireEvent.click(plus50Btn);
     fireEvent.click(screen.getAllByRole('button', { name: 'UPDATE' })[0]);
@@ -315,6 +318,7 @@ describe('AdminConsoleView', () => {
     expect(screen.getByText(/GAME OVER — scores frozen/i)).toBeInTheDocument();
 
     // Try to update cash
+    fireEvent.click(screen.getByRole('button', { name: /Adjust Cash Balance/i }));
     const plus50Btn = screen.getAllByRole('button', { name: '+50' })[0];
     fireEvent.click(plus50Btn);
     fireEvent.click(screen.getAllByRole('button', { name: 'UPDATE' })[0]);
@@ -351,16 +355,14 @@ describe('AdminConsoleView', () => {
     renderComponent({ connection: 'OFFLINE' });
 
     expect(screen.getByText(/OFFLINE — Edits disabled/i)).toBeInTheDocument();
-    const updateButtons = screen.getAllByRole('button', { name: 'UPDATE' });
-    expect(updateButtons[0]).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Adjust Cash Balance/i })).toBeDisabled();
   });
 
   it('disables edit buttons and displays warning banner when scoreboard is stale >30s', () => {
     renderComponent({ isStale: true, staleAgeSeconds: 45 });
 
     expect(screen.getByText(/SCOREBOARD DATA IS STALE \(45s old\)/i)).toBeInTheDocument();
-    const updateButtons = screen.getAllByRole('button', { name: 'UPDATE' });
-    expect(updateButtons[0]).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Adjust Cash Balance/i })).toBeDisabled();
   });
 
   it('manages abort modal with required note and triggers rpcAdminAbortGame', async () => {

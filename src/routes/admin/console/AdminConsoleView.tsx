@@ -120,6 +120,13 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   }, [snapshot.teams, selectedTeamId]);
 
   const selectedTeam = snapshot.teams.find((t) => t.id === selectedTeamId) || snapshot.teams[0];
+  const activeTeams = snapshot.teams.filter((t) => !t.is_bankrupt);
+  const leader = snapshot.teams.reduce<(typeof snapshot.teams)[0] | undefined>(
+    (best, t) => (!best || t.cv > best.cv ? t : best),
+    undefined
+  );
+  const totalCash = snapshot.teams.reduce((n, t) => n + t.cash, 0);
+  const totalBusinesses = snapshot.teams.reduce((n, t) => n + t.businesses.length, 0);
 
   const triggerFlash = (teamId: string, direction: 'up' | 'down') => {
     setFlashes((prev) => ({ ...prev, [teamId]: direction }));
@@ -519,15 +526,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         lastUpdated={lastUpdated}
         onRefetch={handleManualRefetch}
         isRefetching={isRefetching}
-        onAbortGame={isActive ? handleOpenAbort : undefined}
       />
-
-      {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-brand-gold text-brand-navy px-4 py-2.5 text-center border-b-4 border-brand-navy shadow-pixel-sm">
-        <p className="font-pixel text-[11px] leading-relaxed">
-          💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
-        </p>
-      </div>
 
       {/* 2. FULL-WIDTH SYSTEM ALERTS */}
       {isOffline && (
@@ -568,7 +567,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
       {isTimeExpired && (
         <div className="bg-brand-gold text-brand-navy px-4 py-2 text-center font-pixel text-xs border-b-4 border-brand-navy shadow-pixel-sm">
-          🏁 GAME OVER — scores frozen (50:00 Time Up). Resolve any ties below and click FINALIZE MATCH to certify official winners.
+          🏁 GAME OVER — scores frozen. Gameplay time has expired but the match is NOT finalized yet. Edits now need a note; finalize from Match Controls below.
         </div>
       )}
 
@@ -600,17 +599,23 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       )}
 
       {/* 3. MAIN DESKTOP CONSOLE BODY */}
-      <main className="flex-1 w-full max-w-[1700px] mx-auto p-3 sm:p-4 lg:p-6 flex flex-col xl:flex-row gap-5">
-        {/* Left & Center: Team Grid and Selected Team Editor */}
-        <div className="flex-1 flex flex-col gap-5 min-w-0">
-          {isTimeExpired && (
-            <FinalizePanel
-              roomId={snapshot.room.id}
-              snapshot={snapshot}
-              onRefetch={onRefetch}
-              isOffline={isOffline}
-            />
-          )}
+      <main className="flex-1 w-full max-w-[1400px] mx-auto p-3 sm:p-4 lg:p-6 flex flex-col gap-5">
+        <div className="flex flex-col gap-5 min-w-0">
+          {/* Match overview: sums of authoritative snapshot values */}
+          <section aria-label="Match overview" className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+            {[
+              { k: 'TEAMS IN PLAY', v: `${activeTeams.length}/${snapshot.teams.length}`, sub: `${snapshot.teams.length - activeTeams.length} bankrupt` },
+              { k: 'LEADER (CV)', v: leader ? leader.name : '—', sub: leader ? `₹${leader.cv.toLocaleString('en-IN')}` : '' },
+              { k: 'CASH IN PLAY', v: `₹${totalCash.toLocaleString('en-IN')}`, sub: 'all teams' },
+              { k: 'BUSINESSES OWNED', v: String(totalBusinesses), sub: 'across all teams' },
+            ].map((st) => (
+              <div key={st.k} className="bg-brand-cream border-3 border-brand-navy shadow-pixel-sm px-3 py-2 min-w-0">
+                <span className="font-pixel text-[9px] text-neutral-500 block">{st.k}</span>
+                <span className="font-tabular text-xl font-black text-brand-navy block truncate">{st.v}</span>
+                <span className="font-mono text-[10px] text-neutral-500 block truncate">{st.sub}</span>
+              </div>
+            ))}
+          </section>
 
           <TeamGrid
             teams={snapshot.teams}
@@ -663,11 +668,34 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
             onRemoveBusinessClick={(key) => setRemoveBizKey(key)}
             onOpenBankruptModal={(mode) => setBankruptMode(mode)}
           />
-        </div>
 
-        {/* Right Column: Live Activity Log */}
-        <div className="w-full xl:w-[380px] 2xl:w-[440px] flex-shrink-0">
-          <ActivityLog events={snapshot.events} teams={snapshot.teams} />
+          <ActivityLog events={snapshot.events} teams={snapshot.teams} collapsible />
+
+          {/* Match controls: lifecycle actions, kept apart from team operations */}
+          <section aria-label="Match controls" className="border-4 border-brand-red bg-status-danger-bg/40 p-3 flex flex-col gap-3">
+            <h2 className="font-pixel text-xs uppercase tracking-wider text-brand-red">MATCH CONTROLS</h2>
+          {isTimeExpired && (
+            <FinalizePanel
+              roomId={snapshot.room.id}
+              snapshot={snapshot}
+              onRefetch={onRefetch}
+              isOffline={isOffline}
+            />
+          )}
+
+            {isActive && (
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-mono text-xs text-brand-navy">Started by mistake? Abort resets every team and returns the room to LOBBY.</span>
+                <button
+                  type="button"
+                  onClick={handleOpenAbort}
+                  className="font-pixel text-[10px] bg-brand-red text-white px-3 py-1.5 border-2 border-brand-navy hover:bg-interactive-red-hover active:translate-y-0.5 cursor-pointer uppercase tracking-wider"
+                >
+                  ✕ ABORT GAME
+                </button>
+              </div>
+            )}
+          </section>
         </div>
       </main>
 

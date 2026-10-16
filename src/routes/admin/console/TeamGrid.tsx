@@ -59,14 +59,14 @@ export const TeamGrid: React.FC<TeamGridProps> = ({
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <h2 className="font-pixel text-xs uppercase tracking-wider text-brand-navy">
-          TOURNAMENT TEAMS ({teams.length})
+          TEAM LEDGER ({teams.length})
         </h2>
         <span className="hidden sm:inline font-mono text-[10px] text-neutral-500">
           Press 1–{teams.length} or Arrow keys to select
         </span>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+      <div className="border-4 border-brand-navy shadow-pixel bg-brand-cream flex flex-col">
         {teams.map((team) => (
           <TeamCard
             key={team.id}

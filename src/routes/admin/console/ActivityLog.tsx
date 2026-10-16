@@ -5,11 +5,13 @@ import { AdminRoomSnapshot } from '../../../data/rpc';
 export interface ActivityLogProps {
   events: AdminRoomSnapshot['events'];
   teams: AdminRoomSnapshot['teams'];
+  collapsible?: boolean;
 }
 
 type FilterCategory = 'ALL' | 'MONEY' | 'BUSINESS' | 'SYSTEM' | string;
 
-export const ActivityLog: React.FC<ActivityLogProps> = ({ events, teams }) => {
+export const ActivityLog: React.FC<ActivityLogProps> = ({ events, teams, collapsible = false }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(!collapsible);
   const [filter, setFilter] = useState<FilterCategory>('ALL');
   const [teamFilter, setTeamFilter] = useState<string>('ALL');
 
@@ -57,8 +59,19 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ events, teams }) => {
               {filteredEvents.length}
             </span>
           </div>
+          {collapsible && (
+            <button
+              type="button"
+              aria-expanded={isOpen}
+              onClick={() => setIsOpen((o) => !o)}
+              className="font-pixel text-[10px] text-brand-gold border border-white/30 px-2 py-1 cursor-pointer hover:bg-white/10"
+            >
+              {isOpen ? '▲ HIDE' : '▼ SHOW'}
+            </button>
+          )}
         </div>
 
+        {isOpen && <>
         {/* Filter Category Chips */}
         <div className="flex flex-wrap items-center gap-1 font-pixel text-[9px]">
           {(['ALL', 'MONEY', 'BUSINESS', 'SYSTEM'] as const).map((cat) => (
@@ -99,10 +112,11 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ events, teams }) => {
             ))}
           </select>
         </div>
+        </>}
       </div>
 
       {/* Scrollable Event List */}
-      <div className="flex-1 overflow-y-auto divide-y divide-neutral-300 min-h-[300px] max-h-[calc(100vh-280px)]">
+      {isOpen && <div className="flex-1 overflow-y-auto divide-y divide-neutral-300 min-h-[300px] max-h-[calc(100vh-280px)]">
         {filteredEvents.length === 0 ? (
           <div className="p-6 text-center font-mono text-xs text-neutral-500">
             No activity events match selected filters.
@@ -125,7 +139,7 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ events, teams }) => {
             );
           })
         )}
-      </div>
+      </div>}
     </div>
   );
 };

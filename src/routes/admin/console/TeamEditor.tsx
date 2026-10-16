@@ -30,7 +30,7 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
   onOpenBankruptModal,
 }) => {
   return (
-    <div className="bg-brand-cream border-4 border-brand-navy shadow-pixel flex flex-col overflow-hidden">
+    <div className="bg-brand-cream border-4 border-brand-navy shadow-pixel flex flex-col overflow-hidden w-full">
       {/* Team Header Banner */}
       <div
         className="p-3 border-b-4 border-brand-navy flex flex-wrap items-center justify-between gap-2 bg-brand-navy text-brand-white"
@@ -86,6 +86,7 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <ValueEditor
             label="Cash Balance"
+            teamName={team.name}
             currentValue={team.cash}
             onUpdate={onUpdateCash}
             isTimeExpired={isTimeExpired}
@@ -93,6 +94,7 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
           />
           <ValueEditor
             label="Company Value (CV)"
+            teamName={team.name}
             currentValue={team.cv}
             onUpdate={onUpdateCv}
             isTimeExpired={isTimeExpired}
@@ -112,7 +114,7 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
 
         {/* Team Status / Danger Zone */}
         {!team.is_bankrupt && (
-          <div className="pt-2 border-t-2 border-neutral-300 flex items-center justify-between">
+          <div className="pt-3 border-t-2 border-neutral-300 flex flex-wrap items-center justify-between gap-2">
             <span className="font-mono text-xs text-neutral-500">
               If team physically cannot pay debt after forced sales:
             </span>
