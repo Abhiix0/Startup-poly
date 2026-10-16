@@ -1,180 +1,121 @@
 import React from 'react';
 import { TeamStateResponse } from '../../data/rpc';
-import { PixelCard } from '../../ui';
+import { PixelCoin, PixelTrophy } from '../../ui/pixel';
 import { formatINR } from '../../lib/format';
+import { Panel, Eyebrow, Metric, MAX_BUSINESSES } from './TeamScene';
+import { TeamBusinessList } from './TeamBusinessList';
 
 export interface FinalBoardViewProps {
   state: TeamStateResponse;
 }
 
+const ordinal = (n: number) => {
+  const v = n % 100;
+  const suffix = ['th', 'st', 'nd', 'rd'][(v - 20) % 10] ?? ['th', 'st', 'nd', 'rd'][v] ?? 'th';
+  return `${n}${suffix}`;
+};
+
+// Only the team's own get_my_state.final_result is shown; other teams' standings are admin-only.
 export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
   const { team, businesses, final_result } = state;
 
-  const rank = final_result?.rank ?? 1;
+  const rank = final_result?.rank ?? null;
   const isWinner = rank === 1;
-  const isPodium = rank <= 3;
   const finalCv = final_result?.cv ?? team.cv;
   const finalCash = final_result?.cash ?? team.cash;
   const isBankrupt = final_result?.is_bankrupt ?? team.is_bankrupt;
+  const businessCount = final_result?.business_count ?? businesses.length;
+  const upgradeCount = businesses.reduce((sum, b) => sum + b.level, 0);
 
-  let titleBadge = `RANK #${rank}`;
-  let podiumHeading = `OFFICIAL FINISH: #${rank}`;
-  if (isWinner) {
-    titleBadge = '1ST PLACE · WINNER';
-    podiumHeading = 'STARTUPOLY CHAMPION';
-  } else if (rank === 2) {
-    titleBadge = '2ND PLACE · RUNNER UP';
-    podiumHeading = '2ND PLACE PODIUM';
-  } else if (rank === 3) {
-    titleBadge = '3RD PLACE · BRONZE';
-    podiumHeading = '3RD PLACE PODIUM';
-  }
+  const heading = isWinner ? 'STARTUPOLY CHAMPION' : rank !== null ? `${ordinal(rank)} PLACE` : 'MATCH COMPLETE';
 
   return (
-    <div className="flex flex-col gap-4 pb-6">
-      {/* Trophy / Result Banner Card */}
-      <div
-        className={`border-4 border-brand-navy p-4 sm:p-5 shadow-[4px_4px_0px] shadow-brand-navy flex flex-col items-center text-center relative overflow-hidden ${
-          isWinner
-            ? 'bg-brand-gold text-brand-navy'
-            : isPodium
-            ? 'bg-neutral-50 text-brand-navy'
-            : 'bg-neutral-800 text-neutral-50'
+    <div className="flex flex-col gap-4 pb-4">
+      <Panel
+        label="Final result"
+        className={`flex flex-col items-center text-center gap-2 py-6 sm:py-8 ${
+          isWinner ? 'bg-brand-gold!' : ''
         }`}
       >
-        <div className="flex items-center gap-2 mb-2">
-          <span className="font-pixel text-[9px] uppercase tracking-widest px-2 py-0.5 border border-brand-navy bg-white text-brand-navy">
-            OFFICIAL FINAL RESULT
+        <span className="rounded border border-brand-navy bg-white px-2 py-0.5 font-pixel text-[11px] font-bold uppercase tracking-widest text-brand-navy">
+          OFFICIAL FINAL RESULT
+        </span>
+        <PixelTrophy size={isWinner ? 64 : 48} />
+        <p className="font-pixel text-xs font-bold uppercase tracking-widest text-neutral-700">
+          Match complete
+        </p>
+        <h1 className="font-pixel text-3xl sm:text-4xl font-extrabold text-brand-navy uppercase">
+          {heading}
+        </h1>
+        {rank !== null && (
+          <span className="inline-flex items-center gap-2 rounded-md bg-brand-navy px-3 py-1 font-pixel text-sm font-bold text-brand-gold">
+            RANK #{rank}
           </span>
-          <span className="font-pixel text-[9px] uppercase tracking-wider px-2 py-0.5 bg-brand-green text-white border border-brand-navy">
+        )}
+        <div className="mt-1 inline-flex items-center gap-2 rounded-md border-2 border-brand-navy bg-white px-3 py-1.5">
+          <span
+            aria-hidden="true"
+            className="w-4 h-4 rounded-sm border border-brand-navy"
+            style={{ backgroundColor: team.color }}
+          />
+          <span className="font-pixel text-sm font-bold text-brand-navy">
+            {team.name} · Slot #{team.slot}
+          </span>
+          <span className="rounded border border-brand-navy bg-brand-green px-1.5 py-0.5 font-pixel text-[10px] font-bold uppercase text-white">
             YOU
           </span>
         </div>
+      </Panel>
 
-        <div className="text-4xl sm:text-5xl my-1">
-          {isWinner ? '🏆' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '🎖️'}
+      <section aria-label="Your final metrics" className="grid gap-4 sm:grid-cols-2">
+        <h2 className="sr-only">YOUR FINAL METRICS</h2>
+        <Metric
+          label="Final company value"
+          value={
+            <>
+              {finalCv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
+            </>
+          }
+          valueClass="text-status-info-dark"
+          className="bg-white"
+        />
+        <Metric
+          label="Final cash"
+          value={formatINR(finalCash)}
+          valueClass="text-status-success-dark"
+          className="bg-white"
+          badge={<PixelCoin size={22} />}
+        />
+      </section>
+
+      <Panel label="Match summary" className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col">
+          <Eyebrow>Businesses held</Eyebrow>
+          <span className="font-tabular text-xl font-black text-brand-navy tabular-nums">
+            {businessCount}/{MAX_BUSINESSES}
+          </span>
         </div>
-
-        <h2 className="font-pixel text-lg sm:text-xl uppercase tracking-wider mt-1">
-          {podiumHeading}
-        </h2>
-
-        <div className="inline-flex items-center gap-2 mt-2 px-3 py-1 bg-brand-navy text-brand-gold border-2 border-brand-navy font-pixel text-xs">
-          <span>★</span>
-          <span>{titleBadge}</span>
-          <span>★</span>
+        <div className="flex flex-col">
+          <Eyebrow>Upgrades</Eyebrow>
+          <span className="font-tabular text-xl font-black text-brand-navy tabular-nums">{upgradeCount}</span>
         </div>
+        <span
+          className={`rounded border-2 border-brand-navy px-2 py-1 font-pixel text-xs font-bold uppercase text-white ${
+            isBankrupt ? 'bg-brand-red' : 'bg-brand-green'
+          }`}
+        >
+          {isBankrupt ? 'Bankrupt' : 'Solvent'}
+        </span>
+      </Panel>
 
-        <p className="font-mono text-xs mt-3 max-w-xs text-opacity-90">
-          Match concluded and certified by Game Master. Private scores finalized.
-        </p>
-      </div>
+      <TeamBusinessList
+        businesses={businesses}
+        emptyText="No businesses were held at the end of the match."
+      />
 
-      {/* Team Details & Final Metrics Card */}
-      <PixelCard title="YOUR FINAL METRICS" headerBg="navy" padding="md">
-        <div className="flex flex-col gap-4">
-          {/* Team Tag Bar */}
-          <div className="flex items-center justify-between border-b-2 border-neutral-300 pb-3">
-            <div className="flex items-center gap-2.5">
-              <span
-                className="w-5 h-5 border-2 border-brand-navy shadow-[1px_1px_0px] shadow-brand-navy shrink-0"
-                style={{ backgroundColor: team.color }}
-              />
-              <div>
-                <span className="font-pixel text-xs text-brand-navy block">
-                  {team.name}
-                </span>
-                <span className="font-mono text-[10px] text-neutral-500">
-                  Team Slot #{team.slot}
-                </span>
-              </div>
-            </div>
-
-            <span
-              className={`font-pixel text-[9px] px-2 py-1 border border-brand-navy ${
-                isBankrupt
-                  ? 'bg-brand-red text-white'
-                  : 'bg-brand-green text-white'
-              }`}
-            >
-              {isBankrupt ? 'BANKRUPT' : 'SOLVENT'}
-            </span>
-          </div>
-
-          {/* Metric Stats Grid */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-neutral-50 border-2 border-brand-navy p-3 shadow-[2px_2px_0px] shadow-brand-navy">
-              <span className="font-pixel text-[9px] text-neutral-500 block uppercase">
-                COMPANY VALUE
-              </span>
-              <span className="font-pixel text-base sm:text-lg text-brand-navy mt-1 block">
-                {finalCv.toLocaleString('en-IN')} CV
-              </span>
-            </div>
-
-            <div className="bg-neutral-50 border-2 border-brand-navy p-3 shadow-[2px_2px_0px] shadow-brand-navy">
-              <span className="font-pixel text-[9px] text-neutral-500 block uppercase">
-                FINAL CASH
-              </span>
-              <span className="font-pixel text-base sm:text-lg text-brand-green mt-1 block">
-                {formatINR(finalCash)}
-              </span>
-            </div>
-          </div>
-
-          {/* Owned Businesses Portfolio */}
-          <div className="border-t-2 border-neutral-300 pt-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-pixel text-[10px] text-brand-navy uppercase">
-                PORTFOLIO ({businesses.length}/3)
-              </span>
-              <span className="font-mono text-[10px] text-neutral-500">
-                Max 3 businesses
-              </span>
-            </div>
-
-            {businesses.length === 0 ? (
-              <p className="font-mono text-xs text-neutral-500 italic py-2">
-                No businesses owned at match conclusion.
-              </p>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {businesses.map((b) => (
-                  <div
-                    key={b.business_key}
-                    className="bg-white border-2 border-brand-navy px-3 py-2 flex items-center justify-between shadow-[1px_1px_0px] shadow-brand-navy"
-                  >
-                    <div>
-                      <span className="font-pixel text-xs text-brand-navy block">
-                        {b.name}
-                      </span>
-                      <span className="font-mono text-[10px] text-neutral-500">
-                        Initial cost: {formatINR(b.cost)}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="font-pixel text-[9px] bg-brand-gold text-brand-navy px-1.5 py-0.5 border border-brand-navy">
-                        {b.level === 0 ? 'BASE' : `UPGRADE ${b.level}`}
-                      </span>
-                      <span className="font-mono text-xs font-bold text-brand-navy">
-                        +{b.cv_contribution} CV
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Official Privacy Notice */}
-          <div className="bg-status-warning-light border-2 border-status-warning-dark p-2.5 text-center shadow-[1px_1px_0px] shadow-status-warning-dark">
-            <p className="font-mono text-[11px] text-status-warning-text leading-relaxed">
-              🔒 Open-ground tournament rules: Team scores remain strictly private to your device. Complete tournament standings are displayed on the Game Master console.
-            </p>
-          </div>
-        </div>
-      </PixelCard>
+      <p className="text-center font-mono text-xs text-neutral-700">
+        Team results are private to your device. Full standings are shown on the organizer's console.
+      </p>
     </div>
   );
 };

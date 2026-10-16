@@ -1,8 +1,8 @@
 import React from 'react';
-import { PixelCard, BigNumber } from '../../ui';
-import { PixelCoin, PixelCloud } from '../../ui/pixel';
+import { PixelCoin, PixelMushroom } from '../../ui/pixel';
 import { formatINR } from '../../lib/format';
 import { TeamStateResponse } from '../../data/rpc';
+import { Panel, Metric } from './TeamScene';
 
 interface LobbyWaitViewProps {
   state: TeamStateResponse;
@@ -13,63 +13,49 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Waiting Banner Card */}
-      <PixelCard title="LOBBY CONNECTED" headerBg="green" padding="lg">
-        <div className="flex flex-col items-center text-center gap-3 py-4">
-          <div className="relative">
-            <PixelCloud size={72} className="opacity-90 anim-cloud-float" />
-            <div className="w-12 h-12 bg-nes-gold border-3 border-nes-navy shadow-[2px_2px_0px_var(--color-nes-navy)] flex items-center justify-center font-pixel text-xl text-nes-navy mx-auto -mt-6 relative z-10">
-              🎮
-            </div>
-          </div>
-
-          <h2 className="font-pixel text-sm sm:text-base text-nes-navy uppercase">
-            YOU'RE IN! WAITING FOR MATCH TO START
-          </h2>
-
-          <p className="font-mono text-xs text-neutral-500 max-w-xs leading-relaxed">
-            Your phone is synced with the scoreboard. Keep this screen open; the 50-minute game clock and live financials will start automatically when the organizer launches the game.
-          </p>
-
-          <div className="mt-2 inline-flex items-center gap-2 bg-neutral-50 border-2 border-nes-navy px-3 py-1.5 shadow-[2px_2px_0px_var(--color-nes-navy)]">
-            <span
-              className="w-3.5 h-3.5 border border-nes-navy"
-              style={{ backgroundColor: team.color }}
-            />
-            <span className="font-pixel text-xs text-nes-navy">
-              SLOT #{team.slot}: {team.name}
-            </span>
-          </div>
-        </div>
-      </PixelCard>
-
-      {/* Starting Stats Overview */}
-      <PixelCard title="STARTING PORTFOLIO" headerBg="navy" padding="md">
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          <BigNumber
-            label="STARTING CASH"
-            value={formatINR(team.cash)}
-            variant="green"
-            size="sm"
-            icon={<PixelCoin size={20} />}
+      <Panel label="Lobby status" className="flex flex-col items-center text-center gap-3 py-6 sm:py-8">
+        <PixelMushroom size={56} />
+        <span className="font-pixel text-[11px] font-bold uppercase tracking-widest text-status-success-dark">
+          Team joined
+        </span>
+        <h1 className="font-pixel text-2xl sm:text-3xl font-extrabold text-brand-navy uppercase">
+          Waiting for the match to start
+        </h1>
+        <p className="font-mono text-sm text-neutral-700 max-w-md leading-relaxed">
+          You're in. The match has not started yet. Keep this screen open: the game clock and your live
+          financials appear here automatically when the organizer launches the game.
+        </p>
+        <div className="inline-flex items-center gap-2 rounded-md border-2 border-brand-navy bg-neutral-50 px-3 py-1.5">
+          <span
+            aria-hidden="true"
+            className="w-4 h-4 rounded-sm border border-brand-navy"
+            style={{ backgroundColor: team.color }}
           />
-          <BigNumber
-            label="STARTING CV"
-            value={`${team.cv} CV`}
-            variant="navy"
-            size="sm"
-          />
-        </div>
-
-        <div className="bg-white border-2 border-nes-navy p-3 text-center">
-          <span className="font-pixel text-[10px] text-neutral-500 block uppercase mb-1">
-            BUSINESS CAPACITY
-          </span>
-          <span className="font-mono font-extrabold text-sm text-nes-navy">
-            0 / 3 Businesses Owned
+          <span className="font-pixel text-sm font-bold text-brand-navy">
+            Slot #{team.slot} · {team.name}
           </span>
         </div>
-      </PixelCard>
+      </Panel>
+
+      <section aria-label="Starting resources" className="grid gap-4 sm:grid-cols-2">
+        <Metric
+          label="Starting cash"
+          value={formatINR(team.cash)}
+          valueClass="text-status-success-dark"
+          className="bg-white"
+          badge={<PixelCoin size={22} />}
+        />
+        <Metric
+          label="Starting company value"
+          value={
+            <>
+              {team.cv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
+            </>
+          }
+          valueClass="text-status-info-dark"
+          className="bg-white"
+        />
+      </section>
     </div>
   );
 };

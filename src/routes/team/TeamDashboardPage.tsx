@@ -6,6 +6,7 @@ import { LobbyWaitView } from './LobbyWaitView';
 import { ActiveDashboardView } from './ActiveDashboardView';
 import { GameOverView } from './GameOverView';
 import { FinalBoardView } from './FinalBoardView';
+import { TeamScene } from './TeamScene';
 
 export const TeamDashboardPage: React.FC = () => {
   const {
@@ -83,25 +84,27 @@ export const TeamDashboardPage: React.FC = () => {
   const { team, room } = state;
 
   return (
-    <div className="min-h-screen bg-nes-sky flex flex-col justify-between selection:bg-nes-gold selection:text-nes-navy">
-      {/* Mobile Top Navigation */}
-      <header className="bg-nes-navy text-white border-b-4 border-nes-navy p-3 shadow-[0_3px_0px_var(--color-nes-navy)] flex items-center justify-between sticky top-0 z-20">
-        <div className="flex items-center gap-2 truncate">
+    <div className="relative isolate min-h-screen bg-[linear-gradient(to_bottom,var(--color-brand-sky),var(--color-sky-horizon))] flex flex-col justify-between selection:bg-brand-gold selection:text-brand-navy">
+      <TeamScene />
+
+      <header className="sticky top-0 z-20 bg-brand-navy text-white border-b-2 border-brand-navy px-3 py-2 sm:px-5 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="font-pixel text-xs font-extrabold tracking-widest text-brand-gold hidden sm:block">
+            STARTUPOLY
+          </span>
+          <span aria-hidden="true" className="hidden sm:block h-5 w-px bg-white/30" />
           <span
-            className="w-4 h-4 border-2 border-white shadow-[1px_1px_0px_var(--color-nes-navy)] flex-shrink-0"
+            aria-hidden="true"
+            className="w-4 h-4 rounded-sm border-2 border-white shrink-0"
             style={{ backgroundColor: team.color }}
           />
-          <div className="truncate">
-            <span className="font-pixel text-xs text-nes-gold block truncate">
-              {team.name}
-            </span>
-            <span className="font-mono text-[10px] text-neutral-400">
-              SLOT #{team.slot}
-            </span>
+          <div className="min-w-0 leading-tight">
+            <span className="font-pixel text-sm font-bold text-white block truncate">{team.name}</span>
+            <span className="font-mono text-[11px] text-neutral-300">Slot #{team.slot}</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <ConnectionPill status={connection} lastUpdated={lastUpdatedAt} showLabel={false} />
           <StatusPill status={room.status} size="sm" />
         </div>
@@ -109,13 +112,15 @@ export const TeamDashboardPage: React.FC = () => {
 
       {/* Offline / Reconnecting Banner (> 20s stale) */}
       {isStale && (
-        <div className="bg-warning-surface text-warning-text border-b-3 border-nes-navy px-3 py-1.5 text-center font-mono text-xs font-bold animate-pulse">
+        <div
+          role="status"
+          className="relative z-10 bg-status-warning-bg text-status-warning-text border-b-2 border-brand-navy px-3 py-1.5 text-center font-mono text-xs font-bold"
+        >
           ⚠ Reconnecting… last update {staleAgeSeconds}s ago (values preserved)
         </div>
       )}
 
-      {/* Main Single-Column Content (Mobile First 360-430px) */}
-      <main className="flex-1 w-full max-w-md mx-auto p-3 sm:p-4 flex flex-col gap-4">
+      <main className="relative z-10 flex-1 w-full max-w-3xl mx-auto p-3 sm:p-6 flex flex-col gap-4">
         {room.status === 'LOBBY' && <LobbyWaitView state={state} />}
 
         {room.status === 'ACTIVE' && (
@@ -133,7 +138,7 @@ export const TeamDashboardPage: React.FC = () => {
       </main>
 
       {/* Brick Ground Base Strip */}
-      <div className="h-6 nes-brick-pattern border-t-4 border-nes-navy" />
+      <div aria-hidden="true" className="relative z-10 h-6 nes-brick-pattern border-t-4 border-brand-navy" />
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PixelButton } from '../../../ui';
+import { PixelButton, Modal } from '../../../ui';
 
 export interface ValueEditorProps {
   label: string;
+  teamName?: string;
   unit?: string;
   currentValue: number;
   onUpdate: (newValue: number, note?: string) => Promise<void>;
@@ -12,6 +13,7 @@ export interface ValueEditorProps {
 
 export const ValueEditor: React.FC<ValueEditorProps> = ({
   label,
+  teamName,
   unit = '₹',
   currentValue,
   onUpdate,
@@ -19,6 +21,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
   disabled = false,
 }) => {
   const [inputValue, setInputValue] = useState<string>(String(currentValue));
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isConfirming, setIsConfirming] = useState<boolean>(false);
   const [note, setNote] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -77,6 +80,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
   };
 
   const handleCancelConfirm = () => {
+    setIsOpen(false);
     setIsConfirming(false);
     setInputValue(String(currentValue));
     setNote('');
@@ -84,6 +88,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
   };
 
   const handleConfirmSubmit = async () => {
+    if (isSubmitting) return;
     if (isTimeExpired && !note.trim()) {
       setError('Note is required for post-game corrections.');
       return;
@@ -93,6 +98,7 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
       setIsSubmitting(true);
       setError(null);
       await onUpdate(targetValue, note.trim() || undefined);
+      setIsOpen(false);
       setIsConfirming(false);
       setNote('');
     } catch (err: any) {
@@ -114,16 +120,38 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
   };
 
   return (
-    <div className="bg-white border-3 border-brand-navy p-3 shadow-pixel-sm flex flex-col gap-2.5">
-      {/* Label and current display */}
-      <div className="flex items-center justify-between">
-        <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
-          {label}
-        </label>
-        <span className="font-mono text-xs text-neutral-500">
-          Current: <strong className="text-brand-navy">{unit}{currentValue.toLocaleString('en-IN')}</strong>
+    <div className="bg-white border-3 border-brand-navy p-3 shadow-pixel-sm flex items-center justify-between gap-3">
+      <div className="min-w-0">
+        <span className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy block">{label}</span>
+        <span className="font-tabular text-2xl font-black text-brand-navy tabular-nums block truncate">
+          {unit}{currentValue.toLocaleString('en-IN')}
         </span>
       </div>
+      <PixelButton
+        variant="secondary"
+        size="sm"
+        disabled={disabled}
+        aria-label={`Adjust ${label}`}
+        onClick={() => setIsOpen(true)}
+      >
+        ADJUST
+      </PixelButton>
+
+      <Modal
+        isOpen={isOpen}
+        onClose={() => !isSubmitting && handleCancelConfirm()}
+        title={`ADJUST ${label.toUpperCase()}`}
+        maxWidth="md"
+      >
+      <div className="flex flex-col gap-2.5">
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono text-xs text-brand-navy">
+        <dt className="text-neutral-500">Team</dt>
+        <dd className="font-bold">{teamName ?? '—'}</dd>
+        <dt className="text-neutral-500">Operation</dt>
+        <dd className="font-bold">Set {label} to an exact value</dd>
+        <dt className="text-neutral-500">Current</dt>
+        <dd className="font-bold">{unit}{currentValue.toLocaleString('en-IN')}</dd>
+      </dl>
 
       {/* Input and UPDATE button row */}
       {!isConfirming ? (
@@ -271,6 +299,8 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
           ⚠ {error}
         </span>
       )}
+      </div>
+      </Modal>
     </div>
   );
 };
