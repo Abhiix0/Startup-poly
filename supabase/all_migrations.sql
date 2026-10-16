@@ -580,6 +580,8 @@ END $$;
 ALTER TABLE public.team_businesses REPLICA IDENTITY FULL;
 
 
+-- HISTORICAL MIGRATION: this drops the legacy tables of the pre-0001 schema. It has already been applied and
+-- must never be re-run against production data (comment-only edit; the SQL below is unchanged).
 -- Migration 0006: Drop legacy prototype tables
 -- STARTUPOLY Live Scoreboard & Game Management System
 --

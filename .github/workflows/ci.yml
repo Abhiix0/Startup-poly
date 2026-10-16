@@ -7,6 +7,8 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_BIN: supabase
     steps:
       - uses: actions/checkout@v4
 
@@ -32,3 +34,12 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+      - name: Bundle secret scan
+        run: npm run check:bundle
+
+      - name: Database suites (races, security over HTTP, RPC contract)
+        run: npm run test:db-suites
+
+      - name: Upgrade path (live 0015 game to latest)
+        run: npm run test:upgrade
