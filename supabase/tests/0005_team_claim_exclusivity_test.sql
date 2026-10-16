@@ -45,6 +45,11 @@ SELECT lives_ok(
   'Admin opens lobby for claim exclusivity test'
 );
 
+-- Players cannot read rooms/team_secrets under RLS, so capture code and PIN as admin.
+SELECT r.code AS room_code,
+       (SELECT ts.join_pin FROM public.team_secrets ts JOIN public.teams t ON t.id = ts.team_id WHERE t.room_id = r.id AND t.slot = 1) AS pin1
+FROM public.rooms r WHERE r.status = 'LOBBY' \gset
+
 SELECT set_config(
   'request.jwt.claims',
   '{"sub": "b4000000-0000-0000-0000-000000000001", "role": "authenticated"}',
@@ -52,13 +57,7 @@ SELECT set_config(
 );
 
 SELECT lives_ok(
-  $$SELECT public.join_team(
-      r.code,
-      1,
-      (SELECT ts.join_pin FROM public.team_secrets ts JOIN public.teams t ON t.id = ts.team_id WHERE t.room_id = r.id AND t.slot = 1)
-  )
-  FROM public.rooms r
-  WHERE r.status = 'LOBBY'$$,
+  format('SELECT public.join_team(%L, 1, %L)', :'room_code', :'pin1'),
   'First phone claims team slot successfully'
 );
 
@@ -69,18 +68,13 @@ SELECT set_config(
 );
 
 SELECT throws_ok(
-  $$SELECT public.join_team(
-      r.code,
-      1,
-      (SELECT ts.join_pin FROM public.team_secrets ts JOIN public.teams t ON t.id = ts.team_id WHERE t.room_id = r.id AND t.slot = 1)
-  )
-  FROM public.rooms r
-  WHERE r.status = 'LOBBY'$$,
+  format('SELECT public.join_team(%L, 1, %L)', :'room_code', :'pin1'),
   'P0001',
   'TEAM_ALREADY_CLAIMED',
   'Second phone cannot claim an already-connected team'
 );
 
+RESET ROLE;
 SELECT is(
   (SELECT count(*)::int
    FROM public.team_claims tc

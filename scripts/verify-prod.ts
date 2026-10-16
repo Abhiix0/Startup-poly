@@ -1,4 +1,11 @@
 /**
+ * READ-ONLY BY DESIGN: this script performs no mutating RPC calls and writes no data.
+ * It issues SELECTs and a few negative probes (admin_create_room as anon / non-admin)
+ * that are expected to be REJECTED; it also opens one anonymous auth session.
+ * Because it never mutates, it is the only script exempt from scripts/lib/assertLocal.
+ */
+
+/**
  * ⚠️ SECURITY WARNING:
  * This verification script operates solely using the public Anon Key.
  * NEVER supply or hardcode SUPABASE_SERVICE_ROLE_KEY into this script or client files.

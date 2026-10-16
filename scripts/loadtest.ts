@@ -13,6 +13,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { assertLocal } from './lib/assertLocal';
 
 interface LatencyRecord {
   editIndex: number;
@@ -65,6 +66,7 @@ function calculatePercentile(values: number[], percentile: number): number {
 
 async function runLoadTest() {
   const config = parseArgs();
+  assertLocal(config.supabaseUrl);
   console.log('====================================================');
   console.log('  STARTUPOLY LIVE LOAD & SOAK TEST');
   console.log('====================================================');

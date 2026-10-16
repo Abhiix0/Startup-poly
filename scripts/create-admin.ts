@@ -8,6 +8,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import * as readline from 'readline';
+import { assertLocal } from './lib/assertLocal';
 
 function askHidden(query: string): Promise<string> {
   return new Promise((resolve) => {
@@ -82,7 +83,6 @@ async function main() {
 
   const args = process.argv.slice(2);
   let email = '';
-  let allowRemote = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -91,8 +91,6 @@ async function main() {
     } else if (arg === '--email' && args[i + 1]) {
       email = args[i + 1].trim();
       i++;
-    } else if (arg === '--allow-remote') {
-      allowRemote = true;
     }
   }
 
@@ -103,13 +101,9 @@ async function main() {
 
   // Safety guard for remote databases
   const urlObj = new URL(supabaseUrl);
-  const isLocal = urlObj.hostname === 'localhost' || urlObj.hostname === '127.0.0.1';
+  assertLocal(supabaseUrl, args);
 
-  if (!isLocal) {
-    if (!allowRemote) {
-      console.error(`⛔ SAFETY ABORT: Target URL "${supabaseUrl}" is not localhost. Pass --allow-remote to proceed.`);
-      process.exit(1);
-    }
+  if (urlObj.hostname !== 'localhost' && urlObj.hostname !== '127.0.0.1') {
     const hostConfirm = await askQuestion(`⚠️ You are targeting a REMOTE host [${urlObj.host}]. Type host name to confirm: `);
     if (hostConfirm !== urlObj.host) {
       console.error('❌ Hostname confirmation mismatch. Aborting.');

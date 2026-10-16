@@ -208,6 +208,8 @@ CREATE INDEX idx_team_businesses_team_id ON public.team_businesses(team_id);
 CREATE INDEX idx_activity_events_room_id_id ON public.activity_events(room_id, id DESC);
 CREATE INDEX idx_activity_events_room_team ON public.activity_events(room_id, team_id);
 CREATE INDEX idx_team_claims_team_id ON public.team_claims(team_id);
+
+
 -- Migration 0002: Integrity triggers and lifecycle constraints
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -339,6 +341,8 @@ CREATE TRIGGER trg_final_results_immutable
 BEFORE UPDATE OR DELETE ON public.final_results
 FOR EACH ROW
 EXECUTE FUNCTION public.fn_check_immutable_table();
+
+
 -- Migration 0003: Row Level Security policies and role privileges
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -494,6 +498,8 @@ CREATE POLICY "Claimed users can select final results when room is finalized"
         AND r.status = 'FINALIZED'
     )
   );
+
+
 -- Migration 0004: Official Rulebook Business Catalog Seed
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -529,6 +535,8 @@ ON CONFLICT (key) DO UPDATE SET
   u2_cv = EXCLUDED.u2_cv,
   is_provisional = EXCLUDED.is_provisional,
   sort_order = EXCLUDED.sort_order;
+
+
 -- Migration 0005: Supabase Realtime publication setup
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -570,6 +578,8 @@ END $$;
 
 -- 2. Set REPLICA IDENTITY FULL on team_businesses so DELETE events broadcast full old row (including team_id)
 ALTER TABLE public.team_businesses REPLICA IDENTITY FULL;
+
+
 -- Migration 0006: Drop legacy prototype tables
 -- STARTUPOLY Live Scoreboard & Game Management System
 --
@@ -580,6 +590,8 @@ ALTER TABLE public.team_businesses REPLICA IDENTITY FULL;
 
 DROP TABLE IF EXISTS public.match_events CASCADE;
 DROP TABLE IF EXISTS public.matches CASCADE;
+
+
 -- Migration 0007: Core Functions (Error Helper, Server Clock, Expiry Derivation)
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -656,6 +668,8 @@ $$;
 
 REVOKE ALL ON FUNCTION public.expire_if_due(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.expire_if_due(uuid) TO anon, authenticated;
+
+
 -- Migration 0008: Admin Stored Procedures
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -2076,6 +2090,8 @@ GRANT EXECUTE ON FUNCTION public.get_admin_snapshot(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.list_history() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.get_history_detail(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.get_team_snapshot(uuid) TO authenticated;
+
+
 -- Migration 0009: Team-Facing Stored Procedures (Lobby, Join, Isolated Dashboard)
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -2355,6 +2371,8 @@ GRANT EXECUTE ON FUNCTION public.join_team(text, int, text) TO authenticated, an
 
 REVOKE ALL ON FUNCTION public.get_my_state() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_my_state() TO authenticated, anon;
+
+
 -- Migration 0010: Standings, Tiebreaks, and Finalization
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -2581,6 +2599,8 @@ GRANT EXECUTE ON FUNCTION public.get_standings(uuid) TO authenticated;
 
 REVOKE ALL ON FUNCTION public.admin_finalize(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_finalize(uuid) TO authenticated;
+
+
 -- Migration 0011: Performance Indexes and Realtime Optimization
 -- STARTUPOLY Live Scoreboard & Game Management System
 
@@ -2599,6 +2619,8 @@ CREATE INDEX IF NOT EXISTS idx_final_results_room_id ON public.final_results(roo
 -- - team_businesses: room_id (idx_team_businesses_room_id), team_id (idx_team_businesses_team_id)
 -- - activity_events: room_id + id DESC (idx_activity_events_room_id_id)
 -- - team_claims: user_id + team_id (PK), team_id (idx_team_claims_team_id)
+
+
 -- Migration 0012: Admin Abort Game Function
 -- STARTUPOLY Live Scoreboard & Game Management System
 -- Allows admin to revert an accidentally started match back to LOBBY
@@ -2662,6 +2684,7 @@ $$;
 
 REVOKE ALL ON FUNCTION public.admin_abort_game(uuid, text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_abort_game(uuid, text) TO authenticated;
+
 
 -- Migration 0013: Fix Admin Abort Reset
 -- STARTUPOLY Live Scoreboard & Game Management System
@@ -2796,8 +2819,6 @@ REVOKE ALL ON FUNCTION public.admin_abort_game(uuid, text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_abort_game(uuid, text) TO authenticated;
 
 
-
--- Migration 0014: Enforce one active phone claim per team
 -- Migration 0014: Enforce one active phone claim per team
 -- A team slot may be claimed by exactly one anonymous session at a time.
 -- Admin release remains the explicit recovery path for a lost phone/session.
@@ -2933,9 +2954,16 @@ GRANT EXECUTE ON FUNCTION public.join_team(text, int, text) TO anon, authenticat
 
 COMMIT;
 
+
 -- Migration 0015: Enforce player privacy at the database and RLS layers
+-- 1. get_my_state() must NEVER return other teams' names, colors, cash, CV, business counts or rankings.
+--    Removes the full tournament leaderboard from the player RPC response.
+--    When a room is finalized, returns ONLY the calling team's own final_result.
+-- 2. Restricts RLS on public.final_results so claimed users can ONLY select their own team's final result row.
+
 BEGIN;
 
+-- 1. Restrict RLS on public.final_results to own team row only
 DROP POLICY IF EXISTS "Claimed users can select final results when room is finalized" ON public.final_results;
 
 CREATE POLICY "Claimed users can select own final result when room is finalized"
@@ -2952,6 +2980,7 @@ CREATE POLICY "Claimed users can select own final result when room is finalized"
     )
   );
 
+-- 2. Update get_my_state() to return strictly caller's own team state and final_result
 CREATE OR REPLACE FUNCTION public.get_my_state()
 RETURNS jsonb
 LANGUAGE plpgsql
