@@ -185,3 +185,9 @@ A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock
 - Residual risk: someone who knows the room code can lock joins for that room for 60 s at a time. PINs are plaintext in `team_secrets` on purpose (organisers read them out); anyone with admin access can read them.
 - A late first-time join to a TIME_EXPIRED room is still allowed (the dashboard shows the game-over view). Owner decision pending.
 - **Manual checklist (do not script):** in the Supabase dashboard, Authentication, Rate Limits, confirm "Anonymous sign-ins" per hour per IP. Locally it is 30 (`config.toml`). The throttle above does not depend on it, but it caps how many sessions one IP can mint.
+
+## Security surface (migration 0020)
+- `anon` (no session) may execute only `server_time`, `get_lobby`, `join_team`, `get_my_state`, `is_admin`. Anonymous sign-in players are role `authenticated`, not `anon`.
+- Internal helpers (`room_standings`, `get_team_snapshot`, `app_now`, `raise_error`, the replay checks) are not executable by any client; SECURITY DEFINER callers reach them as the owner.
+- `supabase/tests/0011_security_matrix_test.sql` fails when a function or table is added without being classified, or when a SECURITY DEFINER function lacks a pinned `search_path`. Add new objects to its expected lists deliberately.
+- Realtime: a claimed player receives only its own team row, its own businesses and its room (checked with a real subscription in `security/security.test.ts`). Right after `supabase db reset` Realtime needs a few seconds before it delivers anything.

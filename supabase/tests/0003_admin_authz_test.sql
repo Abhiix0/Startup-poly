@@ -217,7 +217,7 @@ SELECT throws_ok(
 );
 
 
--- ─── Part B: Anonymous caller ────────────────────────────────────────────────
+-- ─── Part B: Anonymous caller (since 0020 anon has no EXECUTE on admin RPCs: denied before NOT_ADMIN) ──
 SET LOCAL ROLE anon;
 SELECT set_config(
   'request.jwt.claims',
@@ -231,8 +231,8 @@ SELECT throws_ok(
       '[{"name":"T1","color":"#FF0000"},{"name":"T2","color":"#00FF00"},
         {"name":"T3","color":"#0000FF"},{"name":"T4","color":"#FFFF00"},
         {"name":"T5","color":"#FF00FF"}]'::jsonb)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-01: anon: admin_create_room raises NOT_ADMIN'
+  '42501', NULL,
+  'B-01: anon: admin_create_room is denied EXECUTE (permission denied)'
 );
 
 -- B-02  admin_update_team_config
@@ -240,32 +240,32 @@ SELECT throws_ok(
   $$SELECT public.admin_update_team_config(
       'f0000000-0000-0000-0000-000000000001'::uuid,
       'NewName', '#AABBCC')$$,
-  'P0001', 'NOT_ADMIN',
-  'B-02: anon: admin_update_team_config raises NOT_ADMIN'
+  '42501', NULL,
+  'B-02: anon: admin_update_team_config is denied EXECUTE (permission denied)'
 );
 
 -- B-03  admin_open_lobby
 SELECT throws_ok(
   $$SELECT public.admin_open_lobby(
       'e0000000-0000-0000-0000-000000000001'::uuid)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-03: anon: admin_open_lobby raises NOT_ADMIN'
+  '42501', NULL,
+  'B-03: anon: admin_open_lobby is denied EXECUTE (permission denied)'
 );
 
 -- B-04  admin_release_team
 SELECT throws_ok(
   $$SELECT public.admin_release_team(
       'f0000000-0000-0000-0000-000000000001'::uuid)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-04: anon: admin_release_team raises NOT_ADMIN'
+  '42501', NULL,
+  'B-04: anon: admin_release_team is denied EXECUTE (permission denied)'
 );
 
 -- B-05  admin_start_game
 SELECT throws_ok(
   $$SELECT public.admin_start_game(
       'e0000000-0000-0000-0000-000000000001'::uuid, false)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-05: anon: admin_start_game raises NOT_ADMIN'
+  '42501', NULL,
+  'B-05: anon: admin_start_game is denied EXECUTE (permission denied)'
 );
 
 -- B-06  admin_set_team_values
@@ -275,8 +275,8 @@ SELECT throws_ok(
       1000, 0, 0,
       '99000000-0000-0000-0000-000000000001'::uuid,
       'test note')$$,
-  'P0001', 'NOT_ADMIN',
-  'B-06: anon: admin_set_team_values raises NOT_ADMIN'
+  '42501', NULL,
+  'B-06: anon: admin_set_team_values is denied EXECUTE (permission denied)'
 );
 
 -- B-07  admin_adjust
@@ -292,8 +292,8 @@ SELECT throws_ok(
       ),
       'RENT', 'authz test',
       '99000000-0000-0000-0000-000000000001'::uuid)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-07: anon: admin_adjust raises NOT_ADMIN'
+  '42501', NULL,
+  'B-07: anon: admin_adjust is denied EXECUTE (permission denied)'
 );
 
 -- B-08  admin_add_business
@@ -303,8 +303,8 @@ SELECT throws_ok(
       'saas', true, 0,
       '99000000-0000-0000-0000-000000000001'::uuid,
       'test')$$,
-  'P0001', 'NOT_ADMIN',
-  'B-08: anon: admin_add_business raises NOT_ADMIN'
+  '42501', NULL,
+  'B-08: anon: admin_add_business is denied EXECUTE (permission denied)'
 );
 
 -- B-09  admin_set_business_level
@@ -314,8 +314,8 @@ SELECT throws_ok(
       'saas', 1::smallint, true, 0,
       '99000000-0000-0000-0000-000000000001'::uuid,
       'test')$$,
-  'P0001', 'NOT_ADMIN',
-  'B-09: anon: admin_set_business_level raises NOT_ADMIN'
+  '42501', NULL,
+  'B-09: anon: admin_set_business_level is denied EXECUTE (permission denied)'
 );
 
 -- B-10  admin_remove_business
@@ -325,8 +325,8 @@ SELECT throws_ok(
       'saas', 'FORCED_SALE', true, 0,
       '99000000-0000-0000-0000-000000000001'::uuid,
       'test')$$,
-  'P0001', 'NOT_ADMIN',
-  'B-10: anon: admin_remove_business raises NOT_ADMIN'
+  '42501', NULL,
+  'B-10: anon: admin_remove_business is denied EXECUTE (permission denied)'
 );
 
 -- B-11  admin_set_bankrupt
@@ -336,8 +336,8 @@ SELECT throws_ok(
       true, 0,
       '99000000-0000-0000-0000-000000000001'::uuid,
       'test')$$,
-  'P0001', 'NOT_ADMIN',
-  'B-11: anon: admin_set_bankrupt raises NOT_ADMIN'
+  '42501', NULL,
+  'B-11: anon: admin_set_bankrupt is denied EXECUTE (permission denied)'
 );
 
 -- B-12  admin_set_tiebreak
@@ -346,38 +346,38 @@ SELECT throws_ok(
       'e0000000-0000-0000-0000-000000000001'::uuid,
       ARRAY['f0000000-0000-0000-0000-000000000001'::uuid],
       'test')$$,
-  'P0001', 'NOT_ADMIN',
-  'B-12: anon: admin_set_tiebreak raises NOT_ADMIN'
+  '42501', NULL,
+  'B-12: anon: admin_set_tiebreak is denied EXECUTE (permission denied)'
 );
 
 -- B-13  get_admin_snapshot
 SELECT throws_ok(
   $$SELECT public.get_admin_snapshot(
       'e0000000-0000-0000-0000-000000000001'::uuid)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-13: anon: get_admin_snapshot raises NOT_ADMIN'
+  '42501', NULL,
+  'B-13: anon: get_admin_snapshot is denied EXECUTE (permission denied)'
 );
 
 -- B-14  admin_finalize
 SELECT throws_ok(
   $$SELECT public.admin_finalize(
       'e0000000-0000-0000-0000-000000000001'::uuid)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-14: anon: admin_finalize raises NOT_ADMIN'
+  '42501', NULL,
+  'B-14: anon: admin_finalize is denied EXECUTE (permission denied)'
 );
 
 -- B-15  list_history
 SELECT throws_ok(
   $$SELECT public.list_history()$$,
-  'P0001', 'NOT_ADMIN',
-  'B-15: anon: list_history raises NOT_ADMIN'
+  '42501', NULL,
+  'B-15: anon: list_history is denied EXECUTE (permission denied)'
 );
 
 -- B-16  get_history_detail
 SELECT throws_ok(
   $$SELECT public.get_history_detail('e0000000-0000-0000-0000-000000000001'::uuid)$$,
-  'P0001', 'NOT_ADMIN',
-  'B-16: anon: get_history_detail raises NOT_ADMIN'
+  '42501', NULL,
+  'B-16: anon: get_history_detail is denied EXECUTE (permission denied)'
 );
 
 

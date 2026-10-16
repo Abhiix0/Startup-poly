@@ -15,7 +15,8 @@
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local > src/data/database.types.ts",
-    "test:concurrency": "vitest run --config supabase/tests/concurrency/vitest.config.ts"
+    "test:concurrency": "vitest run --config supabase/tests/concurrency/vitest.config.ts",
+    "test:security": "vitest run --config supabase/tests/concurrency/vitest.config.ts security"
   },
   "keywords": [],
   "author": "",

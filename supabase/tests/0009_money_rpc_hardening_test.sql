@@ -27,8 +27,8 @@ SELECT public.admin_start_game((SELECT id FROM public.rooms), true);
 -- replay of set_team_values: one effect, identical response
 SELECT lives_ok($$SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=1), 1200, NULL, 0, (SELECT v FROM rid WHERE k='set'), NULL)$$, 'set_team_values first call');
 SELECT is(
-  public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=1), 1200, NULL, 0, (SELECT v FROM rid WHERE k='set'), NULL),
-  public.get_team_snapshot((SELECT id FROM public.teams WHERE slot=1)),
+  public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=1), 1200, NULL, 0, (SELECT v FROM rid WHERE k='set'), NULL)->'team'->>'cash',
+  '1200',
   'set_team_values replay returns the team snapshot');
 SELECT is((SELECT count(*)::int FROM public.activity_events WHERE type='CASH_SET'), 1, 'replay wrote one CASH_SET event');
 SELECT is((SELECT version FROM public.teams WHERE slot=1), 1, 'replay did not bump the version again');

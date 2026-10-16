@@ -14,11 +14,16 @@ const opts = { auth: { persistSession: false, autoRefreshToken: false } };
 
 // Local GoTrue has the email provider off (config.toml [auth.email] enable_signup=false), so
 // sessions are minted by signing a JWT with the local JWT secret. Local secret only.
+const tokens = new WeakMap<SupabaseClient, string>();
+export const tokenOf = (c: SupabaseClient) => tokens.get(c)!;
+
 function clientFor(uid: string): SupabaseClient {
   const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString('base64url');
   const body = `${b64({ alg: 'HS256', typ: 'JWT' })}.${b64({ sub: uid, role: 'authenticated', aud: 'authenticated', exp: Math.floor(Date.now() / 1000) + 3600 })}`;
   const token = `${body}.${createHmac('sha256', process.env.LOCAL_JWT_SECRET!).update(body).digest('base64url')}`;
-  return createClient(url!, anon!, { ...opts, global: { headers: { Authorization: `Bearer ${token}` } } });
+  const client = createClient(url!, anon!, { ...opts, global: { headers: { Authorization: `Bearer ${token}` } } });
+  tokens.set(client, token);
+  return client;
 }
 
 async function newUser(label: string): Promise<string> {
@@ -68,5 +73,7 @@ export async function teamIds(admin: SupabaseClient, roomId: string) {
   if (error) throw error;
   return data as { id: string; version: number; slot: number }[];
 }
+
+export const localUrl = () => url!;
 
 export const isDeadlock = (e: { code?: string } | null) => e?.code === '40P01';
