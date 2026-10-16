@@ -348,8 +348,5 @@ export async function rpcGetHistoryDetail(room_id: string): Promise<HistoryDetai
   return callRpc<HistoryDetailResponse>('get_history_detail', { room_id });
 }
 
-// Aliases and Convenience Types
-export const getMyStateRpc = rpcGetMyState;
-export const joinTeamRpc = rpcJoinTeam;
-export const getLobbyRpc = rpcGetLobby;
+// Convenience Types
 export type TeamStateResponse = NonNullable<Awaited<ReturnType<typeof rpcGetMyState>>>;
