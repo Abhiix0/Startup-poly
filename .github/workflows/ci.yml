@@ -33,7 +33,21 @@ jobs:
         run: supabase db reset
 
       - name: pgTAP tests
-        run: supabase test db
+        shell: bash
+        run: |
+          set +e
+          supabase test db 2>&1 | tee pgtap.log
+          EXIT_CODE=${PIPESTATUS[0]}
+          if [ $EXIT_CODE -ne 0 ]; then
+            grep -E "not ok|FAIL|ERROR|error|pgtap|Looks like|# Failed" pgtap.log | while IFS= read -r line; do
+              echo "::error title=pgTAP::$line"
+            done
+          fi
+          echo "## pgTAP Test Output" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat pgtap.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          exit $EXIT_CODE
 
       - run: npm ci
       - run: npm run typecheck
