@@ -158,4 +158,35 @@ describe('TeamJoinPage', () => {
       expect(rateLimitElements.length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  it('displays descriptive error when anonymous sign-ins are disabled in Supabase', async () => {
+    vi.mocked(rpcModule.rpcGetLobby).mockResolvedValue(mockLobby as any);
+    const anonError = {
+      name: 'AuthApiError',
+      message: 'Anonymous sign-ins are disabled',
+      status: 422,
+      code: 'anonymous_provider_disabled',
+    };
+    vi.mocked(clientModule.ensureAnonymousSession).mockRejectedValue(anonError);
+
+    renderComponent();
+
+    const codeInput = screen.getByLabelText(/1\. Room Code/i);
+    fireEvent.change(codeInput, { target: { value: 'ABC892' } });
+
+    await waitFor(() => {
+      expect(screen.getByText('Alpha Rockets')).toBeInTheDocument();
+    });
+
+    const pinInput = screen.getByLabelText(/3\. 4-Digit Secret PIN/i);
+    fireEvent.change(pinInput, { target: { value: '1111' } });
+
+    const connectBtn = screen.getByRole('button', { name: /ENTER WORLD|CONNECT PHONE/i });
+    fireEvent.click(connectBtn);
+
+    await waitFor(() => {
+      const anonElements = screen.getAllByText(/Anonymous sign-ins are disabled in Supabase/i);
+      expect(anonElements.length).toBeGreaterThanOrEqual(1);
+    });
+  });
 });
