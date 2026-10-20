@@ -74,6 +74,16 @@ export const ActiveDashboardView: React.FC<ActiveDashboardViewProps> = ({
         />
       </Panel>
 
+      {/* Primary Winning Metric: Total Valuation */}
+      <div className="bg-brand-gold/20 border-4 border-brand-navy shadow-pixel p-4 text-center rounded-lg">
+        <span className="font-pixel text-[11px] text-brand-navy font-bold uppercase tracking-wider block">
+          TOTAL COMPANY VALUE (CASH + CV)
+        </span>
+        <span className="font-pixel text-3xl sm:text-4xl text-brand-navy font-black tabular-nums block mt-1 drop-shadow-[1px_1px_0px_var(--color-brand-white)]">
+          {formatINR(team.cash + team.cv)}
+        </span>
+      </div>
+
       <section aria-label="Financial summary" className="grid gap-4 md:grid-cols-2">
         <Metric
           label="Available cash"

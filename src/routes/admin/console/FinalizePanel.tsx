@@ -80,7 +80,7 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
   };
 
   return (
-    <div className="bg-brand-cream border-4 border-brand-navy shadow-pixel p-4 flex flex-col gap-4">
+    <div id="finalize-panel" className="bg-brand-cream border-4 border-brand-navy shadow-pixel p-4 flex flex-col gap-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-brand-navy pb-3">
         <div>

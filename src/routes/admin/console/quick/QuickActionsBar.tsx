@@ -10,6 +10,11 @@ export interface QuickActionsBarProps {
   onOpenBonusCard: () => void;
   onOpenCrisisCard: () => void;
   onOpenLoseFeature: () => void;
+  onOpenPitchTimer?: () => void;
+  onOpenWildcard?: () => void;
+  onUndo?: () => void;
+  canUndo?: boolean;
+  lastUndoLabel?: string;
   disabled?: boolean;
 }
 
@@ -23,136 +28,211 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
   onOpenBonusCard,
   onOpenCrisisCard,
   onOpenLoseFeature,
+  onOpenPitchTimer,
+  onOpenWildcard,
+  onUndo,
+  canUndo = false,
+  lastUndoLabel,
   disabled = false,
 }) => {
   return (
-    <div className="bg-brand-navy border-3 border-brand-navy p-2.5 shadow-pixel-sm flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <span className="font-pixel text-[11px] text-brand-gold uppercase tracking-wider">
-          ⚡ QUICK ACTIONS (CALCULATOR)
-        </span>
-        <span className="hidden sm:inline font-mono text-[10px] text-neutral-400">
-          Hotkeys: [R] Rent • [S] Start • [B] Buy • [U] Upgrade
+    <div className="bg-brand-navy border-4 border-brand-navy p-3 shadow-pixel flex flex-col gap-2.5 select-none">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-white/20 pb-2">
+        <div className="flex items-center gap-2">
+          <span className="text-sm">⚡</span>
+          <span className="font-pixel text-[11px] text-brand-gold uppercase tracking-wider font-bold">
+            RAPID ACTION PAD (SINGLE-ADMIN COCKPIT)
+          </span>
+        </div>
+        <span className="hidden md:inline font-mono text-[10px] text-neutral-300">
+          Press highlighted letter key on laptop keyboard
         </span>
       </div>
 
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
+        {/* BOARD OPERATIONS */}
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenRent}
+          title="Calculate rent on visiting another team's business (Hotkey: R)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-brand-gold text-brand-navy
-            border border-brand-navy shadow-pixel-sm hover:bg-interactive-gold-hover
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-3 py-2 bg-brand-gold text-brand-navy font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          RENT (R)
+          <span>🏠</span> RENT (R)
         </button>
 
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenStartLap}
+          title="Pass or land on START: +₹200 cash, +CV portfolio bonus (Hotkey: S)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-brand-green text-brand-white
-            border border-brand-navy shadow-pixel-sm hover:bg-interactive-green-hover
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-3 py-2 bg-brand-green text-white font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          START LAP (S)
+          <span>🏁</span> START LAP (S)
         </button>
 
+        {/* BUSINESS OPERATIONS */}
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenBuy}
+          title="Acquire an unowned business from catalog (Hotkey: B)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-brand-cream text-brand-navy
-            border border-brand-navy shadow-pixel-sm hover:bg-brand-white
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-brand-cream text-brand-navy font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          BUY (B)
+          <span>🛒</span> BUY (B)
         </button>
 
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenUpgrade}
+          title="Upgrade owned business level (Hotkey: U)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-brand-cream text-brand-navy
-            border border-brand-navy shadow-pixel-sm hover:bg-brand-white
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-brand-cream text-brand-navy font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          UPGRADE (U)
+          <span>⭐</span> UPGRADE (U)
         </button>
 
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenForcedSale}
+          title="Liquidate owned business for 100% original purchase cost to pay debt"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-neutral-200 text-brand-navy
-            border border-brand-navy shadow-pixel-sm hover:bg-brand-gold
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-neutral-200 text-brand-navy font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          FORCED SALE
+          <span>🔨</span> FORCED SALE
         </button>
 
+        {/* SPECIAL INTERACTIONS & CHITS */}
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenSteal}
+          title="Action D: Take ₹100 from target team (Hotkey: T)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-neutral-200 text-brand-navy
-            border border-brand-navy shadow-pixel-sm hover:bg-brand-gold
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-neutral-200 text-brand-navy font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          STEAL TALENT
+          <span>🥷</span> STEAL TALENT (T)
         </button>
 
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenBonusCard}
+          title="Bonus card 1–6 quick resolver (Hotkey: C)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-brand-sky text-brand-white
-            border border-brand-navy shadow-pixel-sm hover:bg-interactive-blue-hover
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-sky-600 text-white font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          BONUS CARD
+          <span>🎁</span> BONUS CARD (C)
         </button>
 
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenCrisisCard}
+          title="Crisis card 1–6 penalty resolver (Hotkey: X)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-brand-red text-brand-white
-            border border-brand-navy shadow-pixel-sm hover:bg-interactive-red-hover
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-brand-red text-white font-bold
+            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          CRISIS CARD
+          <span>💥</span> CRISIS CARD (X)
         </button>
 
         <button
           type="button"
           disabled={disabled}
           onClick={onOpenLoseFeature}
+          title="Action C: Immediate loss of 200 CV (Hotkey: L)"
           className="
-            font-pixel text-[10px] uppercase px-2.5 py-1.5 bg-neutral-800 text-neutral-400
-            border border-white/20 hover:text-white
-            active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-neutral-800 text-neutral-200 font-bold
+            border-2 border-neutral-600 shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+            transition-all flex items-center gap-1
           "
         >
-          LOSE FEATURE
+          <span>📉</span> LOSE FEATURE (L)
         </button>
+
+        {onOpenPitchTimer && (
+          <button
+            type="button"
+            onClick={onOpenPitchTimer}
+            title="Action B / Tiebreak 30-second presentation clock (Hotkey: P)"
+            className="
+              font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-sky-500 text-brand-navy font-bold
+              border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+              hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer transition-all flex items-center gap-1
+            "
+          >
+            <span>🎤</span> PITCH (P)
+          </button>
+        )}
+
+        {onOpenWildcard && (
+          <button
+            type="button"
+            onClick={onOpenWildcard}
+            title="Draw random physical task for Wildcard space (Hotkey: W)"
+            className="
+              font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-purple-600 text-white font-bold
+              border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+              hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer transition-all flex items-center gap-1
+            "
+          >
+            <span>🎲</span> WILDCARD (W)
+          </button>
+        )}
+
+        {canUndo && onUndo && (
+          <button
+            type="button"
+            onClick={onUndo}
+            title={`Undo: ${lastUndoLabel || 'last action'} (Hotkey: Ctrl+Z)`}
+            className="
+              font-pixel text-[10px] sm:text-xs uppercase px-3.5 py-2 bg-brand-red text-white font-bold
+              border-2 border-brand-gold shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
+              hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer transition-all
+              flex items-center gap-1.5 animate-pulse ml-auto
+            "
+          >
+            <span>↩️</span> UNDO ({lastUndoLabel || 'LAST'}) [Ctrl+Z]
+          </button>
+        )}
       </div>
     </div>
   );

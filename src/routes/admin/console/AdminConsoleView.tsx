@@ -21,6 +21,7 @@ import {
   rpcAdminRemoveBusiness,
   rpcAdminSetBankrupt,
   rpcAdminAbortGame,
+  rpcAdminExtendGame,
   rpcRoomStatus,
 } from '../../../data/rpc';
 import {
@@ -32,6 +33,12 @@ import {
   LoseFeatureDialog,
   ForcedSaleDialog,
 } from './quick';
+import { PitchTimerModal } from './PitchTimerModal';
+import { WildcardModal } from './WildcardModal';
+import { TimeOverModal } from './TimeOverModal';
+import { useStandings } from '../../../data/useStandings';
+import { sounds } from '../../../lib/sound';
+import { safeRandomUUID } from '../../../lib/uuid';
 import { FinalizePanel } from './FinalizePanel';
 import { ResultView } from './ResultView';
 
@@ -57,6 +64,16 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   );
   const [isRefetching, setIsRefetching] = useState<boolean>(false);
   const [flashes, setFlashes] = useState<Record<string, 'up' | 'down' | null>>({});
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(sounds.isEnabled());
+  const [lastUndoableAction, setLastUndoableAction] = useState<{
+    label: string;
+    reversalChanges: Array<{
+      team_id: string;
+      cash_delta: number;
+      cv_delta: number;
+    }>;
+  } | null>(null);
+
   const [lastFailedAction, setLastFailedAction] = useState<{
     label: string;
     retry: () => void;
@@ -81,6 +98,10 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const [forcedSaleTeamId, setForcedSaleTeamId] = useState<string>('');
   const [forcedSaleShortfall, setForcedSaleShortfall] = useState<number | undefined>(undefined);
 
+  // Arena & Field Modals
+  const [isPitchTimerOpen, setIsPitchTimerOpen] = useState<boolean>(false);
+  const [isWildcardOpen, setIsWildcardOpen] = useState<boolean>(false);
+
   // Conflict & Insufficient Cash states
   const [conflictDetails, setConflictDetails] = useState<{
     expectedVersion?: number;
@@ -104,6 +125,37 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const [abortNote, setAbortNote] = useState<string>('');
   const [abortError, setAbortError] = useState<string | null>(null);
 
+  // Standings & Time Over states
+  const { standings, hasUnresolvedTie } = useStandings(snapshot.room.id, isTimeExpired);
+  const [isTimeOverModalOpen, setIsTimeOverModalOpen] = useState<boolean>(false);
+  const [isExtendingTime, setIsExtendingTime] = useState<boolean>(false);
+  const hasTriggeredTimeOverPopupRef = React.useRef<boolean>(false);
+
+  useEffect(() => {
+    if (isTimeExpired && !hasTriggeredTimeOverPopupRef.current) {
+      hasTriggeredTimeOverPopupRef.current = true;
+      setIsTimeOverModalOpen(true);
+      sounds.playBuzzer();
+    } else if (!isTimeExpired) {
+      hasTriggeredTimeOverPopupRef.current = false;
+    }
+  }, [isTimeExpired]);
+
+  const handleExtendTenMinutes = async () => {
+    try {
+      setIsExtendingTime(true);
+      await rpcAdminExtendGame(snapshot.room.id, 600);
+      sounds.playWhistle();
+      successToast('⚡ Extra time active! Added 10 minutes to match clock.');
+      setIsTimeOverModalOpen(false);
+      await onRefetch();
+    } catch (err: any) {
+      errorToast(err?.message || 'Failed to extend match time.');
+    } finally {
+      setIsExtendingTime(false);
+    }
+  };
+
   const handleOpenAbort = () => {
     setAbortNote('');
     setAbortError(null);
@@ -122,7 +174,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const selectedTeam = snapshot.teams.find((t) => t.id === selectedTeamId) || snapshot.teams[0];
   const activeTeams = snapshot.teams.filter((t) => !t.is_bankrupt);
   const leader = snapshot.teams.reduce<(typeof snapshot.teams)[0] | undefined>(
-    (best, t) => (!best || t.cv > best.cv ? t : best),
+    (best, t) => (!best || (t.cash + t.cv) > (best.cash + best.cv) ? t : best),
     undefined
   );
   const totalCash = snapshot.teams.reduce((n, t) => n + t.cash, 0);
@@ -209,12 +261,22 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         setIsCardOpen(false);
         setIsLoseFeatureOpen(false);
         setIsForcedSaleOpen(false);
+        setIsPitchTimerOpen(false);
+        setIsWildcardOpen(false);
         return;
       }
 
       if (isInput) return;
 
       const key = e.key.toLowerCase();
+
+      // Undo hotkey: Ctrl+Z or Cmd+Z
+      if ((e.ctrlKey || e.metaKey) && key === 'z') {
+        e.preventDefault();
+        void handleUndo();
+        return;
+      }
+
       if (key === 'r') {
         e.preventDefault();
         setIsRentOpen(true);
@@ -231,14 +293,63 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         } else {
           errorToast(`${selectedTeam.name} has no businesses to upgrade.`);
         }
+      } else if (key === 't') {
+        e.preventDefault();
+        setIsStealOpen(true);
+      } else if (key === 'c') {
+        e.preventDefault();
+        setCardMode('BONUS');
+        setIsCardOpen(true);
+      } else if (key === 'x') {
+        e.preventDefault();
+        setCardMode('CRISIS');
+        setIsCardOpen(true);
+      } else if (key === 'l') {
+        e.preventDefault();
+        setIsLoseFeatureOpen(true);
+      } else if (key === 'p') {
+        e.preventDefault();
+        setIsPitchTimerOpen(true);
+      } else if (key === 'w') {
+        e.preventDefault();
+        setIsWildcardOpen(true);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedTeam, errorToast]);
+  }, [selectedTeam, errorToast, lastUndoableAction]);
 
   // --- MUTATION HANDLERS ---
+
+  const handleUndo = async () => {
+    if (!lastUndoableAction) return;
+    try {
+      const changesWithVersions = lastUndoableAction.reversalChanges.map((rev) => {
+        const currentTeam = snapshot.teams.find((t) => t.id === rev.team_id);
+        return {
+          team_id: rev.team_id,
+          cash_delta: rev.cash_delta,
+          cv_delta: rev.cv_delta,
+          expected_version: currentTeam?.version ?? 0,
+        };
+      });
+
+      await rpcAdminAdjust({
+        changes: changesWithVersions,
+        label: `UNDO_${lastUndoableAction.label}`,
+        note: `Correction: Undoing ${lastUndoableAction.label}`,
+        request_id: safeRandomUUID(),
+      });
+
+      sounds.playDamage();
+      successToast(`Reversed: ${lastUndoableAction.label}`);
+      setLastUndoableAction(null);
+      await onRefetch();
+    } catch (err: any) {
+      handleError(err, undefined, 'Undo');
+    }
+  };
 
   const handleQuickAdjust = async (params: {
     changes: Array<{
@@ -258,6 +369,24 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         note: params.note,
         request_id: params.requestId,
       });
+
+      // Play contextual audio feedback
+      if (params.changes.some((c) => c.cash_delta > 0 || c.cv_delta > 0)) {
+        sounds.playCoin();
+      } else {
+        sounds.playDamage();
+      }
+
+      // Record for 1-click Undo
+      setLastUndoableAction({
+        label: params.label,
+        reversalChanges: params.changes.map((ch) => ({
+          team_id: ch.team_id,
+          cash_delta: -ch.cash_delta,
+          cv_delta: -ch.cv_delta,
+        })),
+      });
+
       successToast(`Action ${params.label} recorded.`);
       params.changes.forEach((ch) => {
         triggerFlash(ch.team_id, ch.cash_delta >= 0 ? 'up' : 'down');
@@ -515,7 +644,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   if (!selectedTeam) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-brand-sky text-brand-navy">
+    <div className="flex flex-col min-h-screen bg-brand-sky nes-sky-gradient text-brand-navy relative selection:bg-brand-gold selection:text-brand-navy">
       {/* 1. TOP BAR */}
       <ConsoleTopBar
         roomCode={snapshot.room.code}
@@ -526,7 +655,67 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         lastUpdated={lastUpdated}
         onRefetch={handleManualRefetch}
         isRefetching={isRefetching}
+        onExtendTenMinutes={handleExtendTenMinutes}
+        isExtendingTime={isExtendingTime}
       />
+
+      {/* ARENA & QUICK COMMAND STRIP */}
+      <div className="bg-brand-navy border-b-2 border-brand-gold px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-white shadow-pixel-sm">
+        <div className="flex items-center gap-2 flex-wrap">
+          <a
+            href={`/arena/${snapshot.room.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Launch Arena Projector view in a separate window"
+            className="font-pixel text-[10px] bg-brand-gold text-brand-navy px-3 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-white active:translate-y-0.5 transition-colors uppercase font-bold flex items-center gap-1.5"
+          >
+            <span>📺</span> ARENA SCREEN (PROJECTOR)
+          </a>
+
+          <button
+            type="button"
+            onClick={() => setIsPitchTimerOpen(true)}
+            title="30-second physical pitch timer for Action B & tiebreaks (Hotkey: P)"
+            className="font-pixel text-[10px] bg-sky-600 text-white px-2.5 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-sky-500 active:translate-y-0.5 transition-colors uppercase flex items-center gap-1 cursor-pointer"
+          >
+            <span>🎤</span> 30s PITCH [P]
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsWildcardOpen(true)}
+            title="Draw random physical task for Wildcard space (Hotkey: W)"
+            className="font-pixel text-[10px] bg-purple-600 text-white px-2.5 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-purple-500 active:translate-y-0.5 transition-colors uppercase flex items-center gap-1 cursor-pointer"
+          >
+            <span>🎲</span> WILDCARD [W]
+          </button>
+
+          {lastUndoableAction && (
+            <button
+              type="button"
+              onClick={handleUndo}
+              title={`Undo last action: ${lastUndoableAction.label} (Hotkey: Ctrl+Z)`}
+              className="font-pixel text-[10px] bg-brand-red text-white px-3 py-1.5 border-2 border-white/60 shadow-pixel-sm hover:bg-interactive-red-hover active:translate-y-0.5 transition-colors uppercase font-bold flex items-center gap-1 cursor-pointer animate-pulse"
+            >
+              <span>↩️</span> UNDO: {lastUndoableAction.label} [Ctrl+Z]
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="hidden xl:inline font-mono text-[10px] text-brand-gold/80">
+            Keys: [1-6] Team • [S] Start • [R] Rent • [B] Buy • [U] Upgrade • [T] Steal • [C] Bonus • [X] Crisis • [P] Pitch
+          </span>
+          <button
+            type="button"
+            onClick={() => setSoundEnabled(sounds.toggle())}
+            title="Toggle Sound FX"
+            className="font-pixel text-[10px] bg-neutral-800 text-neutral-300 px-2.5 py-1 border border-neutral-600 hover:text-white cursor-pointer"
+          >
+            {soundEnabled ? '🔊 SOUND ON' : '🔇 MUTED'}
+          </button>
+        </div>
+      </div>
 
       {/* 2. FULL-WIDTH SYSTEM ALERTS */}
       {isOffline && (
@@ -566,8 +755,45 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       )}
 
       {isTimeExpired && (
-        <div className="bg-brand-gold text-brand-navy px-4 py-2 text-center font-pixel text-xs border-b-4 border-brand-navy shadow-pixel-sm">
-          🏁 GAME OVER — scores frozen. Gameplay time has expired but the match is NOT finalized yet. Edits now need a note; finalize from Match Controls below.
+        <div className="bg-brand-gold border-b-4 border-brand-navy p-3 px-4 shadow-pixel flex flex-wrap items-center justify-between gap-3 text-brand-navy">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">⏰</span>
+            <div>
+              <span className="font-pixel text-xs font-black uppercase tracking-wider block">
+                🏁 GAME OVER — SCORES FROZEN
+              </span>
+              <span className="font-mono text-[11px] text-brand-navy/80 block">
+                Gameplay time has expired. Grant +10 minutes extra time, or finalize results.
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              disabled={isExtendingTime}
+              onClick={handleExtendTenMinutes}
+              className="font-pixel text-xs bg-brand-green text-white px-3.5 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-interactive-green-hover active:translate-y-0.5 cursor-pointer uppercase font-bold flex items-center gap-1.5 transition-all disabled:opacity-50"
+            >
+              <span>⚡</span> {isExtendingTime ? 'EXTENDING...' : '+10 MINS EXTRA TIME [E]'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsTimeOverModalOpen(false);
+                document.getElementById('finalize-panel')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="font-pixel text-xs bg-brand-navy text-brand-gold px-3.5 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-neutral-800 active:translate-y-0.5 cursor-pointer uppercase font-bold flex items-center gap-1.5 transition-all"
+            >
+              <span>🏆</span> REVIEW & FINALIZE [F]
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsTimeOverModalOpen(true)}
+              className="font-pixel text-xs bg-brand-cream text-brand-navy px-2.5 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-brand-white cursor-pointer uppercase font-bold"
+            >
+              OPTIONS
+            </button>
+          </div>
         </div>
       )}
 
@@ -598,23 +824,95 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         </div>
       )}
 
-      {/* 3. MAIN DESKTOP CONSOLE BODY */}
-      <main className="flex-1 w-full max-w-[1400px] mx-auto p-3 sm:p-4 lg:p-6 flex flex-col gap-5">
-        <div className="flex flex-col gap-5 min-w-0">
+      {/* 3. MAIN DESKTOP CONSOLE BODY (FRAMED IN ARCADE BRICK PERIMETER) */}
+      <main className="flex-1 w-full max-w-[1440px] mx-auto p-3 sm:p-5 lg:p-6 flex flex-col gap-5">
+        <div className="border-4 sm:border-[8px] border-brand-brick shadow-[0_10px_0_var(--color-brand-navy)] bg-brand-cream/95 p-3 sm:p-5 lg:p-6 flex flex-col gap-5 min-w-0">
           {/* Match overview: sums of authoritative snapshot values */}
-          <section aria-label="Match overview" className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-            {[
-              { k: 'TEAMS IN PLAY', v: `${activeTeams.length}/${snapshot.teams.length}`, sub: `${snapshot.teams.length - activeTeams.length} bankrupt` },
-              { k: 'LEADER (CV)', v: leader ? leader.name : '—', sub: leader ? `₹${leader.cv.toLocaleString('en-IN')}` : '' },
-              { k: 'CASH IN PLAY', v: `₹${totalCash.toLocaleString('en-IN')}`, sub: 'all teams' },
-              { k: 'BUSINESSES OWNED', v: String(totalBusinesses), sub: 'across all teams' },
-            ].map((st) => (
-              <div key={st.k} className="bg-brand-cream border-3 border-brand-navy shadow-pixel-sm px-3 py-2 min-w-0">
-                <span className="font-pixel text-[9px] text-neutral-500 block">{st.k}</span>
-                <span className="font-tabular text-xl font-black text-brand-navy block truncate">{st.v}</span>
-                <span className="font-mono text-[10px] text-neutral-500 block truncate">{st.sub}</span>
+          <section aria-label="Match overview" className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {/* Card 1: TEAMS IN PLAY */}
+            <div className="bg-brand-white border-3 sm:border-4 border-brand-navy shadow-pixel relative overflow-hidden p-3.5 sm:p-4 flex flex-col justify-between hover:-translate-y-0.5 transition-transform">
+              <div className="flex items-center justify-between border-b-2 border-brand-navy/15 pb-2">
+                <span className="font-pixel text-[10px] sm:text-[11px] text-brand-navy font-black uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="text-sm">🎮</span> TEAMS IN PLAY
+                </span>
+                <span className="w-2.5 h-2.5 rounded-full bg-brand-green border border-brand-navy animate-pulse" />
               </div>
-            ))}
+              <div className="my-2.5">
+                <span className="font-pixel text-2xl sm:text-3xl font-black text-brand-navy tabular-nums block">
+                  {activeTeams.length}/{snapshot.teams.length}
+                </span>
+              </div>
+              <span className="font-mono text-[10px] sm:text-xs text-neutral-500 block truncate font-bold">
+                {snapshot.teams.length - activeTeams.length > 0
+                  ? `${snapshot.teams.length - activeTeams.length} bankrupt`
+                  : 'All slots active'}
+              </span>
+            </div>
+
+            {/* Card 2: LEADER (TOTAL) */}
+            <div className="bg-brand-white border-3 sm:border-4 border-brand-navy shadow-pixel relative overflow-hidden p-3.5 sm:p-4 flex flex-col justify-between hover:-translate-y-0.5 transition-transform ring-2 ring-brand-gold/60">
+              <div className="flex items-center justify-between border-b-2 border-brand-navy/15 pb-2">
+                <span className="font-pixel text-[10px] sm:text-[11px] text-brand-navy font-black uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="text-sm">👑</span> LEADER (TOTAL)
+                </span>
+                <span className="font-pixel text-[9px] bg-brand-gold text-brand-navy px-1.5 py-0.5 border border-brand-navy font-bold">
+                  RANK #1
+                </span>
+              </div>
+              <div className="my-2.5">
+                <span className="font-pixel text-xl sm:text-2xl font-black text-brand-navy truncate block">
+                  {leader ? leader.name : '—'}
+                </span>
+              </div>
+              <span
+                className="font-mono text-[10px] sm:text-xs text-neutral-600 block truncate font-bold"
+                title={leader ? `₹${(leader.cash + leader.cv).toLocaleString('en-IN')} (Cash: ₹${leader.cash.toLocaleString('en-IN')} + CV: ₹${leader.cv.toLocaleString('en-IN')})` : ''}
+              >
+                {leader
+                  ? `₹${(leader.cash + leader.cv).toLocaleString('en-IN')} (Cash: ₹${leader.cash.toLocaleString('en-IN')} + CV: ₹${leader.cv.toLocaleString('en-IN')})`
+                  : 'No active teams'}
+              </span>
+            </div>
+
+            {/* Card 3: CASH IN PLAY */}
+            <div className="bg-brand-white border-3 sm:border-4 border-brand-navy shadow-pixel relative overflow-hidden p-3.5 sm:p-4 flex flex-col justify-between hover:-translate-y-0.5 transition-transform">
+              <div className="flex items-center justify-between border-b-2 border-brand-navy/15 pb-2">
+                <span className="font-pixel text-[10px] sm:text-[11px] text-brand-navy font-black uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="text-sm">🪙</span> CASH IN PLAY
+                </span>
+                <span className="font-mono text-[9px] bg-status-success-bg text-brand-green px-1.5 py-0.5 border border-brand-green font-bold">
+                  LIQUID
+                </span>
+              </div>
+              <div className="my-2.5">
+                <span className="font-pixel text-2xl sm:text-3xl font-black text-brand-green tabular-nums block">
+                  ₹{totalCash.toLocaleString('en-IN')}
+                </span>
+              </div>
+              <span className="font-mono text-[10px] sm:text-xs text-neutral-500 block truncate font-bold">
+                all teams
+              </span>
+            </div>
+
+            {/* Card 4: BUSINESSES OWNED */}
+            <div className="bg-brand-white border-3 sm:border-4 border-brand-navy shadow-pixel relative overflow-hidden p-3.5 sm:p-4 flex flex-col justify-between hover:-translate-y-0.5 transition-transform">
+              <div className="flex items-center justify-between border-b-2 border-brand-navy/15 pb-2">
+                <span className="font-pixel text-[10px] sm:text-[11px] text-brand-navy font-black uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="text-sm">🏢</span> BUSINESSES OWNED
+                </span>
+                <span className="font-mono text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 border border-purple-400 font-bold">
+                  ASSETS
+                </span>
+              </div>
+              <div className="my-2.5">
+                <span className="font-pixel text-2xl sm:text-3xl font-black text-brand-navy tabular-nums block">
+                  {totalBusinesses}
+                </span>
+              </div>
+              <span className="font-mono text-[10px] sm:text-xs text-neutral-500 block truncate font-bold">
+                across all teams
+              </span>
+            </div>
           </section>
 
           <TeamGrid
@@ -654,6 +952,11 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               setIsCardOpen(true);
             }}
             onOpenLoseFeature={() => setIsLoseFeatureOpen(true)}
+            onOpenPitchTimer={() => setIsPitchTimerOpen(true)}
+            onOpenWildcard={() => setIsWildcardOpen(true)}
+            onUndo={handleUndo}
+            canUndo={Boolean(lastUndoableAction)}
+            lastUndoLabel={lastUndoableAction?.label}
           />
 
           <TeamEditor
@@ -813,6 +1116,34 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         isTimeExpired={isTimeExpired}
         onSellBusiness={handleForcedSaleBusiness}
         onDeclareBankrupt={handleDeclareBankrupt}
+      />
+
+      {/* PITCH TIMER & WILDCARD MODALS */}
+      <PitchTimerModal
+        isOpen={isPitchTimerOpen}
+        onClose={() => setIsPitchTimerOpen(false)}
+        teamName={selectedTeam?.name}
+      />
+
+      <WildcardModal
+        isOpen={isWildcardOpen}
+        onClose={() => setIsWildcardOpen(false)}
+        teamName={selectedTeam?.name}
+      />
+
+      {/* TIME OVER MODAL: EXTEND +10 MINS OR FINALIZE */}
+      <TimeOverModal
+        isOpen={isTimeOverModalOpen}
+        onClose={() => setIsTimeOverModalOpen(false)}
+        snapshot={snapshot}
+        standings={standings}
+        hasUnresolvedTie={hasUnresolvedTie}
+        onExtendTenMinutes={handleExtendTenMinutes}
+        onOpenFinalize={() => {
+          setIsTimeOverModalOpen(false);
+          document.getElementById('finalize-panel')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        isExtending={isExtendingTime}
       />
 
       {/* Abort Game Confirmation Modal */}

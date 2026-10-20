@@ -25,6 +25,7 @@ export type ActivityEventType =
   | 'TIEBREAK_SET'
   | 'TIME_EXPIRED'
   | 'GAME_FINALIZED'
+  | 'GAME_EXTENDED'
   | 'GAME_ABORTED';
 
 export interface Database {
@@ -568,6 +569,10 @@ export interface Database {
       };
       admin_abort_game: {
         Args: { p_room_id: string; note?: string | null; request_id?: string | null };
+        Returns: Json;
+      };
+      admin_extend_game: {
+        Args: { p_room_id: string; p_additional_seconds?: number; request_id?: string | null };
         Returns: Json;
       };
     };

@@ -29,6 +29,9 @@ const AdminHistoryPage = React.lazy(() =>
 const AdminRoomHistoryPage = React.lazy(() =>
   import('./routes/admin/AdminRoomHistoryPage').then((m) => ({ default: m.AdminRoomHistoryPage }))
 );
+const ArenaPage = React.lazy(() =>
+  import('./routes/arena/ArenaPage').then((m) => ({ default: m.ArenaPage }))
+);
 
 const AppRoutes: React.FC = () => {
   return (
@@ -38,6 +41,8 @@ const AppRoutes: React.FC = () => {
           {/* Public Root */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/rules" element={<RulesPage />} />
+          <Route path="/arena/:roomId" element={<ArenaPage />} />
+          <Route path="/projector/:roomId" element={<ArenaPage />} />
 
           {/* Team Routes (Mobile-first, instantly loaded) */}
           <Route path="/join" element={<TeamJoinPage />} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PixelCoin } from '../../ui/pixel';
+import { sounds } from '../../lib/sound';
 
 export interface Burst {
   id: number;
@@ -44,6 +45,7 @@ export const TapCoinBurst: React.FC<TapCoinBurstProps> = ({ isBooting = false })
         return;
       }
       lastTapRef.current = now;
+      sounds.playCoin();
 
       // 6. Cap concurrent bursts to max 3
       const newBurst: Burst = {

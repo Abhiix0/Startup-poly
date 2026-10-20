@@ -29,29 +29,47 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
   onRemoveBusinessClick,
   onOpenBankruptModal,
 }) => {
+  const totalValuation = team.cash + team.cv;
+
   return (
-    <div className="bg-brand-cream border-4 border-brand-navy shadow-pixel flex flex-col overflow-hidden w-full">
-      {/* Team Header Banner */}
-      <div
-        className="p-3 border-b-4 border-brand-navy flex flex-wrap items-center justify-between gap-2 bg-brand-navy text-brand-white"
-      >
-        <div className="flex items-center gap-2.5">
+    <div className="bg-brand-white border-4 border-brand-navy shadow-pixel flex flex-col overflow-hidden w-full">
+      {/* Team Header Banner with Arcade Accent */}
+      <div className="p-3 sm:p-3.5 border-b-4 border-brand-navy flex flex-wrap items-center justify-between gap-3 bg-brand-navy text-brand-white">
+        <div className="flex items-center gap-3 min-w-0">
           <span
-            className="w-4 h-4 border-2 border-white flex-shrink-0"
+            className="w-5 h-5 border-2 border-white flex-shrink-0 shadow-pixel-sm"
             style={{ backgroundColor: team.color }}
           />
-          <h2 className="font-pixel text-xs sm:text-sm uppercase tracking-wider truncate">
+          <h2 className="font-pixel text-xs sm:text-base uppercase tracking-wider truncate font-black text-brand-white">
             SLOT #{team.slot}: {team.name}
           </h2>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="bg-neutral-800 text-neutral-400 px-2 py-0.5 border border-white/20">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="font-pixel text-xs sm:text-sm bg-brand-gold text-brand-navy px-2.5 py-1 border-2 border-brand-navy shadow-pixel-sm font-black flex items-center gap-1.5">
+            <span className="text-xs">🏆</span>
+            <span>TOTAL: ₹{totalValuation.toLocaleString('en-IN')}</span>
+          </div>
+
+          <span
+            title={team.claimed ? 'Team phone connected live' : 'Waiting for team device to claim'}
+            className="font-pixel text-[10px] text-brand-navy bg-brand-white px-2 py-1 border-2 border-brand-navy shadow-pixel-sm flex items-center gap-1.5 font-bold"
+          >
+            <span
+              className={`w-2 h-2 rounded-full border border-brand-navy ${
+                team.claimed ? 'bg-brand-green animate-pulse' : 'bg-neutral-400'
+              }`}
+            />
+            {team.claimed ? 'CLAIMED' : 'UNCLAIMED'}
+          </span>
+
+          <span className="font-mono text-xs bg-neutral-800 text-neutral-300 px-2 py-0.5 border border-white/20">
             v{team.version}
           </span>
+
           {team.is_bankrupt && (
-            <span className="bg-brand-red text-brand-white font-pixel text-[10px] px-2 py-0.5 border border-white">
-              BANKRUPT
+            <span className="bg-brand-red text-brand-white font-pixel text-[10px] px-2 py-1 border-2 border-white shadow-pixel-sm font-bold">
+              ☠ BANKRUPT
             </span>
           )}
         </div>

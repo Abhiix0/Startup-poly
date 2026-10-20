@@ -42,7 +42,7 @@ export const Podium: React.FC<PodiumProps> = ({
               {second.name}
             </span>
             <span className="font-mono font-bold text-[11px] sm:text-xs text-status-info-dark">
-              ₹{second.cv.toLocaleString('en-IN')} CV
+              ₹{(second.cash + second.cv).toLocaleString('en-IN')} TOTAL
             </span>
           </div>
 
@@ -80,8 +80,8 @@ export const Podium: React.FC<PodiumProps> = ({
             <span className="font-pixel text-xs sm:text-sm text-brand-navy block truncate font-bold">
               {first.name}
             </span>
-            <span className="font-mono font-extrabold text-xs sm:text-sm text-brand-green">
-              ₹{first.cv.toLocaleString('en-IN')} CV
+            <span className="font-mono font-black text-xs sm:text-sm text-brand-green">
+              ₹{(first.cash + first.cv).toLocaleString('en-IN')} TOTAL
             </span>
           </div>
 
@@ -114,7 +114,7 @@ export const Podium: React.FC<PodiumProps> = ({
               {third.name}
             </span>
             <span className="font-mono font-bold text-[11px] sm:text-xs text-status-info-dark">
-              ₹{third.cv.toLocaleString('en-IN')} CV
+              ₹{(third.cash + third.cv).toLocaleString('en-IN')} TOTAL
             </span>
           </div>
 

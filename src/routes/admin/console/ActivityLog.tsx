@@ -47,7 +47,7 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ events, teams, collaps
   }, [events, filter, teamFilter]);
 
   return (
-    <div className="bg-brand-cream border-4 border-brand-navy shadow-pixel flex flex-col h-full overflow-hidden">
+    <div className="bg-brand-white border-4 border-brand-navy shadow-pixel flex flex-col h-full overflow-hidden">
       {/* Header & Filter Controls */}
       <div className="bg-brand-navy text-white p-3 border-b-4 border-brand-navy flex flex-col gap-2">
         <div className="flex items-center justify-between">

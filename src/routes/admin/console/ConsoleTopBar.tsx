@@ -13,6 +13,8 @@ export interface ConsoleTopBarProps {
   onRefetch?: () => void;
   isRefetching?: boolean;
   onAbortGame?: () => void;
+  onExtendTenMinutes?: () => void;
+  isExtendingTime?: boolean;
 }
 
 export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
@@ -25,48 +27,74 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
   onRefetch,
   isRefetching = false,
   onAbortGame,
+  onExtendTenMinutes,
+  isExtendingTime = false,
 }) => {
   return (
-    <header className="bg-brand-navy text-white border-b-4 border-brand-navy px-4 py-3 flex flex-wrap items-center justify-between gap-4 shadow-pixel">
-      {/* Left section: Back navigation & Room status */}
+    <header className="bg-brand-navy text-white border-b-4 border-brand-navy px-4 py-3 flex flex-wrap items-center justify-between gap-4 shadow-pixel select-none">
+      {/* Left section: Navigation & Room Badge */}
       <div className="flex items-center gap-3">
         <Link
           to="/admin"
-          className="font-pixel text-xs text-brand-gold hover:underline flex items-center gap-1"
+          className="font-pixel text-xs text-brand-gold hover:underline flex items-center gap-1.5 transition-colors"
         >
-          ◄ CONSOLE
+          <span>◄</span> CONSOLE
         </Link>
         <div className="border-l-2 border-white/20 pl-3 flex items-center gap-2">
-          <span className="font-pixel text-xs text-white">ROOM {roomCode}</span>
+          <span className="font-pixel text-xs text-brand-gold tracking-wider">
+            ROOM {roomCode}
+          </span>
           <StatusPill status={status} size="sm" />
         </div>
-        {onAbortGame && (
+        {onAbortGame && status === 'ACTIVE' && (
           <div className="border-l-2 border-white/20 pl-3">
             <button
+              type="button"
               onClick={onAbortGame}
-              className="font-pixel text-[10px] bg-brand-red text-white px-3 py-1.5 border-2 border-white/30 hover:bg-interactive-red-hover active:translate-y-0.5 transition-colors cursor-pointer uppercase tracking-wider"
+              className="font-pixel text-[10px] bg-brand-red text-white px-2.5 py-1 border-2 border-white/30 hover:bg-interactive-red-hover active:translate-y-0.5 transition-colors cursor-pointer uppercase tracking-wider"
               title="Abort game and return to lobby"
             >
-              ✕ ABORT GAME
+              ✕ ABORT
             </button>
           </div>
         )}
       </div>
 
-      {/* Center section: Authoritative Server-Clock Countdown */}
-      <div className="flex flex-col items-center justify-center">
-        <Countdown
-          endsAt={endsAt}
-          status={status}
-          serverNow={serverNow}
-          size="lg"
-          showLabel={false}
-          className="scale-90 sm:scale-100"
-        />
-        {status === 'TIME_EXPIRED' && (
-          <span className="font-pixel text-[8px] sm:text-[9px] text-brand-gold mt-1 tracking-wider uppercase drop-shadow-[1px_1px_0px_rgba(0,0,0,1)]">
-            TIME UP · SCORES FROZEN
-          </span>
+      {/* Center section: Authoritative Server-Clock Countdown & Extra Time Action */}
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center justify-center bg-black/30 border-2 border-brand-gold/40 px-3.5 py-1 shadow-inner">
+          <Countdown
+            endsAt={endsAt}
+            status={status}
+            serverNow={serverNow}
+            size="lg"
+            showLabel={false}
+            className="scale-90 sm:scale-100"
+          />
+          {status === 'TIME_EXPIRED' && (
+            <span className="font-pixel text-[8px] sm:text-[9px] text-brand-gold tracking-wider uppercase drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] animate-pulse">
+              TIME UP · SCORES FROZEN
+            </span>
+          )}
+        </div>
+
+        {/* Quick +10m Extra Time Button */}
+        {onExtendTenMinutes && (status === 'ACTIVE' || status === 'TIME_EXPIRED') && (
+          <button
+            type="button"
+            disabled={isExtendingTime}
+            onClick={onExtendTenMinutes}
+            title="Add 10 minutes of extra time to this match"
+            className="
+              font-pixel text-[10px] bg-brand-green text-white px-2.5 py-1.5
+              border-2 border-brand-navy shadow-pixel-sm hover:bg-interactive-green-hover
+              active:translate-y-0.5 cursor-pointer flex items-center gap-1 font-bold uppercase transition-all
+              disabled:opacity-50 disabled:cursor-not-allowed
+            "
+          >
+            <span>⚡</span>
+            <span>{isExtendingTime ? '+10M...' : '+10M TIME'}</span>
+          </button>
         )}
       </div>
 
@@ -78,10 +106,11 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
         <ConnectionPill status={connection} lastUpdated={lastUpdated} />
         {onRefetch && (
           <button
+            type="button"
             onClick={onRefetch}
             disabled={isRefetching}
             title="Refresh snapshot now"
-            className="w-8 h-8 flex items-center justify-center bg-brand-cream text-brand-navy border-2 border-brand-navy font-pixel text-xs hover:bg-brand-gold transition-colors cursor-pointer disabled:opacity-50 active:translate-y-0.5"
+            className="w-8 h-8 flex items-center justify-center bg-brand-cream text-brand-navy border-2 border-brand-navy font-pixel text-xs hover:bg-brand-gold transition-colors cursor-pointer disabled:opacity-50 active:translate-y-0.5 shadow-pixel-sm"
           >
             {isRefetching ? '…' : '↻'}
           </button>
@@ -90,4 +119,3 @@ export const ConsoleTopBar: React.FC<ConsoleTopBarProps> = ({
     </header>
   );
 };
-

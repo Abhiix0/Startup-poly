@@ -138,6 +138,15 @@ export async function rpcAdminAbortGame(room_id: string, note: string) {
   return mutate<any>('admin_abort_game', { p_room_id: room_id, note });
 }
 
+export async function rpcAdminExtendGame(room_id: string, additional_seconds = 600) {
+  return mutate<{
+    room_id: string;
+    status: string;
+    ends_at: string;
+    duration_seconds: number;
+  }>('admin_extend_game', { p_room_id: room_id, p_additional_seconds: additional_seconds });
+}
+
 // 4. Admin Edits
 export async function rpcAdminSetTeamValues(params: {
   team_id: string;

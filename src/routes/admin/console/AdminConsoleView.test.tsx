@@ -15,6 +15,7 @@ vi.mock('../../../data/rpc', async () => {
     rpcAdminRemoveBusiness: vi.fn(),
     rpcAdminSetBankrupt: vi.fn(),
     rpcAdminAbortGame: vi.fn(),
+    rpcAdminExtendGame: vi.fn(),
   };
 });
 
@@ -410,6 +411,33 @@ describe('AdminConsoleView', () => {
 
     await waitFor(() => {
       expect(screen.getAllByText(/NOTE_REQUIRED/i).length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it('displays TimeOverModal when status is TIME_EXPIRED and handles extending 10 minutes', async () => {
+    vi.mocked(rpcModule.rpcAdminExtendGame).mockResolvedValue({} as any);
+
+    const expiredSnapshot: rpcModule.AdminRoomSnapshot = {
+      ...mockSnapshot,
+      room: {
+        ...mockSnapshot.room,
+        status: 'TIME_EXPIRED',
+      },
+    };
+
+    renderComponent({ snapshot: expiredSnapshot });
+
+    // Expect Game Over indicator
+    expect(screen.getAllByText(/GAME OVER/i).length).toBeGreaterThanOrEqual(1);
+
+    // Expect Extend Time button in modal or banner
+    const extendBtn = screen.getAllByRole('button', { name: /\+10 MINS/i })[0];
+    expect(extendBtn).toBeInTheDocument();
+
+    fireEvent.click(extendBtn);
+
+    await waitFor(() => {
+      expect(rpcModule.rpcAdminExtendGame).toHaveBeenCalledWith('room-1', 600);
     });
   });
 });

@@ -119,23 +119,38 @@ export const ValueEditor: React.FC<ValueEditorProps> = ({
     }
   };
 
-  return (
-    <div className="bg-white border-3 border-brand-navy p-3 shadow-pixel-sm flex items-center justify-between gap-3">
-      <div className="min-w-0">
-        <span className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy block">{label}</span>
-        <span className="font-tabular text-2xl font-black text-brand-navy tabular-nums block truncate">
-          {unit}{currentValue.toLocaleString('en-IN')}
-        </span>
-      </div>
-      <PixelButton
-        variant="secondary"
-        size="sm"
-        disabled={disabled}
-        aria-label={`Adjust ${label}`}
-        onClick={() => setIsOpen(true)}
+    const isCash = label.toLowerCase().includes('cash');
+
+    return (
+      <div
+        className={`
+          bg-brand-white border-3 sm:border-4 border-brand-navy p-3.5 sm:p-4 shadow-pixel
+          flex items-center justify-between gap-3 transition-transform hover:-translate-y-0.5
+          border-l-8 ${isCash ? 'border-l-brand-green' : 'border-l-sky-600'}
+        `}
       >
-        ADJUST
-      </PixelButton>
+        <div className="min-w-0">
+          <span className="font-pixel text-[10px] sm:text-[11px] uppercase tracking-wider text-neutral-500 font-bold block flex items-center gap-1.5">
+            <span>{isCash ? '🪙' : '📈'}</span>
+            <span>{label}</span>
+          </span>
+          <span
+            className={`font-tabular text-2xl sm:text-3xl font-black tabular-nums block truncate ${
+              isCash ? 'text-brand-green' : 'text-sky-800'
+            }`}
+          >
+            {unit}{currentValue.toLocaleString('en-IN')}
+          </span>
+        </div>
+        <PixelButton
+          variant="secondary"
+          size="sm"
+          disabled={disabled}
+          aria-label={`Adjust ${label}`}
+          onClick={() => setIsOpen(true)}
+        >
+          ADJUST
+        </PixelButton>
 
       <Modal
         isOpen={isOpen}
