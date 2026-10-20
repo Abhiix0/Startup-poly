@@ -59,7 +59,10 @@ SELECT is(
 );
 
 -- Test extending when TIME_EXPIRED: force room to TIME_EXPIRED
+RESET ROLE;
 UPDATE public.rooms SET status = 'TIME_EXPIRED', ends_at = public.app_now() - interval '1 second';
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000025", "role": "authenticated"}', true);
 
 -- Host extends expired game by 10 minutes (600s)
 SELECT lives_ok(

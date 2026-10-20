@@ -4,8 +4,32 @@
 -- Works when the room is ACTIVE (adding extra time) or when TIME_EXPIRED (re-activating
 -- the room and pushing ends_at into the future).
 --
+-- 0. Updates activity_events type check constraint to permit GAME_EXTENDED.
 -- 1. Updates fn_check_room_status_transition to allow TIME_EXPIRED -> ACTIVE.
 -- 2. Creates public.admin_extend_game(p_room_id, p_additional_seconds, request_id).
+
+-- 0. Update activity_events type check constraint to permit GAME_EXTENDED
+ALTER TABLE public.activity_events DROP CONSTRAINT IF EXISTS activity_events_type_check;
+ALTER TABLE public.activity_events ADD CONSTRAINT activity_events_type_check CHECK (type IN (
+  'ROOM_CREATED',
+  'TEAM_CONFIGURED',
+  'LOBBY_OPENED',
+  'TEAM_CLAIMED',
+  'TEAM_RELEASED',
+  'GAME_STARTED',
+  'CASH_SET',
+  'CV_SET',
+  'ADJUSTMENT',
+  'BUSINESS_ADDED',
+  'BUSINESS_LEVEL_SET',
+  'BUSINESS_REMOVED',
+  'BANKRUPTCY_SET',
+  'TIEBREAK_SET',
+  'TIME_EXPIRED',
+  'GAME_FINALIZED',
+  'GAME_ABORTED',
+  'GAME_EXTENDED'
+));
 
 -- 1. Update room status transition trigger
 CREATE OR REPLACE FUNCTION public.fn_check_room_status_transition()
