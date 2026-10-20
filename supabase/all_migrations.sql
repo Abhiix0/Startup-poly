@@ -5669,6 +5669,7 @@ DECLARE
   v_status public.room_status;
   v_curr_ver int;
   v_curr_bankrupt boolean;
+  v_curr_cash int;
   v_biz RECORD;
   v_is_correction boolean := false;
 BEGIN
@@ -5686,8 +5687,8 @@ BEGIN
   SELECT status INTO v_status FROM public.rooms WHERE id = v_room_id FOR UPDATE;
 
   -- Team row is locked after the room; columns are re-read under the lock.
-  SELECT t.version, t.is_bankrupt
-  INTO v_curr_ver, v_curr_bankrupt
+  SELECT t.version, t.is_bankrupt, t.cash
+  INTO v_curr_ver, v_curr_bankrupt, v_curr_cash
   FROM public.teams t
   WHERE t.id = team_id AND t.room_id = v_room_id
   FOR UPDATE;
@@ -5759,8 +5760,8 @@ BEGIN
     team_id,
     request_id,
     'BANKRUPTCY_SET',
-    jsonb_build_object('is_bankrupt', v_curr_bankrupt),
-    jsonb_build_object('is_bankrupt', value),
+    jsonb_build_object('is_bankrupt', v_curr_bankrupt, 'cash', v_curr_cash),
+    jsonb_build_object('is_bankrupt', value, 'cash', CASE WHEN value THEN 0 ELSE v_curr_cash END),
     note,
     v_is_correction,
     auth.uid(),
