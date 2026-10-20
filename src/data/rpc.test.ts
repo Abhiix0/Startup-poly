@@ -3,6 +3,7 @@ import { supabase } from './client';
 import {
   rpcAdminSetTeamValues,
   rpcAdminAbortGame,
+  rpcAdminCancelRoom,
   rpcGetStandings,
   rpcAdminFinalize,
   rpcAdminStartGame,
@@ -33,6 +34,19 @@ describe('rpc.ts - RPC Client Wrapper Contract Tests', () => {
       request_id: expect.any(String),
     });
     expect(result).toEqual({ status: 'LOBBY' });
+  });
+
+  it('rpcAdminCancelRoom passes p_room_id and note to admin_cancel_room', async () => {
+    vi.mocked(supabase.rpc as any).mockResolvedValue({ data: { room_id: 'room-123', status: 'FINALIZED', cancelled: true }, error: null });
+
+    const result = await rpcAdminCancelRoom('room-123', 'Cancelled by organizer');
+
+    expect(supabase.rpc).toHaveBeenCalledWith('admin_cancel_room', {
+      p_room_id: 'room-123',
+      note: 'Cancelled by organizer',
+      request_id: expect.any(String),
+    });
+    expect(result).toEqual({ room_id: 'room-123', status: 'FINALIZED', cancelled: true });
   });
 
   it('rpcGetStandings passes p_room_id to match SQL signature', async () => {

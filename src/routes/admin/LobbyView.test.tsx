@@ -1,13 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { LobbyView } from './LobbyView';
 import * as rpcModule from '../../data/rpc';
 import { ToastProvider } from '../../ui';
 import { AdminRoomSnapshot } from '../../data/rpc';
 
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
+
 vi.mock('../../data/rpc', () => ({
   rpcAdminReleaseTeam: vi.fn(),
   rpcAdminStartGame: vi.fn(),
+  rpcAdminCancelRoom: vi.fn(),
 }));
 
 describe('LobbyView', () => {
@@ -106,16 +117,18 @@ describe('LobbyView', () => {
     const onRefetch = vi.fn().mockResolvedValue(undefined);
     const utils = render(
       <ToastProvider>
-        <LobbyView snapshot={snapshot} onRefetch={onRefetch} />
+        <MemoryRouter>
+          <LobbyView snapshot={snapshot} onRefetch={onRefetch} />
+        </MemoryRouter>
       </ToastProvider>
     );
     return { ...utils, onRefetch };
   };
 
-  it('renders huge room code and team PINs', () => {
+  it('renders room code and team PINs', () => {
     renderComponent();
 
-    expect(screen.getByText('ABC890')).toBeInTheDocument();
+    expect(screen.getAllByText('ABC890').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('1111')).toBeInTheDocument();
     expect(screen.getByText('2222')).toBeInTheDocument();
     expect(screen.getByText('Claimed').nextSibling).toHaveTextContent('1');
@@ -190,6 +203,30 @@ describe('LobbyView', () => {
 
     await waitFor(() => {
       expect(rpcModule.rpcAdminStartGame).toHaveBeenCalledWith('room-lobby-1', false);
+    });
+  });
+
+  it('opens discard match modal and calls rpcAdminCancelRoom on confirm', async () => {
+    vi.mocked(rpcModule.rpcAdminCancelRoom).mockResolvedValue({
+      room_id: 'room-lobby-1',
+      status: 'FINALIZED',
+      cancelled: true,
+    } as any);
+
+    renderComponent();
+
+    const discardBtn = screen.getByRole('button', { name: /DISCARD MATCH/i });
+    fireEvent.click(discardBtn);
+
+    expect(screen.getByText(/DISCARD \/ CANCEL MATCH/i)).toBeInTheDocument();
+    expect(screen.getByText(/close the lobby, release all/i)).toBeInTheDocument();
+
+    const confirmDiscardBtn = screen.getByRole('button', { name: /YES, DISCARD MATCH/i });
+    fireEvent.click(confirmDiscardBtn);
+
+    await waitFor(() => {
+      expect(rpcModule.rpcAdminCancelRoom).toHaveBeenCalledWith('room-lobby-1', expect.any(String));
+      expect(mockNavigate).toHaveBeenCalledWith('/admin');
     });
   });
 });

@@ -21,6 +21,7 @@ INSERT INTO exp_tables VALUES
 CREATE TEMP TABLE exp_funcs (f text PRIMARY KEY, anon_x bool, auth_x bool) ON COMMIT DROP;
 INSERT INTO exp_funcs VALUES
   ('admin_abort_game', false, true), ('admin_add_business', false, true), ('admin_adjust', false, true),
+  ('admin_cancel_room', false, true),
   ('admin_create_room', false, true), ('admin_extend_game', false, true), ('admin_finalize', false, true), ('admin_open_lobby', false, true),
   ('admin_release_team', false, true), ('admin_remove_business', false, true), ('admin_set_bankrupt', false, true),
   ('admin_set_business_level', false, true), ('admin_set_team_values', false, true), ('admin_set_tiebreak', false, true),

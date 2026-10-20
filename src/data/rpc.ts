@@ -138,6 +138,14 @@ export async function rpcAdminAbortGame(room_id: string, note: string) {
   return mutate<any>('admin_abort_game', { p_room_id: room_id, note });
 }
 
+export async function rpcAdminCancelRoom(room_id: string, note = 'Cancelled by organizer') {
+  return mutate<{
+    room_id: string;
+    status: string;
+    cancelled: boolean;
+  }>('admin_cancel_room', { p_room_id: room_id, note });
+}
+
 export async function rpcAdminExtendGame(room_id: string, additional_seconds = 600) {
   return mutate<{
     room_id: string;

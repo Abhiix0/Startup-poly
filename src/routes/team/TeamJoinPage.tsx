@@ -111,6 +111,7 @@ export const TeamJoinPage: React.FC = () => {
       }, 600);
     } catch (err: any) {
       let message = "Code, team or PIN didn't match";
+      console.error('[Startupoly Join Error]', err);
       if (
         err?.code === 'anonymous_provider_disabled' ||
         err?.error_code === 'anonymous_provider_disabled' ||
@@ -119,18 +120,18 @@ export const TeamJoinPage: React.FC = () => {
           err.message.includes('anonymous_provider_disabled')
         ))
       ) {
-        message = 'Anonymous sign-ins are disabled in Supabase. Please enable "Anonymous sign-ins" in your Supabase Dashboard under Authentication -> Providers.';
+        message = 'Match service temporarily unavailable. Please ask the organizer to check room setup.';
       } else if (err?.code === 'TOO_MANY_ATTEMPTS') {
         const wait = err?.detail?.retry_after_seconds;
         message = typeof wait === 'number' ? `Too many tries — wait ${wait} seconds` : 'Too many tries — wait a minute';
       } else if (err?.code === 'TEAM_ALREADY_CLAIMED') {
-        message = 'This team is already connected. Ask the organiser to release it before rejoining.';
+        message = 'This team is already connected. Ask the organizer to release it before rejoining.';
       } else if (err?.code === 'BAD_CODE_OR_PIN' || err?.message === 'BAD_CODE_OR_PIN') {
         message = "Code, team or PIN didn't match";
       } else if (isNetworkError(err)) {
         message = 'Unable to reach the match server. Check your connection and try again.';
-      } else if (err?.message && err?.name !== 'AppError') {
-        message = err.message;
+      } else {
+        message = "Code, team or PIN didn't match";
       }
       setErrorMessage(message);
       errorToast(message);

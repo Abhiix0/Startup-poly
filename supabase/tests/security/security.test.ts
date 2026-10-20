@@ -18,6 +18,7 @@ const uuid = () => crypto.randomUUID();
 // Exact named parameters: PostgREST resolves an RPC by name + argument names (a mismatch is PGRST202, not a security result).
 const ADMIN_RPC_PARAMS: Record<string, string[]> = {
   admin_abort_game: ['p_room_id', 'note', 'request_id'],
+  admin_cancel_room: ['p_room_id', 'note', 'request_id'],
   admin_add_business: ['team_id', 'business_key', 'apply_purchase', 'expected_version', 'request_id', 'note'],
   admin_adjust: ['changes', 'label', 'note', 'request_id'],
   admin_create_room: ['team_count', 'teams'],

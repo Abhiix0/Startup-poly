@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { PixelButton, PixelCard, StatusPill, TextField, Modal, useToast } from '../../ui';
 import { TEAM_COLOR_PALETTE } from '../../domain/teams';
-import { rpcAdminUpdateTeamConfig, rpcAdminOpenLobby, rpcRoomStatus, AdminRoomSnapshot } from '../../data/rpc';
+import { rpcAdminUpdateTeamConfig, rpcAdminOpenLobby, rpcAdminCancelRoom, rpcRoomStatus, AdminRoomSnapshot } from '../../data/rpc';
 import { lifecycleAlreadyDone } from '../../lib/lifecycle';
 
 interface SetupViewProps {
@@ -11,6 +12,7 @@ interface SetupViewProps {
 
 export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => {
   const { room, teams } = snapshot;
+  const navigate = useNavigate();
 
   // Local state for editing teams
   const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
@@ -21,6 +23,10 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
   // Modal for Open Lobby confirmation
   const [showOpenLobbyModal, setShowOpenLobbyModal] = useState(false);
   const [isOpeningLobby, setIsOpeningLobby] = useState(false);
+
+  // Modal for Discard/Cancel match confirmation
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const { successToast, errorToast } = useToast();
 
@@ -74,35 +80,68 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
     }
   };
 
+  const handleCancelRoom = async () => {
+    if (isCancelling) return;
+    try {
+      setIsCancelling(true);
+      await rpcAdminCancelRoom(room.id, 'Setup discarded by organizer');
+      successToast('Match room discarded.');
+      setShowCancelModal(false);
+      navigate('/admin');
+    } catch (err: any) {
+      errorToast(err.message || 'Failed to discard room.');
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
   const nameError =
     editingTeamId && draftName.trim().length === 0 ? 'Team name is required (1 to 30 characters).' : undefined;
   const createdAt = new Date(room.created_at);
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Introduction */}
-      <section aria-labelledby="setup-heading" className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="font-pixel text-[11px] uppercase tracking-widest text-brand-navy bg-brand-gold border-2 border-brand-navy px-2 py-0.5">
-            STARTUPOLY · ADMIN
-          </span>
-          <span className="font-pixel text-[11px] uppercase tracking-widest text-brand-navy">
-            ROOM {room.code}
-          </span>
-          <StatusPill status={room.status} size="sm" />
+      {/* Structured Breadcrumbs & Header Bar */}
+      <section aria-labelledby="setup-heading" className="bg-brand-white border-3 border-brand-navy p-4 shadow-pixel flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-brand-navy pb-3">
+          <div className="flex items-center gap-2">
+            <Link
+              to="/admin"
+              className="font-pixel text-xs text-brand-navy hover:text-brand-brick hover:underline flex items-center gap-1 font-bold"
+            >
+              ◄ CONSOLE
+            </Link>
+            <span className="text-neutral-400 font-mono">/</span>
+            <span className="font-pixel text-xs text-brand-navy bg-brand-gold border border-brand-navy px-2 py-0.5">
+              ROOM {room.code}
+            </span>
+            <StatusPill status={room.status} size="sm" />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <PixelButton
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCancelModal(true)}
+              className="text-xs text-status-danger-dark border-status-danger-base hover:bg-status-danger-bg"
+              title="Discard this match room and start over"
+            >
+              ✕ DISCARD MATCH
+            </PixelButton>
+          </div>
         </div>
+
         <div>
-          <h1 id="setup-heading" className="font-pixel text-2xl sm:text-3xl font-extrabold text-brand-navy">
-            Match Setup
+          <h1 id="setup-heading" className="font-pixel text-xl sm:text-2xl font-extrabold text-brand-navy tracking-tight">
+            Match Setup & Team Roster
           </h1>
-          <p className="font-mono text-sm text-brand-navy mt-1 max-w-2xl">
-            Review team names and colors below before opening the lobby. Once opened, players can
-            enter the room code on their phones.
+          <p className="font-mono text-xs sm:text-sm text-neutral-600 mt-0.5">
+            Review and customize team names and colors below. When ready, open the lobby so players can connect their phones.
           </p>
         </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
         {/* Configuration: Team Roster */}
         <PixelCard title="TEAM ROSTER & COLOR ASSIGNMENTS" headerBg="brick" padding="md">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -120,73 +159,79 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
                 >
                   {isEditing ? (
                     <form
-                      className="flex flex-col gap-3"
                       onSubmit={(e) => {
                         e.preventDefault();
-                        if (!isSavingTeam) handleSaveTeam(team.id);
+                        handleSaveTeam(team.id);
                       }}
+                      className="flex flex-col gap-3"
                     >
                       <div className="flex items-center justify-between border-b-2 border-brand-navy pb-2">
-                        <span className="font-pixel text-xs text-brand-navy">
-                          EDIT SLOT #{team.slot}
+                        <span className="font-pixel text-xs text-brand-navy font-bold">
+                          EDITING SLOT #{team.slot}
                         </span>
+                        <span
+                          className="w-4 h-4 rounded-sm border-2 border-brand-navy"
+                          style={{ backgroundColor: draftColor }}
+                        />
                       </div>
 
                       <TextField
+                        id={`team-name-${team.id}`}
                         label="Team Name"
                         value={draftName}
                         onChange={(e) => setDraftName(e.target.value)}
-                        maxLength={30}
-                        disabled={isSavingTeam}
                         error={nameError}
-                        helperText={`${draftName.length}/30`}
-                        autoFocus
+                        maxLength={30}
+                        required
+                        disabled={isSavingTeam}
                       />
 
-                      <div role="group" aria-label="Select Color">
-                        <span className="font-pixel text-[10px] uppercase text-brand-navy block mb-1">
+                      <div>
+                        <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy block mb-1">
                           Select Color
-                        </span>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {TEAM_COLOR_PALETTE.map((c) => {
-                            const inUse = isColorInUse(c.hex);
-                            const isSelected = draftColor.toUpperCase() === c.hex.toUpperCase();
-
+                        </label>
+                        <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 p-2 bg-brand-white border-2 border-brand-navy">
+                          {TEAM_COLOR_PALETTE.map((pal) => {
+                            const taken = isColorInUse(pal.hex);
+                            const selected = draftColor.toUpperCase() === pal.hex.toUpperCase();
                             return (
                               <button
+                                key={pal.hex}
                                 type="button"
-                                key={c.hex}
-                                disabled={inUse || isSavingTeam}
-                                onClick={() => setDraftColor(c.hex)}
-                                aria-label={`${c.hex}${inUse ? ' (used by another team)' : ''}`}
-                                aria-pressed={isSelected}
-                                title={inUse ? 'Used by another team' : c.hex}
-                                className={`
-                                  w-8 h-8 border-2 border-brand-navy cursor-pointer flex items-center justify-center font-pixel text-[9px] text-brand-white
-                                  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy
-                                  ${isSelected ? 'ring-2 ring-brand-navy scale-110 shadow-pixel-sm' : ''}
-                                  ${inUse ? 'opacity-20 cursor-not-allowed' : 'hover:scale-105'}
-                                `}
-                                style={{ backgroundColor: c.hex }}
-                              >
-                                {isSelected ? '✓' : ''}
-                              </button>
+                                onClick={() => !taken && setDraftColor(pal.hex)}
+                                disabled={taken || isSavingTeam}
+                                title={`${pal.name}${taken ? ' (in use)' : ''}`}
+                                className={`w-6 h-6 rounded-sm border-2 transition-transform ${
+                                  selected
+                                    ? 'border-brand-navy scale-110 shadow-pixel-sm z-10'
+                                    : 'border-brand-navy/60 hover:scale-105'
+                                } ${taken ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
+                                style={{ backgroundColor: pal.hex }}
+                              />
                             );
                           })}
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-end gap-2 pt-2">
+                      <div className="flex items-center gap-2 pt-2 border-t border-brand-navy/20">
                         <PixelButton
-                          type="button"
                           variant="ghost"
                           size="sm"
+                          type="button"
                           onClick={handleCancelEdit}
                           disabled={isSavingTeam}
+                          className="flex-1"
                         >
                           CANCEL
                         </PixelButton>
-                        <PixelButton type="submit" variant="primary" size="sm" isLoading={isSavingTeam}>
+                        <PixelButton
+                          variant="primary"
+                          size="sm"
+                          type="submit"
+                          isLoading={isSavingTeam}
+                          disabled={!draftName.trim()}
+                          className="flex-1"
+                        >
                           SAVE
                         </PixelButton>
                       </div>
@@ -196,7 +241,7 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
                       <div className="flex items-center justify-between border-b-2 border-brand-navy pb-2 mb-2">
                         <div className="flex items-center gap-2">
                           <span
-                            className="w-4 h-4 border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)]"
+                            className="w-4 h-4 rounded-sm border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)]"
                             style={{ backgroundColor: team.color }}
                           />
                           <span className="font-pixel text-xs text-brand-navy">
@@ -252,8 +297,8 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
 
           <PixelCard variant="gold" padding="md">
             <div className="flex flex-col gap-3">
-              <p className="font-mono text-xs text-brand-navy">
-                Opening the lobby makes the room code active for player phones.
+              <p className="font-mono text-xs text-brand-navy font-bold">
+                Ready to invite players? Open the lobby to activate the room code.
               </p>
               {editingTeamId && (
                 <p role="status" className="font-mono text-xs text-status-warning-text font-semibold">
@@ -264,8 +309,8 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
                 variant="primary"
                 size="lg"
                 onClick={() => setShowOpenLobbyModal(true)}
-                disabled={isSavingTeam || isOpeningLobby}
-                className="w-full"
+                disabled={isSavingTeam || isOpeningLobby || isCancelling}
+                className="w-full font-pixel text-sm py-3"
               >
                 OPEN LOBBY NOW
               </PixelButton>
@@ -309,6 +354,42 @@ export const SetupView: React.FC<SetupViewProps> = ({ snapshot, onRefetch }) => 
               ★ Once the lobby opens, the 6-character room code becomes active for player phones.
               Each team can enter their designated 4-digit PIN to connect.
             </p>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Confirmation Modal to Discard Room */}
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        title="DISCARD / CANCEL MATCH"
+        footer={
+          <>
+            <PixelButton
+              variant="ghost"
+              size="md"
+              onClick={() => setShowCancelModal(false)}
+              disabled={isCancelling}
+            >
+              KEEP MATCH
+            </PixelButton>
+            <PixelButton
+              variant="danger"
+              size="md"
+              onClick={handleCancelRoom}
+              isLoading={isCancelling}
+            >
+              YES, DISCARD MATCH
+            </PixelButton>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <p className="font-mono text-sm leading-relaxed text-brand-navy">
+            Are you sure you want to discard <strong>Room {room.code}</strong>?
+          </p>
+          <div className="bg-status-danger-bg border-2 border-brand-navy p-3 text-xs text-status-danger-dark font-mono">
+            ⚠ This will close the setup session and return you to the Admin Console to create a fresh match.
           </div>
         </div>
       </Modal>

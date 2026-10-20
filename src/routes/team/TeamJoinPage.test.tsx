@@ -185,7 +185,7 @@ describe('TeamJoinPage', () => {
     fireEvent.click(connectBtn);
 
     await waitFor(() => {
-      const anonElements = screen.getAllByText(/Anonymous sign-ins are disabled in Supabase/i);
+      const anonElements = screen.getAllByText(/Match service temporarily unavailable/i);
       expect(anonElements.length).toBeGreaterThanOrEqual(1);
     });
   });

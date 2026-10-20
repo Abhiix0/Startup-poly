@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { PixelButton, PixelCard, StatusPill, Modal, useToast } from '../../ui';
-import { rpcAdminReleaseTeam, rpcAdminStartGame, rpcRoomStatus, AdminRoomSnapshot } from '../../data/rpc';
+import { rpcAdminReleaseTeam, rpcAdminStartGame, rpcAdminCancelRoom, rpcRoomStatus, AdminRoomSnapshot } from '../../data/rpc';
 import { lifecycleAlreadyDone } from '../../lib/lifecycle';
 
 interface LobbyViewProps {
@@ -10,6 +11,7 @@ interface LobbyViewProps {
 
 export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => {
   const { room, teams } = snapshot;
+  const navigate = useNavigate();
 
   // Release modal state
   const [releasingTeam, setReleasingTeam] = useState<(typeof teams)[0] | null>(null);
@@ -19,11 +21,43 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
   const [showStartModal, setShowStartModal] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
+  // Cancel room modal state
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  // Copy feedback state
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
   const { successToast, errorToast } = useToast();
 
   const joinedTeams = teams.filter((t) => t.claimed);
   const unjoinedTeams = teams.filter((t) => !t.claimed);
   const allJoined = unjoinedTeams.length === 0;
+  const progressPercent = Math.round((joinedTeams.length / (teams.length || 1)) * 100);
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(room.code);
+      setCopiedCode(true);
+      successToast(`Room code ${room.code} copied!`);
+      setTimeout(() => setCopiedCode(false), 2000);
+    } catch {
+      errorToast('Failed to copy code to clipboard.');
+    }
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      const joinUrl = `${window.location.origin}/join?code=${room.code}`;
+      await navigator.clipboard.writeText(joinUrl);
+      setCopiedLink(true);
+      successToast('Direct join link copied! Share with players to connect.');
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      errorToast('Failed to copy join link.');
+    }
+  };
 
   const handleRelease = async () => {
     if (!releasingTeam || isReleasing) return;
@@ -37,6 +71,21 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
       errorToast(err.message || 'Failed to release team slot.');
     } finally {
       setIsReleasing(false);
+    }
+  };
+
+  const handleCancelRoom = async () => {
+    if (isCancelling) return;
+    try {
+      setIsCancelling(true);
+      await rpcAdminCancelRoom(room.id, 'Match cancelled by organizer');
+      successToast('Match room cancelled successfully.');
+      setShowCancelModal(false);
+      navigate('/admin');
+    } catch (err: any) {
+      errorToast(err.message || 'Failed to cancel room.');
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -67,86 +116,152 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Introduction */}
-      <section aria-labelledby="lobby-heading" className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="font-pixel text-[11px] uppercase tracking-widest text-brand-navy bg-brand-gold border-2 border-brand-navy px-2 py-0.5">
-            STARTUPOLY · ADMIN
-          </span>
-          <span className="font-pixel text-[11px] uppercase tracking-widest text-brand-navy">
-            ROOM {room.code}
-          </span>
-          <StatusPill status={room.status} size="sm" />
+      {/* Structured Breadcrumbs & Top Bar */}
+      <section aria-labelledby="lobby-heading" className="bg-brand-white border-3 border-brand-navy p-4 shadow-pixel flex flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-brand-navy pb-3">
+          <div className="flex items-center gap-2">
+            <Link
+              to="/admin"
+              className="font-pixel text-xs text-brand-navy hover:text-brand-brick hover:underline flex items-center gap-1 font-bold"
+            >
+              ◄ CONSOLE
+            </Link>
+            <span className="text-neutral-400 font-mono">/</span>
+            <span className="font-pixel text-xs text-brand-navy bg-brand-gold border border-brand-navy px-2 py-0.5">
+              ROOM {room.code}
+            </span>
+            <StatusPill status={room.status} size="sm" />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <PixelButton
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCancelModal(true)}
+              className="text-xs text-status-danger-dark border-status-danger-base hover:bg-status-danger-bg"
+              title="Discard this match room and start over"
+            >
+              ✕ DISCARD MATCH
+            </PixelButton>
+          </div>
         </div>
-        <div>
-          <h1 id="lobby-heading" className="font-pixel text-2xl sm:text-3xl font-extrabold text-brand-navy">
-            Team Lobby
-          </h1>
-          <p className="font-mono text-sm text-brand-navy mt-1 max-w-2xl">
-            Teams join with the room code and their PIN. Start the match when you are ready.
-          </p>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 id="lobby-heading" className="font-pixel text-xl sm:text-2xl font-extrabold text-brand-navy tracking-tight">
+              Match Lobby & Team Roster
+            </h1>
+            <p className="font-mono text-xs sm:text-sm text-neutral-600 mt-0.5">
+              Players go to <strong className="text-brand-navy underline">startupoly.vercel.app/join</strong>, enter room code <strong>{room.code}</strong>, select their team slot, and enter the secret PIN.
+            </p>
+          </div>
+
+          {/* Quick Copy Controls */}
+          <div className="flex items-center gap-2 shrink-0">
+            <PixelButton
+              variant="secondary"
+              size="sm"
+              onClick={handleCopyCode}
+              className="text-xs flex items-center gap-1"
+            >
+              <span>{copiedCode ? '✓' : '📋'}</span>
+              <span>{copiedCode ? 'COPIED' : 'COPY CODE'}</span>
+            </PixelButton>
+            <PixelButton
+              variant="ghost"
+              size="sm"
+              onClick={handleCopyLink}
+              className="text-xs flex items-center gap-1"
+            >
+              <span>{copiedLink ? '✓' : '🔗'}</span>
+              <span>{copiedLink ? 'LINK COPIED' : 'JOIN LINK'}</span>
+            </PixelButton>
+          </div>
+        </div>
+
+        {/* Readiness Progress Bar */}
+        <div className="bg-neutral-50 border-2 border-brand-navy p-3 flex flex-col gap-1.5 mt-1">
+          <div className="flex items-center justify-between font-mono text-xs font-bold text-brand-navy">
+            <span>Team Connection Readiness</span>
+            <span>{joinedTeams.length} of {teams.length} Teams Connected ({progressPercent}%)</span>
+          </div>
+          <div className="w-full bg-neutral-200 h-3 border border-brand-navy overflow-hidden">
+            <div
+              className={`h-full transition-all duration-300 ${allJoined ? 'bg-status-success-base' : 'bg-brand-gold'}`}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
         </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
-        {/* Team roster */}
-        <PixelCard title="TEAM ROSTER & PINS" headerBg="brick" padding="md">
+      {/* Main Grid: Roster + Match Controls Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
+        {/* Team Roster List */}
+        <PixelCard title="TEAM SLOTS & SECRET PINS" headerBg="brick" padding="md">
           {teams.length === 0 ? (
-            <p className="font-mono text-sm text-brand-navy">No teams in this room.</p>
+            <p className="font-mono text-sm text-brand-navy">No teams configured in this room.</p>
           ) : (
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {teams.map((team) => (
                 <li
                   key={team.id}
-                  className={`border-3 border-brand-navy p-4 shadow-pixel-sm flex flex-col gap-3 min-w-0 ${
+                  className={`border-3 border-brand-navy p-4 shadow-pixel-sm flex flex-col justify-between gap-3 min-w-0 transition-colors ${
                     team.claimed ? 'bg-status-success-bg' : 'bg-brand-white'
                   }`}
                 >
+                  {/* Team Card Header */}
                   <div className="flex items-center justify-between gap-2 border-b-2 border-brand-navy pb-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
                       <span
-                        className="w-4 h-4 border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)]"
+                        className="w-5 h-5 border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)] shrink-0"
                         style={{ backgroundColor: team.color }}
                         aria-hidden="true"
                       />
                       <span className="font-pixel text-xs text-brand-navy">SLOT #{team.slot}</span>
                     </div>
+
                     <span
-                      className={`font-pixel text-[10px] uppercase px-2 py-0.5 border-2 border-brand-navy ${
+                      className={`font-pixel text-[10px] uppercase px-2 py-0.5 border-2 border-brand-navy shrink-0 ${
                         team.claimed
-                          ? 'bg-status-success-bg text-status-success-dark'
+                          ? 'bg-status-success-bg text-status-success-dark font-black'
                           : 'bg-status-warning-bg text-status-warning-text'
                       }`}
                     >
-                      {team.claimed ? 'CLAIMED' : 'UNCLAIMED'}
+                      {team.claimed ? '✓ CLAIMED' : 'UNCLAIMED'}
                     </span>
                   </div>
 
-                  <h3 className="font-pixel text-sm text-brand-navy truncate" title={team.name}>
+                  {/* Team Name */}
+                  <h3 className="font-pixel text-base text-brand-navy truncate" title={team.name}>
                     {team.name}
                   </h3>
 
+                  {/* Secret PIN Box & Release Action */}
                   <div className="bg-neutral-50 border-2 border-brand-navy p-2.5 flex items-center justify-between gap-2">
                     <div>
-                      <span className="font-pixel text-[9px] text-brand-navy font-bold block uppercase">
+                      <span className="font-pixel text-[9px] text-neutral-500 font-bold block uppercase tracking-wider">
                         SECRET PIN
                       </span>
-                      <span className="font-mono font-extrabold text-xl text-brand-navy tracking-widest">
+                      <span className="font-mono font-black text-2xl text-brand-navy tracking-[0.2em]">
                         {team.pin || '••••'}
                       </span>
                     </div>
 
-                    {team.claimed && (
+                    {team.claimed ? (
                       <PixelButton
                         variant="danger"
                         size="sm"
                         onClick={() => setReleasingTeam(team)}
                         disabled={isStarting || isReleasing}
-                        className="text-[10px] min-h-[44px] py-1 px-3"
+                        className="text-[10px] py-1 px-3 min-h-[36px]"
                         title="Disconnect this team's device"
                       >
                         RELEASE
                       </PixelButton>
+                    ) : (
+                      <span className="font-mono text-[11px] text-neutral-400 italic">
+                        Waiting...
+                      </span>
                     )}
                   </div>
                 </li>
@@ -155,21 +270,23 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
           )}
         </PixelCard>
 
-        {/* Summary + primary action */}
+        {/* Sidebar: Match Controls & Actions */}
         <aside className="flex flex-col gap-4 lg:sticky lg:top-6">
+          {/* Room Code Card */}
           <PixelCard title="ROOM CODE" headerBg="navy" variant="cream" padding="md">
-            <div className="flex flex-col gap-2 items-center text-center">
-              <div className="bg-brand-gold border-4 border-brand-navy shadow-pixel-lg px-4 py-3 max-w-full">
-                <span className="font-mono text-4xl sm:text-5xl font-black tracking-[0.2em] text-brand-navy select-all break-all">
+            <div className="flex flex-col gap-3 items-center text-center">
+              <div className="bg-brand-gold border-4 border-brand-navy shadow-pixel-lg px-4 py-3 w-full">
+                <span className="font-mono text-4xl sm:text-5xl font-black tracking-[0.25em] text-brand-navy select-all break-all block">
                   {room.code}
                 </span>
               </div>
-              <p className="font-mono text-xs text-brand-navy">
-                Players go to <strong className="underline">/join</strong>, enter this code, pick a slot and enter the PIN.
+              <p className="font-mono text-xs text-brand-navy leading-relaxed">
+                Project this code on the main screen for all participating teams.
               </p>
             </div>
           </PixelCard>
 
+          {/* Claim Summary Card */}
           <PixelCard title="CLAIM STATUS" headerBg="navy" padding="md">
             <dl className="font-mono text-sm text-brand-navy flex flex-col gap-2">
               <div className="flex items-center justify-between gap-2">
@@ -178,34 +295,39 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
               </div>
               <div className="flex items-center justify-between gap-2">
                 <dt className="text-neutral-500">Claimed</dt>
-                <dd className="font-bold">{joinedTeams.length}</dd>
+                <dd className="font-bold text-status-success-dark">{joinedTeams.length}</dd>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <dt className="text-neutral-500">Unclaimed</dt>
-                <dd className="font-bold">{unjoinedTeams.length}</dd>
+                <dd className="font-bold text-status-warning-text">{unjoinedTeams.length}</dd>
               </div>
             </dl>
-            <p className="font-mono text-[11px] text-neutral-500 mt-3">
-              Claimed means a device entered the PIN. It does not show who is online.
-            </p>
           </PixelCard>
 
-          <PixelCard variant="gold" padding="md">
+          {/* Launch Match Action Card */}
+          <PixelCard variant={allJoined ? 'gold' : 'white'} padding="md">
             <div className="flex flex-col gap-3">
-              <p role="status" className="font-mono text-xs text-brand-navy">
+              <p role="status" className="font-mono text-xs text-brand-navy font-bold">
                 {allJoined
-                  ? 'Every team has claimed a slot.'
-                  : `${unjoinedTeams.length} of ${teams.length} teams have not claimed a slot.`}
+                  ? '★ All teams are connected and ready!'
+                  : `Waiting for ${unjoinedTeams.length} of ${teams.length} teams to enter PIN.`}
               </p>
+
               <PixelButton
-                variant="primary"
+                variant={allJoined ? 'primary' : 'secondary'}
                 size="lg"
                 onClick={() => setShowStartModal(true)}
-                disabled={isStarting || isReleasing}
-                className="w-full"
+                disabled={isStarting || isReleasing || isCancelling}
+                className="w-full font-pixel text-sm py-3"
               >
                 START MATCH
               </PixelButton>
+
+              {!allJoined && (
+                <p className="font-mono text-[11px] text-neutral-500 text-center">
+                  Recommended: Wait until all teams connect. Force start is available if needed.
+                </p>
+              )}
             </div>
           </PixelCard>
         </aside>
@@ -248,6 +370,42 @@ export const LobbyView: React.FC<LobbyViewProps> = ({ snapshot, onRefetch }) => 
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Confirmation Modal to Cancel / Discard Match Room */}
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        title="DISCARD / CANCEL MATCH"
+        footer={
+          <>
+            <PixelButton
+              variant="ghost"
+              size="md"
+              onClick={() => setShowCancelModal(false)}
+              disabled={isCancelling}
+            >
+              KEEP MATCH
+            </PixelButton>
+            <PixelButton
+              variant="danger"
+              size="md"
+              onClick={handleCancelRoom}
+              isLoading={isCancelling}
+            >
+              YES, DISCARD MATCH
+            </PixelButton>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <p className="font-mono text-sm leading-relaxed text-brand-navy">
+            Are you sure you want to discard <strong>Room {room.code}</strong>?
+          </p>
+          <div className="bg-status-danger-bg border-2 border-brand-navy p-3 text-xs text-status-danger-dark font-mono">
+            ⚠ This will close the lobby, release all {joinedTeams.length} connected devices, and return you to the Admin Console to create a fresh match.
+          </div>
+        </div>
       </Modal>
 
       {/* Confirmation Modal to Start Game */}

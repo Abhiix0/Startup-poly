@@ -13,22 +13,34 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <Panel label="Lobby status" className="flex flex-col items-center text-center gap-3 py-6 sm:py-8">
-        <PixelMushroom size={56} />
-        <span className="font-pixel text-[11px] font-bold uppercase tracking-widest text-status-success-dark">
-          Team joined
-        </span>
-        <h1 className="font-pixel text-2xl sm:text-3xl font-extrabold text-brand-navy uppercase">
-          Waiting for the match to start
+      {/* Central Waiting Room Status Card */}
+      <Panel label="Match Lobby" className="flex flex-col items-center text-center gap-3 py-6 sm:py-8">
+        <div className="relative">
+          <PixelMushroom size={56} />
+          <span className="absolute -top-1 -right-1 flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success-base opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-status-success-base" />
+          </span>
+        </div>
+
+        <div className="inline-flex items-center gap-1.5 font-pixel text-[11px] font-bold uppercase tracking-widest text-brand-navy bg-brand-gold border-2 border-brand-navy px-3 py-1 shadow-[2px_2px_0px_var(--color-brand-navy)]">
+          <span>⏳</span>
+          <span>LOBBY STAGE · MATCH NOT STARTED</span>
+        </div>
+
+        <h1 className="font-pixel text-2xl sm:text-3xl font-extrabold text-brand-navy uppercase tracking-tight">
+          Connected & Waiting for Host
         </h1>
+
         <p className="font-mono text-sm text-neutral-700 max-w-md leading-relaxed">
-          You're in. The match has not started yet. Keep this screen open: the game clock and your live
-          financials appear here automatically when the organizer launches the game.
+          Your device is securely connected to <strong>Slot #{team.slot} ({team.name})</strong>.
+          The 50-minute tournament clock is stopped and will begin when the organizer starts the match.
         </p>
-        <div className="inline-flex items-center gap-2 rounded-md border-2 border-brand-navy bg-neutral-50 px-3 py-1.5">
+
+        <div className="inline-flex items-center gap-2 rounded-md border-2 border-brand-navy bg-neutral-50 px-4 py-2 mt-1 shadow-pixel-sm">
           <span
             aria-hidden="true"
-            className="w-4 h-4 rounded-sm border border-brand-navy"
+            className="w-4 h-4 rounded-sm border-2 border-brand-navy shadow-[1px_1px_0px_var(--color-brand-navy)]"
             style={{ backgroundColor: team.color }}
           />
           <span className="font-pixel text-sm font-bold text-brand-navy">
@@ -37,25 +49,32 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
         </div>
       </Panel>
 
-      <section aria-label="Starting resources" className="grid gap-4 sm:grid-cols-2">
-        <Metric
-          label="Starting cash"
-          value={formatINR(team.cash)}
-          valueClass="text-status-success-dark"
-          className="bg-white"
-          badge={<PixelCoin size={22} />}
-        />
-        <Metric
-          label="Starting company value"
-          value={
-            <>
-              {team.cv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
-            </>
-          }
-          valueClass="text-status-info-dark"
-          className="bg-white"
-        />
-      </section>
+      {/* Starting Allocation Preview */}
+      <div className="border-2 border-brand-navy bg-brand-white p-3 shadow-pixel-sm">
+        <h2 className="font-pixel text-[11px] font-bold text-brand-navy uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <span>💼</span>
+          <span>Starting Allocation (Unlocks on Match Start)</span>
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Metric
+            label="Initial Cash"
+            value={formatINR(team.cash)}
+            valueClass="text-status-success-dark font-extrabold"
+            className="bg-neutral-50"
+            badge={<PixelCoin size={22} />}
+          />
+          <Metric
+            label="Initial Company Value"
+            value={
+              <>
+                {team.cv.toLocaleString('en-IN')} <span className="text-xl text-neutral-600 font-bold">CV</span>
+              </>
+            }
+            valueClass="text-status-info-dark font-extrabold"
+            className="bg-neutral-50"
+          />
+        </div>
+      </div>
     </div>
   );
 };

@@ -575,6 +575,10 @@ export interface Database {
         Args: { p_room_id: string; p_additional_seconds?: number; request_id?: string | null };
         Returns: Json;
       };
+      admin_cancel_room: {
+        Args: { p_room_id: string; note?: string | null; request_id?: string | null };
+        Returns: Json;
+      };
     };
     Enums: {
       room_status: RoomStatus;
