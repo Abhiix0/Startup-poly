@@ -2071,8 +2071,7 @@
 }
 
 .anim-scene-transition {
-  animation: scene-fade-slide 200ms ease-out both;
-  will-change: opacity, transform;
+  animation: scene-fade-slide 200ms ease-out;
 }
 
 /* ========================================================================= */

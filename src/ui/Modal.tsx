@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
 
   const maxWidthStyles = {
     sm: 'max-w-sm',
@@ -46,11 +47,11 @@ export const Modal: React.FC<ModalProps> = ({
     xl: 'max-w-2xl',
   };
 
-  return (
+  const modalNode = (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-100"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-black/60 backdrop-blur-xs animate-in fade-in duration-100"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -60,11 +61,11 @@ export const Modal: React.FC<ModalProps> = ({
         className={`
           w-full ${maxWidthStyles[maxWidth]} bg-neutral-50
           border-4 border-brand-navy shadow-pixel-lg
-          flex flex-col max-h-[90vh] overflow-hidden
+          flex flex-col max-h-[calc(100dvh-2rem)] my-auto overflow-hidden
         `}
       >
         {/* Modal Header */}
-        <div className="bg-brand-navy text-brand-white px-4 py-3 flex items-center justify-between border-b-4 border-brand-navy">
+        <div className="bg-brand-navy text-brand-white px-4 py-3 flex items-center justify-between border-b-4 border-brand-navy shrink-0">
           <h2 className="font-pixel text-xs sm:text-sm uppercase tracking-wider truncate pr-2">
             {title}
           </h2>
@@ -78,17 +79,19 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 font-sans text-sm text-brand-navy">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 font-sans text-sm text-brand-navy min-h-0">
           {children}
         </div>
 
         {/* Modal Footer */}
         {footer && (
-          <div className="bg-neutral-200 px-4 py-3 border-t-4 border-brand-navy flex items-center justify-end gap-3">
+          <div className="bg-neutral-200 px-4 py-3 border-t-4 border-brand-navy flex items-center justify-end gap-3 shrink-0">
             {footer}
           </div>
         )}
       </div>
     </div>
   );
+
+  return createPortal(modalNode, document.body);
 };
