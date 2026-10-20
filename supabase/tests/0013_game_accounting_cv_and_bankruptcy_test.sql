@@ -1,7 +1,7 @@
 -- Test suite for Migration 0022: Game Accounting CV and Bankruptcy
 BEGIN;
 CREATE EXTENSION IF NOT EXISTS pgtap;
-SELECT plan(15);
+SELECT plan(16);
 
 SELECT set_config('app.env', 'test', true);
 SELECT set_config('app.test_now', '2026-03-01 10:00:00+00', true);
