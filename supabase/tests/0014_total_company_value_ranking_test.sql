@@ -28,6 +28,7 @@ SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=2), 
 SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=3), 500, 900, 0, gen_random_uuid(), NULL);
 
 -- Verify rankings:
+RESET ROLE;
 -- Rank 1: Alpha (Total 1500 beats Beta's 1400, even though Beta has 800 CV > 300 CV)
 SELECT is(
   (SELECT slot FROM public.room_standings((SELECT id FROM public.rooms)) WHERE rank = 1),
@@ -50,7 +51,10 @@ SELECT is(
 );
 
 -- Mark Team 1 as bankrupt: should drop to last place regardless of valuation
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000023", "role": "authenticated"}', true);
 SELECT public.admin_set_bankrupt((SELECT id FROM public.teams WHERE slot=1), true, 1, gen_random_uuid(), 'Bankruptcy declared');
+RESET ROLE;
 
 SELECT is(
   (SELECT slot FROM public.room_standings((SELECT id FROM public.rooms)) WHERE rank = 1),
