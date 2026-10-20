@@ -579,6 +579,10 @@ export interface Database {
         Args: { p_room_id: string; note?: string | null; request_id?: string | null };
         Returns: Json;
       };
+      leave_team: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
     };
     Enums: {
       room_status: RoomStatus;

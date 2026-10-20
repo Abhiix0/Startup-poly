@@ -28,6 +28,7 @@ INSERT INTO exp_funcs VALUES
   ('admin_start_game', false, true), ('admin_update_team_config', false, true),
   ('get_admin_snapshot', false, true), ('get_history_detail', false, true), ('get_standings', false, true),
   ('list_history', false, true), ('expire_if_due', false, true),
+  ('leave_team', false, true),
   ('get_lobby', true, true), ('get_my_state', true, true), ('join_team', true, true),
   ('is_admin', true, true), ('server_time', true, true),
   ('app_now', false, false), ('raise_error', false, false), ('get_team_snapshot', false, false),

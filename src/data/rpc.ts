@@ -91,6 +91,10 @@ export async function rpcJoinTeam(code: string, slot: number, pin: string) {
   return res as { team_id: string; room_id: string };
 }
 
+export async function rpcLeaveTeam() {
+  return callRpc<{ success: boolean; team_id?: string; slot?: number }>('leave_team');
+}
+
 export async function rpcGetMyState() {
   return callRpc<{
     room: { status: string; started_at: string | null; ends_at: string | null; server_now: string };

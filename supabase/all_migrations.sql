@@ -6428,3 +6428,56 @@ $$;
 
 REVOKE ALL ON FUNCTION public.admin_cancel_room(uuid, text, uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_cancel_room(uuid, text, uuid) TO authenticated;
+
+
+-- 3. Player Leave Team Function (LOBBY only)
+CREATE OR REPLACE FUNCTION public.leave_team()
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id uuid := auth.uid();
+  v_team_id uuid;
+  v_room_id uuid;
+  v_status public.room_status;
+  v_slot int;
+  v_name text;
+BEGIN
+  IF v_user_id IS NULL THEN
+    PERFORM public.raise_error('NOT_AUTHENTICATED');
+  END IF;
+
+  SELECT tc.team_id, t.room_id, t.slot, t.name, r.status
+  INTO v_team_id, v_room_id, v_slot, v_name, v_status
+  FROM public.team_claims tc
+  JOIN public.teams t ON tc.team_id = t.id
+  JOIN public.rooms r ON t.room_id = r.id
+  WHERE tc.user_id = v_user_id;
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('success', true, 'message', 'No active team claim');
+  END IF;
+
+  -- Only allow voluntary departure during LOBBY stage
+  IF v_status <> 'LOBBY' THEN
+    PERFORM public.raise_error('ROOM_NOT_EDITABLE', jsonb_build_object('status', v_status));
+  END IF;
+
+  DELETE FROM public.team_claims WHERE user_id = v_user_id;
+
+  INSERT INTO public.activity_events (
+    room_id, team_id, type, note, actor_id, created_at
+  ) VALUES (
+    v_room_id, v_team_id, 'TEAM_RELEASED',
+    'Player voluntarily disconnected from Slot #' || v_slot || ' (' || v_name || ')',
+    v_user_id, public.app_now()
+  );
+
+  RETURN jsonb_build_object('success', true, 'team_id', v_team_id, 'slot', v_slot);
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.leave_team() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.leave_team() TO authenticated;

@@ -27,6 +27,7 @@ const WRAPPERS: Array<[string, () => Promise<unknown>]> = [
   ['server_time', () => rpc.rpcServerTime()],
   ['get_lobby', () => rpc.rpcGetLobby('ABC123')],
   ['join_team', () => rpc.rpcJoinTeam('ABC123', 1, '1234')],
+  ['leave_team', () => rpc.rpcLeaveTeam()],
   ['get_my_state', () => rpc.rpcGetMyState()],
   ['admin_create_room', () => rpc.rpcAdminCreateRoom(5, [])],
   ['admin_update_team_config', () => rpc.rpcAdminUpdateTeamConfig('t', 'n', '#000000')],

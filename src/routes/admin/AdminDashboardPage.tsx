@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
 import { supabase } from '../../data/client';
-import { PixelButton, PixelBrickTile, Modal, PixelLoader, ErrorBanner } from '../../ui';
+import { PixelButton, PixelBrickTile, Modal, PixelLoader, ErrorBanner, StatusPill, useToast } from '../../ui';
 import { CreateRoomView } from './CreateRoomView';
+import { rpcAdminCancelRoom } from '../../data/rpc';
+
+interface ActiveRoomSummary {
+  id: string;
+  status: string;
+  code: string;
+  team_count: number;
+}
 
 export const AdminDashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
+  const { successToast, errorToast } = useToast();
+
   const [checkingActiveRoom, setCheckingActiveRoom] = useState(true);
-  const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
+  const [activeRoom, setActiveRoom] = useState<ActiveRoomSummary | null>(null);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+  const [discardConfirmOpen, setDiscardConfirmOpen] = useState(false);
+  const [isDiscarding, setIsDiscarding] = useState(false);
   const [roomCheckError, setRoomCheckError] = useState<string | null>(null);
   const [checkAttempt, setCheckAttempt] = useState(0);
 
@@ -19,7 +31,7 @@ export const AdminDashboardPage: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('rooms')
-          .select('id, status')
+          .select('id, status, code, team_count')
           .neq('status', 'FINALIZED')
           .order('created_at', { ascending: false })
           .limit(1)
@@ -28,8 +40,10 @@ export const AdminDashboardPage: React.FC = () => {
         if (error) {
           throw error;
         }
-        if (data?.id && isMounted) {
-          setActiveRoomId(data.id);
+        if (data && isMounted) {
+          setActiveRoom(data as ActiveRoomSummary);
+        } else if (isMounted) {
+          setActiveRoom(null);
         }
       } catch (err) {
         console.warn('Failed to check active room:', err);
@@ -49,13 +63,23 @@ export const AdminDashboardPage: React.FC = () => {
     };
   }, [checkAttempt]);
 
+  const handleDiscardActiveRoom = async () => {
+    if (!activeRoom || isDiscarding) return;
+    try {
+      setIsDiscarding(true);
+      await rpcAdminCancelRoom(activeRoom.id, 'Discarded from admin dashboard');
+      successToast(`Match room ${activeRoom.code} discarded.`);
+      setActiveRoom(null);
+      setDiscardConfirmOpen(false);
+    } catch (err: any) {
+      errorToast(err?.message || 'Failed to discard room.');
+    } finally {
+      setIsDiscarding(false);
+    }
+  };
+
   if (checkingActiveRoom) {
     return <PixelLoader label="CHECKING MATCH STATE..." delayMs={0} />;
-  }
-
-  // If a non-finalized room already exists, redirect directly to its control console
-  if (activeRoomId) {
-    return <Navigate to={`/admin/room/${activeRoomId}`} replace />;
   }
 
   return (
@@ -91,7 +115,7 @@ export const AdminDashboardPage: React.FC = () => {
         </p>
       </div>
 
-      {/* Main Container: Create Room View */}
+      {/* Main Container: Either Active Match Panel or Create Room Form */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
         {roomCheckError ? (
           <ErrorBanner
@@ -102,6 +126,47 @@ export const AdminDashboardPage: React.FC = () => {
               setCheckAttempt((attempt) => attempt + 1);
             }}
           />
+        ) : activeRoom ? (
+          <div className="bg-brand-white border-4 border-brand-navy p-6 sm:p-8 shadow-pixel-lg flex flex-col gap-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-brand-navy pb-4">
+              <div className="flex items-center gap-3">
+                <span className="font-pixel text-xs text-brand-navy bg-brand-gold border-2 border-brand-navy px-3 py-1 font-bold">
+                  ROOM {activeRoom.code}
+                </span>
+                <StatusPill status={activeRoom.status} size="sm" />
+              </div>
+              <span className="font-mono text-xs text-neutral-500 font-bold tracking-wide uppercase">
+                ACTIVE MATCH IN PROGRESS
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h1 className="font-pixel text-xl sm:text-2xl text-brand-navy font-black tracking-tight leading-snug">
+                Tournament Match Currently Open
+              </h1>
+              <p className="font-mono text-sm text-neutral-700 max-w-2xl leading-relaxed">
+                Room <strong>{activeRoom.code}</strong> is currently in{' '}
+                <span className="font-bold underline">{activeRoom.status}</span> stage with {activeRoom.team_count} teams.
+                You can resume managing this match, or discard it to start a new game.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-3 border-t-2 border-brand-navy/20">
+              <Link to={`/admin/room/${activeRoom.id}`}>
+                <PixelButton variant="primary" size="lg" className="font-pixel text-xs">
+                  RESUME MATCH CONSOLE →
+                </PixelButton>
+              </Link>
+              <PixelButton
+                variant="danger"
+                size="lg"
+                onClick={() => setDiscardConfirmOpen(true)}
+                className="font-pixel text-xs"
+              >
+                ✕ DISCARD MATCH
+              </PixelButton>
+            </div>
+          </div>
         ) : (
           <CreateRoomView />
         )}
@@ -109,6 +174,42 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* Brick Ground Base */}
       <PixelBrickTile hasGrass={true} className="h-8" />
+
+      {/* Discard Active Match Confirmation Modal */}
+      <Modal
+        isOpen={discardConfirmOpen}
+        onClose={() => setDiscardConfirmOpen(false)}
+        title="DISCARD CURRENT MATCH"
+        footer={
+          <>
+            <PixelButton
+              variant="ghost"
+              size="md"
+              onClick={() => setDiscardConfirmOpen(false)}
+              disabled={isDiscarding}
+            >
+              KEEP MATCH
+            </PixelButton>
+            <PixelButton
+              variant="danger"
+              size="md"
+              onClick={handleDiscardActiveRoom}
+              isLoading={isDiscarding}
+            >
+              YES, DISCARD MATCH
+            </PixelButton>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <p className="font-mono text-sm leading-relaxed text-brand-navy">
+            Are you sure you want to discard <strong>Room {activeRoom?.code}</strong>?
+          </p>
+          <div className="bg-status-danger-bg border-2 border-brand-navy p-3 text-xs text-status-danger-dark font-mono">
+            ⚠ All connected player devices will be released and the match will be closed. You will be able to create a fresh match immediately.
+          </div>
+        </div>
+      </Modal>
 
       {/* Logout confirm — requires explicit confirmation before calling logout() */}
       <Modal
