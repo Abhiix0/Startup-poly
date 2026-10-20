@@ -44,7 +44,28 @@ jobs:
         run: npm run check:bundle
 
       - name: Database suites (races, security over HTTP, RPC contract)
-        run: npm run test:db-suites
+        shell: bash
+        run: |
+          set +e
+          npm run test:db-suites 2>&1 | tee dbsuites.log
+          EXIT_CODE=${PIPESTATUS[0]}
+          if [ $EXIT_CODE -ne 0 ]; then
+            grep -E "FAILED|FAIL|Error:|AssertionError" dbsuites.log | head -n 25 | while IFS= read -r line; do
+              echo "::error title=DB-Suites::$line"
+            done
+            FAILS=$(tail -n 35 dbsuites.log | tr '\n' ' | ')
+            echo "::error title=DB-Suites-Tail::$FAILS"
+          fi
+          exit $EXIT_CODE
 
       - name: Upgrade path (live 0015 game to latest)
-        run: npm run test:upgrade
+        shell: bash
+        run: |
+          set +e
+          npm run test:upgrade 2>&1 | tee upgrade.log
+          EXIT_CODE=${PIPESTATUS[0]}
+          if [ $EXIT_CODE -ne 0 ]; then
+            FAILS=$(tail -n 35 upgrade.log | tr '\n' ' | ')
+            echo "::error title=Upgrade-Tail::$FAILS"
+          fi
+          exit $EXIT_CODE

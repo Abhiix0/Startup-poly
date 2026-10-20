@@ -21,6 +21,7 @@ const ADMIN_RPC_PARAMS: Record<string, string[]> = {
   admin_add_business: ['team_id', 'business_key', 'apply_purchase', 'expected_version', 'request_id', 'note'],
   admin_adjust: ['changes', 'label', 'note', 'request_id'],
   admin_create_room: ['team_count', 'teams'],
+  admin_extend_game: ['p_room_id', 'p_additional_seconds', 'request_id'],
   admin_finalize: ['p_room_id', 'request_id'],
   admin_open_lobby: ['room_id', 'request_id'],
   admin_release_team: ['team_id'],
