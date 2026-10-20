@@ -35,6 +35,8 @@ const WRAPPERS: Array<[string, () => Promise<unknown>]> = [
   ['admin_start_game', () => rpc.rpcAdminStartGame('r')],
   ['admin_start_game', () => rpc.rpcAdminStartGame('r', true)],
   ['admin_abort_game', () => rpc.rpcAdminAbortGame('r', 'note')],
+  ['admin_extend_game', () => rpc.rpcAdminExtendGame('r')],
+  ['admin_extend_game', () => rpc.rpcAdminExtendGame('r', 600)],
   ['admin_set_team_values', () => rpc.rpcAdminSetTeamValues({ team_id: 't', expected_version: 0 })],
   ['admin_set_team_values', () => rpc.rpcAdminSetTeamValues({ team_id: 't', cash: 1, cv: 2, expected_version: 0, request_id: 'x', note: 'n' })],
   ['admin_adjust', () => rpc.rpcAdminAdjust({ changes: [], label: 'l' })],
