@@ -1,17 +1,17 @@
 import React from 'react';
 import {
-  PixelBrickTile,
   PixelCloudFluffy,
   PixelPipe,
 } from '../../ui';
 import {
   PixelCoin,
   PixelQuestionBlock,
-  PixelBug,
   PixelGrassTuft,
   PixelFlower,
+  PixelBug,
   PixelSparkle,
   PixelMonitor,
+  PixelBrickTile,
 } from '../../ui/pixel';
 import { Founder } from './Founder';
 
@@ -20,89 +20,108 @@ export interface PixelWorldProps {
 }
 
 export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false }) => {
+  const [worldWidth, setWorldWidth] = React.useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWorldWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isSmall = worldWidth < 640;
+  const isLarge = worldWidth >= 1024;
+  const leftStart = isSmall ? 72 : isLarge ? 120 : 104;
+  const rightEnd = isSmall ? 64 : isLarge ? 108 : 92;
+  const maxDistance = Math.max(160, worldWidth - leftStart - rightEnd - 46);
+  const platformOffset = Math.round(maxDistance * 0.45);
+
   return (
     <footer
-      className="w-full relative select-none overflow-hidden"
+      className="w-full relative select-none overflow-hidden shrink-0"
       aria-hidden="true"
     >
       {/* Dynamic World Viewport */}
-      <div className="relative w-full h-20 sm:h-24 md:h-26 lg:h-28 pointer-events-none">
+      <div className="relative w-full h-24 sm:h-28 md:h-32 pointer-events-none">
         {/* ========================================================================= */}
         {/* LAYER 1: SKY (Background canvas layer)                                   */}
         {/* ========================================================================= */}
         <div data-layer="1-sky" className="absolute inset-0 pointer-events-none" />
 
         {/* ========================================================================= */}
-        {/* LAYER 2: FAR CLOUDS (110s drift, small, 40-50% opacity)                  */}
+        {/* LAYER 2: HORIZON CLOUDS ROW 1 (110s drift, top horizon lane)              */}
         {/* ========================================================================= */}
         <div
           data-layer="2-clouds-far"
-          className="absolute inset-x-0 top-0 h-20 overflow-hidden pointer-events-none"
+          className="absolute inset-x-0 top-0 h-12 overflow-hidden pointer-events-none"
         >
           <div
-            className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-45"
+            className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-50"
             style={{ animationDelay: '-25s' }}
           >
             {/* Set 1 */}
-            <div className="w-1/2 relative h-16 shrink-0">
+            <div className="w-1/2 relative h-10 shrink-0">
               <div className="absolute top-1 left-[10%]">
                 <PixelCloudFluffy size={42} />
               </div>
-              <div className="absolute top-4 left-[45%]">
-                <PixelCloudFluffy size={48} />
+              <div className="absolute top-1.5 left-[46%]">
+                <PixelCloudFluffy size={46} />
               </div>
               <div className="absolute top-1 left-[80%]">
-                <PixelCloudFluffy size={38} />
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
             {/* Set 2 (Identical for seamless loop) */}
-            <div className="w-1/2 relative h-16 shrink-0">
+            <div className="w-1/2 relative h-10 shrink-0">
               <div className="absolute top-1 left-[10%]">
                 <PixelCloudFluffy size={42} />
               </div>
-              <div className="absolute top-4 left-[45%]">
-                <PixelCloudFluffy size={48} />
+              <div className="absolute top-1.5 left-[46%]">
+                <PixelCloudFluffy size={46} />
               </div>
               <div className="absolute top-1 left-[80%]">
-                <PixelCloudFluffy size={38} />
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 3: NEAR CLOUDS (45s drift, larger, 80-90% opacity)                  */}
+        {/* LAYER 3: HORIZON CLOUDS ROW 2 (65s drift, lower horizon lane, clear of fort) */}
         {/* ========================================================================= */}
         <div
           data-layer="3-clouds-near"
-          className="absolute inset-x-0 top-0 h-22 overflow-hidden pointer-events-none"
+          className="absolute left-0 right-44 sm:right-56 md:right-64 lg:right-76 top-11 sm:top-13 h-12 overflow-hidden pointer-events-none"
         >
           <div
-            className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-85"
+            className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-65"
             style={{ animationDelay: '-12s' }}
           >
             {/* Set 1 */}
-            <div className="w-1/2 relative h-20 shrink-0">
-              <div className="absolute top-2 left-[5%]">
-                <PixelCloudFluffy size={64} />
+            <div className="w-1/2 relative h-10 shrink-0">
+              <div className="absolute top-1 left-[8%]">
+                <PixelCloudFluffy size={38} />
               </div>
-              <div className="absolute top-5 left-[35%]">
-                <PixelCloudFluffy size={74} />
+              <div className="absolute top-1.5 left-[30%]">
+                <PixelCloudFluffy size={44} />
               </div>
-              <div className="absolute top-3 left-[72%]">
-                <PixelCloudFluffy size={58} />
+              <div className="absolute top-1 left-[54%]">
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
             {/* Set 2 (Identical for seamless loop) */}
-            <div className="w-1/2 relative h-20 shrink-0">
-              <div className="absolute top-2 left-[5%]">
-                <PixelCloudFluffy size={64} />
+            <div className="w-1/2 relative h-10 shrink-0">
+              <div className="absolute top-1 left-[8%]">
+                <PixelCloudFluffy size={38} />
               </div>
-              <div className="absolute top-5 left-[35%]">
-                <PixelCloudFluffy size={74} />
+              <div className="absolute top-1.5 left-[30%]">
+                <PixelCloudFluffy size={44} />
               </div>
-              <div className="absolute top-3 left-[72%]">
-                <PixelCloudFluffy size={58} />
+              <div className="absolute top-1 left-[54%]">
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
           </div>
@@ -138,139 +157,146 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 5: OBJECTS (Pipes, Question Blocks, Monitor, Critter, Poly Slot)   */}
+        {/* LAYER 5: OBJECTS (Pipes, Blocks, Obstacles, Character, Monitor, Castle)    */}
         {/* ========================================================================= */}
         <div
           data-layer="5-objects"
           className="absolute inset-x-0 bottom-0 h-full pointer-events-none"
         >
-          {/* LEFT GROUND OBJECTS: Daisy Flower & Grass + Warp Pipe + Grass + Brick Podium + Orange Flower */}
-          <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-1.5 sm:gap-2.5">
-            {/* Leftmost Daisy Flower & Grass tuft */}
+
+          {/* LEFT GROUND OBJECTS: Warp Pipe + Question Block + Brown Blocks + Critter + Flowers */}
+          <div className="absolute bottom-0 left-2 sm:left-6 lg:left-10 flex items-end gap-1.5 sm:gap-2.5 z-10">
+            {/* Daisy Wildflower & Grass to the left of the Warp pipe */}
             <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
-              <PixelFlower size={20} variant={1} />
-              <PixelGrassTuft size={18} variant={1} />
+              <PixelFlower size={18} variant={1} />
+              <PixelGrassTuft size={16} variant={2} />
             </div>
 
             {/* Classic Large Green Warp Pipe */}
             <div className="relative flex flex-col items-center">
-              {/* Phase 4: Rare ambient coin peek */}
               <div
                 data-testid="ambient-pipe-coin"
                 className="absolute -top-3 left-1/2 -translate-x-1/2 pointer-events-none anim-pipe-coin-peek"
                 aria-hidden="true"
               >
-                <PixelCoin size={14} />
+                <PixelCoin size={15} />
               </div>
               <div className="anim-pipe-highlight">
-                <PixelPipe className="w-[56px] h-[50px] sm:w-[68px] sm:h-[58px]" />
+                <PixelPipe className="w-[54px] h-[48px] sm:w-[68px] sm:h-[54px]" />
               </div>
             </div>
 
-            {/* Grass tuft between pipe & brick podium */}
+            {/* Grass tufts beside pipe */}
             <div className="hidden sm:block mb-0.5">
-              <PixelGrassTuft size={18} variant={2} />
+              <PixelGrassTuft size={16} variant={1} />
             </div>
 
-            {/* Stepped Brick Podium with ? Block & Bug */}
-            <div className="hidden sm:flex items-end gap-1.5">
-              {/* Coin hovering */}
-              <div className="flex flex-col items-center -mb-1">
-                <div className="anim-coin-idle">
-                  <PixelCoin size={18} />
-                </div>
-                {/* Floating Question Block */}
-                <div className="anim-block-cycle world-block-highlight">
-                  <PixelQuestionBlock size={28} />
-                </div>
+            {/* Question block sitting on grass with 1 gold coin floating above it */}
+            <div className="hidden sm:flex flex-col items-center">
+              <div className="anim-coin-idle mb-1">
+                <PixelCoin size={16} />
               </div>
-
-              {/* Stepped Brick Block with Walking Bug */}
-              <div className="flex flex-col items-center">
-                <PixelBug size={24} className="mb-0.5 anim-critter-crawl" />
-                <div className="flex">
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-nes-brick border-2 border-nes-navy" />
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 bg-nes-brick border-2 border-nes-navy" />
-                </div>
+              <div className="anim-block-cycle world-block-highlight">
+                <PixelQuestionBlock size={26} />
               </div>
             </div>
 
-            {/* Orange Wildflower beside Brick podium */}
-            <div className="hidden sm:block mb-0.5">
-              <PixelFlower size={20} variant={2} />
+            {/* 2 Brown Brick Blocks sitting on the grass with Red Bug crawling on top */}
+            <div className="hidden sm:flex flex-col items-center">
+              {/* Red Bug crawling on top of the brown blocks */}
+              <div className="-mb-0.5">
+                <PixelBug size={18} className="anim-critter-crawl" />
+              </div>
+              {/* 2 Brown blocks side by side */}
+              <div className="w-13 h-6 bg-[#B84418] border-2 border-[#102040] shadow-[1px_1px_0px_#102040] flex items-center justify-around px-0.5">
+                <div className="w-5 h-full border-r border-[#102040] bg-[#D96836]/30" />
+                <div className="w-5 h-full bg-[#D96836]/30" />
+              </div>
+            </div>
+
+            {/* Wildflower beside brown blocks */}
+            <div className="hidden sm:flex items-end mb-0.5">
+              <PixelFlower size={16} variant={2} />
             </div>
           </div>
 
-          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Poly + CRT Monitor + Grass + Pipe + Daisy + Grass */}
-          <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-1.5 sm:gap-3">
-            {/* Floating Question Block and Coins */}
+          {/* Running Character moving across the screen from corner to corner */}
+          <div
+            id="founder-ground-target"
+            className={`absolute bottom-0 left-2 sm:left-6 lg:left-10 z-20 transition-opacity duration-150 ${
+              isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+          >
+            <Founder
+              size={44}
+              initialPhase="idle"
+              isPaused={isIntroActive}
+              className="scale-95 sm:scale-100 origin-bottom"
+              platformOffset={platformOffset}
+              maxDistance={maxDistance}
+            />
+          </div>
+
+          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Admin Monitor + Grass + Pipe + Daisy */}
+          <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-1.5 sm:gap-2.5 z-10">
+            {/* Question Block and Coins sitting on grass */}
             <div className="hidden md:flex items-end gap-1.5">
               <div className="flex flex-col items-center">
                 <div className="anim-block-cycle world-block-highlight">
-                  <PixelQuestionBlock size={28} />
+                  <PixelQuestionBlock size={26} />
                 </div>
               </div>
-              <div className="flex items-center gap-1 mb-1">
+              <div className="flex items-center gap-1 mb-0.5">
                 <div className="anim-coin-idle">
-                  <PixelCoin size={18} />
+                  <PixelCoin size={16} />
                 </div>
                 <div className="anim-coin-idle" style={{ animationDelay: '-0.4s' }}>
-                  <PixelCoin size={18} />
+                  <PixelCoin size={16} />
                 </div>
               </div>
-            </div>
-
-            {/* Founder Mascot with walk-in, idle, bubble & CTA reactions */}
-            <div
-              id="founder-ground-target"
-              className={`relative z-20 transition-opacity duration-150 ${
-                isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
-              }`}
-            >
-              <Founder
-                size={46}
-                initialPhase="idle"
-                isPaused={isIntroActive}
-                className="scale-90 sm:scale-100 origin-bottom"
-              />
             </div>
 
             {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
-            <div className="hidden lg:block world-admin-monitor mb-1">
-              <PixelMonitor size={36} />
+            <div className="hidden lg:block world-admin-monitor mb-0.5">
+              <PixelMonitor size={34} />
             </div>
 
             {/* Grass tuft beside right warp pipe */}
             <div className="hidden sm:block mb-0.5">
-              <PixelGrassTuft size={18} variant={1} />
+              <PixelGrassTuft size={16} variant={1} />
             </div>
 
             {/* Right Large Green Warp Pipe */}
             <div className="flex flex-col items-center">
               <div className="anim-pipe-highlight">
-                <PixelPipe className="w-[56px] h-[50px] sm:w-[68px] sm:h-[54px]" />
+                <PixelPipe className="w-[54px] h-[48px] sm:w-[68px] sm:h-[54px]" />
               </div>
             </div>
 
             {/* Daisy Wildflower & Grass to the right of the Warp pipe */}
             <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
-              <PixelFlower size={20} variant={1} />
-              <PixelGrassTuft size={18} variant={2} />
+              <PixelFlower size={18} variant={1} />
+              <PixelGrassTuft size={16} variant={2} />
             </div>
           </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* LAYER 6: GROUND (Full-width pixel brick tile + copyright metadata bar)    */}
+      {/* LAYER 6: CONTINUOUS MARIO BRICK GROUND ACROSS THE BOTTOM                  */}
+      {/* Flat level top grass walking surface with classic terracotta brick tiles  */}
       {/* ========================================================================= */}
-      <div data-layer="6-ground" className="w-full relative z-10">
-        <PixelBrickTile hasGrass={true} className="h-7 sm:h-8 w-full" />
-        <div className="bg-nes-navy pt-1.5 sm:pt-2 pb-[max(0.4rem,env(safe-area-inset-bottom))] px-4 text-center border-t-2 border-nes-gold">
-          <p className="font-pixel text-[8px] sm:text-[9px] text-nes-gold tracking-wider">
-            ★ &nbsp; WORLD 01 · STARTUPOLY © 2026 &nbsp; ★
-          </p>
-        </div>
+      <div data-layer="6-ground" className="w-full relative z-10 shrink-0">
+        <PixelBrickTile hasGrass={true} className="h-8 sm:h-9" />
+      </div>
+
+      {/* ========================================================================= */}
+      {/* LAYER 7: BOTTOM METADATA COPYRIGHT BAR (Always Fully Inside Viewport)     */}
+      {/* ========================================================================= */}
+      <div className="bg-[#102040] py-1 sm:py-1.5 px-4 text-center border-t-2 border-[#FFCC00] shrink-0 z-20 relative">
+        <p className="font-pixel text-[8px] sm:text-[9px] text-[#FFCC00] tracking-wider leading-none">
+          ★ &nbsp; WORLD 01 · STARTUPOLY © 2026 &nbsp; ★
+        </p>
       </div>
     </footer>
   );

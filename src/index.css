@@ -2345,3 +2345,94 @@
     scroll-behavior: smooth;
   }
 }
+
+/* ========================================================================= */
+/* Landing Page Retro Scenery & Logo Ambient Animations                      */
+/* ========================================================================= */
+
+@keyframes island-float-left {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  35% {
+    transform: translate3d(3px, -5px, 0);
+  }
+  70% {
+    transform: translate3d(-2px, -8px, 0);
+  }
+}
+
+@keyframes island-float-right {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  30% {
+    transform: translate3d(-3px, -7px, 0);
+  }
+  75% {
+    transform: translate3d(2px, -4px, 0);
+  }
+}
+
+.anim-island-float-left {
+  animation: island-float-left 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.anim-island-float-right {
+  animation: island-float-right 8.2s ease-in-out infinite;
+  animation-delay: -3.2s;
+  will-change: transform;
+}
+
+@keyframes logo-live-shimmer {
+  0%, 72% {
+    opacity: 0;
+    transform: translate3d(-150%, 0, 0) skewX(-22deg);
+  }
+  75% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  95%, 100% {
+    opacity: 0;
+    transform: translate3d(450%, 0, 0) skewX(-22deg);
+  }
+}
+
+@keyframes logo-ambient-glow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1.05);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.12);
+  }
+}
+
+.anim-logo-shimmer {
+  animation: logo-live-shimmer 6.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.anim-logo-glow {
+  animation: logo-ambient-glow 4.5s ease-in-out infinite;
+}
+
+@keyframes critter-patrol {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, 0, 0);
+  }
+}
+
+.anim-critter-crawl {
+  animation: critter-patrol 3.2s steps(2) infinite;
+  will-change: transform;
+}
+

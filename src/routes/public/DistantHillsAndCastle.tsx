@@ -1,66 +1,131 @@
 import React from 'react';
 
-/**
- * Scenery & landscape sprite illustration colors.
- * Exempt from global UI design tokens per docs/COLOR_SYSTEM.md Section 6.
- */
-const SCENERY_COLORS = {
-  distantBluePeak: '#2554B8',
-  distantBlueBase: '#183B82',
-  greenHillsPeak: '#22C55E',
-  greenHillsBase: '#15803D',
-  flagRed: '#E11D48',
-  flagHighlight: '#FB7185',
-} as const;
-
 export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ className = '' }) => {
   return (
     <div
-      className={`absolute inset-x-0 bottom-0 pointer-events-none overflow-hidden select-none z-0 ${className}`}
+      className={`absolute inset-x-0 bottom-0 pointer-events-none select-none z-0 ${className}`}
       aria-hidden="true"
     >
       {/* ======================================================================= */}
-      {/* LAYER: Background Blue Mountain Silhouettes                             */}
+      {/* LAYER: Natural Soft Layered Mountain Panorama                           */}
+      {/* Broad, gently rounded peaks with smooth slopes (Super Mario World)      */}
       {/* ======================================================================= */}
       <svg
         viewBox="0 0 1440 280"
-        className="w-full h-44 sm:h-60 md:h-72 lg:h-80 object-cover object-bottom"
+        className="w-full h-44 sm:h-52 md:h-60 lg:h-66 object-cover object-bottom"
         preserveAspectRatio="none"
       >
         <defs>
+          {/* Distant Blue Mountain Gradient */}
           <linearGradient id="distantBlueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={SCENERY_COLORS.distantBluePeak} stopOpacity="0.95" />
-            <stop offset="100%" stopColor={SCENERY_COLORS.distantBlueBase} stopOpacity="1" />
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.88" />
+            <stop offset="45%" stopColor="#2563EB" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#1E3A8A" stopOpacity="1" />
           </linearGradient>
+
+          {/* Foreground Lush Green Hills Gradient */}
           <linearGradient id="greenHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={SCENERY_COLORS.greenHillsPeak} stopOpacity="0.75" />
-            <stop offset="100%" stopColor={SCENERY_COLORS.greenHillsBase} stopOpacity="0.9" />
+            <stop offset="0%" stopColor="#2ECC71" />
+            <stop offset="45%" stopColor="#22C55E" />
+            <stop offset="85%" stopColor="#16A34A" />
+            <stop offset="100%" stopColor="#15803D" />
           </linearGradient>
         </defs>
 
-        {/* Far Background Blue Mountain Peaks */}
-        <path
-          d="M 0,280 L 0,170 Q 160,80 320,160 T 640,130 T 960,170 T 1280,120 T 1440,160 L 1440,280 Z"
-          fill="url(#distantBlueGrad)"
-        />
+        {/* --------------------------------------------------------------------- */}
+        {/* 1. LAYER A: DISTANT BLUE MOUNTAIN RANGE (Broad, rounded soft peaks)    */}
+        {/* --------------------------------------------------------------------- */}
+        <g>
+          {/* Broad, gently rolling blue mountain range */}
+          <path
+            d="M 0,280 
+               L 0,165 
+               C 80,165 150,85 260,85 
+               C 360,85 430,145 520,145 
+               C 610,145 680,70 780,70 
+               C 890,70 960,135 1050,135 
+               C 1140,135 1200,80 1280,80 
+               C 1350,80 1400,125 1440,145 
+               L 1440,280 Z"
+            fill="url(#distantBlueGrad)"
+            stroke="#102040"
+            strokeWidth="2"
+          />
+        </g>
 
-        {/* Mid-Distant Rolling Green Rounded Hills */}
-        <path
-          d="M 0,280 L 0,200 Q 140,120 280,195 T 560,150 T 840,205 T 1120,160 Q 1280,215 1440,230 L 1440,280 Z"
-          fill="url(#greenHillsGrad)"
-        />
+        {/* --------------------------------------------------------------------- */}
+        {/* 2. LAYER B: FOREGROUND LUSH GREEN ROLLING HILLS (Soft, rounded slopes) */}
+        {/* --------------------------------------------------------------------- */}
+        <g>
+          {/* Main rolling green hills body with gentle overlap */}
+          <path
+            d="M 0,280 
+               L 0,195 
+               C 50,195 90,140 150,140 
+               C 220,140 290,190 380,190 
+               C 470,190 520,135 590,135 
+               C 670,135 740,185 820,185 
+               C 900,185 960,140 1040,140 
+               C 1120,140 1180,180 1250,180 
+               C 1310,180 1350,165 1400,165 
+               C 1420,165 1435,170 1440,172 
+               L 1440,280 Z"
+            fill="url(#greenHillsGrad)"
+            stroke="#102040"
+            strokeWidth="2"
+          />
+
+          {/* Soft Hilltop Crest Highlights (Super Mario World style) */}
+          <path
+            d="M 85,155 C 115,140 150,140 210,148"
+            stroke="#86EFAC"
+            strokeWidth="3"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.8"
+          />
+          <path
+            d="M 520,150 C 555,135 590,135 655,145"
+            stroke="#86EFAC"
+            strokeWidth="3"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.8"
+          />
+          <path
+            d="M 970,152 C 1005,140 1040,140 1105,148"
+            stroke="#86EFAC"
+            strokeWidth="3"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.8"
+          />
+          <path
+            d="M 1340,172 C 1370,165 1400,165 1435,170"
+            stroke="#86EFAC"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.75"
+          />
+        </g>
+
+        {/* Continuous Ground Baseline (y = 279) */}
+        <line x1="0" y1="279" x2="1440" y2="279" stroke="#102040" strokeWidth="2" />
       </svg>
 
       {/* ======================================================================= */}
-      {/* LAYER: Majestic Castle Fortress Silhouette (Elevated and Visible)        */}
+      {/* LAYER: Fully Opaque Majestic Castle Fortress                             */}
+      {/* Base sits directly on the ground with zero gap underneath               */}
+      {/* Full fort shape preserved and completely visible                         */}
       {/* ======================================================================= */}
-      <div className="hidden sm:block absolute bottom-14 sm:bottom-18 lg:bottom-22 right-4 sm:right-8 lg:right-12 z-0 opacity-40">
+      <div className="block absolute bottom-[49px] sm:bottom-[54px] md:bottom-[56px] lg:bottom-[57px] right-2 sm:right-6 md:right-10 lg:right-14 z-0 opacity-100 scale-75 sm:scale-90 md:scale-100 origin-bottom-right drop-shadow-[0_4px_8px_rgba(16,32,64,0.35)]">
         <div className="relative flex flex-col items-center">
           {/* Main Central Castle Tower with Flag */}
           <div className="relative flex flex-col items-center">
             {/* Flagpole mounted right in the center of the conical roof peak */}
             <div className="relative flex items-end justify-center -mb-0.5">
-              <div className="w-1.5 h-10 bg-nes-navy rounded-t-sm" />
+              <div className="w-1.5 h-10 bg-[#0F172A] rounded-t-sm" />
               {/* Triangular Flag attached at the top of the pole extending right */}
               <div className="absolute top-0 left-1">
                 <svg
@@ -70,49 +135,52 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
                   fill="none"
                   className="anim-flag-flutter origin-left"
                 >
-                  <path d="M0 0 L28 9 L0 18 Z" fill={SCENERY_COLORS.flagRed} stroke="var(--color-nes-navy)" strokeWidth="2" />
-                  <path d="M0 2 L20 9 L0 11 Z" fill={SCENERY_COLORS.flagHighlight} />
-                  <rect x="4" y="7" width="4" height="4" fill="var(--color-nes-gold)" />
+                  <path d="M0 0 L28 9 L0 18 Z" fill="#E11D48" stroke="#0F172A" strokeWidth="2" />
+                  <path d="M0 2 L20 9 L0 11 Z" fill="#FB7185" />
+                  <rect x="4" y="7" width="4" height="4" fill="#FFCC00" />
                 </svg>
               </div>
             </div>
 
             {/* Conical Roof / Battlements */}
-            <div className="w-0 h-0 border-l-[22px] border-l-transparent border-r-[22px] border-r-transparent border-b-[26px] border-b-neutral-700" />
-            <div className="w-13 h-4 bg-neutral-700 border-x-2 border-nes-navy flex justify-between px-1">
-              <div className="w-2 h-2 bg-nes-navy" />
-              <div className="w-2 h-2 bg-nes-navy" />
-              <div className="w-2 h-2 bg-nes-navy" />
+            <div className="w-0 h-0 border-l-[22px] border-l-transparent border-r-[22px] border-r-transparent border-b-[26px] border-b-[#475569]" />
+            <div className="w-13 h-4 bg-[#475569] border-x-2 border-[#0F172A] flex justify-between px-1">
+              <div className="w-2 h-2 bg-[#0F172A]" />
+              <div className="w-2 h-2 bg-[#0F172A]" />
+              <div className="w-2 h-2 bg-[#0F172A]" />
             </div>
 
-            {/* Central Tower Body with Arched Windows */}
-            <div className="w-11 h-28 bg-neutral-700 border-x-2 border-nes-navy flex flex-col items-center pt-3 gap-2">
-              <div className="w-3.5 h-6 bg-nes-navy rounded-t-sm" />
-              <div className="w-3 h-5 bg-nes-navy rounded-t-sm" />
+            {/* Central Tower Body with Amber Lit Arched Windows */}
+            <div className="w-11 h-28 bg-[#3E4D64] border-x-2 border-[#0F172A] flex flex-col items-center pt-3 gap-2">
+              <div className="w-3.5 h-6 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
+              <div className="w-3 h-5 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
             </div>
           </div>
 
           {/* Left & Right Flanking Turrets with Battlements */}
-          <div className="w-36 h-20 bg-neutral-700 border-t-2 border-x-2 border-nes-navy flex justify-between items-start -mt-18 px-2">
+          <div className="w-36 h-20 bg-[#3E4D64] border-t-2 border-x-2 border-[#0F172A] flex justify-between items-start -mt-18 px-2">
             {/* Left Turret Top */}
             <div className="flex flex-col items-center -mt-7">
-              <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-neutral-700" />
-              <div className="w-7 h-3 bg-neutral-700 border-x-2 border-nes-navy" />
-              <div className="w-2.5 h-4 bg-nes-navy rounded-t-sm mt-1" />
+              <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-[#475569]" />
+              <div className="w-7 h-3 bg-[#475569] border-x-2 border-[#0F172A]" />
+              <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm mt-1" />
             </div>
 
             {/* Castle Main Gate / Portcullis */}
-            <div className="w-8 h-12 bg-nes-navy rounded-t-md self-end flex items-center justify-center">
-              <div className="w-6 h-9 border-t border-x border-neutral-500 rounded-t-sm opacity-60" />
+            <div className="w-8 h-12 bg-[#0F172A] rounded-t-md self-end flex items-center justify-center">
+              <div className="w-6 h-9 border-t border-x border-[#94A3B8] rounded-t-sm opacity-85" />
             </div>
 
             {/* Right Turret Top */}
             <div className="flex flex-col items-center -mt-7">
-              <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-neutral-700" />
-              <div className="w-7 h-3 bg-neutral-700 border-x-2 border-nes-navy" />
-              <div className="w-2.5 h-4 bg-nes-navy rounded-t-sm mt-1" />
+              <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-[#475569]" />
+              <div className="w-7 h-3 bg-[#475569] border-x-2 border-[#0F172A]" />
+              <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm mt-1" />
             </div>
           </div>
+
+          {/* Solid Foundation Base Level with Ground */}
+          <div className="w-38 h-2 bg-[#2E3B4E] border-x-2 border-b-2 border-[#0F172A] -mt-0.5" />
         </div>
       </div>
     </div>
