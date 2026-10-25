@@ -7,17 +7,19 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
       aria-hidden="true"
     >
       {/* ======================================================================= */}
-      {/* LAYER: Natural Layered Mountain Panorama with Mario Depth & Snowcaps   */}
+      {/* LAYER: Natural Pixel-Art Stepped Mountain Panorama with Snowcaps        */}
       {/* ======================================================================= */}
       <svg
         viewBox="0 0 1440 280"
         className="w-full h-44 sm:h-52 md:h-60 lg:h-66 object-cover object-bottom"
         preserveAspectRatio="none"
+        shapeRendering="crispEdges"
+        style={{ imageRendering: 'pixelated' }}
       >
         <defs>
           {/* Distant Alpine Mountain Gradient */}
           <linearGradient id="distantAlpineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#4A75C7" stopOpacity="0.85" />
+            <stop offset="0%" stopColor="#4A75C7" stopOpacity="0.9" />
             <stop offset="50%" stopColor="#31559C" stopOpacity="0.95" />
             <stop offset="100%" stopColor="#1E386B" stopOpacity="1" />
           </linearGradient>
@@ -45,46 +47,38 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
         </defs>
 
         {/* --------------------------------------------------------------------- */}
-        {/* 1. LAYER A: DISTANT MAJESTIC ALPINE PEAKS WITH SNOWCAPS               */}
+        {/* 1. LAYER A: DISTANT PIXELATED ALPINE PEAKS WITH SNOWCAPS              */}
         {/* --------------------------------------------------------------------- */}
         <g>
-          {/* Broad, gently rolling blue mountain peaks */}
+          {/* Stepped pixel-art alpine peaks silhouette (Left, Center & Right peaks) */}
           <path
-            d="M 0,280 
-               L 0,160 
-               C 70,150 140,75 250,75 
-               C 340,75 410,135 500,135 
-               C 580,135 660,65 760,65 
-               C 870,65 940,125 1030,125 
-               C 1120,125 1190,75 1270,75 
-               C 1340,75 1395,120 1440,140 
-               L 1440,280 Z"
+            d="M 0,280 V 160 H 12 V 156 H 24 V 152 H 36 V 148 H 48 V 144 H 54 V 140 H 60 V 136 H 72 V 132 H 78 V 128 H 84 V 124 H 96 V 120 H 102 V 116 H 108 V 112 H 120 V 108 H 126 V 104 H 132 V 100 H 144 V 96 H 156 V 92 H 162 V 88 H 180 V 84 H 192 V 80 H 210 V 76 H 288 V 80 H 306 V 84 H 318 V 88 H 336 V 92 H 342 V 96 H 354 V 100 H 366 V 104 H 378 V 108 H 390 V 112 H 402 V 116 H 408 V 120 H 426 V 124 H 438 V 128 H 456 V 132 H 480 V 136 H 516 V 132 H 540 V 128 H 552 V 124 H 564 V 120 H 576 V 116 H 588 V 112 H 600 V 108 H 606 V 104 H 618 V 100 H 630 V 96 H 636 V 92 H 648 V 88 H 660 V 84 H 672 V 80 H 684 V 76 H 696 V 72 H 714 V 68 H 738 V 64 H 786 V 68 H 816 V 72 H 834 V 76 H 852 V 80 H 864 V 84 H 876 V 88 H 888 V 92 H 900 V 96 H 912 V 100 H 924 V 104 H 936 V 108 H 948 V 112 H 960 V 116 H 972 V 120 H 996 V 124 H 1068 V 120 H 1092 V 116 H 1110 V 112 H 1122 V 108 H 1134 V 104 H 1146 V 100 H 1158 V 96 H 1170 V 92 H 1188 V 88 H 1200 V 84 H 1212 V 80 H 1236 V 76 H 1302 V 80 H 1320 V 84 H 1332 V 88 H 1344 V 92 H 1350 V 96 H 1362 V 100 H 1368 V 104 H 1374 V 108 H 1386 V 112 H 1392 V 116 H 1398 V 120 H 1404 V 124 H 1410 V 128 H 1422 V 132 H 1428 V 136 H 1434 V 140 H 1440 V 280 Z"
             fill="url(#distantAlpineGrad)"
             stroke="#102040"
             strokeWidth="2"
           />
 
-          {/* Peak 1 Snowcap */}
+          {/* Peak 1 Pixel Snowcap */}
           <path
-            d="M 215,95 Q 250,75 285,95 Q 268,105 250,98 Q 232,105 215,95 Z"
+            d="M 216,76 H 288 V 104 H 282 V 100 H 276 V 92 H 264 V 96 H 258 V 104 H 246 V 100 H 240 V 92 H 228 V 96 H 222 V 104 H 216 Z"
             fill="url(#snowcapGrad)"
             stroke="#102040"
             strokeWidth="1.5"
             opacity="0.9"
           />
 
-          {/* Peak 2 Snowcap (Center Hero Peak) */}
+          {/* Peak 2 Pixel Snowcap (Center Hero Peak) */}
           <path
-            d="M 720,85 Q 760,65 800,85 Q 780,96 760,88 Q 740,96 720,85 Z"
+            d="M 720,68 H 738 V 64 H 786 V 68 H 804 V 96 H 798 V 92 H 792 V 84 H 786 V 80 H 774 V 88 H 768 V 92 H 762 V 96 H 756 V 92 H 750 V 84 H 744 V 80 H 732 V 88 H 726 V 92 H 720 Z"
             fill="url(#snowcapGrad)"
             stroke="#102040"
             strokeWidth="1.5"
             opacity="0.9"
           />
 
-          {/* Peak 3 Snowcap */}
+          {/* Peak 3 Pixel Snowcap */}
           <path
-            d="M 1235,95 Q 1270,75 1305,95 Q 1288,105 1270,98 Q 1252,105 1235,95 Z"
+            d="M 1236,76 H 1302 V 80 H 1308 V 104 H 1302 V 100 H 1296 V 92 H 1284 V 96 H 1278 V 104 H 1266 V 100 H 1260 V 92 H 1248 V 96 H 1242 V 104 H 1236 Z"
             fill="url(#snowcapGrad)"
             stroke="#102040"
             strokeWidth="1.5"
@@ -93,19 +87,11 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
         </g>
 
         {/* --------------------------------------------------------------------- */}
-        {/* 2. LAYER B: MID-DISTANCE TEAL ROLLING HILLS                           */}
+        {/* 2. LAYER B: MID-DISTANCE PIXELATED TEAL ROLLING HILLS                 */}
         {/* --------------------------------------------------------------------- */}
         <g opacity="0.8">
           <path
-            d="M 0,280 
-               L 0,185 
-               C 60,185 110,120 190,120 
-               C 280,120 350,175 440,175 
-               C 530,175 600,115 690,115 
-               C 780,115 850,165 940,165 
-               C 1020,165 1090,125 1170,125 
-               C 1250,125 1320,160 1440,160 
-               L 1440,280 Z"
+            d="M 0,280 V 184 H 24 V 180 H 36 V 176 H 48 V 172 H 54 V 168 H 60 V 164 H 72 V 160 H 78 V 156 H 84 V 152 H 90 V 148 H 102 V 144 H 108 V 140 H 114 V 136 H 126 V 132 H 138 V 128 H 150 V 124 H 168 V 120 H 222 V 124 H 246 V 128 H 258 V 132 H 276 V 136 H 288 V 140 H 300 V 144 H 312 V 148 H 324 V 152 H 336 V 156 H 348 V 160 H 360 V 164 H 372 V 168 H 390 V 172 H 420 V 176 H 462 V 172 H 486 V 168 H 504 V 164 H 516 V 160 H 528 V 156 H 540 V 152 H 552 V 148 H 564 V 144 H 576 V 140 H 582 V 136 H 594 V 132 H 606 V 128 H 618 V 124 H 636 V 120 H 654 V 116 H 732 V 120 H 750 V 124 H 768 V 128 H 780 V 132 H 798 V 136 H 810 V 140 H 822 V 144 H 834 V 148 H 846 V 152 H 864 V 156 H 882 V 160 H 900 V 164 H 978 V 160 H 1002 V 156 H 1020 V 152 H 1038 V 148 H 1050 V 144 H 1068 V 140 H 1080 V 136 H 1098 V 132 H 1116 V 128 H 1146 V 124 H 1194 V 128 H 1224 V 132 H 1248 V 136 H 1266 V 140 H 1290 V 144 H 1308 V 148 H 1332 V 152 H 1356 V 156 H 1392 V 160 H 1440 V 280 Z"
             fill="url(#midTealHillsGrad)"
             stroke="#102040"
             strokeWidth="2"
@@ -113,63 +99,60 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
         </g>
 
         {/* --------------------------------------------------------------------- */}
-        {/* 3. LAYER C: FOREGROUND LUSH GREEN ROLLING DUNES WITH SOFT CREST LIGHTS */}
+        {/* 3. LAYER C: FOREGROUND PIXELATED LUSH GREEN DUNES & CREST LIGHTS      */}
         {/* --------------------------------------------------------------------- */}
         <g>
-          {/* Main rolling green hills body with gentle Mario World curves */}
+          {/* Main stepped rolling green hills body */}
           <path
-            d="M 0,280 
-               L 0,195 
-               C 50,195 90,140 150,140 
-               C 220,140 290,190 380,190 
-               C 470,190 520,135 590,135 
-               C 670,135 740,185 820,185 
-               C 900,185 960,140 1040,140 
-               C 1120,140 1180,180 1250,180 
-               C 1310,180 1350,165 1400,165 
-               C 1420,165 1435,170 1440,172 
-               L 1440,280 Z"
+            d="M 0,280 V 196 H 12 V 192 H 30 V 188 H 36 V 184 H 48 V 180 H 54 V 176 H 60 V 172 H 66 V 168 H 72 V 164 H 78 V 160 H 90 V 156 H 96 V 152 H 102 V 148 H 114 V 144 H 132 V 140 H 174 V 144 H 198 V 148 H 210 V 152 H 222 V 156 H 234 V 160 H 246 V 164 H 258 V 168 H 270 V 172 H 288 V 176 H 300 V 180 H 318 V 184 H 336 V 188 H 420 V 184 H 438 V 180 H 450 V 176 H 462 V 172 H 474 V 168 H 486 V 164 H 492 V 160 H 504 V 156 H 510 V 152 H 522 V 148 H 534 V 144 H 546 V 140 H 564 V 136 H 624 V 140 H 648 V 144 H 660 V 148 H 672 V 152 H 684 V 156 H 696 V 160 H 714 V 164 H 726 V 168 H 738 V 172 H 750 V 176 H 762 V 180 H 786 V 184 H 858 V 180 H 876 V 176 H 894 V 172 H 906 V 168 H 918 V 164 H 930 V 160 H 942 V 156 H 960 V 152 H 972 V 148 H 990 V 144 H 1008 V 140 H 1074 V 144 H 1098 V 148 H 1110 V 152 H 1128 V 156 H 1140 V 160 H 1158 V 164 H 1170 V 168 H 1182 V 172 H 1200 V 176 H 1224 V 180 H 1290 V 176 H 1320 V 172 H 1344 V 168 H 1374 V 164 H 1416 V 168 H 1434 V 172 H 1440 V 280 Z"
             fill="url(#greenHillsGrad)"
             stroke="#102040"
             strokeWidth="2"
           />
 
-          {/* Soft Hilltop Crest Highlights (Super Mario World style) */}
+          {/* Stepped Pixel Crest Highlights (Super Mario World 8-bit aesthetic) */}
           <path
-            d="M 85,155 C 115,140 150,140 210,148"
-            stroke="#86EFAC"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.8"
+            d="M 84,160 H 90 V 156 H 96 V 152 H 102 V 148 H 114 V 144 H 132 V 140 H 174 V 144 H 198 V 148 H 210 V 152 H 216 V 156 H 210 V 152 H 198 V 148 H 174 V 144 H 132 V 148 H 114 V 152 H 102 V 156 H 96 V 160 H 90 V 164 H 84 Z"
+            fill="#86EFAC"
+            opacity="0.85"
           />
           <path
-            d="M 520,150 C 555,135 590,135 655,145"
-            stroke="#86EFAC"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.8"
+            d="M 516,152 H 522 V 148 H 534 V 144 H 546 V 140 H 564 V 136 H 624 V 140 H 648 V 144 H 660 V 148 H 648 V 144 H 624 V 140 H 564 V 144 H 546 V 148 H 534 V 152 H 522 V 156 H 516 Z"
+            fill="#86EFAC"
+            opacity="0.85"
           />
           <path
-            d="M 970,152 C 1005,140 1040,140 1105,148"
-            stroke="#86EFAC"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.8"
+            d="M 966,152 H 972 V 148 H 990 V 144 H 1008 V 140 H 1074 V 144 H 1098 V 148 H 1110 V 152 H 1098 V 148 H 1074 V 144 H 1008 V 148 H 990 V 152 H 972 V 156 H 966 Z"
+            fill="#86EFAC"
+            opacity="0.85"
           />
           <path
-            d="M 1340,172 C 1370,165 1400,165 1435,170"
-            stroke="#86EFAC"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.75"
+            d="M 1338,172 H 1344 V 168 H 1374 V 164 H 1416 V 168 H 1434 V 172 H 1416 V 168 H 1374 V 172 H 1344 V 176 H 1338 Z"
+            fill="#86EFAC"
+            opacity="0.85"
           />
+
+          {/* Pixel Shrub Tufts dotted along the green slopes matching reference */}
+          <g fill="#166534">
+            <rect x="240" y="164" width="4" height="6" />
+            <rect x="244" y="162" width="6" height="8" />
+            <rect x="250" y="164" width="4" height="6" />
+            <rect x="450" y="174" width="4" height="6" />
+            <rect x="454" y="172" width="6" height="8" />
+            <rect x="460" y="174" width="4" height="6" />
+            <rect x="696" y="162" width="4" height="6" />
+            <rect x="700" y="160" width="6" height="8" />
+            <rect x="706" y="162" width="4" height="6" />
+            <rect x="918" y="166" width="4" height="6" />
+            <rect x="922" y="164" width="6" height="8" />
+            <rect x="928" y="166" width="4" height="6" />
+            <rect x="1170" y="170" width="4" height="6" />
+            <rect x="1174" y="168" width="6" height="8" />
+            <rect x="1180" y="170" width="4" height="6" />
+          </g>
         </g>
 
-        {/* Continuous Ground Baseline (y = 279) */}
+        {/* Continuous Stepped Ground Baseline (y = 279) */}
         <line x1="0" y1="279" x2="1440" y2="279" stroke="#102040" strokeWidth="2" />
       </svg>
 
