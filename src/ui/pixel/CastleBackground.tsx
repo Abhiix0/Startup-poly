@@ -124,7 +124,7 @@ export const CastleBackground: React.FC<CastleBackgroundProps> = ({
       </div>
 
       {/* Main Foreground Content (Signboard Mounted on the scene) */}
-      <div className="relative z-10 flex-1 flex flex-col justify-between">
+      <div className="relative z-30 flex-1 flex flex-col justify-between">
         {children}
       </div>
 

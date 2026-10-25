@@ -13,9 +13,9 @@ export interface PlainsBackgroundProps {
 
 export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-nes-sky flex flex-col justify-between relative overflow-hidden select-none anim-scene-transition">
+    <div className="min-h-screen nes-sky-gradient flex flex-col justify-between relative overflow-hidden select-none anim-scene-transition">
       {/* ======================================================================= */}
-      {/* LAYER 1: Distant Background Hills & Misty Castle Silhouette            */}
+      {/* LAYER 1: Distant Background Hills (Matching Landing Page Panorama)       */}
       {/* ======================================================================= */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Layered Mountain Panorama Aligned to Ground Baseline */}
@@ -114,37 +114,14 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
           <line x1="0" y1="279" x2="1440" y2="279" stroke="#102040" strokeWidth="2" />
         </svg>
 
-        {/* Castle Fortress Grounded on Right (Free from left pipe) */}
-        <div className="hidden sm:block absolute bottom-7 sm:bottom-8 right-4 sm:right-12 lg:right-16 opacity-90 z-0 drop-shadow-[0_4px_6px_rgba(16,32,64,0.3)]">
-          <div className="relative flex flex-col items-center">
-            {/* Center tower with flag */}
-            <div className="relative flex items-end justify-center -mb-0.5">
-              <div className="w-1 h-7 bg-[#102040]" />
-              <div className="absolute top-0 left-0.5">
-                <svg width="20" height="13" viewBox="0 0 20 13" fill="none">
-                  <path d="M0 0 L20 6.5 L0 13 Z" fill="#E11D48" stroke="#102040" strokeWidth="1.5" />
-                  <path d="M0 2 L14 6.5 L0 9 Z" fill="#FB7185" />
-                </svg>
-              </div>
-            </div>
-            <div className="w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-b-[20px] border-b-[#334155]" />
-            <div className="w-9 h-22 bg-[#334155] border-x-2 border-[#102040] flex flex-col items-center pt-2 gap-1.5">
-              <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#102040] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
-              <div className="w-2 h-3.5 bg-[#FCD34D] border border-[#102040] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
-            </div>
-            {/* Flanking turrets */}
-            <div className="w-26 h-14 bg-[#334155] border-t-2 border-x-2 border-[#102040] flex justify-between items-start -mt-14 px-1.5">
-              <div className="flex flex-col items-center -mt-5">
-                <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-b-[12px] border-b-[#334155]" />
-                <div className="w-5 h-5 bg-[#334155] border-x-2 border-[#102040]" />
-              </div>
-              <div className="w-6 h-9 bg-[#102040] rounded-t-sm self-end" />
-              <div className="flex flex-col items-center -mt-5">
-                <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-b-[12px] border-b-[#334155]" />
-                <div className="w-5 h-5 bg-[#334155] border-x-2 border-[#102040]" />
-              </div>
-            </div>
-            <div className="w-28 h-1.5 bg-[#26354A] border-x-2 border-b-2 border-[#102040]" />
+        {/* Animated Background How-To-Play & Encouraging Words Banner */}
+        <div className="absolute top-14 sm:top-16 inset-x-0 flex justify-center pointer-events-none z-10 px-4">
+          <div className="anim-retro-banner inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[#102040]/85 backdrop-blur-xs border-2 border-[#FFCC00] shadow-[2px_2px_0px_#B84418] rounded-xs max-w-xl text-center">
+            <span className="text-[10px] sm:text-xs text-[#FFCC00] animate-pulse">💡</span>
+            <p className="font-pixel text-[8px] sm:text-[9.5px] text-[#FFFBEB] tracking-wide leading-relaxed">
+              <span className="text-[#FFCC00] font-bold">TUTORIAL:</span> 1. ENTER 6-DIGIT CODE &nbsp;•&nbsp; 2. PICK SQUAD &nbsp;•&nbsp; 3. SCALE UP &amp; WIN!
+            </p>
+            <span className="text-[10px] sm:text-xs text-[#22C55E] hidden sm:inline">★</span>
           </div>
         </div>
       </div>

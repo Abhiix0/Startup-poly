@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ArcadeLink,
 } from '../../ui';
@@ -8,8 +9,10 @@ import {
   PixelTerminalIcon,
   PixelGrassTuft,
   PixelFlower,
+  PixelMario,
   StartupolyLogo,
 } from '../../ui/pixel';
+import { sounds } from '../../lib/sound';
 import { usePageVisibility } from '../../lib/usePageVisibility';
 import { useFirstVisit } from '../../lib/useFirstVisit';
 import { PixelWorld } from './PixelWorld';
@@ -22,15 +25,30 @@ import { GameIntroOverlay } from './intro/GameIntroOverlay';
 import { GameRulesModal } from './rules/GameRulesModal';
 
 export const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   const { isFirstVisit, markSeen } = useFirstVisit();
   const [showIntro, setShowIntro] = useState<boolean>(true);
   const [showRules, setShowRules] = useState<boolean>(false);
   const [activeCta, setActiveCta] = useState<'join' | 'admin' | null>(null);
+  const [launchTarget, setLaunchTarget] = useState<'join' | 'admin' | null>(null);
 
   // Check prefers-reduced-motion
   const isReducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  const handleCtaClick = (target: 'join' | 'admin', e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isReducedMotion) {
+      navigate(target === 'join' ? '/join' : '/admin');
+      return;
+    }
+    sounds.playJump();
+    setLaunchTarget(target);
+    setTimeout(() => {
+      navigate(target === 'join' ? '/join' : '/admin');
+    }, 400);
+  };
 
   // Synchronize document pause state with tab visibility
   usePageVisibility();
@@ -239,6 +257,7 @@ export const LandingPage: React.FC = () => {
                     size="md"
                     fullWidth
                     ctaType="join"
+                    onClick={(e) => handleCtaClick('join', e)}
                     onPointerEnter={() => setActiveCta('join')}
                     onPointerLeave={() => setActiveCta(null)}
                     onFocus={() => setActiveCta('join')}
@@ -358,6 +377,7 @@ export const LandingPage: React.FC = () => {
                     size="sm"
                     fullWidth
                     ctaType="admin"
+                    onClick={(e) => handleCtaClick('admin', e)}
                     onPointerEnter={() => setActiveCta('admin')}
                     onPointerLeave={() => setActiveCta(null)}
                     onFocus={() => setActiveCta('admin')}
@@ -449,6 +469,27 @@ export const LandingPage: React.FC = () => {
       {/* Tap / Touch Easter Egg Bursts (Phase 4)                                 */}
       {/* ======================================================================= */}
       <TapCoinBurst isBooting={isFirstVisit} />
+
+      {/* ======================================================================= */}
+      {/* SUPER MARIO NAVIGATION LAUNCH JUMP (Team Phone / Admin Transition)     */}
+      {/* ======================================================================= */}
+      {launchTarget && (
+        <div
+          data-testid="mario-launch-jump"
+          aria-hidden="true"
+          className={`fixed bottom-12 sm:bottom-16 left-1/2 -ml-6 z-50 pointer-events-none ${
+            launchTarget === 'join' ? 'anim-mario-launch-join' : 'anim-mario-launch-admin'
+          }`}
+        >
+          <div className="relative flex flex-col items-center">
+            {/* Retro Comic Speech Callout */}
+            <div className="mb-1 whitespace-nowrap bg-[#FFCC00] text-[#102040] border-2 border-[#102040] px-2 py-0.5 font-pixel text-[8px] font-bold shadow-[2px_2px_0px_#102040]">
+              {launchTarget === 'join' ? "LET'S GO!! 🍄" : 'WARP ADMIN! ⚡'}
+            </div>
+            <PixelMario size={50} pose="jump" />
+          </div>
+        </div>
+      )}
 
       {/* ======================================================================= */}
       {/* LAYER 4: Living Pixel World Ground & Scene                              */}

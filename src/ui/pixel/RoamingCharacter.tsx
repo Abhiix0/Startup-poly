@@ -122,7 +122,7 @@ export const RoamingCharacter: React.FC<RoamingCharacterProps> = ({
           ? cfg.maxX
           : cfg.hasObstacle
           ? Math.max(winW - cfg.size - 16, 200)
-          : 65;
+          : Math.min(Math.max(winW * 0.45, 260), 550);
 
       let x = currentXRef.current + directionRef.current * SPEED * dt;
       let dir = directionRef.current;

@@ -150,7 +150,7 @@ export const TeamJoinPage: React.FC = () => {
 
   return (
     <PlainsBackground>
-      {/* Top Navbar / World Map Signpost & Checkpoint Badge */}
+      {/* Top Navbar / World Map Signpost */}
       <header className="p-3 sm:p-4 flex items-center justify-between z-20">
         <Link
           to="/"
@@ -159,10 +159,6 @@ export const TeamJoinPage: React.FC = () => {
           <span className="text-sm">🗺️</span>
           <span>WORLD MAP</span>
         </Link>
-        <span className="inline-flex items-center gap-1.5 font-pixel text-[10px] sm:text-xs text-nes-navy bg-nes-gold px-3 sm:px-4 py-1.5 border-2 border-nes-navy shadow-[3px_3px_0px_var(--color-nes-navy)] font-black tracking-wider">
-          <span>🚩</span>
-          <span>CHECKPOINT</span>
-        </span>
       </header>
 
       {/* Main Single-Column Game World Scene */}
@@ -337,7 +333,7 @@ export const TeamJoinPage: React.FC = () => {
         </WoodenSignboard>
 
         {/* Pixel Mascot Mario Patrols The Ground with dynamic slogans and obstacle-aware jump */}
-        <div className="absolute inset-x-0 bottom-0 pointer-events-none z-20">
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none z-20 anim-mario-land">
           <RoamingCharacter
             size={48}
             bubbleText={isSuccess ? 'Lets Go!!' : undefined}
