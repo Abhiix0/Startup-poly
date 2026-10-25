@@ -163,13 +163,13 @@ export const LandingPage: React.FC = () => {
           </div>
         </header>
 
-        {/* Main Portals Grid (Level 4 Primary Checkpoints) */}
-        <main className="relative max-w-3xl w-full mx-auto px-4 py-0.5 flex flex-col justify-center z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-[1.15fr_0.85fr] gap-4 sm:gap-5 md:gap-6 items-end justify-items-center">
+        {/* Main Portals Grid (Level 4 Primary Checkpoints - Enlarged 10-15% with Retro Arcade Typography) */}
+        <main className="relative max-w-4xl w-full mx-auto px-4 py-0.5 flex flex-col justify-center z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-[1.12fr_0.88fr] gap-5 sm:gap-6 md:gap-8 items-end justify-items-center">
             {/* ================================================================= */}
-            {/* PRIMARY HERO CTA: TEAM PHONE (Wooden Checkpoint Signboard)       */}
+            {/* PRIMARY HERO CTA: TEAM PHONE (Wooden Checkpoint Signboard, +12%) */}
             {/* ================================================================= */}
-            <div className={`relative flex flex-col items-center w-full max-w-[360px] ${isFirstVisit ? 'anim-card-arrival-phone' : ''}`}>
+            <div className={`relative flex flex-col items-center w-full max-w-[400px] ${isFirstVisit ? 'anim-card-arrival-phone' : ''}`}>
               {/* Phase 4: One-time section entrance coin accent on primary card arrival */}
               {isFirstVisit && !isReducedMotion && (
                 <div
@@ -181,9 +181,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               )}
               <div
-                onPointerEnter={() => setActiveCta('join')}
-                onPointerLeave={() => setActiveCta(null)}
-                className="group relative w-full bg-[#D78B30] border-[4px] border-[#181512] shadow-[6px_6px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1 transition-all duration-100 ease-out p-3 sm:p-3.5 flex flex-col justify-between items-center text-center rounded-sm select-none"
+                className="group relative w-full bg-[#D78B30] border-[4px] border-[#181512] shadow-[6px_6px_0px_#102040] hover:shadow-[8px_8px_0px_#102040] hover:-translate-y-1 transition-all duration-100 ease-out p-3.5 sm:p-4 flex flex-col justify-between items-center text-center rounded-sm select-none"
               >
                 {/* Left edge wood grain shadow */}
                 <div className="absolute top-0 bottom-0 left-0 w-2.5 bg-[#B86B1E] border-r-2 border-[#8A4810] pointer-events-none" />
@@ -207,7 +205,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Inner Cream/Parchment Face */}
-                <div className="relative w-full bg-[#FFF5D6] border-[3px] border-[#9E5D1D] shadow-inner pt-3 pb-3 px-3 sm:px-4 flex flex-col items-center justify-between gap-3 rounded-none z-10">
+                <div className="relative w-full bg-[#FFF5D6] border-[3px] border-[#9E5D1D] shadow-inner pt-3.5 pb-3.5 px-4 sm:px-5 flex flex-col items-center justify-between gap-3.5 rounded-none z-10">
                   {/* 4 Corner Silver Rivets with Screws */}
                   <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
                     <div className="w-1.5 h-0.5 bg-[#181512]" />
@@ -222,12 +220,12 @@ export const LandingPage: React.FC = () => {
                     <div className="w-1.5 h-0.5 bg-[#181512]" />
                   </div>
 
-                  {/* Icon & Title */}
+                  {/* Icon & Title with Retro Arcade Typography */}
                   <div className="flex flex-col items-center text-center gap-1.5 pt-0.5">
                     <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
-                      <PixelPhoneIcon size={42} />
+                      <PixelPhoneIcon size={46} />
                     </div>
-                    <h2 className="font-pixel text-xs sm:text-sm text-[#181512] uppercase tracking-wider font-extrabold">
+                    <h2 className="font-arcade text-xs sm:text-[13px] md:text-sm text-[#181512] uppercase tracking-wide font-bold">
                       TEAM PHONE
                     </h2>
                   </div>
@@ -239,9 +237,11 @@ export const LandingPage: React.FC = () => {
                     size="md"
                     fullWidth
                     ctaType="join"
+                    onPointerEnter={() => setActiveCta('join')}
+                    onPointerLeave={() => setActiveCta(null)}
                     onFocus={() => setActiveCta('join')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-[#FFCC00] hover:!bg-[#FFB800] !border-[3px] !border-[#181512] !text-[#181512] font-black tracking-wider text-xs sm:text-sm py-2 sm:py-2.5 shadow-[0_4px_0_#B8860B,3px_4px_0_#181512] hover:shadow-[0_5px_0_#B8860B,4px_5px_0_#181512] active:translate-y-1 active:shadow-[0_0px_0_#B8860B,1px_1px_0_#181512] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
+                    className="!bg-[#FFCC00] hover:!bg-[#FFB800] !border-[3px] !border-[#181512] !text-[#181512] font-arcade tracking-wide text-xs sm:text-[13px] py-2.5 sm:py-3 shadow-[0_4px_0_#B8860B,3px_4px_0_#181512] hover:shadow-[0_5px_0_#B8860B,4px_5px_0_#181512] active:translate-y-1 active:shadow-[0_0px_0_#B8860B,1px_1px_0_#181512] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all cursor-pointer"
                   >
                     JOIN MATCH
                   </ArcadeLink>
@@ -262,11 +262,11 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* ================================================================= */}
-            {/* SECONDARY UTILITY CTA: EVENT ADMIN (Subordinate Castle Console)    */}
+            {/* SECONDARY UTILITY CTA: EVENT ADMIN (Subordinate Castle Console, +14%) */}
             {/* ================================================================= */}
             <div
               onAnimationEnd={handleEntranceEnd}
-              className={`flex flex-col items-center w-full max-w-[280px] opacity-90 hover:opacity-100 transition-opacity ${isFirstVisit ? 'anim-card-arrival-admin' : ''}`}
+              className={`flex flex-col items-center w-full max-w-[320px] opacity-95 hover:opacity-100 transition-opacity ${isFirstVisit ? 'anim-card-arrival-admin' : ''}`}
             >
               {/* Castle Battlements & Cyan/Gold Waving Flag Header */}
               <div className="hidden sm:flex justify-between items-end w-full px-1 -mb-1 z-10 pointer-events-none">
@@ -296,9 +296,7 @@ export const LandingPage: React.FC = () => {
               </div>
 
               <div
-                onPointerEnter={() => setActiveCta('admin')}
-                onPointerLeave={() => setActiveCta(null)}
-                className="group relative w-full bg-gradient-to-b from-[#3E5276] via-[#354664] to-[#28364E] border-[3px] border-[#121A2A] shadow-[5px_5px_0px_#0C1320,0_4px_12px_rgba(18,26,42,0.3)] hover:shadow-[7px_7px_0px_#0C1320,0_6px_16px_rgba(0,240,255,0.15)] hover:-translate-y-0.5 transition-all duration-100 ease-out p-2 sm:p-2.5 flex flex-col justify-between items-center text-center rounded-sm select-none"
+                className="group relative w-full bg-gradient-to-b from-[#3E5276] via-[#354664] to-[#28364E] border-[3px] border-[#121A2A] shadow-[5px_5px_0px_#0C1320,0_4px_12px_rgba(18,26,42,0.3)] hover:shadow-[7px_7px_0px_#0C1320,0_6px_16px_rgba(0,240,255,0.15)] hover:-translate-y-0.5 transition-all duration-100 ease-out p-2.5 sm:p-3 flex flex-col justify-between items-center text-center rounded-sm select-none"
               >
                 {/* Subtle animated border shimmer */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xs z-20">
@@ -316,7 +314,7 @@ export const LandingPage: React.FC = () => {
 
                 {/* Inner Slate-Blue Console Face */}
                 <div
-                  className="relative w-full border-2 border-[#58729A] shadow-inner pt-2 pb-2 px-2 sm:px-3 flex flex-col items-center justify-between gap-2 rounded-none z-10"
+                  className="relative w-full border-2 border-[#58729A] shadow-inner pt-2.5 pb-2.5 px-2.5 sm:px-3.5 flex flex-col items-center justify-between gap-2.5 rounded-none z-10"
                   style={{
                     backgroundColor: '#D5E0F1',
                     backgroundImage: 'radial-gradient(rgba(30, 58, 95, 0.08) 1px, transparent 1px), linear-gradient(180deg, #E2ECF8 0%, #D5E0F1 60%, #C4D3E8 100%)',
@@ -337,12 +335,12 @@ export const LandingPage: React.FC = () => {
                     <div className="w-1 h-0.5 bg-[#1E293B]" />
                   </div>
 
-                  {/* Icon & Title with Pulsing Status Dot and Blinking Cursor */}
+                  {/* Icon & Title with Retro Arcade Typography */}
                   <div className="flex flex-col items-center text-center gap-1 pt-0.5">
                     <div className="shrink-0 group-hover:scale-105 transition-transform duration-100 drop-shadow-[0_2px_4px_rgba(18,26,42,0.2)]">
-                      <PixelTerminalIcon size={32} />
+                      <PixelTerminalIcon size={36} />
                     </div>
-                    <h2 className="font-pixel text-[10px] sm:text-xs text-[#0F172A] uppercase tracking-wider font-extrabold flex items-center justify-center gap-1 drop-shadow-[1px_1px_0px_#FFFFFF]">
+                    <h2 className="font-arcade text-[10px] sm:text-xs text-[#0F172A] uppercase tracking-wide font-bold flex items-center justify-center gap-1 drop-shadow-[1px_1px_0px_#FFFFFF]">
                       EVENT ADMIN
                       <span className="inline-block w-1.5 h-1.5 bg-[#0284C7] shadow-[0_0_6px_#00F0FF] anim-pulse-dot" />
                       <span className="font-mono text-[#0284C7] anim-cursor-blink text-xs -ml-0.5 select-none">_</span>
@@ -356,9 +354,11 @@ export const LandingPage: React.FC = () => {
                     size="sm"
                     fullWidth
                     ctaType="admin"
+                    onPointerEnter={() => setActiveCta('admin')}
+                    onPointerLeave={() => setActiveCta(null)}
                     onFocus={() => setActiveCta('admin')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-[#223554] hover:!bg-[#2C446C] !border-2 !border-[#102040] !text-[#FFFFFF] font-bold text-[10px] sm:text-xs py-1.5 sm:py-2 shadow-[0_2px_0_#0F172A,2px_2px_0_#102040] hover:-translate-y-[1px] hover:shadow-[0_0_8px_rgba(56,189,248,0.3),0_3px_0_#0F172A,2px_3px_0_#102040] active:translate-y-0.5 active:shadow-[0_1px_0_#0F172A,1px_1px_0_#181E28] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all tracking-wider"
+                    className="!bg-[#223554] hover:!bg-[#2C446C] !border-2 !border-[#102040] !text-[#FFFFFF] font-arcade text-[10px] sm:text-xs py-2 sm:py-2.5 shadow-[0_2px_0_#0F172A,2px_2px_0_#102040] hover:-translate-y-[1px] hover:shadow-[0_0_8px_rgba(56,189,248,0.3),0_3px_0_#0F172A,2px_3px_0_#102040] active:translate-y-0.5 active:shadow-[0_1px_0_#0F172A,1px_1px_0_#181E28] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all tracking-wide cursor-pointer"
                   >
                     ADMIN CONSOLE
                   </ArcadeLink>

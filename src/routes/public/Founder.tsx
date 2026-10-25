@@ -56,13 +56,16 @@ export const Founder: React.FC<FounderProps> = React.memo(({
   const [isJumping, setIsJumping] = useState(false);
   const [facingLeft, setFacingLeft] = useState(false);
 
-  // Position, direction, and timing refs (immune to cursor movements and parent re-renders)
+  // Position, direction, and timing refs (100% independent of mouse cursor)
   const currentXRef = useRef<number>(0);
   const directionRef = useRef<1 | -1>(1);
   const lastTimeRef = useRef<number | null>(null);
-  const lastJumpStateRef = useRef<boolean>(false);
   const lastSloganTimeRef = useRef<number>(0);
   const rafIdRef = useRef<number | null>(null);
+
+  // Intentional jump physics state
+  const jumpProgressRef = useRef<number | null>(null);
+  const nextScriptedJumpTimeRef = useRef<number>(0);
 
   // Store latest bounds in refs so RAF always sees current responsive values without restarting
   const boundsRef = useRef({ platformOffset, maxDistance });
@@ -84,15 +87,35 @@ export const Founder: React.FC<FounderProps> = React.memo(({
     setPhase('idle');
   }, []);
 
-  // Continuous animation loop: independent of cursor movement, mouse events, or CTA hovers
+  // Intentional keyboard jump control (Space or ArrowUp triggers an authentic high jump)
   useEffect(() => {
     if (isPaused || phase !== 'idle') return;
 
-    const SPEED = 135; // Pixels per second: brisk, smooth retro platformer running pace
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        // Trigger intentional jump only if currently grounded
+        if (jumpProgressRef.current === null) {
+          jumpProgressRef.current = 0;
+          setIsJumping(true);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPaused, phase]);
+
+  // Autonomous animation loop: smooth, natural walking independent of mouse cursor
+  useEffect(() => {
+    if (isPaused || phase !== 'idle') return;
+
+    const SPEED = 165; // Brisk, natural retro platformer run pace (slightly faster)
+    const JUMP_DURATION = 0.55; // 550ms crisp parabolic jump duration
 
     const updateFrame = (now: number) => {
       if (lastTimeRef.current === null) {
         lastTimeRef.current = now;
+        nextScriptedJumpTimeRef.current = now + 9000; // First intentional jump in 9s
       }
       const dt = Math.min((now - lastTimeRef.current) / 1000, 0.05);
       lastTimeRef.current = now;
@@ -105,52 +128,52 @@ export const Founder: React.FC<FounderProps> = React.memo(({
         setSloganIndex((prev) => (prev + 1) % SLOGANS.length);
       }
 
-      const { maxDistance: maxDist, platformOffset: pOffset } = boundsRef.current;
-      const jumpStart = pOffset - 28;
-      const jumpEnd = pOffset + 52 + 10;
-      const jumpSpan = jumpEnd - jumpStart; // 90px obstacle jump span
-
+      const { maxDistance: maxDist } = boundsRef.current;
       let x = currentXRef.current + directionRef.current * SPEED * dt;
       let dir = directionRef.current;
 
-      // Smooth corner-to-corner reversal
+      // Consistent walking boundaries with guaranteed correct sprite orientation
       if (dir === 1 && x >= maxDist) {
         x = maxDist;
         directionRef.current = -1;
-        setFacingLeft(true);
+        setFacingLeft(true); // Facing left when moving left
       } else if (dir === -1 && x <= 0) {
         x = 0;
         directionRef.current = 1;
-        setFacingLeft(false);
+        setFacingLeft(false); // Facing right when moving right
       }
 
       currentXRef.current = x;
 
-      // Jump behavior: Mario jumps ONLY at the actual green platform obstacle
-      let jumping = false;
-      let y = 0;
+      // Intentional jump behavior (controlled scripted jumps or user keypress)
+      // Occasional scripted jump every 12 seconds
+      if (jumpProgressRef.current === null && now >= nextScriptedJumpTimeRef.current) {
+        jumpProgressRef.current = 0;
+        nextScriptedJumpTimeRef.current = now + 12000;
+      }
 
-      if (x >= jumpStart && x <= jumpEnd) {
+      let y = 0;
+      let jumping = false;
+
+      if (jumpProgressRef.current !== null) {
         jumping = true;
-        let p = 0;
-        if (dir === 1) {
-          p = (x - jumpStart) / jumpSpan;
-        } else {
-          p = (jumpEnd - x) / jumpSpan;
+        jumpProgressRef.current += dt / JUMP_DURATION;
+        const p = Math.min(1, jumpProgressRef.current);
+        // Clean authentic parabolic arc with gravity feel (peak: -48px)
+        y = -Math.sin(p * Math.PI) * 48;
+
+        if (jumpProgressRef.current >= 1) {
+          // Landed firmly on turf
+          jumpProgressRef.current = null;
+          jumping = false;
+          y = 0;
+          setSloganIndex((prev) => (prev + 1) % SLOGANS.length);
         }
-        p = Math.max(0, Math.min(1, p));
-        // Parabolic arc: peak elevation 46px directly over platform center
-        y = -Math.sin(p * Math.PI) * 46;
       } else {
+        // Flat ground walking: zero random hops
         jumping = false;
         y = 0;
       }
-
-      // Landing transition: when Mario lands after jumping, rotate to next slogan & expression
-      if (lastJumpStateRef.current && !jumping) {
-        setSloganIndex((prev) => (prev + 1) % SLOGANS.length);
-      }
-      lastJumpStateRef.current = jumping;
 
       setMarioTransform({ x, y });
       setIsJumping(jumping);
@@ -178,7 +201,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
       className={`founder-wrapper relative select-none pointer-events-none flex flex-col items-center ${className}`}
       aria-hidden="true"
     >
-      {/* Mario Motion Track: translated position driven continuously across ground */}
+      {/* Mario Motion Track: translated position driven smoothly across ground */}
       <div
         onAnimationEnd={handleAnimationEnd}
         className={`founder-motion-track relative flex flex-col items-center ${
@@ -206,7 +229,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
             visibility: isJumping ? 'hidden' : 'visible',
           }}
         >
-          {/* Cheerful Speech Bubble with Slogan matching Hand Movement */}
+          {/* Cheerful Speech Bubble with Slogan */}
           <div className="bg-white border-2 border-[#102040] shadow-[2px_2px_0px_#102040] px-2.5 py-0.5 text-center whitespace-nowrap z-20">
             <span className="font-pixel text-[9px] sm:text-[10px] text-[#102040] font-bold tracking-wider">
               {currentSlogan}
@@ -222,7 +245,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
           <div className="founder-bubble-tail w-2 h-1 bg-[#102040]" />
         </div>
 
-        {/* Character Facing Direction & Sprite Container */}
+        {/* Character Facing Direction & Sprite Container (flips correctly with walking direction) */}
         <div className="founder-character-container flex items-center justify-center">
           <PixelMario
             size={size}

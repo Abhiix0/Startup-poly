@@ -7,7 +7,7 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
       aria-hidden="true"
     >
       {/* ======================================================================= */}
-      {/* LAYER: Natural Layered Mountain Panorama with Mario Depth & Snowcaps   */}
+      {/* LAYER: Refined Two-Tone Blue Mountain Panorama (Arcade Pixel Atmosphere) */}
       {/* ======================================================================= */}
       <svg
         viewBox="0 0 1440 280"
@@ -15,40 +15,32 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
         preserveAspectRatio="none"
       >
         <defs>
-          {/* Distant Alpine Mountain Gradient */}
-          <linearGradient id="distantAlpineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#4A75C7" stopOpacity="0.85" />
-            <stop offset="50%" stopColor="#31559C" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#1E386B" stopOpacity="1" />
+          {/* Tone 1: Distant Deep Arcade Indigo/Navy Blue */}
+          <linearGradient id="twoTonePeaksGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#2A4D85" />
+            <stop offset="60%" stopColor="#1E3763" />
+            <stop offset="100%" stopColor="#152646" />
           </linearGradient>
 
-          {/* Mid-range Teal Hill Gradient */}
-          <linearGradient id="midTealHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#14B8A6" stopOpacity="0.85" />
-            <stop offset="60%" stopColor="#0D9488" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#0F766E" stopOpacity="1" />
+          {/* Tone 2: Foreground Vibrant Mid-Arcade Blue */}
+          <linearGradient id="twoToneHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#3E72DC" />
+            <stop offset="55%" stopColor="#2E5AB5" />
+            <stop offset="100%" stopColor="#204085" />
           </linearGradient>
 
-          {/* Foreground Lush Green Hills Gradient */}
-          <linearGradient id="greenHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#2ECC71" />
-            <stop offset="45%" stopColor="#22C55E" />
-            <stop offset="85%" stopColor="#16A34A" />
-            <stop offset="100%" stopColor="#15803D" />
-          </linearGradient>
-
-          {/* Snowcap highlight */}
-          <linearGradient id="snowcapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          {/* Subtle Snowcap / Sky Highlight */}
+          <linearGradient id="twoToneSnowcap" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="100%" stopColor="#BFDBFE" />
+            <stop offset="100%" stopColor="#C3D9FF" />
           </linearGradient>
         </defs>
 
         {/* --------------------------------------------------------------------- */}
-        {/* 1. LAYER A: DISTANT MAJESTIC ALPINE PEAKS WITH SNOWCAPS               */}
+        {/* TONE 1 (LAYER A): DISTANT DEEP BLUE MOUNTAIN PEAKS                    */}
         {/* --------------------------------------------------------------------- */}
         <g>
-          {/* Broad, gently rolling blue mountain peaks */}
+          {/* Broad, smooth rolling alpine silhouettes */}
           <path
             d="M 0,280 
                L 0,160 
@@ -59,24 +51,24 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
                C 1120,125 1190,75 1270,75 
                C 1340,75 1395,120 1440,140 
                L 1440,280 Z"
-            fill="url(#distantAlpineGrad)"
+            fill="url(#twoTonePeaksGrad)"
             stroke="#102040"
             strokeWidth="2"
           />
 
-          {/* Peak 1 Snowcap */}
+          {/* Subtle Peak 1 Snowcap */}
           <path
             d="M 215,95 Q 250,75 285,95 Q 268,105 250,98 Q 232,105 215,95 Z"
-            fill="url(#snowcapGrad)"
+            fill="url(#twoToneSnowcap)"
             stroke="#102040"
             strokeWidth="1.5"
             opacity="0.9"
           />
 
-          {/* Peak 2 Snowcap (Center-Right Hero Peak) */}
+          {/* Peak 2 Snowcap (Center Hero Peak) */}
           <path
             d="M 720,85 Q 760,65 800,85 Q 780,96 760,88 Q 740,96 720,85 Z"
-            fill="url(#snowcapGrad)"
+            fill="url(#twoToneSnowcap)"
             stroke="#102040"
             strokeWidth="1.5"
             opacity="0.9"
@@ -85,7 +77,7 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
           {/* Peak 3 Snowcap */}
           <path
             d="M 1235,95 Q 1270,75 1305,95 Q 1288,105 1270,98 Q 1252,105 1235,95 Z"
-            fill="url(#snowcapGrad)"
+            fill="url(#twoToneSnowcap)"
             stroke="#102040"
             strokeWidth="1.5"
             opacity="0.9"
@@ -93,30 +85,10 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
         </g>
 
         {/* --------------------------------------------------------------------- */}
-        {/* 2. LAYER B: MID-DISTANCE TEAL ROLLING HILLS                           */}
-        {/* --------------------------------------------------------------------- */}
-        <g opacity="0.8">
-          <path
-            d="M 0,280 
-               L 0,185 
-               C 60,185 110,120 190,120 
-               C 280,120 350,175 440,175 
-               C 530,175 600,115 690,115 
-               C 780,115 850,165 940,165 
-               C 1020,165 1090,125 1170,125 
-               C 1250,125 1320,160 1440,160 
-               L 1440,280 Z"
-            fill="url(#midTealHillsGrad)"
-            stroke="#102040"
-            strokeWidth="2"
-          />
-        </g>
-
-        {/* --------------------------------------------------------------------- */}
-        {/* 3. LAYER C: FOREGROUND LUSH GREEN ROLLING DUNES WITH SOFT CREST LIGHTS */}
+        {/* TONE 2 (LAYER B): FOREGROUND VIBRANT MID-BLUE ROLLING SLOPES          */}
         {/* --------------------------------------------------------------------- */}
         <g>
-          {/* Main rolling green hills body with gentle Mario World curves */}
+          {/* Smooth rolling silhouette in harmonious secondary blue */}
           <path
             d="M 0,280 
                L 0,195 
@@ -129,43 +101,43 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
                C 1310,180 1350,165 1400,165 
                C 1420,165 1435,170 1440,172 
                L 1440,280 Z"
-            fill="url(#greenHillsGrad)"
+            fill="url(#twoToneHillsGrad)"
             stroke="#102040"
             strokeWidth="2"
           />
 
-          {/* Soft Hilltop Crest Highlights (Super Mario World style) */}
+          {/* Subtle Soft Blue Crest Highlights */}
           <path
             d="M 85,155 C 115,140 150,140 210,148"
-            stroke="#86EFAC"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.8"
-          />
-          <path
-            d="M 520,150 C 555,135 590,135 655,145"
-            stroke="#86EFAC"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.8"
-          />
-          <path
-            d="M 970,152 C 1005,140 1040,140 1105,148"
-            stroke="#86EFAC"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.8"
-          />
-          <path
-            d="M 1340,172 C 1370,165 1400,165 1435,170"
-            stroke="#86EFAC"
+            stroke="#BFDBFE"
             strokeWidth="2.5"
             strokeLinecap="round"
             fill="none"
             opacity="0.75"
+          />
+          <path
+            d="M 520,150 C 555,135 590,135 655,145"
+            stroke="#BFDBFE"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.75"
+          />
+          <path
+            d="M 970,152 C 1005,140 1040,140 1105,148"
+            stroke="#BFDBFE"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.75"
+          />
+          <path
+            d="M 1340,172 C 1370,165 1400,165 1435,170"
+            stroke="#BFDBFE"
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.7"
           />
         </g>
 
@@ -174,9 +146,10 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
       </svg>
 
       {/* ======================================================================= */}
-      {/* LAYER: Fully Opaque Majestic Castle Fortress - Grounded on Turf Baseline */}
+      {/* LAYER: Prominent, Noticeable Majestic Castle Fortress (Enlarged)         */}
+      {/* Grounded directly on the grass turf baseline with no green obstruction   */}
       {/* ======================================================================= */}
-      <div className="block absolute bottom-7 sm:bottom-8 md:bottom-8 lg:bottom-8 right-2 sm:right-6 md:right-10 lg:right-14 z-0 opacity-100 scale-75 sm:scale-85 md:scale-95 lg:scale-100 origin-bottom-right drop-shadow-[0_4px_8px_rgba(16,32,64,0.35)]">
+      <div className="block absolute bottom-7 sm:bottom-8 md:bottom-8 lg:bottom-8 right-1 sm:right-4 md:right-6 lg:right-8 z-0 opacity-100 scale-110 sm:scale-125 md:scale-135 lg:scale-150 origin-bottom-right drop-shadow-[0_6px_14px_rgba(16,32,64,0.45)]">
         <div className="relative flex flex-col items-center">
           {/* Main Central Castle Tower with Flag */}
           <div className="relative flex flex-col items-center">
