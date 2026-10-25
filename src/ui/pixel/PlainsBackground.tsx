@@ -18,41 +18,111 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
       {/* LAYER 1: Distant Background Hills & Misty Castle Silhouette            */}
       {/* ======================================================================= */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Distant Rolling Hills SVG */}
+        {/* Layered Mountain Panorama Aligned to Ground Baseline */}
         <svg
           viewBox="0 0 1440 280"
-          className="absolute inset-x-0 bottom-8 w-full h-44 sm:h-64 object-cover object-bottom opacity-70"
+          className="absolute inset-x-0 bottom-7 sm:bottom-8 w-full h-44 sm:h-64 object-cover object-bottom"
           preserveAspectRatio="none"
         >
           <defs>
-            <linearGradient id="plainsHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#4A80E8" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.7" />
+            {/* Distant Alpine Gradient */}
+            <linearGradient id="plainsAlpineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#4A75C7" stopOpacity="0.85" />
+              <stop offset="50%" stopColor="#31559C" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#1E386B" stopOpacity="1" />
             </linearGradient>
+
+            {/* Mid Teal Gradient */}
+            <linearGradient id="plainsMidTealGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#14B8A6" stopOpacity="0.85" />
+              <stop offset="60%" stopColor="#0D9488" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#0F766E" stopOpacity="1" />
+            </linearGradient>
+
+            {/* Foreground Lush Green Hills Gradient */}
             <linearGradient id="plainsGreenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#22C55E" stopOpacity="0.7" />
-              <stop offset="100%" stopColor="#15803D" stopOpacity="0.85" />
+              <stop offset="0%" stopColor="#2ECC71" />
+              <stop offset="45%" stopColor="#22C55E" />
+              <stop offset="85%" stopColor="#16A34A" />
+              <stop offset="100%" stopColor="#15803D" />
+            </linearGradient>
+
+            {/* Snowcap highlight */}
+            <linearGradient id="plainsSnowcapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FFFFFF" />
+              <stop offset="100%" stopColor="#BFDBFE" />
             </linearGradient>
           </defs>
-          <path
-            d="M 0,280 L 0,170 Q 160,90 320,165 T 640,130 T 960,170 T 1280,125 T 1440,160 L 1440,280 Z"
-            fill="url(#plainsHillsGrad)"
-          />
-          <path
-            d="M 0,280 L 0,200 Q 140,120 280,195 T 560,150 T 840,205 T 1120,160 Q 1280,215 1440,230 L 1440,280 Z"
-            fill="url(#plainsGreenGrad)"
-          />
+
+          {/* 1. Distant Alpine Peaks with Snowcaps */}
+          <g>
+            <path
+              d="M 0,280 L 0,160 C 70,150 140,75 250,75 C 340,75 410,135 500,135 C 580,135 660,65 760,65 C 870,65 940,125 1030,125 C 1120,125 1190,75 1270,75 C 1340,75 1395,120 1440,140 L 1440,280 Z"
+              fill="url(#plainsAlpineGrad)"
+              stroke="#102040"
+              strokeWidth="2"
+            />
+            {/* Snowcaps */}
+            <path
+              d="M 215,95 Q 250,75 285,95 Q 268,105 250,98 Q 232,105 215,95 Z"
+              fill="url(#plainsSnowcapGrad)"
+              stroke="#102040"
+              strokeWidth="1.5"
+              opacity="0.9"
+            />
+            <path
+              d="M 720,85 Q 760,65 800,85 Q 780,96 760,88 Q 740,96 720,85 Z"
+              fill="url(#plainsSnowcapGrad)"
+              stroke="#102040"
+              strokeWidth="1.5"
+              opacity="0.9"
+            />
+            <path
+              d="M 1235,95 Q 1270,75 1305,95 Q 1288,105 1270,98 Q 1252,105 1235,95 Z"
+              fill="url(#plainsSnowcapGrad)"
+              stroke="#102040"
+              strokeWidth="1.5"
+              opacity="0.9"
+            />
+          </g>
+
+          {/* 2. Mid-range Teal Slopes */}
+          <g opacity="0.85">
+            <path
+              d="M 0,280 L 0,185 C 60,185 110,120 190,120 C 280,120 350,175 440,175 C 530,175 600,115 690,115 C 780,115 850,165 940,165 C 1020,165 1090,125 1170,125 C 1250,125 1320,160 1440,160 L 1440,280 Z"
+              fill="url(#plainsMidTealGrad)"
+              stroke="#102040"
+              strokeWidth="2"
+            />
+          </g>
+
+          {/* 3. Foreground Lush Rolling Green Hills */}
+          <g>
+            <path
+              d="M 0,280 L 0,195 C 50,195 90,140 150,140 C 220,140 290,190 380,190 C 470,190 520,135 590,135 C 670,135 740,185 820,185 C 900,185 960,140 1040,140 C 1120,140 1180,180 1250,180 C 1310,180 1350,165 1400,165 C 1420,165 1435,170 1440,172 L 1440,280 Z"
+              fill="url(#plainsGreenGrad)"
+              stroke="#102040"
+              strokeWidth="2"
+            />
+            {/* Crest Highlights */}
+            <path d="M 85,155 C 115,140 150,140 210,148" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+            <path d="M 520,150 C 555,135 590,135 655,145" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+            <path d="M 970,152 C 1005,140 1040,140 1105,148" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+            <path d="M 1340,172 C 1370,165 1400,165 1435,170" stroke="#86EFAC" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.75" />
+          </g>
+
+          <line x1="0" y1="279" x2="1440" y2="279" stroke="#102040" strokeWidth="2" />
         </svg>
 
-        {/* Misty Distant Castle on Left (from reference image) */}
-        <div className="hidden sm:block absolute bottom-14 sm:bottom-20 left-4 sm:left-12 opacity-30 z-0">
+        {/* Castle Fortress Grounded on Left */}
+        <div className="hidden sm:block absolute bottom-7 sm:bottom-8 left-4 sm:left-12 opacity-80 z-0 drop-shadow-[0_4px_6px_rgba(16,32,64,0.3)]">
           <div className="relative flex flex-col items-center">
             {/* Center tower with flag */}
             <div className="w-1 h-6 bg-[#102040]" />
             <div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-b-[18px] border-b-[#334155]" />
             <div className="w-8 h-20 bg-[#334155] border-x-2 border-[#102040] flex flex-col items-center pt-2 gap-1.5">
-              <div className="w-2.5 h-4 bg-[#102040] rounded-t-sm" />
-              <div className="w-2 h-3 bg-[#102040] rounded-t-sm" />
+              <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#102040] rounded-t-sm" />
+              <div className="w-2 h-3 bg-[#FCD34D] border border-[#102040] rounded-t-sm" />
             </div>
             {/* Flanking turrets */}
             <div className="w-24 h-12 bg-[#334155] border-t-2 border-x-2 border-[#102040] flex justify-between items-start -mt-12 px-1">
@@ -60,25 +130,79 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
               <div className="w-5 h-8 bg-[#102040] rounded-t-sm self-end" />
               <div className="w-4 h-6 bg-[#334155] border-x-2 border-[#102040] -mt-4" />
             </div>
+            <div className="w-26 h-1 bg-[#26354A] border-x-2 border-b-2 border-[#102040]" />
           </div>
         </div>
       </div>
 
       {/* ======================================================================= */}
-      {/* LAYER 2: Sky & Drifting Clouds Layer                                    */}
+      {/* LAYER 2: Moving Animated Drifting Clouds (Upper & Mid Lanes)            */}
       {/* ======================================================================= */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-4 left-[6%] opacity-70">
-          <PixelCloudFluffy size={58} />
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Upper High-Altitude Cloud Lane (110s smooth drift) */}
+        <div className="absolute inset-x-0 top-3 sm:top-5 h-16 overflow-hidden pointer-events-none">
+          <div
+            className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-65"
+            style={{ animationDelay: '-20s' }}
+          >
+            {/* Set 1 */}
+            <div className="w-1/2 relative h-14 shrink-0">
+              <div className="absolute top-1 left-[8%]">
+                <PixelCloudFluffy size={44} />
+              </div>
+              <div className="absolute top-3 left-[38%]">
+                <PixelCloudFluffy size={52} />
+              </div>
+              <div className="absolute top-1 left-[70%]">
+                <PixelCloudFluffy size={42} />
+              </div>
+            </div>
+            {/* Set 2 (Seamless Loop) */}
+            <div className="w-1/2 relative h-14 shrink-0">
+              <div className="absolute top-1 left-[8%]">
+                <PixelCloudFluffy size={44} />
+              </div>
+              <div className="absolute top-3 left-[38%]">
+                <PixelCloudFluffy size={52} />
+              </div>
+              <div className="absolute top-1 left-[70%]">
+                <PixelCloudFluffy size={42} />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="absolute top-10 right-[8%] opacity-80">
-          <PixelCloudFluffy size={78} />
-        </div>
-        <div className="absolute top-20 left-[45%] opacity-50">
-          <PixelCloudFluffy size={48} />
-        </div>
-        <div className="hidden sm:block absolute top-64 right-[16%] opacity-60">
-          <PixelCloudFluffy size={62} />
+
+        {/* Lower/Mid Cloud Lane (65s smooth drift) */}
+        <div className="absolute inset-x-0 top-16 sm:top-20 h-16 overflow-hidden pointer-events-none">
+          <div
+            className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-75"
+            style={{ animationDelay: '-8s' }}
+          >
+            {/* Set 1 */}
+            <div className="w-1/2 relative h-14 shrink-0">
+              <div className="absolute top-1 left-[15%]">
+                <PixelCloudFluffy size={60} />
+              </div>
+              <div className="absolute top-2 left-[55%]">
+                <PixelCloudFluffy size={46} />
+              </div>
+              <div className="absolute top-1 left-[85%]">
+                <PixelCloudFluffy size={68} />
+              </div>
+            </div>
+            {/* Set 2 (Seamless Loop) */}
+            <div className="w-1/2 relative h-14 shrink-0">
+              <div className="absolute top-1 left-[15%]">
+                <PixelCloudFluffy size={60} />
+              </div>
+              <div className="absolute top-2 left-[55%]">
+                <PixelCloudFluffy size={46} />
+              </div>
+              <div className="absolute top-1 left-[85%]">
+                <PixelCloudFluffy size={68} />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

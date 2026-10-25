@@ -30,10 +30,9 @@ describe('GameRulesModal and LandingPage Integration', () => {
     const boardPreviewTab = screen.getByRole('button', { name: /BOARD PREVIEW/i });
     fireEvent.click(boardPreviewTab);
     expect(
-      screen.getByText(/SAMPLE LAYOUT — FINAL PHYSICAL BOARD DESIGN COMING SOON/i)
+      screen.getByText(/OFFICIAL 24-SPACE PHYSICAL BOARD/i)
     ).toBeInTheDocument();
     expect(screen.getByText(/10 Spaces/i)).toBeInTheDocument();
-    expect(screen.getByText(/PHYSICAL BOARD PREVIEW/i)).toBeInTheDocument();
 
     // Tab 3: Businesses
     const businessesTab = screen.getByRole('button', { name: /BUSINESSES/i });

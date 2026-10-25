@@ -182,6 +182,7 @@ export const TeamJoinPage: React.FC = () => {
           subtitle="ENTER YOUR ROOM CODE"
           state={errorMessage ? 'shake' : isSuccess ? 'bounce' : 'idle'}
           maxWidth="max-w-md"
+          showPosts={false}
         >
           {/* Game Celebration State */}
           {isSuccess ? (
@@ -335,11 +336,12 @@ export const TeamJoinPage: React.FC = () => {
           )}
         </WoodenSignboard>
 
-        {/* Pixel Mascot Poly Patrols The Ground (with "Let's play!" speech bubble) */}
+        {/* Pixel Mascot Mario Patrols The Ground with dynamic slogans */}
         <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
           <RoamingCharacter
             size={52}
-            bubbleText={isSuccess ? 'Lets Go!!' : "Let's play!"}
+            bubbleText={isSuccess ? 'Lets Go!!' : undefined}
+            variant="player"
             isCheering={isSuccess}
           />
         </div>

@@ -13,6 +13,7 @@ export interface WoodenSignboardProps {
   children: React.ReactNode;
   className?: string;
   maxWidth?: string;
+  showPosts?: boolean;
 }
 
 export const WoodenSignboard: React.FC<WoodenSignboardProps> = ({
@@ -25,6 +26,7 @@ export const WoodenSignboard: React.FC<WoodenSignboardProps> = ({
   children,
   className = '',
   maxWidth = 'max-w-md',
+  showPosts = true,
 }) => {
   const isCastle = variant === 'castle';
 
@@ -175,49 +177,51 @@ export const WoodenSignboard: React.FC<WoodenSignboardProps> = ({
       </div>
 
       {/* Wooden Mounting Support Posts planted into ground */}
-      <div className="w-full flex justify-between px-10 sm:px-16 pointer-events-none -mt-1">
-        {/* Left Post */}
-        <div className="relative flex flex-col items-center">
-          <div
-            className="w-7 sm:w-8 h-16 sm:h-24 bg-[var(--color-wood-base)] border-x-4 border-b-4 border-brand-navy relative"
-            style={{
-              backgroundImage:
-                'linear-gradient(90deg, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 3px, transparent 3px, transparent 100%)',
-            }}
-          >
-            {/* Post Rivet */}
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-brand-navy" />
-          </div>
-          {/* Grass & Flower at Left Post Base */}
-          {!isCastle && (
-            <div className="absolute -bottom-1 -left-3 flex items-end gap-0.5">
-              <PixelGrassTuft size={18} variant={1} />
-              <PixelFlower size={16} variant={2} />
+      {showPosts && (
+        <div className="w-full flex justify-between px-10 sm:px-16 pointer-events-none -mt-1">
+          {/* Left Post */}
+          <div className="relative flex flex-col items-center">
+            <div
+              className="w-7 sm:w-8 h-16 sm:h-24 bg-[var(--color-wood-base)] border-x-4 border-b-4 border-brand-navy relative"
+              style={{
+                backgroundImage:
+                  'linear-gradient(90deg, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 3px, transparent 3px, transparent 100%)',
+              }}
+            >
+              {/* Post Rivet */}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-brand-navy" />
             </div>
-          )}
-        </div>
+            {/* Grass & Flower at Left Post Base */}
+            {!isCastle && (
+              <div className="absolute -bottom-1 -left-3 flex items-end gap-0.5">
+                <PixelGrassTuft size={18} variant={1} />
+                <PixelFlower size={16} variant={2} />
+              </div>
+            )}
+          </div>
 
-        {/* Right Post */}
-        <div className="relative flex flex-col items-center">
-          <div
-            className="w-7 sm:w-8 h-16 sm:h-24 bg-[var(--color-wood-base)] border-x-4 border-b-4 border-brand-navy relative"
-            style={{
-              backgroundImage:
-                'linear-gradient(90deg, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 3px, transparent 3px, transparent 100%)',
-            }}
-          >
-            {/* Post Rivet */}
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-brand-navy" />
-          </div>
-          {/* Grass & Flower at Right Post Base */}
-          {!isCastle && (
-            <div className="absolute -bottom-1 -right-3 flex items-end gap-0.5">
-              <PixelFlower size={16} variant={1} />
-              <PixelGrassTuft size={18} variant={2} />
+          {/* Right Post */}
+          <div className="relative flex flex-col items-center">
+            <div
+              className="w-7 sm:w-8 h-16 sm:h-24 bg-[var(--color-wood-base)] border-x-4 border-b-4 border-brand-navy relative"
+              style={{
+                backgroundImage:
+                  'linear-gradient(90deg, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 3px, transparent 3px, transparent 100%)',
+              }}
+            >
+              {/* Post Rivet */}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-brand-navy" />
             </div>
-          )}
+            {/* Grass & Flower at Right Post Base */}
+            {!isCastle && (
+              <div className="absolute -bottom-1 -right-3 flex items-end gap-0.5">
+                <PixelFlower size={16} variant={1} />
+                <PixelGrassTuft size={18} variant={2} />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

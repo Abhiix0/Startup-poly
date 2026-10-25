@@ -17,6 +17,7 @@ type TabKey = 'how-to-play' | 'board-preview' | 'businesses' | 'spaces-cards';
 export const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('how-to-play');
   const [selectedSpaceIndex, setSelectedSpaceIndex] = useState<number>(0);
+  const [isImageZoomed, setIsImageZoomed] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close on Escape key
@@ -245,13 +246,42 @@ export const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose 
           {/* --------------------------------------------------------------- */}
           {activeTab === 'board-preview' && (
             <div className="space-y-3">
-              {/* Mandatory Disclaimer Badge */}
-              <div className="bg-[#FEF3C7] border-2 border-[#D97706] p-2.5 rounded-sm text-center select-none shadow-[2px_2px_0px_#B45309]">
-                <div className="font-pixel text-[10px] sm:text-[11px] text-[#92400E] font-bold">
-                  ⚠️ SAMPLE LAYOUT — FINAL PHYSICAL BOARD DESIGN COMING SOON
+              {/* Official Physical Board Artwork Display */}
+              <div className="bg-[#102040] border-3 border-[#181512] rounded-sm p-3 shadow-[4px_4px_0px_#181512] flex flex-col items-center">
+                <div className="w-full flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#FFCC00] text-sm animate-pulse">★</span>
+                    <span className="font-pixel text-[10px] sm:text-xs text-[#FFCC00] font-bold">
+                      OFFICIAL 24-SPACE PHYSICAL BOARD
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsImageZoomed(true)}
+                    className="font-pixel text-[8px] sm:text-[9px] bg-[#FFCC00] text-[#102040] hover:bg-[#FFE066] px-2 py-1 border border-[#102040] shadow-[1px_1px_0px_#B84418] cursor-pointer"
+                  >
+                    🔍 ENLARGE BOARD
+                  </button>
                 </div>
-                <div className="text-[11px] text-[#78350F] font-sans mt-0.5">
-                  Illustrative 24-space square diagram. The rulebook does not fix the exact positions of each ordinary space; final physical layout confirmed on game day.
+
+                {/* High-res Board Image with Click-to-Zoom */}
+                <div
+                  className="relative group w-full max-w-[420px] aspect-square rounded-sm overflow-hidden border-3 border-[#FFCC00] shadow-[3px_3px_0px_#181512] bg-[#38BDF8] cursor-zoom-in"
+                  onClick={() => setIsImageZoomed(true)}
+                >
+                  <img
+                    src="/board.png"
+                    alt="STARTUPOLY Official Physical Board"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-colors">
+                    <span className="opacity-0 group-hover:opacity-100 font-pixel text-[10px] bg-[#102040]/90 text-[#FFCC00] border border-[#FFCC00] px-3 py-1.5 shadow-[2px_2px_0px_#000] transition-opacity">
+                      CLICK TO FULLSCREEN
+                    </span>
+                  </div>
+                </div>
+                <div className="text-[10px] sm:text-[11px] text-[#93C5FD] font-sans mt-2 text-center">
+                  Official STARTUPOLY board diagram featuring Start, AI, SaaS, FinTech, DevTools, Cyber Security, EdTech, HealthTech, CleanTech, Robotics, Action spaces, Bonus &amp; Crisis cards!
                 </div>
               </div>
 
@@ -612,6 +642,43 @@ export const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose 
           </button>
         </div>
       </div>
+
+      {/* High-Res Fullscreen Lightbox Zoom Modal */}
+      {isImageZoomed && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Enlarged STARTUPOLY Board"
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center p-3 sm:p-6 bg-[#081226]/95 backdrop-blur-md anim-fade-in"
+          onClick={() => setIsImageZoomed(false)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[92vh] flex flex-col items-center bg-[#102040] p-3 border-4 border-[#FFCC00] shadow-[8px_8px_0px_#081226]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-full flex items-center justify-between pb-2 border-b-2 border-[#FFCC00] mb-2">
+              <span className="font-pixel text-[11px] sm:text-xs text-[#FFCC00] tracking-wider font-bold">
+                STARTUPOLY — OFFICIAL PHYSICAL BOARD
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsImageZoomed(false)}
+                className="w-7 h-7 sm:w-8 sm:h-8 bg-[#E11D48] text-white font-pixel text-xs sm:text-sm border-2 border-[#181512] shadow-[2px_2px_0px_#181512] flex items-center justify-center cursor-pointer hover:bg-[#F43F5E]"
+              >
+                ✕
+              </button>
+            </div>
+            <img
+              src="/board.png"
+              alt="STARTUPOLY Official Physical Board Fullscreen"
+              className="max-h-[75vh] w-auto max-w-full object-contain border-2 border-[#181512]"
+            />
+            <p className="font-pixel text-[8px] text-[#93C5FD] mt-2 text-center">
+              Click anywhere outside or press ✕ to close
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

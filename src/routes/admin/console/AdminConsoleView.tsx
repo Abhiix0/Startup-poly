@@ -11,6 +11,7 @@ import { RemoveBusinessDialog } from './RemoveBusinessDialog';
 import { BankruptDialog } from './BankruptDialog';
 import { ConflictDialog } from './ConflictDialog';
 import { useToast, Modal, PixelButton } from '../../../ui';
+import { RoamingCharacter } from '../../../ui/pixel';
 import { ConnectionStatus } from '../../../ui/ConnectionPill';
 import {
   AdminRoomSnapshot,
@@ -1268,6 +1269,13 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           </p>
         </div>
       </Modal>
+
+      {/* Mascot Mario Patrols Ground */}
+      <div className="w-full relative h-10 overflow-hidden pointer-events-none select-none">
+        <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
+          <RoamingCharacter size={46} variant="admin" />
+        </div>
+      </div>
 
       {/* 5. NES Ground Pattern */}
       <div className="h-8 nes-brick-pattern border-t-4 border-brand-navy" />

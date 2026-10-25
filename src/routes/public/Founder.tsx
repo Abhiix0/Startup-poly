@@ -12,17 +12,31 @@ export interface FounderProps {
 }
 
 const SLOGANS = [
-  "LET'S GO!",
+  "LET'S PLAY!",
   "BUILD YOUR DREAM!",
-  "READY TO PLAY?",
+  "ROLL THE DICE!",
   "STARTUPOLY!",
+  "RAISE CAPITAL!",
+  "BUILD YOUR MVP!",
+  "AVOID CRISIS!",
+  "UNICORN STATUS!",
+  "CHECK THE RULES!",
+  "PIVOT FAST!",
+  "SCALE UP!",
 ];
 
 const SLOGAN_TO_EXPRESSION: Record<string, MarioExpression> = {
-  "LET'S GO!": 'wave',
+  "LET'S PLAY!": 'wave',
   "BUILD YOUR DREAM!": 'confident',
-  "READY TO PLAY?": 'point',
+  "ROLL THE DICE!": 'point',
   "STARTUPOLY!": 'celebrate',
+  "RAISE CAPITAL!": 'confident',
+  "BUILD YOUR MVP!": 'wave',
+  "AVOID CRISIS!": 'point',
+  "UNICORN STATUS!": 'celebrate',
+  "CHECK THE RULES!": 'point',
+  "PIVOT FAST!": 'wave',
+  "SCALE UP!": 'confident',
 };
 
 export const Founder: React.FC<FounderProps> = React.memo(({
@@ -47,6 +61,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
   const directionRef = useRef<1 | -1>(1);
   const lastTimeRef = useRef<number | null>(null);
   const lastJumpStateRef = useRef<boolean>(false);
+  const lastSloganTimeRef = useRef<number>(0);
   const rafIdRef = useRef<number | null>(null);
 
   // Store latest bounds in refs so RAF always sees current responsive values without restarting
@@ -81,6 +96,14 @@ export const Founder: React.FC<FounderProps> = React.memo(({
       }
       const dt = Math.min((now - lastTimeRef.current) / 1000, 0.05);
       lastTimeRef.current = now;
+
+      // Constantly cycle speech bubble message every 3.2s
+      if (lastSloganTimeRef.current === 0) {
+        lastSloganTimeRef.current = now;
+      } else if (now - lastSloganTimeRef.current >= 3200) {
+        lastSloganTimeRef.current = now;
+        setSloganIndex((prev) => (prev + 1) % SLOGANS.length);
+      }
 
       const { maxDistance: maxDist, platformOffset: pOffset } = boundsRef.current;
       const jumpStart = pOffset - 28;

@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAdminRoom } from '../../data/useAdminRoom';
 import { PixelCard, StatusPill, ConnectionPill, ErrorBanner, Skeleton, PixelBrickTile } from '../../ui';
+import { RoamingCharacter } from '../../ui/pixel';
 import { SetupView } from './SetupView';
 import { LobbyView } from './LobbyView';
 import { ActiveSummaryView } from './ActiveSummaryView';
@@ -99,6 +100,13 @@ export const AdminRoomPage: React.FC = () => {
           </>
         )}
       </main>
+
+      {/* Mascot Mario Patrols Ground */}
+      <div className="w-full relative h-10 overflow-hidden pointer-events-none select-none">
+        <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
+          <RoamingCharacter size={46} variant="admin" />
+        </div>
+      </div>
 
       {/* Brick Ground Base */}
       <PixelBrickTile hasGrass={true} className="h-8" />

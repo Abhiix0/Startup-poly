@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
 import { supabase } from '../../data/client';
 import { PixelButton, PixelBrickTile, Modal, PixelLoader, ErrorBanner, StatusPill, useToast } from '../../ui';
+import { RoamingCharacter } from '../../ui/pixel';
 import { CreateRoomView } from './CreateRoomView';
 import { rpcAdminCancelRoom } from '../../data/rpc';
 
@@ -173,6 +174,13 @@ export const AdminDashboardPage: React.FC = () => {
           <CreateRoomView />
         )}
       </main>
+
+      {/* Mascot Mario Patrols Ground */}
+      <div className="w-full relative h-10 overflow-hidden pointer-events-none select-none">
+        <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
+          <RoamingCharacter size={46} variant="admin" />
+        </div>
+      </div>
 
       {/* Brick Ground Base */}
       <PixelBrickTile hasGrass={true} className="h-8" />

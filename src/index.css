@@ -1179,10 +1179,10 @@
 
 @keyframes founder-bob {
   0%, 45%, 100% {
-    transform: translateY(0);
+    margin-top: 0;
   }
   50%, 95% {
-    transform: translateY(1px);
+    margin-top: 1px;
   }
 }
 
