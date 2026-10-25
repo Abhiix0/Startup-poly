@@ -80,7 +80,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
   useEffect(() => {
     if (launchTarget) {
       const curX = currentXRef.current;
-      const targetDeltaX = launchTarget === 'join' ? -40 : 160;
+      const targetDeltaX = launchTarget === 'join' ? -70 : 180;
       setIsJumping(true);
       if (launchTarget === 'join') {
         setFacingLeft(true);
@@ -89,10 +89,10 @@ export const Founder: React.FC<FounderProps> = React.memo(({
       }
       const animId = requestAnimationFrame(() => {
         setLaunchStyle({
-          transform: `translate3d(${curX + targetDeltaX}px, -270px, 0) scale(1.22) ${
-            launchTarget === 'join' ? 'rotate(-6deg)' : 'rotate(6deg)'
+          transform: `translate3d(${curX + targetDeltaX}px, -400px, 0) scale(1.35) ${
+            launchTarget === 'join' ? 'rotate(-8deg)' : 'rotate(8deg)'
           }`,
-          transition: 'transform 420ms cubic-bezier(0.18, 0.89, 0.32, 1.15)',
+          transition: 'transform 650ms cubic-bezier(0.22, 1, 0.36, 1)',
         });
       });
       return () => cancelAnimationFrame(animId);

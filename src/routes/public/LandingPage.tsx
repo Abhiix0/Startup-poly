@@ -30,6 +30,7 @@ export const LandingPage: React.FC = () => {
   const [showRules, setShowRules] = useState<boolean>(false);
   const [activeCta, setActiveCta] = useState<'join' | 'admin' | null>(null);
   const [launchTarget, setLaunchTarget] = useState<'join' | 'admin' | null>(null);
+  const [warpTransition, setWarpTransition] = useState<'join' | 'admin' | null>(null);
 
   // Check prefers-reduced-motion
   const isReducedMotion =
@@ -45,8 +46,11 @@ export const LandingPage: React.FC = () => {
     sounds.playJump();
     setLaunchTarget(target);
     setTimeout(() => {
+      setWarpTransition(target);
+    }, 450);
+    setTimeout(() => {
       navigate(target === 'join' ? '/join' : '/admin');
-    }, 400);
+    }, 950);
   };
 
   // Synchronize document pause state with tab visibility
@@ -116,6 +120,91 @@ export const LandingPage: React.FC = () => {
       {/* RETRO PIXEL-ART RULES MODAL OVERLAY                                    */}
       {/* ======================================================================= */}
       <GameRulesModal isOpen={showRules} onClose={() => setShowRules(false)} />
+
+      {/* ======================================================================= */}
+      {/* SPLIT-SECOND ARCADE WARP TRANSITION (Matches Team Phone or Admin)       */}
+      {/* ======================================================================= */}
+      {warpTransition && (
+        <div
+          data-testid="warp-transition-overlay"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#102040]/75 backdrop-blur-[2px] transition-opacity duration-150 select-none pointer-events-auto"
+        >
+          {warpTransition === 'join' ? (
+            /* Team Phone Matching Golden Wood Signboard Interstitial */
+            <div className="relative w-full max-w-[340px] bg-[#D78B30] border-[4px] border-[#181512] shadow-[8px_8px_0px_#102040] p-4 text-center rounded-sm">
+              {/* Corner Screws */}
+              <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#181512]" />
+              </div>
+              <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#181512]" />
+              </div>
+              <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#181512]" />
+              </div>
+              <div className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#CBD5E1] border border-[#181512] shadow-[1px_1px_0px_#475569] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#181512]" />
+              </div>
+
+              {/* Inner Parchment Face */}
+              <div className="relative w-full bg-[#FFF5D6] border-[3px] border-[#9E5D1D] p-3.5 flex flex-col items-center gap-2">
+                <div className="shrink-0 -mt-1 scale-110">
+                  <PixelPhoneIcon size={46} />
+                </div>
+                <h2 className="font-arcade text-xs sm:text-[13px] text-[#181512] uppercase tracking-wide font-bold">
+                  ★ CONNECTING TO TEAM PHONE ★
+                </h2>
+                <p className="font-pixel text-[9px] text-[#8A4810] tracking-wider uppercase">
+                  Entering Arena Lobby · Ready Your Team
+                </p>
+                <div className="flex items-center gap-2 pt-1">
+                  <div className="anim-coin-idle">
+                    <PixelCoin size={16} />
+                  </div>
+                  <span className="font-pixel text-[10px] text-[#181512] tracking-widest">
+                    [ ■ ■ ■ ■ ■ ■ □ ]
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Admin Console Matching Slate Blue Terminal Interstitial */
+            <div className="relative w-full max-w-[340px] bg-[#1E293B] border-[4px] border-[#0F172A] shadow-[8px_8px_0px_#102040] p-4 text-center rounded-sm">
+              {/* Corner Screws */}
+              <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-[#94A3B8] border border-[#0F172A] shadow-[1px_1px_0px_#FFFFFF] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#0F172A]" />
+              </div>
+              <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#94A3B8] border border-[#0F172A] shadow-[1px_1px_0px_#FFFFFF] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#0F172A]" />
+              </div>
+              <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-[#94A3B8] border border-[#0F172A] shadow-[1px_1px_0px_#FFFFFF] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#0F172A]" />
+              </div>
+              <div className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#94A3B8] border border-[#0F172A] shadow-[1px_1px_0px_#FFFFFF] flex items-center justify-center">
+                <div className="w-1.5 h-0.5 bg-[#0F172A]" />
+              </div>
+
+              {/* Inner Slate-Blue Face */}
+              <div className="relative w-full bg-[#DCE6F5] border-[3px] border-[#58729A] p-3.5 flex flex-col items-center gap-2">
+                <div className="shrink-0 -mt-1 scale-110 drop-shadow-[0_2px_4px_rgba(18,26,42,0.2)]">
+                  <PixelTerminalIcon size={44} />
+                </div>
+                <h2 className="font-arcade text-xs sm:text-[13px] text-[#0F172A] uppercase tracking-wide font-bold flex items-center gap-1.5">
+                  ★ ACCESSING ADMIN CONSOLE ★
+                  <span className="inline-block w-1.5 h-1.5 bg-[#0284C7] shadow-[0_0_6px_#00F0FF] anim-pulse-dot" />
+                </h2>
+                <p className="font-pixel text-[9px] text-[#334155] tracking-wider uppercase">
+                  Startupoly System OS · Authenticating
+                </p>
+                <div className="font-mono text-[10px] text-[#0F172A] tracking-wider pt-1 flex items-center gap-1">
+                  <span>&gt; AUTHENTICATING ACCESS</span>
+                  <span className="anim-cursor-blink">_</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ======================================================================= */}
       {/* LAYER 1: Distant Hills & Castle Silhouette Layer                         */}

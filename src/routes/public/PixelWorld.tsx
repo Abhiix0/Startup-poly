@@ -45,11 +45,17 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({
 
   return (
     <footer
-      className="w-full relative select-none overflow-hidden shrink-0"
+      className={`w-full relative select-none shrink-0 ${
+        launchTarget ? 'overflow-visible z-50' : 'overflow-hidden'
+      }`}
       aria-hidden="true"
     >
       {/* Dynamic World Viewport */}
-      <div className="relative w-full h-24 sm:h-28 md:h-32 pointer-events-none">
+      <div
+        className={`relative w-full h-24 sm:h-28 md:h-32 pointer-events-none ${
+          launchTarget ? 'overflow-visible' : ''
+        }`}
+      >
         {/* ========================================================================= */}
         {/* LAYER 1: SKY (Background canvas layer)                                   */}
         {/* ========================================================================= */}
@@ -228,7 +234,7 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({
           <div
             id="founder-ground-target"
             className={`absolute bottom-0 left-2 sm:left-6 lg:left-10 ${
-              launchTarget ? 'z-50' : 'z-20'
+              launchTarget ? 'z-50 overflow-visible' : 'z-20'
             } transition-opacity duration-150 ${
               isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
