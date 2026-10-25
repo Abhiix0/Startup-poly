@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   PlainsBackground,
@@ -52,6 +52,14 @@ export const TeamJoinPage: React.FC = () => {
       setSelectedSlot(null);
     }
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const codeParam = params.get('code');
+    if (codeParam && codeParam.length === 6) {
+      handleRoomCodeChange(codeParam);
+    }
+  }, [location.search]);
 
   const fetchLobby = async (code: string) => {
     try {

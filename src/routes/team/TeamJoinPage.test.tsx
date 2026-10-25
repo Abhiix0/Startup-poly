@@ -189,4 +189,22 @@ describe('TeamJoinPage', () => {
       expect(anonElements.length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  it('pre-fills room code and auto-fetches lobby when ?code= is in URL', async () => {
+    vi.mocked(rpcModule.rpcGetLobby).mockResolvedValue(mockLobby as any);
+
+    render(
+      <ToastProvider>
+        <MemoryRouter initialEntries={['/join?code=ABC892']}>
+          <TeamJoinPage />
+        </MemoryRouter>
+      </ToastProvider>
+    );
+
+    await waitFor(() => {
+      expect(rpcModule.rpcGetLobby).toHaveBeenCalledWith('ABC892');
+      expect(screen.getByText('Alpha Rockets')).toBeInTheDocument();
+    });
+  });
 });
+

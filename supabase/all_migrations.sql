@@ -6348,12 +6348,16 @@ REVOKE ALL ON FUNCTION public.admin_extend_game(uuid, int, uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_extend_game(uuid, int, uuid) TO authenticated;
 
 
--- Migration 0025: Admin Cancel / Discard Room
+-- Migration 0025: Admin Cancel / Discard Room & Player Leave Team
 -- STARTUPOLY Live Scoreboard & Game Management System
 --
--- Enables the host/admin to cancel or discard an unstarted (CREATED, LOBBY) or accidental ACTIVE room,
--- transitioning it to FINALIZED, releasing active team claims, and allowing the host to create a new match.
+-- Enables:
+-- 1. Host/admin to cancel or discard an unstarted (CREATED, LOBBY) or accidental ACTIVE room.
+-- 2. Players to voluntarily disconnect from a team slot during LOBBY if they joined by mistake.
+--
+-- Updates fn_check_room_status_transition to allow CREATED -> FINALIZED, LOBBY -> FINALIZED, and ACTIVE -> FINALIZED.
 
+-- 1. Update room status transition trigger
 CREATE OR REPLACE FUNCTION public.fn_check_room_status_transition()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -6378,6 +6382,7 @@ BEGIN
 END;
 $$;
 
+-- 2. Admin Cancel Room Function
 CREATE OR REPLACE FUNCTION public.admin_cancel_room(
   p_room_id uuid,
   note text DEFAULT 'Cancelled by organizer',
@@ -6428,7 +6433,6 @@ $$;
 
 REVOKE ALL ON FUNCTION public.admin_cancel_room(uuid, text, uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.admin_cancel_room(uuid, text, uuid) TO authenticated;
-
 
 -- 3. Player Leave Team Function (LOBBY only)
 CREATE OR REPLACE FUNCTION public.leave_team()

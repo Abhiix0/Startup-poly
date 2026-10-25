@@ -118,6 +118,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const isOffline = connection === 'OFFLINE';
   const isStaleData = isStale || staleAgeSeconds > 30;
   const isEditDisabled = isOffline || isStaleData;
+  const [mobileOperationsTab, setMobileOperationsTab] = useState<'teams' | 'audit'>('teams');
 
   // Abort Game state
   const [showAbortModal, setShowAbortModal] = useState<boolean>(false);
@@ -915,64 +916,94 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
             </div>
           </section>
 
-          <TeamGrid
-            teams={snapshot.teams}
-            selectedTeamId={selectedTeam.id}
-            onSelectTeam={(id) => {
-              setSelectedTeamId(id);
-              setInsufficientCashShortfall(null);
-            }}
-            flashes={flashes}
-          />
+          {/* Mobile Operations Tab Switcher (< md) */}
+          <div className="flex md:hidden items-center border-2 border-brand-navy bg-brand-white p-1 shadow-pixel-sm">
+            <button
+              type="button"
+              onClick={() => setMobileOperationsTab('teams')}
+              className={`flex-1 py-2 font-pixel text-xs text-center border-2 uppercase font-bold transition-colors cursor-pointer ${
+                mobileOperationsTab === 'teams'
+                  ? 'bg-brand-gold text-brand-navy border-brand-navy shadow-pixel-sm'
+                  : 'bg-transparent text-neutral-600 border-transparent hover:text-brand-navy'
+              }`}
+            >
+              👥 TEAMS & ACTIONS
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileOperationsTab('audit')}
+              className={`flex-1 py-2 font-pixel text-xs text-center border-2 uppercase font-bold transition-colors cursor-pointer ${
+                mobileOperationsTab === 'audit'
+                  ? 'bg-brand-gold text-brand-navy border-brand-navy shadow-pixel-sm'
+                  : 'bg-transparent text-neutral-600 border-transparent hover:text-brand-navy'
+              }`}
+            >
+              📋 LIVE AUDIT LOG ({snapshot.events.length})
+            </button>
+          </div>
 
-          <QuickActionsBar
-            disabled={isEditDisabled}
-            onOpenRent={() => setIsRentOpen(true)}
-            onOpenStartLap={() => setIsStartLapOpen(true)}
-            onOpenBuy={() => setIsAddOpen(true)}
-            onOpenUpgrade={() => {
-              if (selectedTeam.businesses.length > 0) {
-                setUpgradeBizKey(selectedTeam.businesses[0].business_key);
-              } else {
-                errorToast(`${selectedTeam.name} has no businesses to upgrade.`);
-              }
-            }}
-            onOpenForcedSale={() => {
-              setForcedSaleTeamId(selectedTeam.id);
-              setForcedSaleShortfall(undefined);
-              setIsForcedSaleOpen(true);
-            }}
-            onOpenSteal={() => setIsStealOpen(true)}
-            onOpenBonusCard={() => {
-              setCardMode('BONUS');
-              setIsCardOpen(true);
-            }}
-            onOpenCrisisCard={() => {
-              setCardMode('CRISIS');
-              setIsCardOpen(true);
-            }}
-            onOpenLoseFeature={() => setIsLoseFeatureOpen(true)}
-            onOpenPitchTimer={() => setIsPitchTimerOpen(true)}
-            onOpenWildcard={() => setIsWildcardOpen(true)}
-            onUndo={handleUndo}
-            canUndo={Boolean(lastUndoableAction)}
-            lastUndoLabel={lastUndoableAction?.label}
-          />
+          <div className={`flex flex-col gap-5 ${mobileOperationsTab === 'teams' ? 'flex' : 'hidden md:flex'}`}>
+            <TeamGrid
+              teams={snapshot.teams}
+              selectedTeamId={selectedTeam.id}
+              onSelectTeam={(id) => {
+                setSelectedTeamId(id);
+                setInsufficientCashShortfall(null);
+              }}
+              flashes={flashes}
+            />
 
-          <TeamEditor
-            team={selectedTeam}
-            isTimeExpired={isTimeExpired}
-            disabled={isEditDisabled}
-            onUpdateCash={handleUpdateCash}
-            onUpdateCv={handleUpdateCv}
-            onAddBusinessClick={() => setIsAddOpen(true)}
-            onUpgradeBusinessClick={(key) => setUpgradeBizKey(key)}
-            onEditBusinessClick={(key) => setEditBizKey(key)}
-            onRemoveBusinessClick={(key) => setRemoveBizKey(key)}
-            onOpenBankruptModal={(mode) => setBankruptMode(mode)}
-          />
+            <QuickActionsBar
+              disabled={isEditDisabled}
+              onOpenRent={() => setIsRentOpen(true)}
+              onOpenStartLap={() => setIsStartLapOpen(true)}
+              onOpenBuy={() => setIsAddOpen(true)}
+              onOpenUpgrade={() => {
+                if (selectedTeam.businesses.length > 0) {
+                  setUpgradeBizKey(selectedTeam.businesses[0].business_key);
+                } else {
+                  errorToast(`${selectedTeam.name} has no businesses to upgrade.`);
+                }
+              }}
+              onOpenForcedSale={() => {
+                setForcedSaleTeamId(selectedTeam.id);
+                setForcedSaleShortfall(undefined);
+                setIsForcedSaleOpen(true);
+              }}
+              onOpenSteal={() => setIsStealOpen(true)}
+              onOpenBonusCard={() => {
+                setCardMode('BONUS');
+                setIsCardOpen(true);
+              }}
+              onOpenCrisisCard={() => {
+                setCardMode('CRISIS');
+                setIsCardOpen(true);
+              }}
+              onOpenLoseFeature={() => setIsLoseFeatureOpen(true)}
+              onOpenPitchTimer={() => setIsPitchTimerOpen(true)}
+              onOpenWildcard={() => setIsWildcardOpen(true)}
+              onUndo={handleUndo}
+              canUndo={Boolean(lastUndoableAction)}
+              lastUndoLabel={lastUndoableAction?.label}
+            />
 
-          <ActivityLog events={snapshot.events} teams={snapshot.teams} collapsible />
+            <TeamEditor
+              team={selectedTeam}
+              isTimeExpired={isTimeExpired}
+              disabled={isEditDisabled}
+              onUpdateCash={handleUpdateCash}
+              onUpdateCv={handleUpdateCv}
+              onAddBusinessClick={() => setIsAddOpen(true)}
+              onUpgradeBusinessClick={(key) => setUpgradeBizKey(key)}
+              onEditBusinessClick={(key) => setEditBizKey(key)}
+              onRemoveBusinessClick={(key) => setRemoveBizKey(key)}
+              onOpenBankruptModal={(mode) => setBankruptMode(mode)}
+            />
+          </div>
+
+          <div className={`${mobileOperationsTab === 'audit' ? 'block' : 'hidden md:block'}`}>
+            <ActivityLog events={snapshot.events} teams={snapshot.teams} collapsible />
+          </div>
 
           {/* Match controls: lifecycle actions, kept apart from team operations */}
           <section aria-label="Match controls" className="border-4 border-brand-red bg-status-danger-bg/40 p-3 flex flex-col gap-3">
