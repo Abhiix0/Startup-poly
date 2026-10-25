@@ -1761,15 +1761,11 @@
 }
 
 .anim-founder-idle-bob {
-  animation: founder-bob 1.4s steps(2) infinite;
+  animation: none;
 }
 
 .anim-founder-roam {
   animation: founder-ground-roam 24s ease-in-out infinite;
-}
-
-[data-phase="idle"] .founder-character-container {
-  animation: founder-turn-facing 24s steps(1) infinite;
 }
 
 [data-phase="idle"] .anim-founder-roam .poly-sprite-strip {
@@ -1792,23 +1788,9 @@
 .founder-bubble-join {
   display: none;
 }
-[data-cta="join"] .founder-bubble-join {
-  display: block !important;
-  animation: founder-bubble-fade 1.5s ease-out both !important;
-}
-[data-cta="join"] .founder-bubble-intro {
-  display: none !important;
-}
 
 .founder-bubble-admin {
   display: none;
-}
-[data-cta="admin"] .founder-bubble-admin {
-  display: block !important;
-  animation: founder-bubble-fade 1.5s ease-out both !important;
-}
-[data-cta="admin"] .founder-bubble-intro {
-  display: none !important;
 }
 
 .founder-bubble-tail {
@@ -1818,35 +1800,10 @@
   display: block;
   animation: founder-bubble-fade 3.5s ease-out 300ms both;
 }
-[data-cta="join"] .founder-bubble-tail,
-[data-cta="admin"] .founder-bubble-tail {
-  display: block !important;
-  animation: founder-bubble-fade 1.5s ease-out both !important;
-}
 
-/* Founder CTA Reactions */
-[data-cta="join"] .anim-founder-roam,
-[data-cta="admin"] .anim-founder-roam {
-  animation-play-state: paused !important;
-}
-
-[data-cta="join"] .founder-character-container,
-[data-cta="admin"] .founder-character-container {
-  animation: none !important;
-  transform: scaleX(1) !important;
-}
-
-[data-cta="join"] .founder-motion-track {
-  animation: poly-hop-jump 0.25s ease-out !important;
-}
-[data-cta="join"] .founder-motion-track .poly-sprite-strip {
-  transform: translateX(-71.428%) !important;
-  animation: none !important;
-}
-
-[data-cta="admin"] .founder-motion-track .poly-sprite-strip {
-  transform: translateX(-85.714%) !important;
-  animation: none !important;
+/* Retro Arcade Font matching logo */
+.font-arcade {
+  font-family: 'Press Start 2P', monospace, cursive;
 }
 
 @media (max-width: 340px) {

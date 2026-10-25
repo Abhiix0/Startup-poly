@@ -227,7 +227,7 @@ export const LandingPage: React.FC = () => {
                     <div className="shrink-0 group-hover:scale-110 transition-transform duration-100">
                       <PixelPhoneIcon size={42} />
                     </div>
-                    <h2 className="font-pixel text-xs sm:text-sm text-[#181512] uppercase tracking-wider font-extrabold">
+                    <h2 className="font-arcade text-xs sm:text-[13px] text-[#181512] uppercase tracking-wide font-bold">
                       TEAM PHONE
                     </h2>
                   </div>
@@ -239,9 +239,11 @@ export const LandingPage: React.FC = () => {
                     size="md"
                     fullWidth
                     ctaType="join"
+                    onPointerEnter={() => setActiveCta('join')}
+                    onPointerLeave={() => setActiveCta(null)}
                     onFocus={() => setActiveCta('join')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-[#FFCC00] hover:!bg-[#FFB800] !border-[3px] !border-[#181512] !text-[#181512] font-black tracking-wider text-xs sm:text-sm py-2 sm:py-2.5 shadow-[0_4px_0_#B8860B,3px_4px_0_#181512] hover:shadow-[0_5px_0_#B8860B,4px_5px_0_#181512] active:translate-y-1 active:shadow-[0_0px_0_#B8860B,1px_1px_0_#181512] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all"
+                    className="!bg-[#FFCC00] hover:!bg-[#FFB800] !border-[3px] !border-[#181512] !text-[#181512] font-arcade tracking-wide text-xs sm:text-[13px] py-2.5 sm:py-3 shadow-[0_4px_0_#B8860B,3px_4px_0_#181512] hover:shadow-[0_5px_0_#B8860B,4px_5px_0_#181512] active:translate-y-1 active:shadow-[0_0px_0_#B8860B,1px_1px_0_#181512] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all cursor-pointer"
                   >
                     JOIN MATCH
                   </ArcadeLink>
@@ -342,7 +344,7 @@ export const LandingPage: React.FC = () => {
                     <div className="shrink-0 group-hover:scale-105 transition-transform duration-100 drop-shadow-[0_2px_4px_rgba(18,26,42,0.2)]">
                       <PixelTerminalIcon size={32} />
                     </div>
-                    <h2 className="font-pixel text-[10px] sm:text-xs text-[#0F172A] uppercase tracking-wider font-extrabold flex items-center justify-center gap-1 drop-shadow-[1px_1px_0px_#FFFFFF]">
+                    <h2 className="font-arcade text-[10px] sm:text-xs text-[#0F172A] uppercase tracking-wide font-bold flex items-center justify-center gap-1 drop-shadow-[1px_1px_0px_#FFFFFF]">
                       EVENT ADMIN
                       <span className="inline-block w-1.5 h-1.5 bg-[#0284C7] shadow-[0_0_6px_#00F0FF] anim-pulse-dot" />
                       <span className="font-mono text-[#0284C7] anim-cursor-blink text-xs -ml-0.5 select-none">_</span>
@@ -356,9 +358,11 @@ export const LandingPage: React.FC = () => {
                     size="sm"
                     fullWidth
                     ctaType="admin"
+                    onPointerEnter={() => setActiveCta('admin')}
+                    onPointerLeave={() => setActiveCta(null)}
                     onFocus={() => setActiveCta('admin')}
                     onBlur={() => setActiveCta(null)}
-                    className="!bg-[#223554] hover:!bg-[#2C446C] !border-2 !border-[#102040] !text-[#FFFFFF] font-bold text-[10px] sm:text-xs py-1.5 sm:py-2 shadow-[0_2px_0_#0F172A,2px_2px_0_#102040] hover:-translate-y-[1px] hover:shadow-[0_0_8px_rgba(56,189,248,0.3),0_3px_0_#0F172A,2px_3px_0_#102040] active:translate-y-0.5 active:shadow-[0_1px_0_#0F172A,1px_1px_0_#181E28] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all tracking-wider"
+                    className="!bg-[#223554] hover:!bg-[#2C446C] !border-2 !border-[#102040] !text-[#FFFFFF] font-arcade text-[10px] sm:text-xs py-2 sm:py-2.5 shadow-[0_2px_0_#0F172A,2px_2px_0_#102040] hover:-translate-y-[1px] hover:shadow-[0_0_8px_rgba(56,189,248,0.3),0_3px_0_#0F172A,2px_3px_0_#102040] active:translate-y-0.5 active:shadow-[0_1px_0_#0F172A,1px_1px_0_#181E28] motion-reduce:active:translate-y-0 motion-reduce:hover:translate-y-0 transition-all tracking-wide cursor-pointer"
                   >
                     ADMIN CONSOLE
                   </ArcadeLink>

@@ -140,6 +140,41 @@ export const FloatingPlatforms: React.FC<{ className?: string }> = ({ className 
           </div>
         </div>
       </div>
+
+      {/* ======================================================================= */}
+      {/* MID-LEFT RETRO SKY PROP: Floating ? Block & Hovering Coin               */}
+      {/* Adds authentic Mario flavor into the mid-left open space               */}
+      {/* ======================================================================= */}
+      <div className="hidden md:block absolute top-52 lg:top-56 left-4 lg:left-10 anim-island-float-left pointer-events-none z-0">
+        <div className="flex flex-col items-center">
+          <div className="anim-coin-idle mb-1">
+            <PixelCoin size={18} />
+          </div>
+          <div className="anim-block-cycle world-block-highlight">
+            <PixelQuestionBlock size={28} />
+          </div>
+        </div>
+      </div>
+
+      {/* ======================================================================= */}
+      {/* MID-RIGHT RETRO SKY PROP: Floating Brick Pair & Coin                    */}
+      {/* Adds authentic Mario flavor into the mid-right open space              */}
+      {/* ======================================================================= */}
+      <div className="hidden md:block absolute top-56 lg:top-60 right-6 lg:right-12 anim-island-float-right pointer-events-none z-0" style={{ animationDelay: '-1.5s' }}>
+        <div className="flex flex-col items-center">
+          <div className="anim-coin-idle mb-1" style={{ animationDelay: '-0.5s' }}>
+            <PixelCoin size={18} />
+          </div>
+          <div className="flex items-center gap-0.5">
+            <div className="w-6 h-6 bg-[#B84418] border-2 border-[#102040] shadow-[1px_1px_0px_#102040] flex items-center justify-center">
+              <div className="w-4 h-1 bg-[#8B2500]" />
+            </div>
+            <div className="anim-block-cycle world-block-highlight">
+              <PixelQuestionBlock size={24} />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

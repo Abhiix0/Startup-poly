@@ -74,7 +74,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
   useEffect(() => {
     if (isPaused || phase !== 'idle') return;
 
-    const SPEED = 135; // Pixels per second: brisk, smooth retro platformer running pace
+    const SPEED = 150; // Pixels per second: brisk, natural retro running pace
 
     const updateFrame = (now: number) => {
       if (lastTimeRef.current === null) {
@@ -83,7 +83,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
       const dt = Math.min((now - lastTimeRef.current) / 1000, 0.05);
       lastTimeRef.current = now;
 
-      // Constantly cycle speech bubble message every 3.2s
+      // Cycle speech bubble slogan every 3.2s
       if (lastSloganTimeRef.current === 0) {
         lastSloganTimeRef.current = now;
       } else if (now - lastSloganTimeRef.current >= 3200) {
@@ -92,27 +92,31 @@ export const Founder: React.FC<FounderProps> = React.memo(({
       }
 
       const { maxDistance: maxDist, platformOffset: pOffset } = boundsRef.current;
-      const jumpStart = pOffset - 28;
-      const jumpEnd = pOffset + 52 + 10;
-      const jumpSpan = jumpEnd - jumpStart; // 90px obstacle jump span
+      // Obstacle bounds (green platform / pipe zone)
+      const obstacleWidth = 56;
+      const jumpStart = Math.max(24, pOffset - 20);
+      const jumpEnd = jumpStart + obstacleWidth + 30;
+      const jumpSpan = jumpEnd - jumpStart;
 
       let x = currentXRef.current + directionRef.current * SPEED * dt;
       let dir = directionRef.current;
 
-      // Smooth corner-to-corner reversal
+      // Mario goes straight, hits the boundary, turns around, and returns
       if (dir === 1 && x >= maxDist) {
         x = maxDist;
         directionRef.current = -1;
+        dir = -1;
         setFacingLeft(true);
       } else if (dir === -1 && x <= 0) {
         x = 0;
         directionRef.current = 1;
+        dir = 1;
         setFacingLeft(false);
       }
 
       currentXRef.current = x;
 
-      // Jump behavior: Mario jumps ONLY at the actual green platform obstacle
+      // Jump behavior: jumps smoothly ONLY when encountering the obstacle
       let jumping = false;
       let y = 0;
 
@@ -125,14 +129,21 @@ export const Founder: React.FC<FounderProps> = React.memo(({
           p = (jumpEnd - x) / jumpSpan;
         }
         p = Math.max(0, Math.min(1, p));
-        // Parabolic arc: peak elevation 46px directly over platform center
-        y = -Math.sin(p * Math.PI) * 46;
+        // Parabolic arc: peak elevation 42px directly over obstacle center
+        y = -Math.sin(p * Math.PI) * 42;
       } else {
         jumping = false;
         y = 0;
       }
 
-      // Landing transition: when Mario lands after jumping, rotate to next slogan & expression
+      // Maintain strictly accurate sprite facing orientation matching direction (no backward walking)
+      if (dir === 1 && facingLeft) {
+        setFacingLeft(false);
+      } else if (dir === -1 && !facingLeft) {
+        setFacingLeft(true);
+      }
+
+      // Rotate slogan upon landing
       if (lastJumpStateRef.current && !jumping) {
         setSloganIndex((prev) => (prev + 1) % SLOGANS.length);
       }

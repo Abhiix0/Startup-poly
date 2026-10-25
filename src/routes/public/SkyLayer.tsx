@@ -45,48 +45,36 @@ export const SkyLayer: React.FC<SkyLayerProps> = ({ className = '' }) => {
       </div>
 
       {/* ===================================================================== */}
-      {/* Cloud Lane 1: High-Altitude Clouds (110s Drift, 4 widely spaced)       */}
+      {/* Cloud Lane 1: High-Altitude Upper Clouds (Smooth 110s Drift, 2 Outer)  */}
       {/* ===================================================================== */}
       <div className="absolute inset-x-0 top-2 sm:top-4 h-16 overflow-hidden pointer-events-none">
         <div
-          className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-55"
+          className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-60"
           style={{ animationDelay: '-18s' }}
         >
           {/* Panel 1 */}
           <div className="w-1/2 relative h-14 shrink-0">
-            <div className="absolute top-1 left-[6%]">
-              <PixelCloudFluffy size={42} />
+            <div className="absolute top-1 left-[8%]">
+              <PixelCloudFluffy size={44} />
             </div>
-            <div className="absolute top-2 left-[34%]">
-              <PixelCloudFluffy size={36} />
-            </div>
-            <div className="absolute top-1.5 left-[64%]">
-              <PixelCloudFluffy size={38} />
-            </div>
-            <div className="absolute top-1 left-[86%]">
-              <PixelCloudFluffy size={42} />
+            <div className="absolute top-1 left-[82%]">
+              <PixelCloudFluffy size={46} />
             </div>
           </div>
           {/* Panel 2 (Identical for seamless infinite loop) */}
           <div className="w-1/2 relative h-14 shrink-0">
-            <div className="absolute top-1 left-[6%]">
-              <PixelCloudFluffy size={42} />
+            <div className="absolute top-1 left-[8%]">
+              <PixelCloudFluffy size={44} />
             </div>
-            <div className="absolute top-2 left-[34%]">
-              <PixelCloudFluffy size={36} />
-            </div>
-            <div className="absolute top-1.5 left-[64%]">
-              <PixelCloudFluffy size={38} />
-            </div>
-            <div className="absolute top-1 left-[86%]">
-              <PixelCloudFluffy size={42} />
+            <div className="absolute top-1 left-[82%]">
+              <PixelCloudFluffy size={46} />
             </div>
           </div>
         </div>
       </div>
 
       {/* ===================================================================== */}
-      {/* Cloud Lane 2: Upper-Mid Flank Clouds (75s Drift, separate row)         */}
+      {/* Cloud Lane 2: Upper-Mid Flank Clouds (Smooth 75s Drift, Flanks Only)   */}
       {/* ===================================================================== */}
       <div className="absolute inset-x-0 top-14 sm:top-18 h-16 overflow-hidden pointer-events-none">
         <div
@@ -95,59 +83,20 @@ export const SkyLayer: React.FC<SkyLayerProps> = ({ className = '' }) => {
         >
           {/* Panel 1 */}
           <div className="w-1/2 relative h-14 shrink-0">
-            <div className="absolute top-1 left-[16%]">
-              <PixelCloudFluffy size={46} />
+            <div className="absolute top-1 left-[20%]">
+              <PixelCloudFluffy size={42} />
             </div>
-            <div className="absolute top-2 left-[78%]">
-              <PixelCloudFluffy size={48} />
-            </div>
-          </div>
-          {/* Panel 2 (Identical for seamless infinite loop) */}
-          <div className="w-1/2 relative h-14 shrink-0">
-            <div className="absolute top-1 left-[16%]">
-              <PixelCloudFluffy size={46} />
-            </div>
-            <div className="absolute top-2 left-[78%]">
-              <PixelCloudFluffy size={48} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ===================================================================== */}
-      {/* Cloud Lane 3: Lower-Mid Sky Clouds (Clear of Fort & Main Options)      */}
-      {/* Capped before the fort on the right to prevent overlap with castle     */}
-      {/* ===================================================================== */}
-      <div className="absolute left-0 right-44 sm:right-56 md:right-64 lg:right-76 top-28 sm:top-36 md:top-44 h-16 overflow-hidden pointer-events-none">
-        <div
-          className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-45"
-          style={{ animationDelay: '-45s' }}
-        >
-          {/* Panel 1 */}
-          <div className="w-1/2 relative h-14 shrink-0">
-            {/* Left flank cloud (Clear of cards) */}
-            <div className="absolute top-1 left-[6%]">
-              <PixelCloudFluffy size={38} />
-            </div>
-            {/* Mid-left flank cloud */}
-            <div className="absolute top-2.5 left-[22%]">
-              <PixelCloudFluffy size={34} />
-            </div>
-            {/* Lower gap center cloud (Clear under/between) */}
-            <div className="hidden sm:block absolute top-1 left-[50%]">
-              <PixelCloudFluffy size={36} />
+            <div className="absolute top-2 left-[72%]">
+              <PixelCloudFluffy size={44} />
             </div>
           </div>
           {/* Panel 2 (Identical for seamless infinite loop) */}
           <div className="w-1/2 relative h-14 shrink-0">
-            <div className="absolute top-1 left-[6%]">
-              <PixelCloudFluffy size={38} />
+            <div className="absolute top-1 left-[20%]">
+              <PixelCloudFluffy size={42} />
             </div>
-            <div className="absolute top-2.5 left-[22%]">
-              <PixelCloudFluffy size={34} />
-            </div>
-            <div className="hidden sm:block absolute top-1 left-[50%]">
-              <PixelCloudFluffy size={36} />
+            <div className="absolute top-2 left-[72%]">
+              <PixelCloudFluffy size={44} />
             </div>
           </div>
         </div>

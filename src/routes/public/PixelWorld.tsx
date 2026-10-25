@@ -237,7 +237,22 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
             />
           </div>
 
-          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Admin Monitor + Grass + Pipe + Daisy */}
+          {/* MID-RIGHT GROUND OBJECT: Green Warp Pipe (Moved to the side away from the fort) */}
+          <div className="absolute bottom-0 right-48 sm:right-60 md:right-72 lg:right-80 flex items-end gap-1 sm:gap-1.5 z-10 pointer-events-none">
+            <div className="hidden sm:block mb-0.5">
+              <PixelGrassTuft size={16} variant={1} />
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="anim-pipe-highlight">
+                <PixelPipe className="w-[50px] h-[44px] sm:w-[60px] sm:h-[50px]" />
+              </div>
+            </div>
+            <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
+              <PixelFlower size={16} variant={2} />
+            </div>
+          </div>
+
+          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Admin Monitor + Grass + Flowers (Fort courtyard, no pipe blocking) */}
           <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-1.5 sm:gap-2.5 z-10">
             {/* Question Block and Coins sitting on grass */}
             <div className="hidden md:flex items-end gap-1.5">
@@ -261,20 +276,9 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
               <PixelMonitor size={34} />
             </div>
 
-            {/* Grass tuft beside right warp pipe */}
-            <div className="hidden sm:block mb-0.5">
+            {/* Daisy Wildflower & Grass along Fort Base */}
+            <div className="flex items-end gap-1 mb-0.5">
               <PixelGrassTuft size={16} variant={1} />
-            </div>
-
-            {/* Right Large Green Warp Pipe */}
-            <div className="flex flex-col items-center">
-              <div className="anim-pipe-highlight">
-                <PixelPipe className="w-[54px] h-[48px] sm:w-[68px] sm:h-[54px]" />
-              </div>
-            </div>
-
-            {/* Daisy Wildflower & Grass to the right of the Warp pipe */}
-            <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
               <PixelFlower size={18} variant={1} />
               <PixelGrassTuft size={16} variant={2} />
             </div>
