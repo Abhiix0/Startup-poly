@@ -309,112 +309,30 @@ export const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose 
                 </div>
               </div>
 
-              {/* Interactive 24-Space Square Diagram */}
-              <div className="bg-[#102040] p-2.5 sm:p-3.5 border-3 border-[#181512] rounded-sm shadow-[4px_4px_0px_#181512]">
-                {/* 7x7 Perimeter Grid Display */}
-                <div className="grid grid-cols-7 gap-1 sm:gap-1.5 aspect-square max-w-[420px] mx-auto select-none">
-                  {Array.from({ length: 49 }).map((_, gridIdx) => {
-                    const row = Math.floor(gridIdx / 7);
-                    const col = gridIdx % 7;
-                    const isPerimeter = row === 0 || row === 6 || col === 0 || col === 6;
-
-                    if (!isPerimeter) {
-                      // Center Board Area (Inside Square)
-                      if (row === 3 && col === 3) {
-                        return (
-                          <div
-                            key={gridIdx}
-                            className="col-span-5 row-span-5 -m-1 sm:-m-1.5 bg-[#182642] border-2 border-[#FFCC00] rounded-xs flex flex-col items-center justify-center p-2 text-center text-[#FFFBEB]"
-                          >
-                            <div className="font-pixel text-[10px] sm:text-xs text-[#FFCC00] tracking-wider font-bold">
-                              STARTUPOLY
-                            </div>
-                            <div className="font-pixel text-[7px] sm:text-[8px] text-[#93C5FD] mt-0.5">
-                              PHYSICAL BOARD PREVIEW
-                            </div>
-                            <div className="text-[10px] sm:text-[11px] text-[#CBD5E1] font-sans mt-1.5 max-w-[190px] leading-tight hidden sm:block">
-                              Click any space on the perimeter to inspect its type and rule details.
-                            </div>
-                            {/* Sample Team Tokens Legend */}
-                            <div className="mt-2 flex items-center gap-1.5 sm:gap-2">
-                              <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#EF4444] border border-white text-[7px] text-white flex items-center justify-center font-pixel" title="Team Red">T1</span>
-                              <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#3B82F6] border border-white text-[7px] text-white flex items-center justify-center font-pixel" title="Team Blue">T2</span>
-                              <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#10B981] border border-white text-[7px] text-white flex items-center justify-center font-pixel" title="Team Green">T3</span>
-                              <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#F59E0B] border border-white text-[7px] text-white flex items-center justify-center font-pixel" title="Team Yellow">T4</span>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }
-
-                    // Map perimeter coordinate to space index 0..23
-                    let spaceIdx = 0;
-                    if (row === 0) spaceIdx = col; // 0..6 (top row)
-                    else if (col === 6) spaceIdx = 6 + row; // 7..12 (right col)
-                    else if (row === 6) spaceIdx = 12 + (6 - col); // 13..18 (bottom row)
-                    else spaceIdx = 18 + (6 - row); // 19..23 (left col)
-
-                    const space = BOARD_SPACES[spaceIdx];
-                    const isSelected = selectedSpaceIndex === spaceIdx;
-                    const isCorner = spaceIdx % 6 === 0;
-
-                    let bgClass = 'bg-[#E2E8F0] text-[#1E293B]';
-                    let borderClass = 'border-[#94A3B8]';
-
-                    if (space.type === 'START') {
-                      bgClass = 'bg-[#22C55E] text-[#102040]';
-                      borderClass = 'border-[#15803D]';
-                    } else if (space.type.startsWith('ACTION')) {
-                      bgClass = 'bg-[#F97316] text-[#102040]';
-                      borderClass = 'border-[#C2410C]';
-                    } else if (space.type === 'BUSINESS') {
-                      bgClass = 'bg-[#38BDF8] text-[#0C4A6E]';
-                      borderClass = 'border-[#0284C7]';
-                    } else if (space.type === 'BONUS') {
-                      bgClass = 'bg-[#FACC15] text-[#713F12]';
-                      borderClass = 'border-[#CA8A04]';
-                    } else if (space.type === 'CRISIS') {
-                      bgClass = 'bg-[#F87171] text-[#7F1D1D]';
-                      borderClass = 'border-[#DC2626]';
-                    } else if (space.type === 'WILDCARD') {
-                      bgClass = 'bg-[#C084FC] text-[#581C87]';
-                      borderClass = 'border-[#9333EA]';
-                    }
-
-                    return (
-                      <button
-                        key={gridIdx}
-                        type="button"
-                        onClick={() => setSelectedSpaceIndex(spaceIdx)}
-                        className={`relative p-0.5 sm:p-1 flex flex-col items-center justify-center text-center rounded-xs border-2 transition-all cursor-pointer ${bgClass} ${borderClass} ${
-                          isSelected ? 'ring-2 ring-[#FFCC00] scale-105 z-20 shadow-md' : 'hover:scale-102'
-                        } ${isCorner ? 'font-bold' : ''}`}
-                        title={`Space ${spaceIdx}: ${space.name}`}
-                      >
-                        <span className="font-pixel text-[6px] sm:text-[7px] leading-none opacity-75">
-                          {spaceIdx}
-                        </span>
-                        <span className="font-pixel text-[6px] sm:text-[7.5px] line-clamp-2 leading-tight mt-0.5">
-                          {isCorner ? space.name.replace('Action ', 'Act ') : space.name}
-                        </span>
-
-                        {/* Sample Token Placement */}
-                        {spaceIdx === 0 && (
-                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#EF4444] border border-white" />
-                        )}
-                        {spaceIdx === 6 && (
-                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#3B82F6] border border-white" />
-                        )}
-                        {spaceIdx === 12 && (
-                          <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#10B981] border border-white" />
-                        )}
-                        {spaceIdx === 18 && (
-                          <span className="absolute -bottom-1 -left-1 w-2.5 h-2.5 rounded-full bg-[#F59E0B] border border-white" />
-                        )}
-                      </button>
-                    );
-                  })}
+              {/* 24-Space Inspector Directory */}
+              <div className="bg-[#FFFFFF]/95 border-2 border-[#181512] p-2.5 sm:p-3 rounded-sm shadow-[2px_2px_0px_#C89B3C]">
+                <div className="text-[10px] sm:text-[11px] font-pixel text-[#102040] mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 font-bold">
+                    <span>🔍</span> INSPECT SPACES (0–23):
+                  </span>
+                  <span className="font-mono text-[9px] text-[#64748B]">Click space # to view details</span>
+                </div>
+                <div className="grid grid-cols-6 sm:grid-cols-12 gap-1 text-center font-pixel text-[8px] sm:text-[9px]">
+                  {BOARD_SPACES.map((s, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedSpaceIndex(idx)}
+                      className={`py-1.5 px-0.5 border rounded-xs transition-all cursor-pointer truncate ${
+                        selectedSpaceIndex === idx
+                          ? 'bg-[#FFCC00] text-[#102040] border-[#102040] font-bold shadow-[1px_1px_0px_#102040] scale-105 z-10'
+                          : 'bg-[#F1F5F9] text-[#334155] border-[#CBD5E1] hover:bg-[#E2E8F0]'
+                      }`}
+                      title={`Space ${s.index}: ${s.name} (${s.type})`}
+                    >
+                      #{idx}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -424,7 +342,7 @@ export const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose 
                   <span className="font-pixel text-[9px] sm:text-[10px] text-[#102040] font-bold">
                     SPACE #{selectedSpace.index}: {selectedSpace.name}
                   </span>
-                  <span className="font-pixel text-[8px] sm:text-[9px] px-1.5 py-0.5 bg-[#102040] text-[#FFCC00] rounded-xs">
+                  <span className="font-pixel text-[8px] sm:text-[9px] px-1.5 py-0.5 bg-[#102040] text-[#FFCC00] rounded-xs font-bold">
                     {selectedSpace.type}
                   </span>
                 </div>

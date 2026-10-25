@@ -336,13 +336,14 @@ export const TeamJoinPage: React.FC = () => {
           )}
         </WoodenSignboard>
 
-        {/* Pixel Mascot Mario Patrols The Ground with dynamic slogans */}
-        <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
+        {/* Pixel Mascot Mario Patrols The Ground with dynamic slogans and obstacle-aware jump */}
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none z-20">
           <RoamingCharacter
-            size={52}
+            size={48}
             bubbleText={isSuccess ? 'Lets Go!!' : undefined}
             variant="player"
             isCheering={isSuccess}
+            hasObstacle={true}
           />
         </div>
       </main>

@@ -114,23 +114,37 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
           <line x1="0" y1="279" x2="1440" y2="279" stroke="#102040" strokeWidth="2" />
         </svg>
 
-        {/* Castle Fortress Grounded on Left */}
-        <div className="hidden sm:block absolute bottom-7 sm:bottom-8 left-4 sm:left-12 opacity-80 z-0 drop-shadow-[0_4px_6px_rgba(16,32,64,0.3)]">
+        {/* Castle Fortress Grounded on Right (Free from left pipe) */}
+        <div className="hidden sm:block absolute bottom-7 sm:bottom-8 right-4 sm:right-12 lg:right-16 opacity-90 z-0 drop-shadow-[0_4px_6px_rgba(16,32,64,0.3)]">
           <div className="relative flex flex-col items-center">
             {/* Center tower with flag */}
-            <div className="w-1 h-6 bg-[#102040]" />
-            <div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-b-[18px] border-b-[#334155]" />
-            <div className="w-8 h-20 bg-[#334155] border-x-2 border-[#102040] flex flex-col items-center pt-2 gap-1.5">
-              <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#102040] rounded-t-sm" />
-              <div className="w-2 h-3 bg-[#FCD34D] border border-[#102040] rounded-t-sm" />
+            <div className="relative flex items-end justify-center -mb-0.5">
+              <div className="w-1 h-7 bg-[#102040]" />
+              <div className="absolute top-0 left-0.5">
+                <svg width="20" height="13" viewBox="0 0 20 13" fill="none">
+                  <path d="M0 0 L20 6.5 L0 13 Z" fill="#E11D48" stroke="#102040" strokeWidth="1.5" />
+                  <path d="M0 2 L14 6.5 L0 9 Z" fill="#FB7185" />
+                </svg>
+              </div>
+            </div>
+            <div className="w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-b-[20px] border-b-[#334155]" />
+            <div className="w-9 h-22 bg-[#334155] border-x-2 border-[#102040] flex flex-col items-center pt-2 gap-1.5">
+              <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#102040] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
+              <div className="w-2 h-3.5 bg-[#FCD34D] border border-[#102040] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
             </div>
             {/* Flanking turrets */}
-            <div className="w-24 h-12 bg-[#334155] border-t-2 border-x-2 border-[#102040] flex justify-between items-start -mt-12 px-1">
-              <div className="w-4 h-6 bg-[#334155] border-x-2 border-[#102040] -mt-4" />
-              <div className="w-5 h-8 bg-[#102040] rounded-t-sm self-end" />
-              <div className="w-4 h-6 bg-[#334155] border-x-2 border-[#102040] -mt-4" />
+            <div className="w-26 h-14 bg-[#334155] border-t-2 border-x-2 border-[#102040] flex justify-between items-start -mt-14 px-1.5">
+              <div className="flex flex-col items-center -mt-5">
+                <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-b-[12px] border-b-[#334155]" />
+                <div className="w-5 h-5 bg-[#334155] border-x-2 border-[#102040]" />
+              </div>
+              <div className="w-6 h-9 bg-[#102040] rounded-t-sm self-end" />
+              <div className="flex flex-col items-center -mt-5">
+                <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-b-[12px] border-b-[#334155]" />
+                <div className="w-5 h-5 bg-[#334155] border-x-2 border-[#102040]" />
+              </div>
             </div>
-            <div className="w-26 h-1 bg-[#26354A] border-x-2 border-b-2 border-[#102040]" />
+            <div className="w-28 h-1.5 bg-[#26354A] border-x-2 border-b-2 border-[#102040]" />
           </div>
         </div>
       </div>
@@ -211,7 +225,7 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
       {/* ======================================================================= */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
         {/* UPPER-LEFT FLOATING ISLAND: 3 Coins + Platform + ? Block Below */}
-        <div className="hidden sm:block absolute top-14 sm:top-18 left-4 sm:left-10 lg:left-16">
+        <div className="hidden sm:block absolute top-20 sm:top-24 left-3 sm:left-6 lg:left-12">
           <div className="relative flex flex-col items-center">
             {/* 3 Gold Coins hovering in a row above platform */}
             <div className="flex items-center gap-1.5 mb-1 px-2">
@@ -240,14 +254,14 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
             </div>
 
             {/* Floating Question Block Below Platform */}
-            <div className="mt-12 anim-block-cycle">
+            <div className="mt-8 anim-block-cycle">
               <PixelQuestionBlock size={32} />
             </div>
           </div>
         </div>
 
         {/* MID-RIGHT FLOATING ISLAND: 1 Coin + Platform + ? Block Below */}
-        <div className="hidden sm:block absolute top-36 sm:top-44 right-4 sm:right-10 lg:right-16">
+        <div className="hidden sm:block absolute top-24 sm:top-28 right-3 sm:right-6 lg:right-12">
           <div className="relative flex flex-col items-center">
             {/* 1 Gold Coin hovering */}
             <div className="anim-coin-idle mb-1">
