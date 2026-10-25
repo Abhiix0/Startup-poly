@@ -54,8 +54,8 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
                L 0,160 
                C 70,150 140,75 250,75 
                C 340,75 410,135 500,135 
-               C 580,135 660,65 760,65 
-               C 870,65 940,125 1030,125 
+               C 580,135 660,130 760,130 
+               C 870,130 940,125 1030,125 
                C 1120,125 1190,75 1270,75 
                C 1340,75 1395,120 1440,140 
                L 1440,280 Z"
@@ -67,15 +67,6 @@ export const DistantHillsAndCastle: React.FC<{ className?: string }> = ({ classN
           {/* Peak 1 Snowcap */}
           <path
             d="M 215,95 Q 250,75 285,95 Q 268,105 250,98 Q 232,105 215,95 Z"
-            fill="url(#snowcapGrad)"
-            stroke="#102040"
-            strokeWidth="1.5"
-            opacity="0.9"
-          />
-
-          {/* Peak 2 Snowcap (Center-Right Hero Peak) */}
-          <path
-            d="M 720,85 Q 760,65 800,85 Q 780,96 760,88 Q 740,96 720,85 Z"
             fill="url(#snowcapGrad)"
             stroke="#102040"
             strokeWidth="1.5"

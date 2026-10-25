@@ -319,13 +319,8 @@ export const LandingPage: React.FC = () => {
               <div
                 onPointerEnter={() => setActiveCta('admin')}
                 onPointerLeave={() => setActiveCta(null)}
-                className="group relative w-full bg-gradient-to-b from-[#3E5276] via-[#354664] to-[#28364E] border-[3px] border-[#121A2A] shadow-[5px_5px_0px_#0C1320,0_4px_12px_rgba(18,26,42,0.3)] hover:shadow-[7px_7px_0px_#0C1320,0_6px_16px_rgba(0,240,255,0.15)] hover:-translate-y-0.5 transition-all duration-100 ease-out p-2 sm:p-2.5 flex flex-col justify-between items-center text-center rounded-sm select-none"
+                className="group relative w-full bg-[#354664] border-[3px] border-[#121A2A] shadow-[5px_5px_0px_#0C1320] hover:shadow-[7px_7px_0px_#0C1320] hover:-translate-y-0.5 transition-all duration-100 ease-out p-2 sm:p-2.5 flex flex-col justify-between items-center text-center rounded-sm select-none"
               >
-                {/* Subtle animated border shimmer */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xs z-20">
-                  <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-cyan-400/15 to-transparent anim-admin-card-shimmer" />
-                </div>
-
                 {/* Left slate highlight */}
                 <div className="absolute top-0 bottom-0 left-0 w-2 bg-[#4D658E] border-r border-[#263750] pointer-events-none" />
                 {/* Right deep shadow */}
@@ -337,12 +332,7 @@ export const LandingPage: React.FC = () => {
 
                 {/* Inner Slate-Blue Console Face */}
                 <div
-                  className="relative w-full border-2 border-[#58729A] shadow-inner pt-2 pb-2 px-2 sm:px-3 flex flex-col items-center justify-between gap-2 rounded-none z-10"
-                  style={{
-                    backgroundColor: '#D5E0F1',
-                    backgroundImage: 'radial-gradient(rgba(30, 58, 95, 0.08) 1px, transparent 1px), linear-gradient(180deg, #E2ECF8 0%, #D5E0F1 60%, #C4D3E8 100%)',
-                    backgroundSize: '8px 8px, 100% 100%',
-                  }}
+                  className="relative w-full bg-[#DCE6F5] border-2 border-[#58729A] shadow-inner pt-2 pb-2 px-2 sm:px-3 flex flex-col items-center justify-between gap-2 rounded-none z-10"
                 >
                   {/* 4 Corner Metal Screws */}
                   <div className="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-[#94A3B8] border border-[#1E293B] shadow-[1px_1px_0px_#FFFFFF] flex items-center justify-center">
