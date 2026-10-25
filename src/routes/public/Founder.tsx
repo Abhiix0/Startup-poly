@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { PixelMario, MarioExpression } from '../../ui/pixel';
+import { PixelMario } from '../../ui/pixel';
 import { useFirstVisit } from '../../lib/useFirstVisit';
 
 export interface FounderProps {
@@ -24,20 +24,6 @@ const SLOGANS = [
   "PIVOT FAST!",
   "SCALE UP!",
 ];
-
-const SLOGAN_TO_EXPRESSION: Record<string, MarioExpression> = {
-  "LET'S PLAY!": 'wave',
-  "BUILD YOUR DREAM!": 'confident',
-  "ROLL THE DICE!": 'point',
-  "STARTUPOLY!": 'celebrate',
-  "RAISE CAPITAL!": 'confident',
-  "BUILD YOUR MVP!": 'wave',
-  "AVOID CRISIS!": 'point',
-  "UNICORN STATUS!": 'celebrate',
-  "CHECK THE RULES!": 'point',
-  "PIVOT FAST!": 'wave',
-  "SCALE UP!": 'confident',
-};
 
 export const Founder: React.FC<FounderProps> = React.memo(({
   size = 40,
@@ -169,7 +155,6 @@ export const Founder: React.FC<FounderProps> = React.memo(({
   }, [isPaused, phase]);
 
   const currentSlogan = SLOGANS[sloganIndex];
-  const currentExpression = SLOGAN_TO_EXPRESSION[currentSlogan] || 'normal';
 
   return (
     <div
@@ -229,7 +214,6 @@ export const Founder: React.FC<FounderProps> = React.memo(({
             isStrip={true}
             stripAnimation={isJumping ? 'hop' : 'walk'}
             flipX={facingLeft}
-            expression={currentExpression}
             className="shrink-0"
           />
         </div>
