@@ -9,7 +9,6 @@ import {
   PixelTerminalIcon,
   PixelGrassTuft,
   PixelFlower,
-  PixelMario,
   StartupolyLogo,
 } from '../../ui/pixel';
 import { sounds } from '../../lib/sound';
@@ -461,30 +460,9 @@ export const LandingPage: React.FC = () => {
       <TapCoinBurst isBooting={isFirstVisit} />
 
       {/* ======================================================================= */}
-      {/* SUPER MARIO NAVIGATION LAUNCH JUMP (Team Phone / Admin Transition)     */}
-      {/* ======================================================================= */}
-      {launchTarget && (
-        <div
-          data-testid="mario-launch-jump"
-          aria-hidden="true"
-          className={`fixed bottom-12 sm:bottom-16 left-1/2 -ml-6 z-50 pointer-events-none ${
-            launchTarget === 'join' ? 'anim-mario-launch-join' : 'anim-mario-launch-admin'
-          }`}
-        >
-          <div className="relative flex flex-col items-center">
-            {/* Retro Comic Speech Callout */}
-            <div className="mb-1 whitespace-nowrap bg-[#FFCC00] text-[#102040] border-2 border-[#102040] px-2 py-0.5 font-pixel text-[8px] font-bold shadow-[2px_2px_0px_#102040]">
-              {launchTarget === 'join' ? "LET'S GO!! 🍄" : 'WARP ADMIN! ⚡'}
-            </div>
-            <PixelMario size={50} pose="jump" />
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================================= */}
       {/* LAYER 4: Living Pixel World Ground & Scene                              */}
       {/* ======================================================================= */}
-      <PixelWorld isIntroActive={showIntro} />
+      <PixelWorld isIntroActive={showIntro} launchTarget={launchTarget} />
     </div>
   );
 };

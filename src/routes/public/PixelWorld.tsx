@@ -17,9 +17,13 @@ import { Founder } from './Founder';
 
 export interface PixelWorldProps {
   isIntroActive?: boolean;
+  launchTarget?: 'join' | 'admin' | null;
 }
 
-export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false }) => {
+export const PixelWorld: React.FC<PixelWorldProps> = ({
+  isIntroActive = false,
+  launchTarget = null,
+}) => {
   const [worldWidth, setWorldWidth] = React.useState(() =>
     typeof window !== 'undefined' ? window.innerWidth : 1024
   );
@@ -223,7 +227,9 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
           {/* Running Character moving across the screen from corner to corner */}
           <div
             id="founder-ground-target"
-            className={`absolute bottom-0 left-2 sm:left-6 lg:left-10 z-20 transition-opacity duration-150 ${
+            className={`absolute bottom-0 left-2 sm:left-6 lg:left-10 ${
+              launchTarget ? 'z-50' : 'z-20'
+            } transition-opacity duration-150 ${
               isIntroActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
           >
@@ -234,6 +240,7 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
               className="scale-95 sm:scale-100 origin-bottom"
               platformOffset={platformOffset}
               maxDistance={maxDistance}
+              launchTarget={launchTarget}
             />
           </div>
 

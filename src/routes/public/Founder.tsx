@@ -9,6 +9,7 @@ export interface FounderProps {
   isPaused?: boolean;
   platformOffset?: number;
   maxDistance?: number;
+  launchTarget?: 'join' | 'admin' | null;
 }
 
 const SLOGANS = [
@@ -32,6 +33,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
   isPaused = false,
   platformOffset = 180,
   maxDistance = 280,
+  launchTarget = null,
 }) => {
   const { isFirstVisit } = useFirstVisit();
   const [phase, setPhase] = useState<'enter' | 'idle'>(() =>
@@ -41,6 +43,10 @@ export const Founder: React.FC<FounderProps> = React.memo(({
   const [marioTransform, setMarioTransform] = useState({ x: 0, y: 0 });
   const [isJumping, setIsJumping] = useState(false);
   const [facingLeft, setFacingLeft] = useState(false);
+  const [launchStyle, setLaunchStyle] = useState<{
+    transform: string;
+    transition: string;
+  } | null>(null);
 
   // Position, direction, and timing refs (immune to cursor movements and parent re-renders)
   const currentXRef = useRef<number>(0);
@@ -70,9 +76,34 @@ export const Founder: React.FC<FounderProps> = React.memo(({
     setPhase('idle');
   }, []);
 
+  // Handle Mario jumping up towards Team Phone or Admin Console upon click
+  useEffect(() => {
+    if (launchTarget) {
+      const curX = currentXRef.current;
+      const targetDeltaX = launchTarget === 'join' ? -40 : 160;
+      setIsJumping(true);
+      if (launchTarget === 'join') {
+        setFacingLeft(true);
+      } else {
+        setFacingLeft(false);
+      }
+      const animId = requestAnimationFrame(() => {
+        setLaunchStyle({
+          transform: `translate3d(${curX + targetDeltaX}px, -270px, 0) scale(1.22) ${
+            launchTarget === 'join' ? 'rotate(-6deg)' : 'rotate(6deg)'
+          }`,
+          transition: 'transform 420ms cubic-bezier(0.18, 0.89, 0.32, 1.15)',
+        });
+      });
+      return () => cancelAnimationFrame(animId);
+    } else {
+      setLaunchStyle(null);
+    }
+  }, [launchTarget]);
+
   // Continuous animation loop: independent of cursor movement, mouse events, or CTA hovers
   useEffect(() => {
-    if (isPaused || phase !== 'idle') return;
+    if (isPaused || phase !== 'idle' || launchTarget) return;
 
     const SPEED = 150; // Pixels per second: brisk, natural retro running pace
 
@@ -163,7 +194,7 @@ export const Founder: React.FC<FounderProps> = React.memo(({
       }
       lastTimeRef.current = null;
     };
-  }, [isPaused, phase]);
+  }, [isPaused, phase, launchTarget]);
 
   const currentSlogan = SLOGANS[sloganIndex];
 
@@ -185,7 +216,13 @@ export const Founder: React.FC<FounderProps> = React.memo(({
             : 'anim-founder-idle-bob'
         }`}
         style={
-          phase === 'idle'
+          launchStyle
+            ? {
+                transform: launchStyle.transform,
+                transition: launchStyle.transition,
+                willChange: 'transform',
+              }
+            : phase === 'idle'
             ? {
                 transform: `translate3d(${marioTransform.x}px, ${marioTransform.y}px, 0)`,
                 transition: 'none',
@@ -193,19 +230,31 @@ export const Founder: React.FC<FounderProps> = React.memo(({
             : undefined
         }
       >
-        {/* Speech Bubble Anchor (moves with Character, hidden during jump) */}
+        {/* Speech Bubble Anchor (moves with Character, stays visible and highlights during launch) */}
         <div
           className={`founder-bubble-anchor absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 flex flex-col items-center pointer-events-none z-30 transition-all duration-150 ${
-            isJumping ? 'opacity-0 scale-75' : 'opacity-100 scale-100'
+            launchTarget
+              ? 'opacity-100 scale-100'
+              : isJumping
+              ? 'opacity-0 scale-75'
+              : 'opacity-100 scale-100'
           }`}
           style={{
-            visibility: isJumping ? 'hidden' : 'visible',
+            visibility: isJumping && !launchTarget ? 'hidden' : 'visible',
           }}
         >
-          {/* Cheerful Speech Bubble with Slogan matching Hand Movement */}
-          <div className="bg-white border-2 border-[#102040] shadow-[2px_2px_0px_#102040] px-2.5 py-0.5 text-center whitespace-nowrap z-20">
-            <span className="font-pixel text-[9px] sm:text-[10px] text-[#102040] font-bold tracking-wider">
-              {currentSlogan}
+          {/* Cheerful Speech Bubble with Slogan */}
+          <div
+            className={`border-2 border-[#102040] shadow-[2px_2px_0px_#102040] px-2.5 py-0.5 text-center whitespace-nowrap z-20 ${
+              launchTarget ? 'bg-[#FFCC00] text-[#102040]' : 'bg-white text-[#102040]'
+            }`}
+          >
+            <span className="font-pixel text-[9px] sm:text-[10px] font-bold tracking-wider">
+              {launchTarget === 'join'
+                ? "LET'S GO!! 🍄"
+                : launchTarget === 'admin'
+                ? 'WARP ADMIN! ⚡'
+                : currentSlogan}
             </span>
           </div>
 
