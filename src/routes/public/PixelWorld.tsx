@@ -52,52 +52,76 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
         <div data-layer="1-sky" className="absolute inset-0 pointer-events-none" />
 
         {/* ========================================================================= */}
-        {/* LAYER 2: HORIZON CLOUDS ROW 1 (110s drift, sparse far horizon lane)        */}
+        {/* LAYER 2: HORIZON CLOUDS ROW 1 (110s drift, top horizon lane)              */}
         {/* ========================================================================= */}
         <div
           data-layer="2-clouds-far"
           className="absolute inset-x-0 top-0 h-12 overflow-hidden pointer-events-none"
         >
           <div
-            className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-40"
+            className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-50"
             style={{ animationDelay: '-25s' }}
           >
             {/* Set 1 */}
             <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[14%]">
-                <PixelCloudFluffy size={38} />
+              <div className="absolute top-1 left-[10%]">
+                <PixelCloudFluffy size={42} />
+              </div>
+              <div className="absolute top-1.5 left-[46%]">
+                <PixelCloudFluffy size={46} />
+              </div>
+              <div className="absolute top-1 left-[80%]">
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
             {/* Set 2 (Identical for seamless loop) */}
             <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[14%]">
-                <PixelCloudFluffy size={38} />
+              <div className="absolute top-1 left-[10%]">
+                <PixelCloudFluffy size={42} />
+              </div>
+              <div className="absolute top-1.5 left-[46%]">
+                <PixelCloudFluffy size={46} />
+              </div>
+              <div className="absolute top-1 left-[80%]">
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 3: HORIZON CLOUDS ROW 2 (65s drift, sparse near lane, clear of fort) */}
+        {/* LAYER 3: HORIZON CLOUDS ROW 2 (65s drift, lower horizon lane, clear of fort) */}
         {/* ========================================================================= */}
         <div
           data-layer="3-clouds-near"
           className="absolute left-0 right-44 sm:right-56 md:right-64 lg:right-76 top-11 sm:top-13 h-12 overflow-hidden pointer-events-none"
         >
           <div
-            className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-45"
+            className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-65"
             style={{ animationDelay: '-12s' }}
           >
             {/* Set 1 */}
             <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[28%]">
-                <PixelCloudFluffy size={34} />
+              <div className="absolute top-1 left-[8%]">
+                <PixelCloudFluffy size={38} />
+              </div>
+              <div className="absolute top-1.5 left-[30%]">
+                <PixelCloudFluffy size={44} />
+              </div>
+              <div className="absolute top-1 left-[54%]">
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
             {/* Set 2 (Identical for seamless loop) */}
             <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[28%]">
-                <PixelCloudFluffy size={34} />
+              <div className="absolute top-1 left-[8%]">
+                <PixelCloudFluffy size={38} />
+              </div>
+              <div className="absolute top-1.5 left-[30%]">
+                <PixelCloudFluffy size={44} />
+              </div>
+              <div className="absolute top-1 left-[54%]">
+                <PixelCloudFluffy size={40} />
               </div>
             </div>
           </div>
@@ -127,13 +151,13 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
           <div className="hidden lg:block absolute bottom-0 left-44 anim-grass-sway">
             <PixelGrassTuft size={26} variant={1} />
           </div>
-          <div className="hidden lg:block absolute bottom-0 right-56 anim-grass-sway" style={{ animationDelay: '-1.5s' }}>
+          <div className="hidden lg:block absolute bottom-0 right-48 anim-grass-sway" style={{ animationDelay: '-1.5s' }}>
             <PixelGrassTuft size={26} variant={2} />
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* LAYER 5: OBJECTS (Pipes, Blocks, Obstacles, Character, Monitor)          */}
+        {/* LAYER 5: OBJECTS (Pipes, Blocks, Obstacles, Character, Monitor, Castle)    */}
         {/* ========================================================================= */}
         <div
           data-layer="5-objects"
@@ -213,18 +237,8 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
             />
           </div>
 
-          {/* MID-RIGHT GROUND OBJECTS: Warp pipe safely positioned left of castle, keeping castle view completely clear */}
-          <div className="absolute bottom-0 right-48 sm:right-60 md:right-72 lg:right-80 flex items-end gap-1.5 sm:gap-2 z-10 pointer-events-none">
-            {/* Warp Pipe positioned well clear of the right-side castle */}
-            <div className="flex flex-col items-center">
-              <div className="anim-pipe-highlight">
-                <PixelPipe className="w-[50px] h-[44px] sm:w-[60px] sm:h-[48px]" />
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Admin Monitor (Clear of Castle) */}
-          <div className="absolute bottom-0 right-24 sm:right-32 md:right-40 lg:right-48 flex items-end gap-1.5 sm:gap-2.5 z-10">
+          {/* RIGHT GROUND OBJECTS: ? Block + Coins + Admin Monitor + Grass + Pipe + Daisy */}
+          <div className="absolute bottom-0 right-2 sm:right-6 lg:right-10 flex items-end gap-1.5 sm:gap-2.5 z-10">
             {/* Question Block and Coins sitting on grass */}
             <div className="hidden md:flex items-end gap-1.5">
               <div className="flex flex-col items-center">
@@ -242,12 +256,24 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({ isIntroActive = false })
               </div>
             </div>
 
-            {/* Right Admin Desk Monitor */}
+            {/* Right Admin Desk Monitor (Reacts to [data-cta="admin"]) */}
             <div className="hidden lg:block world-admin-monitor mb-0.5">
               <PixelMonitor size={34} />
             </div>
 
-            {/* Daisy Wildflower & Grass beside monitor */}
+            {/* Grass tuft beside right warp pipe */}
+            <div className="hidden sm:block mb-0.5">
+              <PixelGrassTuft size={16} variant={1} />
+            </div>
+
+            {/* Right Large Green Warp Pipe */}
+            <div className="flex flex-col items-center">
+              <div className="anim-pipe-highlight">
+                <PixelPipe className="w-[54px] h-[48px] sm:w-[68px] sm:h-[54px]" />
+              </div>
+            </div>
+
+            {/* Daisy Wildflower & Grass to the right of the Warp pipe */}
             <div className="hidden sm:flex items-end gap-0.5 mb-0.5">
               <PixelFlower size={18} variant={1} />
               <PixelGrassTuft size={16} variant={2} />

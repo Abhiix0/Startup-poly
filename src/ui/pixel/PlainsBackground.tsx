@@ -15,42 +15,50 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
   return (
     <div className="min-h-screen bg-nes-sky flex flex-col justify-between relative overflow-hidden select-none anim-scene-transition">
       {/* ======================================================================= */}
-      {/* LAYER 1: Distant Background Two-Tone Blue Hills & Prominent Castle      */}
+      {/* LAYER 1: Distant Background Hills & Misty Castle Silhouette            */}
       {/* ======================================================================= */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Layered Two-Tone Mountain Panorama Aligned to Ground Baseline */}
+        {/* Layered Mountain Panorama Aligned to Ground Baseline */}
         <svg
           viewBox="0 0 1440 280"
           className="absolute inset-x-0 bottom-7 sm:bottom-8 w-full h-44 sm:h-64 object-cover object-bottom"
           preserveAspectRatio="none"
         >
           <defs>
-            {/* Tone 1: Distant Deep Arcade Indigo/Navy Blue */}
-            <linearGradient id="plainsPeaksGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#2A4D85" />
-              <stop offset="60%" stopColor="#1E3763" />
-              <stop offset="100%" stopColor="#152646" />
+            {/* Distant Alpine Gradient */}
+            <linearGradient id="plainsAlpineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#4A75C7" stopOpacity="0.85" />
+              <stop offset="50%" stopColor="#31559C" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#1E386B" stopOpacity="1" />
             </linearGradient>
 
-            {/* Tone 2: Foreground Vibrant Mid-Arcade Blue */}
-            <linearGradient id="plainsHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#3E72DC" />
-              <stop offset="55%" stopColor="#2E5AB5" />
-              <stop offset="100%" stopColor="#204085" />
+            {/* Mid Teal Gradient */}
+            <linearGradient id="plainsMidTealGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#14B8A6" stopOpacity="0.85" />
+              <stop offset="60%" stopColor="#0D9488" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#0F766E" stopOpacity="1" />
             </linearGradient>
 
-            {/* Subtle Snowcap highlight */}
+            {/* Foreground Lush Green Hills Gradient */}
+            <linearGradient id="plainsGreenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#2ECC71" />
+              <stop offset="45%" stopColor="#22C55E" />
+              <stop offset="85%" stopColor="#16A34A" />
+              <stop offset="100%" stopColor="#15803D" />
+            </linearGradient>
+
+            {/* Snowcap highlight */}
             <linearGradient id="plainsSnowcapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#FFFFFF" />
-              <stop offset="100%" stopColor="#C3D9FF" />
+              <stop offset="100%" stopColor="#BFDBFE" />
             </linearGradient>
           </defs>
 
-          {/* Tone 1: Distant Alpine Peaks with Snowcaps */}
+          {/* 1. Distant Alpine Peaks with Snowcaps */}
           <g>
             <path
               d="M 0,280 L 0,160 C 70,150 140,75 250,75 C 340,75 410,135 500,135 C 580,135 660,65 760,65 C 870,65 940,125 1030,125 C 1120,125 1190,75 1270,75 C 1340,75 1395,120 1440,140 L 1440,280 Z"
-              fill="url(#plainsPeaksGrad)"
+              fill="url(#plainsAlpineGrad)"
               stroke="#102040"
               strokeWidth="2"
             />
@@ -78,73 +86,65 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
             />
           </g>
 
-          {/* Tone 2: Foreground Vibrant Mid-Blue Rolling Slopes */}
-          <g>
+          {/* 2. Mid-range Teal Slopes */}
+          <g opacity="0.85">
             <path
-              d="M 0,280 L 0,195 C 50,195 90,140 150,140 C 220,140 290,190 380,190 C 470,190 520,135 590,135 C 670,135 740,185 820,185 C 900,185 960,140 1040,140 C 1120,140 1180,180 1250,180 C 1310,180 1350,165 1400,165 C 1420,165 1435,170 1440,172 L 1440,280 Z"
-              fill="url(#plainsHillsGrad)"
+              d="M 0,280 L 0,185 C 60,185 110,120 190,120 C 280,120 350,175 440,175 C 530,175 600,115 690,115 C 780,115 850,165 940,165 C 1020,165 1090,125 1170,125 C 1250,125 1320,160 1440,160 L 1440,280 Z"
+              fill="url(#plainsMidTealGrad)"
               stroke="#102040"
               strokeWidth="2"
             />
-            {/* Subtle Crest Highlights */}
-            <path d="M 85,155 C 115,140 150,140 210,148" stroke="#BFDBFE" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.75" />
-            <path d="M 520,150 C 555,135 590,135 655,145" stroke="#BFDBFE" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.75" />
-            <path d="M 970,152 C 1005,140 1040,140 1105,148" stroke="#BFDBFE" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.75" />
-            <path d="M 1340,172 C 1370,165 1400,165 1435,170" stroke="#BFDBFE" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7" />
+          </g>
+
+          {/* 3. Foreground Lush Rolling Green Hills */}
+          <g>
+            <path
+              d="M 0,280 L 0,195 C 50,195 90,140 150,140 C 220,140 290,190 380,190 C 470,190 520,135 590,135 C 670,135 740,185 820,185 C 900,185 960,140 1040,140 C 1120,140 1180,180 1250,180 C 1310,180 1350,165 1400,165 C 1420,165 1435,170 1440,172 L 1440,280 Z"
+              fill="url(#plainsGreenGrad)"
+              stroke="#102040"
+              strokeWidth="2"
+            />
+            {/* Crest Highlights */}
+            <path d="M 85,155 C 115,140 150,140 210,148" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+            <path d="M 520,150 C 555,135 590,135 655,145" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+            <path d="M 970,152 C 1005,140 1040,140 1105,148" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+            <path d="M 1340,172 C 1370,165 1400,165 1435,170" stroke="#86EFAC" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.75" />
           </g>
 
           <line x1="0" y1="279" x2="1440" y2="279" stroke="#102040" strokeWidth="2" />
         </svg>
 
-        {/* Castle Fortress Grounded on Right (Substantially Enlarged & Prominent) */}
-        <div className="block absolute bottom-7 sm:bottom-8 right-2 sm:right-6 md:right-10 lg:right-14 opacity-100 z-0 origin-bottom-right scale-110 sm:scale-130 md:scale-150 lg:scale-175 transition-transform duration-300 drop-shadow-[0_8px_16px_rgba(16,32,64,0.45)] pointer-events-none">
+        {/* Castle Fortress Grounded on Right (Free from left pipe) */}
+        <div className="hidden sm:block absolute bottom-7 sm:bottom-8 right-4 sm:right-12 lg:right-16 opacity-90 z-0 drop-shadow-[0_4px_6px_rgba(16,32,64,0.3)]">
           <div className="relative flex flex-col items-center">
             {/* Center tower with flag */}
             <div className="relative flex items-end justify-center -mb-0.5">
-              <div className="w-1.5 h-10 bg-[#0F172A] rounded-t-sm" />
-              <div className="absolute top-0 left-1">
-                <svg
-                  width="28"
-                  height="18"
-                  viewBox="0 0 28 18"
-                  fill="none"
-                  className="anim-flag-flutter origin-left"
-                >
-                  <path d="M0 0 L28 9 L0 18 Z" fill="#E11D48" stroke="#0F172A" strokeWidth="2" />
-                  <path d="M0 2 L20 9 L0 11 Z" fill="#FB7185" />
-                  <rect x="4" y="7" width="4" height="4" fill="#FFCC00" />
+              <div className="w-1 h-7 bg-[#102040]" />
+              <div className="absolute top-0 left-0.5">
+                <svg width="20" height="13" viewBox="0 0 20 13" fill="none">
+                  <path d="M0 0 L20 6.5 L0 13 Z" fill="#E11D48" stroke="#102040" strokeWidth="1.5" />
+                  <path d="M0 2 L14 6.5 L0 9 Z" fill="#FB7185" />
                 </svg>
               </div>
             </div>
-            {/* Conical Roof / Battlements */}
-            <div className="w-0 h-0 border-l-[22px] border-l-transparent border-r-[22px] border-r-transparent border-b-[26px] border-b-[#475569]" />
-            <div className="w-13 h-4 bg-[#475569] border-x-2 border-[#0F172A] flex justify-between px-1">
-              <div className="w-2 h-2 bg-[#0F172A]" />
-              <div className="w-2 h-2 bg-[#0F172A]" />
-              <div className="w-2 h-2 bg-[#0F172A]" />
+            <div className="w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-b-[20px] border-b-[#334155]" />
+            <div className="w-9 h-22 bg-[#334155] border-x-2 border-[#102040] flex flex-col items-center pt-2 gap-1.5">
+              <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#102040] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
+              <div className="w-2 h-3.5 bg-[#FCD34D] border border-[#102040] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
             </div>
-            {/* Central Tower Body with Amber Lit Arched Windows */}
-            <div className="w-11 h-28 bg-[#3E4D64] border-x-2 border-[#0F172A] flex flex-col items-center pt-3 gap-2">
-              <div className="w-3.5 h-6 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
-              <div className="w-3 h-5 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm shadow-[inset_1px_1px_0px_#FFFBEB]" />
-            </div>
-            {/* Flanking turrets & Portcullis */}
-            <div className="w-36 h-20 bg-[#3E4D64] border-t-2 border-x-2 border-[#0F172A] flex justify-between items-start -mt-18 px-2">
-              <div className="flex flex-col items-center -mt-7">
-                <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-[#475569]" />
-                <div className="w-7 h-3 bg-[#475569] border-x-2 border-[#0F172A]" />
-                <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm mt-1" />
+            {/* Flanking turrets */}
+            <div className="w-26 h-14 bg-[#334155] border-t-2 border-x-2 border-[#102040] flex justify-between items-start -mt-14 px-1.5">
+              <div className="flex flex-col items-center -mt-5">
+                <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-b-[12px] border-b-[#334155]" />
+                <div className="w-5 h-5 bg-[#334155] border-x-2 border-[#102040]" />
               </div>
-              <div className="w-8 h-12 bg-[#0F172A] rounded-t-md self-end flex items-center justify-center">
-                <div className="w-6 h-9 border-t border-x border-[#94A3B8] rounded-t-sm opacity-85" />
-              </div>
-              <div className="flex flex-col items-center -mt-7">
-                <div className="w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-b-[18px] border-b-[#475569]" />
-                <div className="w-7 h-3 bg-[#475569] border-x-2 border-[#0F172A]" />
-                <div className="w-2.5 h-4 bg-[#FCD34D] border border-[#0F172A] rounded-t-sm mt-1" />
+              <div className="w-6 h-9 bg-[#102040] rounded-t-sm self-end" />
+              <div className="flex flex-col items-center -mt-5">
+                <div className="w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-b-[12px] border-b-[#334155]" />
+                <div className="w-5 h-5 bg-[#334155] border-x-2 border-[#102040]" />
               </div>
             </div>
-            <div className="w-38 h-2 bg-[#2E3B4E] border-x-2 border-b-2 border-[#0F172A] -mt-0.5" />
+            <div className="w-28 h-1.5 bg-[#26354A] border-x-2 border-b-2 border-[#102040]" />
           </div>
         </div>
       </div>
