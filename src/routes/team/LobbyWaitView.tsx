@@ -22,6 +22,10 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
     try {
       setIsLeaving(true);
       await rpcLeaveTeam();
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('startupoly_active_team_state');
+        localStorage.removeItem('startupoly_active_team_claim');
+      }
       successToast('Disconnected from team slot.');
       navigate('/join', {
         state: { notice: `Disconnected from Slot #${team.slot} (${team.name}). You can now select a different team.` },

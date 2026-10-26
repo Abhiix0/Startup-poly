@@ -7,6 +7,9 @@ import { AppError } from '../lib/errors';
 
 export type FlashDirection = 'up' | 'down' | null;
 
+export const STORAGE_KEY_TEAM_STATE = 'startupoly_active_team_state';
+export const STORAGE_KEY_TEAM_CLAIM = 'startupoly_active_team_claim';
+
 export interface UseMyTeamResult {
   state: TeamStateResponse | null;
   status: 'loading' | 'ready' | 'error';
@@ -23,7 +26,22 @@ export interface UseMyTeamResult {
 }
 
 export function useMyTeam(): UseMyTeamResult {
-  const [state, setState] = useState<TeamStateResponse | null>(null);
+  // Pre-hydrate state from local cache on accidental reload so player never quits or sees blank screen
+  const [state, setState] = useState<TeamStateResponse | null>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem(STORAGE_KEY_TEAM_STATE);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.team && parsed.room) {
+            return parsed;
+          }
+        }
+      }
+    } catch {}
+    return null;
+  });
+
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [error, setError] = useState<Error | null>(null);
   const [connection, setConnection] = useState<ConnectionStatus>('CONNECTING');
@@ -69,6 +87,10 @@ export function useMyTeam(): UseMyTeamResult {
           logger.warn('useMyTeam', 'Team claim was released by event admin.');
           setWasClaimReleased(true);
         }
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem(STORAGE_KEY_TEAM_STATE);
+          localStorage.removeItem(STORAGE_KEY_TEAM_CLAIM);
+        }
         setState(null);
         setStatus('ready');
         return;
@@ -77,6 +99,13 @@ export function useMyTeam(): UseMyTeamResult {
       hadStateRef.current = true;
       setWasClaimReleased(false);
       setIsSessionLost(false);
+
+      // Persist latest state in local storage for instant re-hydration on reload
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(STORAGE_KEY_TEAM_STATE, JSON.stringify(data));
+        } catch {}
+      }
 
       // Compare previous cash and CV for flash animation
       if (prevCashRef.current !== null) {

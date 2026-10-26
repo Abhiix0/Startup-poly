@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   PlainsBackground,
@@ -37,6 +37,24 @@ export const TeamJoinPage: React.FC = () => {
 
   // Check if redirected with notice (e.g., organizer released slot)
   const redirectNotice = (location.state as { notice?: string })?.notice;
+
+  // Auto-resume to /team if player is already in an active match
+  useEffect(() => {
+    if (redirectNotice) {
+      return;
+    }
+    try {
+      if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem('startupoly_active_team_state');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed?.room?.status && parsed.room.status !== 'FINALIZED') {
+            navigate('/team', { replace: true });
+          }
+        }
+      }
+    } catch {}
+  }, [navigate, redirectNotice]);
 
   // Safe alphabet filter (no 0, 1, I, O)
   const handleRoomCodeChange = (raw: string) => {
@@ -101,6 +119,16 @@ export const TeamJoinPage: React.FC = () => {
 
       // Call join_team RPC
       await rpcJoinTeam(roomCode, selectedSlot, pin);
+
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('startupoly_active_team_claim', JSON.stringify({
+            code: roomCode,
+            slot: selectedSlot,
+            pin,
+          }));
+        } catch {}
+      }
 
       // Trigger game-like celebration
       setIsSuccess(true);

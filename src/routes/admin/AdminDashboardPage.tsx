@@ -29,10 +29,16 @@ export const AdminDashboardPage: React.FC = () => {
     let isMounted = true;
     async function checkCurrentRoom() {
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('rooms')
-          .select('id, status, code, team_count')
-          .neq('status', 'FINALIZED')
+          .select('id, status, code, team_count, created_by')
+          .neq('status', 'FINALIZED');
+
+        if (user?.id) {
+          query = query.eq('created_by', user.id);
+        }
+
+        const { data, error } = await query
           .order('created_at', { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -61,7 +67,7 @@ export const AdminDashboardPage: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [checkAttempt]);
+  }, [checkAttempt, user?.id]);
 
   const handleDiscardActiveRoom = async () => {
     if (!activeRoom || isDiscarding) return;
@@ -97,6 +103,11 @@ export const AdminDashboardPage: React.FC = () => {
           <span className="hidden md:inline font-mono text-xs text-neutral-400">
             {user?.email}
           </span>
+          {user?.email && (
+            <span className="hidden sm:inline font-pixel text-[10px] text-nes-gold bg-nes-navy border border-brand-gold/40 px-2 py-0.5">
+              WORKSPACE: {user.email.split('@')[0].toUpperCase()}
+            </span>
+          )}
           <Link to="/admin/history">
             <PixelButton variant="ghost" size="sm">
               HISTORY

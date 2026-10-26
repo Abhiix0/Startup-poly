@@ -23,6 +23,10 @@ export const ERROR_MAP: Record<string, ErrorMeta> = {
     message: 'Access denied: Admin credentials required.',
     retryable: false,
   },
+  NOT_ROOM_OWNER: {
+    message: 'This match was created by another organizer and is isolated to their workspace.',
+    retryable: false,
+  },
   NOT_AUTHENTICATED: {
     message: 'Authentication session missing or expired. Please sign in or rejoin.',
     retryable: true,

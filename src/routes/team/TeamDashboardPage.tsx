@@ -23,6 +23,18 @@ export const TeamDashboardPage: React.FC = () => {
     isSessionLost,
   } = useMyTeam();
 
+  // Prevent accidental gestures or browser reload quitting active match
+  React.useEffect(() => {
+    if (state?.room.status === 'ACTIVE' || state?.room.status === 'LOBBY') {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue = '';
+      };
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+  }, [state?.room.status]);
+
   // If anonymous session was lost, redirect to /join with notice
   if (isSessionLost) {
     return (
