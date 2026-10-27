@@ -35,7 +35,7 @@ export const LandingPage: React.FC = () => {
   // Check prefers-reduced-motion
   const isReducedMotion =
     typeof window !== 'undefined' &&
-    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
 
   const handleCtaClick = (target: 'join' | 'admin', e: React.MouseEvent) => {
     e.preventDefault();
