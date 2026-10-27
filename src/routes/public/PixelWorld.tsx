@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  PixelCloudFluffy,
   PixelPipe,
 } from '../../ui';
 import {
@@ -61,81 +60,6 @@ export const PixelWorld: React.FC<PixelWorldProps> = ({
         {/* ========================================================================= */}
         <div data-layer="1-sky" className="absolute inset-0 pointer-events-none" />
 
-        {/* ========================================================================= */}
-        {/* LAYER 2: HORIZON CLOUDS ROW 1 (110s drift, top horizon lane)              */}
-        {/* ========================================================================= */}
-        <div
-          data-layer="2-clouds-far"
-          className="absolute inset-x-0 top-0 h-12 overflow-hidden pointer-events-none"
-        >
-          <div
-            className="flex w-[200%] shrink-0 anim-cloud-drift-far opacity-50"
-            style={{ animationDelay: '-25s' }}
-          >
-            {/* Set 1 */}
-            <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[10%]">
-                <PixelCloudFluffy size={42} />
-              </div>
-              <div className="absolute top-1.5 left-[46%]">
-                <PixelCloudFluffy size={46} />
-              </div>
-              <div className="absolute top-1 left-[80%]">
-                <PixelCloudFluffy size={40} />
-              </div>
-            </div>
-            {/* Set 2 (Identical for seamless loop) */}
-            <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[10%]">
-                <PixelCloudFluffy size={42} />
-              </div>
-              <div className="absolute top-1.5 left-[46%]">
-                <PixelCloudFluffy size={46} />
-              </div>
-              <div className="absolute top-1 left-[80%]">
-                <PixelCloudFluffy size={40} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* LAYER 3: HORIZON CLOUDS ROW 2 (65s drift, lower horizon lane, clear of fort) */}
-        {/* ========================================================================= */}
-        <div
-          data-layer="3-clouds-near"
-          className="absolute left-0 right-44 sm:right-56 md:right-64 lg:right-76 top-11 sm:top-13 h-12 overflow-hidden pointer-events-none"
-        >
-          <div
-            className="flex w-[200%] shrink-0 anim-cloud-drift-near opacity-65"
-            style={{ animationDelay: '-12s' }}
-          >
-            {/* Set 1 */}
-            <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[8%]">
-                <PixelCloudFluffy size={38} />
-              </div>
-              <div className="absolute top-1.5 left-[30%]">
-                <PixelCloudFluffy size={44} />
-              </div>
-              <div className="absolute top-1 left-[54%]">
-                <PixelCloudFluffy size={40} />
-              </div>
-            </div>
-            {/* Set 2 (Identical for seamless loop) */}
-            <div className="w-1/2 relative h-10 shrink-0">
-              <div className="absolute top-1 left-[8%]">
-                <PixelCloudFluffy size={38} />
-              </div>
-              <div className="absolute top-1.5 left-[30%]">
-                <PixelCloudFluffy size={44} />
-              </div>
-              <div className="absolute top-1 left-[54%]">
-                <PixelCloudFluffy size={40} />
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* ========================================================================= */}
         {/* LAYER 4: GROUND DECORATIONS (Hills, Grass Tufts, Sparkles, Flowers)     */}

@@ -40,13 +40,12 @@ describe('RulesPage', () => {
     expect(screen.getByText('Investor Pullout')).toBeInTheDocument();
   });
 
-  it('uses final START growth bonus and unconfirmed upgrade costs', () => {
+  it('uses rent calculation tiers and 50-minute gameplay rule', () => {
     renderRules();
-    const table = screen.getByRole('table', { name: 'START Growth Bonus' });
-    expect(within(table).getByRole('row', { name: /^0 No additional CV$/ })).toBeInTheDocument();
-    expect(within(table).getByRole('row', { name: /^1 \+200 CV$/ })).toBeInTheDocument();
-    expect(within(table).getByRole('row', { name: /^2 \+500 CV$/ })).toBeInTheDocument();
-    expect(screen.getAllByText('To be confirmed')).toHaveLength(2);
+    const table = screen.getByRole('table', { name: 'Rent calculation tiers' });
+    expect(within(table).getByRole('row', { name: /^Base 50% of original purchase cost ₹200 Rent$/ })).toBeInTheDocument();
+    expect(within(table).getByRole('row', { name: /^Upgrade 1 75% of original purchase cost ₹300 Rent$/ })).toBeInTheDocument();
+    expect(within(table).getByRole('row', { name: /^Upgrade 2 100% of original purchase cost ₹400 Rent$/ })).toBeInTheDocument();
     expect(screen.getAllByText(/exactly 50 minutes/i).length).toBeGreaterThan(0);
   });
 

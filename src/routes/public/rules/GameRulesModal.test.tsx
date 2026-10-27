@@ -38,8 +38,8 @@ describe('GameRulesModal and LandingPage Integration', () => {
     const businessesTab = screen.getByRole('button', { name: /BUSINESSES/i });
     fireEvent.click(businessesTab);
     expect(screen.getByText(/ACQUISITION & UPGRADE RULES/i)).toBeInTheDocument();
-    expect(screen.getByText(/10 STARTUP BUSINESSES/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/Provisional — Pending Rulebook Confirmation/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Base Rent =/i)).toBeInTheDocument();
+    expect(screen.getByText(/Physics Wallah/i)).toBeInTheDocument();
 
     // Tab 4: Spaces & Cards
     const spacesCardsTab = screen.getByRole('button', { name: /SPACES & CARDS/i });
