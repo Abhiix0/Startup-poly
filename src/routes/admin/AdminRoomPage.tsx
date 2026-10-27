@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAdminRoom } from '../../data/useAdminRoom';
 import { PixelCard, StatusPill, ConnectionPill, ErrorBanner, Skeleton, PixelBrickTile } from '../../ui';
+import { RoamingCharacter } from '../../ui/pixel';
 import { SetupView } from './SetupView';
 import { LobbyView } from './LobbyView';
 import { ActiveSummaryView } from './ActiveSummaryView';
@@ -55,13 +56,6 @@ export const AdminRoomPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-brand-gold text-brand-navy px-4 py-2 text-center border-b-4 border-brand-navy shadow-[0_2px_0px_var(--color-brand-navy)]">
-        <p className="font-pixel text-[11px] leading-relaxed">
-          💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
-        </p>
-      </div>
-
       {/* Main Room Lifecycle Body */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
         {status === 'loading' && (
@@ -106,6 +100,13 @@ export const AdminRoomPage: React.FC = () => {
           </>
         )}
       </main>
+
+      {/* Mascot Mario Patrols Ground */}
+      <div className="w-full relative h-14 overflow-visible pointer-events-none select-none anim-mario-land">
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none">
+          <RoamingCharacter size={46} variant="admin" />
+        </div>
+      </div>
 
       {/* Brick Ground Base */}
       <PixelBrickTile hasGrass={true} className="h-8" />

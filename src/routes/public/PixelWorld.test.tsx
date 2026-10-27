@@ -9,7 +9,7 @@ describe('PixelWorld Living Scene', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders all six conceptual layers with aria-hidden and pointer-events none', () => {
+  it('renders ground, object, and sky layers with aria-hidden and pointer-events none, with lower clouds removed', () => {
     const { container } = render(<PixelWorld />);
 
     const footer = container.querySelector('footer');
@@ -23,25 +23,12 @@ describe('PixelWorld Living Scene', () => {
     const layer6 = container.querySelector('[data-layer="6-ground"]');
 
     expect(layer1).toBeInTheDocument();
-    expect(layer2).toBeInTheDocument();
-    expect(layer3).toBeInTheDocument();
+    // Lower mountain/ground clouds are removed
+    expect(layer2).toBeNull();
+    expect(layer3).toBeNull();
     expect(layer4).toBeInTheDocument();
     expect(layer5).toBeInTheDocument();
     expect(layer6).toBeInTheDocument();
-  });
-
-  it('verifies cloud drift tracks have duplicated sets for seamless looping', () => {
-    const { container } = render(<PixelWorld />);
-
-    const farTrack = container.querySelector('.anim-cloud-drift-far');
-    const nearTrack = container.querySelector('.anim-cloud-drift-near');
-
-    expect(farTrack).toBeInTheDocument();
-    expect(nearTrack).toBeInTheDocument();
-
-    // Each track must contain exactly 2 child panels (each w-1/2)
-    expect(farTrack?.children).toHaveLength(2);
-    expect(nearTrack?.children).toHaveLength(2);
   });
 
   it('verifies absence of legacy animate-bounce and animate-pulse classes in landing files', () => {
@@ -59,8 +46,8 @@ describe('PixelWorld Living Scene', () => {
 
   it('Phase 1: verifies ambient layer classes and speed differentiation across depth bands', () => {
     const { container: worldContainer } = render(<PixelWorld />);
-    expect(worldContainer.querySelector('.anim-cloud-drift-far')).toBeInTheDocument();
-    expect(worldContainer.querySelector('.anim-cloud-drift-near')).toBeInTheDocument();
+    expect(worldContainer.querySelector('.anim-cloud-drift-far')).not.toBeInTheDocument();
+    expect(worldContainer.querySelector('.anim-cloud-drift-near')).not.toBeInTheDocument();
     expect(worldContainer.querySelector('.anim-critter-crawl')).toBeInTheDocument();
 
     const cssFile = path.resolve(__dirname, '../../index.css');

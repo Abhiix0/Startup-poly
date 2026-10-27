@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { rpcGetStandings, StandingsRow } from './rpc';
 
 export interface UseStandingsResult {
@@ -14,19 +14,35 @@ export function useStandings(roomId?: string, enabled = true): UseStandingsResul
   const [hasUnresolvedTie, setHasUnresolvedTie] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const fetchStandings = useCallback(async () => {
     if (!roomId || !enabled) return;
     try {
-      setIsLoading(true);
-      setError(null);
+      if (isMountedRef.current) {
+        setIsLoading(true);
+        setError(null);
+      }
       const res = await rpcGetStandings(roomId);
-      setStandings(res.standings || []);
-      setHasUnresolvedTie(Boolean(res.has_unresolved_tie));
+      if (isMountedRef.current) {
+        setStandings(res.standings || []);
+        setHasUnresolvedTie(Boolean(res.has_unresolved_tie));
+      }
     } catch (err: any) {
-      setError(err instanceof Error ? err : new Error(err?.message || 'Failed to fetch standings.'));
+      if (isMountedRef.current) {
+        setError(err instanceof Error ? err : new Error(err?.message || 'Failed to fetch standings.'));
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   }, [roomId, enabled]);
 

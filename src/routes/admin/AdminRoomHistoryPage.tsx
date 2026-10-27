@@ -11,6 +11,7 @@ export const AdminRoomHistoryPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'leaderboard' | 'audit'>('leaderboard');
 
   const { successToast } = useToast();
 
@@ -130,20 +131,48 @@ export const AdminRoomHistoryPage: React.FC = () => {
         )}
 
         {!isLoading && !error && data && (
-          <div className="flex flex-col xl:flex-row gap-5">
-            {/* Left & Center: Final Leaderboard & Podium */}
-            <div className="flex-1 min-w-0">
-              <LeaderboardView
-                standings={leaderboardEntries}
-                roomCode={data.room.code}
-                finalizedAt={data.room.finalized_at}
-                allowPresentationMode={true}
-              />
+          <div className="flex flex-col gap-4">
+            {/* Mobile Tab Toggle (< xl) */}
+            <div className="flex xl:hidden border-2 border-brand-navy bg-brand-white p-1 shadow-pixel-sm">
+              <button
+                type="button"
+                onClick={() => setActiveTab('leaderboard')}
+                className={`flex-1 py-2 font-pixel text-xs text-center border-2 uppercase font-bold transition-colors cursor-pointer ${
+                  activeTab === 'leaderboard'
+                    ? 'bg-brand-gold text-brand-navy border-brand-navy shadow-pixel-sm'
+                    : 'bg-transparent text-neutral-600 border-transparent hover:text-brand-navy'
+                }`}
+              >
+                🏆 FINAL STANDINGS
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('audit')}
+                className={`flex-1 py-2 font-pixel text-xs text-center border-2 uppercase font-bold transition-colors cursor-pointer ${
+                  activeTab === 'audit'
+                    ? 'bg-brand-gold text-brand-navy border-brand-navy shadow-pixel-sm'
+                    : 'bg-transparent text-neutral-600 border-transparent hover:text-brand-navy'
+                }`}
+              >
+                📋 AUDIT LOG ({data.events.length})
+              </button>
             </div>
 
-            {/* Right Column: Complete Match Audit Log */}
-            <div className="w-full xl:w-[380px] 2xl:w-[440px] flex-shrink-0">
-              <ActivityLog events={data.events} teams={teamsForLog} />
+            <div className="flex flex-col xl:flex-row gap-5">
+              {/* Left & Center: Final Leaderboard & Podium */}
+              <div className={`flex-1 min-w-0 ${activeTab === 'leaderboard' ? 'block' : 'hidden xl:block'}`}>
+                <LeaderboardView
+                  standings={leaderboardEntries}
+                  roomCode={data.room.code}
+                  finalizedAt={data.room.finalized_at}
+                  allowPresentationMode={true}
+                />
+              </div>
+
+              {/* Right Column: Complete Match Audit Log */}
+              <div className={`w-full xl:w-[380px] 2xl:w-[440px] flex-shrink-0 ${activeTab === 'audit' ? 'block' : 'hidden xl:block'}`}>
+                <ActivityLog events={data.events} teams={teamsForLog} />
+              </div>
             </div>
           </div>
         )}

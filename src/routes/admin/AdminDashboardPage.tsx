@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../data/auth';
 import { supabase } from '../../data/client';
 import { PixelButton, PixelBrickTile, Modal, PixelLoader, ErrorBanner, StatusPill, useToast } from '../../ui';
+import { RoamingCharacter } from '../../ui/pixel';
 import { CreateRoomView } from './CreateRoomView';
 import { rpcAdminCancelRoom } from '../../data/rpc';
 
@@ -119,13 +120,6 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Responsive width notice for small devices (< 1024px) */}
-      <div className="lg:hidden bg-nes-gold text-nes-navy px-4 py-2 text-center border-b-4 border-nes-navy shadow-[0_2px_0px_var(--color-brand-navy)]">
-        <p className="font-pixel text-[11px] leading-relaxed">
-          💻 Use a laptop for the admin console. Full operations grid is optimized for screens ≥ 1024px.
-        </p>
-      </div>
-
       {/* Main Container: Either Active Match Panel or Create Room Form */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
         {roomCheckError ? (
@@ -158,7 +152,7 @@ export const AdminDashboardPage: React.FC = () => {
               <p className="font-mono text-sm text-neutral-700 max-w-2xl leading-relaxed">
                 Room <strong>{activeRoom.code}</strong> is currently in{' '}
                 <span className="font-bold underline">{activeRoom.status}</span> stage with {activeRoom.team_count} teams.
-                You can resume managing this match, or discard it to start a new game.
+                You can resume managing this match, open the arena projector view, or discard it to start a new game.
               </p>
             </div>
 
@@ -168,6 +162,15 @@ export const AdminDashboardPage: React.FC = () => {
                   RESUME MATCH CONSOLE →
                 </PixelButton>
               </Link>
+              <a
+                href={`/arena/${activeRoom.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <PixelButton variant="secondary" size="lg" className="font-pixel text-xs flex items-center gap-1.5">
+                  <span>📺</span> ARENA PROJECTOR
+                </PixelButton>
+              </a>
               <PixelButton
                 variant="danger"
                 size="lg"
@@ -182,6 +185,13 @@ export const AdminDashboardPage: React.FC = () => {
           <CreateRoomView />
         )}
       </main>
+
+      {/* Mascot Mario Patrols Ground */}
+      <div className="w-full relative h-14 overflow-visible pointer-events-none select-none anim-mario-land">
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none">
+          <RoamingCharacter size={46} variant="admin" />
+        </div>
+      </div>
 
       {/* Brick Ground Base */}
       <PixelBrickTile hasGrass={true} className="h-8" />

@@ -160,12 +160,13 @@ export const AdminLoginPage: React.FC = () => {
           </form>
         </WoodenSignboard>
 
-        {/* Pixel Mascot Poly Patrols The Ground (Mobile & Desktop) */}
-        <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
+        {/* Pixel Mascot Mario Patrols The Ground (Mobile & Desktop) */}
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none z-30 anim-mario-land">
           <RoamingCharacter
-            size={52}
+            size={48}
             bubbleText={isSuccess ? 'Open Sesame!' : 'Admin Area'}
             isCheering={isSuccess}
+            variant="admin"
           />
         </div>
       </main>

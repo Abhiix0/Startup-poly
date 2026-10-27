@@ -71,6 +71,14 @@ export const TeamJoinPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const codeParam = params.get('code');
+    if (codeParam && codeParam.length === 6) {
+      handleRoomCodeChange(codeParam);
+    }
+  }, [location.search]);
+
   const fetchLobby = async (code: string) => {
     try {
       setIsLoadingLobby(true);
@@ -170,7 +178,7 @@ export const TeamJoinPage: React.FC = () => {
 
   return (
     <PlainsBackground>
-      {/* Top Navbar / World Map Signpost & Checkpoint Badge */}
+      {/* Top Navbar / World Map Signpost */}
       <header className="p-3 sm:p-4 flex items-center justify-between z-20">
         <Link
           to="/"
@@ -179,10 +187,6 @@ export const TeamJoinPage: React.FC = () => {
           <span className="text-sm">🗺️</span>
           <span>WORLD MAP</span>
         </Link>
-        <span className="inline-flex items-center gap-1.5 font-pixel text-[10px] sm:text-xs text-nes-navy bg-nes-gold px-3 sm:px-4 py-1.5 border-2 border-nes-navy shadow-[3px_3px_0px_var(--color-nes-navy)] font-black tracking-wider">
-          <span>🚩</span>
-          <span>CHECKPOINT</span>
-        </span>
       </header>
 
       {/* Main Single-Column Game World Scene */}
@@ -202,6 +206,7 @@ export const TeamJoinPage: React.FC = () => {
           subtitle="ENTER YOUR ROOM CODE"
           state={errorMessage ? 'shake' : isSuccess ? 'bounce' : 'idle'}
           maxWidth="max-w-md"
+          showPosts={false}
         >
           {/* Game Celebration State */}
           {isSuccess ? (
@@ -355,12 +360,14 @@ export const TeamJoinPage: React.FC = () => {
           )}
         </WoodenSignboard>
 
-        {/* Pixel Mascot Poly Patrols The Ground (with "Let's play!" speech bubble) */}
-        <div className="absolute bottom-0 right-4 sm:right-16 md:right-28 pointer-events-none">
+        {/* Pixel Mascot Mario Patrols The Ground with dynamic slogans and obstacle-aware jump */}
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none z-20 anim-mario-land">
           <RoamingCharacter
-            size={52}
-            bubbleText={isSuccess ? 'Lets Go!!' : "Let's play!"}
+            size={48}
+            bubbleText={isSuccess ? 'Lets Go!!' : undefined}
+            variant="player"
             isCheering={isSuccess}
+            hasObstacle={true}
           />
         </div>
       </main>

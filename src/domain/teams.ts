@@ -4,12 +4,12 @@ export interface TeamColor {
 }
 
 export const TEAM_COLOR_PALETTE: readonly TeamColor[] = [
-  { hex: '#E52521', name: 'Crimson Red' },
-  { hex: '#0099FF', name: 'Sky Cyan' },
-  { hex: '#22B14C', name: 'Arcade Green' },
-  { hex: '#FF9900', name: 'Coin Gold' },
-  { hex: '#9333EA', name: 'Pixel Purple' },
-  { hex: '#EC4899', name: 'Neon Coral' },
+  { hex: '#F30004', name: 'Red' },
+  { hex: '#0C7EF1', name: 'Blue' },
+  { hex: '#FFD804', name: 'Yellow' },
+  { hex: '#01A920', name: 'Green' },
+  { hex: '#9400D3', name: 'Purple' },
+  { hex: '#FF5B00', name: 'Orange' },
 ] as const;
 
 export interface TeamDraft {
