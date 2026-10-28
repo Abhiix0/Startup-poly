@@ -9,6 +9,9 @@ import {
   cvContribution,
   resaleValue,
   canAddBusiness,
+  RENT_TABLE,
+  UPGRADE_COST_TABLE,
+  MAX_BUSINESSES_PER_TEAM,
   formatINR,
 } from './economy';
 
@@ -32,6 +35,23 @@ describe('Official Rulebook Economy Domain Logic', () => {
         expect(upgradeCost(b, 2)).toBe(0);
         expect(upgradeCvGain(b, 2)).toBe(0);
       });
+    });
+  });
+
+  describe('Approved rent and upgrade tables', () => {
+    it.each([
+      [200, [100, 150, 200], [100, 150]],
+      [300, [150, 225, 300], [150, 200]],
+      [400, [200, 300, 400], [200, 250]],
+      [500, [250, 375, 500], [250, 300]],
+    ])('cost %i tier', (cost, rent, upgrades) => {
+      expect(RENT_TABLE[cost]).toEqual(rent);
+      expect(UPGRADE_COST_TABLE[cost]).toEqual(upgrades);
+      for (const b of OFFICIAL_BUSINESSES.filter((x) => x.cost === cost)) {
+        expect([rentFor(b, 0), rentFor(b, 1), rentFor(b, 2)]).toEqual(rent);
+        expect([upgradeCost(b, 0), upgradeCost(b, 1), upgradeCost(b, 2)]).toEqual([...upgrades, 0]);
+        expect([b.u1_cost, b.u2_cost]).toEqual(upgrades);
+      }
     });
   });
 
@@ -100,12 +120,12 @@ describe('Official Rulebook Economy Domain Logic', () => {
   });
 
   describe('Business Cap and Resale', () => {
-    it('enforces maximum 3 businesses per team', () => {
+    it('enforces maximum 2 businesses per team', () => {
+      expect(MAX_BUSINESSES_PER_TEAM).toBe(2);
       expect(canAddBusiness(0)).toBe(true);
       expect(canAddBusiness(1)).toBe(true);
-      expect(canAddBusiness(2)).toBe(true);
+      expect(canAddBusiness(2)).toBe(false);
       expect(canAddBusiness(3)).toBe(false);
-      expect(canAddBusiness(4)).toBe(false);
     });
 
     it('calculates resale value equal to purchase cost', () => {

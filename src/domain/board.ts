@@ -41,7 +41,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'AI / DeepTech',
     type: 'BUSINESS',
     businessKey: 'ai_deeptech',
-    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
+    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
   },
   {
     index: 2,
@@ -54,7 +54,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'SaaS',
     type: 'BUSINESS',
     businessKey: 'saas',
-    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
   },
   {
     index: 4,
@@ -67,7 +67,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'FinTech',
     type: 'BUSINESS',
     businessKey: 'fintech',
-    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
+    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
   },
   // Corner 2
   {
@@ -82,7 +82,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'HealthTech',
     type: 'BUSINESS',
     businessKey: 'healthtech',
-    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
+    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
   },
   {
     index: 8,
@@ -101,7 +101,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'EdTech',
     type: 'BUSINESS',
     businessKey: 'edtech',
-    description: 'Cost: ₹200 | Initial CV: 150 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
+    description: 'Cost: ₹200 | Initial CV: 150 | U1: ₹100 (+300 CV) | U2: ₹150 (+400 CV)',
   },
   {
     index: 11,
@@ -122,7 +122,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'DevTools / Infrastructure',
     type: 'BUSINESS',
     businessKey: 'devtools',
-    description: 'Cost: ₹300 | Initial CV: 190 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    description: 'Cost: ₹300 | Initial CV: 190 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
   },
   {
     index: 14,
@@ -135,7 +135,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'Cybersecurity',
     type: 'BUSINESS',
     businessKey: 'cybersecurity',
-    description: 'Cost: ₹400 | Initial CV: 220 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
+    description: 'Cost: ₹400 | Initial CV: 220 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
   },
   {
     index: 16,
@@ -148,7 +148,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'CleanTech / Energy',
     type: 'BUSINESS',
     businessKey: 'cleantech',
-    description: 'Cost: ₹500 | Initial CV: 240 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
+    description: 'Cost: ₹500 | Initial CV: 240 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
   },
   // Corner 4
   {
@@ -163,7 +163,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'Robotics & IoT',
     type: 'BUSINESS',
     businessKey: 'robotics',
-    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
+    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
   },
   {
     index: 20,
@@ -188,7 +188,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'E-Commerce',
     type: 'BUSINESS',
     businessKey: 'ecommerce',
-    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
   },
 ];
 
