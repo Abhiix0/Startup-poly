@@ -4,6 +4,7 @@ import { PixelButton } from '../../../ui';
 import { AdminRoomSnapshot } from '../../../data/rpc';
 import { OFFICIAL_BUSINESSES, upgradeCost } from '../../../domain/economy';
 import { Level } from '../../../domain/types';
+import { MAX_BUSINESSES_PER_TEAM } from '../../../domain/economy';
 
 export interface BusinessListProps {
   team: AdminRoomSnapshot['teams'][0];
@@ -31,11 +32,11 @@ export const BusinessList: React.FC<BusinessListProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-base">🏢</span>
           <h3 className="font-pixel text-xs sm:text-sm uppercase tracking-wider text-brand-navy font-black">
-            BUSINESSES ({team.businesses.length}/3)
+            BUSINESSES ({team.businesses.length}/{MAX_BUSINESSES_PER_TEAM})
           </h3>
           {isCapReached && (
             <span className="font-pixel text-[9px] bg-brand-red text-brand-white px-2 py-0.5 border border-brand-navy font-bold shadow-pixel-sm">
-              CAP REACHED (3/3)
+              CAP REACHED ({MAX_BUSINESSES_PER_TEAM}/{MAX_BUSINESSES_PER_TEAM})
             </span>
           )}
         </div>

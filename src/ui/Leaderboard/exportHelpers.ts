@@ -1,3 +1,5 @@
+import { MAX_BUSINESSES_PER_TEAM } from '../../domain/economy';
+
 export interface LeaderboardEntry {
   rank: number;
   name: string;
@@ -17,7 +19,7 @@ export function formatStandingsAsText(
 
   const rows = standings.map((s) => {
     const statusTag = s.is_bankrupt ? ' [ELIMINATED]' : '';
-    return `#${s.rank} ${s.name} — ₹${s.cash.toLocaleString('en-IN')} Cash | ${s.business_count}/3 Businesses${statusTag}`;
+    return `#${s.rank} ${s.name} — ₹${s.cash.toLocaleString('en-IN')} Cash | ${s.business_count}/${MAX_BUSINESSES_PER_TEAM} Businesses${statusTag}`;
   });
 
   return header + rows.join('\n');

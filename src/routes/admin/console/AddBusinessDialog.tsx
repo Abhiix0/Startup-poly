@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, PixelButton } from '../../../ui';
 import { AdminRoomSnapshot } from '../../../data/rpc';
-import { OFFICIAL_BUSINESSES } from '../../../domain/economy';
+import { OFFICIAL_BUSINESSES, MAX_BUSINESSES_PER_TEAM, canAddBusiness } from '../../../domain/economy';
 
 export interface AddBusinessDialogProps {
   isOpen: boolean;
@@ -30,7 +30,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
   // A free (manual) entry bypasses the purchase rules, so it is explained and audited like a post-game correction.
   const needsNote = isTimeExpired || !applyPurchase;
 
-  const isCapReached = team.businesses.length >= 3;
+  const isCapReached = !canAddBusiness(team.businesses.length);
 
   // Build a map of business_key -> owner team name across all teams
   const ownerMap = new Map<string, string>();
@@ -97,7 +97,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         {isCapReached && (
           <div className="bg-status-danger-bg border-2 border-brand-red p-2 text-center">
             <p className="font-mono text-xs text-brand-red font-bold">
-              ⚠ Team has reached the business cap (3/3). Forced sale or removal required before adding.
+              ⚠ Team has reached the business cap ({MAX_BUSINESSES_PER_TEAM}/{MAX_BUSINESSES_PER_TEAM}). Forced sale or removal required before adding.
             </p>
           </div>
         )}
@@ -105,7 +105,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         {/* 10 Catalog Businesses Picker */}
         <div className="flex flex-col gap-2">
           <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
-            Select Catalog Business ({team.businesses.length}/3 Owned)
+            Select Catalog Business ({team.businesses.length}/{MAX_BUSINESSES_PER_TEAM} Owned)
           </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-1">

@@ -1,10 +1,26 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { GameRulesModal } from './GameRulesModal';
+import { GameRulesModal, HANDBOOK_BOARD_SPACES, HANDBOOK_BONUS_CARDS, HANDBOOK_CRISIS_CARDS } from './GameRulesModal';
+import { BOARD_SPACES } from '../../../domain/board';
 import { LandingPage } from '../LandingPage';
 
 describe('GameRulesModal and LandingPage Integration', () => {
+  it('lists the spaces in the physical board order (same types and positions as the live board)', () => {
+    expect(HANDBOOK_BOARD_SPACES.map((s) => s.type)).toEqual(BOARD_SPACES.map((s) => s.type));
+    const handbookBusinesses = HANDBOOK_BOARD_SPACES.filter((s) => s.type === 'BUSINESS').map((s) => s.index);
+    expect(handbookBusinesses).toEqual(BOARD_SPACES.filter((s) => s.type === 'BUSINESS').map((s) => s.index));
+  });
+
+  it('shows the owner-approved card, Action C and ranking rules', () => {
+    expect(HANDBOOK_BONUS_CARDS.find((c) => c.title === 'Viral Growth')!.effect).toContain('₹300');
+    expect(HANDBOOK_CRISIS_CARDS.find((c) => c.title === 'Market Crash')!.effect).toContain('₹300');
+    expect(HANDBOOK_CRISIS_CARDS.find((c) => c.title === 'Bad PR')!.effect).toContain('₹100');
+    expect(HANDBOOK_BOARD_SPACES[12].description).toMatch(/Pay ₹200 Cash to the Bank/);
+    render(<GameRulesModal isOpen={true} onClose={vi.fn()} />);
+    expect(screen.getByText(/Teams equal on all three share a rank/i)).toBeInTheDocument();
+  });
+
   it('does not render when isOpen is false', () => {
     render(<GameRulesModal isOpen={false} onClose={vi.fn()} />);
     expect(screen.queryByRole('dialog')).toBeNull();

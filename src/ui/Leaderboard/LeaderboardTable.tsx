@@ -1,5 +1,6 @@
 import React from 'react';
 import { LeaderboardEntry } from './exportHelpers';
+import { MAX_BUSINESSES_PER_TEAM } from '../../domain/economy';
 
 export interface LeaderboardTableProps {
   standings: LeaderboardEntry[];
@@ -72,7 +73,7 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                 {/* Businesses Count */}
                 <td className="p-2.5 sm:p-3 text-center font-mono text-xs sm:text-sm">
                   <span className="px-1.5 py-0.5 bg-neutral-50 border border-neutral-300">
-                    {entry.business_count} / 3
+                    {entry.business_count} / {MAX_BUSINESSES_PER_TEAM}
                   </span>
                 </td>
 

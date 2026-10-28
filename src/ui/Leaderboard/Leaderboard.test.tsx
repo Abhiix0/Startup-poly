@@ -9,7 +9,7 @@ const mockStandings: LeaderboardEntry[] = [
     name: 'Alpha Rockets',
     color: '#E52521',
     cash: 500,
-    business_count: 3,
+    business_count: 2,
     is_bankrupt: false,
   },
   {
@@ -120,8 +120,8 @@ describe('exportHelpers', () => {
     const text = formatStandingsAsText('ROOM42', mockStandings, '2026-09-21T12:00:00Z');
     expect(text).toContain('★ STARTUPOLY TOURNAMENT RESULTS ★');
     expect(text).toContain('Room Code: ROOM42');
-    expect(text).toContain('#1 Alpha Rockets — ₹500 Cash | 3/3 Businesses');
-    expect(text).toContain('#5 Epsilon Enterprises — ₹0 Cash | 0/3 Businesses [ELIMINATED]');
+    expect(text).toContain('#1 Alpha Rockets — ₹500 Cash | 2/2 Businesses');
+    expect(text).toContain('#5 Epsilon Enterprises — ₹0 Cash | 0/2 Businesses [ELIMINATED]');
   });
 
   it('exports standings to CSV', () => {

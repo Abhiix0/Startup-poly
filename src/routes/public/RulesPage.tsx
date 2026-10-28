@@ -17,21 +17,21 @@ export const SECTIONS = [
 ] as const;
 
 export const BUSINESSES = [
-  { name: 'OpenAI', category: 'AI / DeepTech', cost: 500, baseRent: 250, u1Rent: 375, u2Rent: 500, forcedSale: 250 },
-  { name: 'Zoho', category: 'SaaS', cost: 300, baseRent: 150, u1Rent: 225, u2Rent: 300, forcedSale: 150 },
-  { name: 'Flipkart', category: 'E-Commerce', cost: 300, baseRent: 150, u1Rent: 225, u2Rent: 300, forcedSale: 150 },
-  { name: 'PhonePe', category: 'FinTech', cost: 400, baseRent: 200, u1Rent: 300, u2Rent: 400, forcedSale: 200 },
-  { name: 'Qure.ai', category: 'HealthTech', cost: 400, baseRent: 200, u1Rent: 300, u2Rent: 400, forcedSale: 200 },
-  { name: 'Physics Wallah', category: 'EdTech', cost: 200, baseRent: 100, u1Rent: 150, u2Rent: 200, forcedSale: 100 },
-  { name: 'Postman', category: 'Developer Tools', cost: 300, baseRent: 150, u1Rent: 225, u2Rent: 300, forcedSale: 150 },
-  { name: 'Cloudflare', category: 'Cybersecurity', cost: 400, baseRent: 200, u1Rent: 300, u2Rent: 400, forcedSale: 200 },
-  { name: 'Ola Electric', category: 'CleanTech / Energy', cost: 500, baseRent: 250, u1Rent: 375, u2Rent: 500, forcedSale: 250 },
-  { name: 'Addverb', category: 'Robotics & Automation', cost: 500, baseRent: 250, u1Rent: 375, u2Rent: 500, forcedSale: 250 },
+  { name: 'OpenAI', category: 'AI / DeepTech', cost: 500, u1Cost: 250, u2Cost: 300, baseRent: 250, u1Rent: 375, u2Rent: 500, forcedSale: 250 },
+  { name: 'Zoho', category: 'SaaS', cost: 300, u1Cost: 150, u2Cost: 200, baseRent: 150, u1Rent: 225, u2Rent: 300, forcedSale: 150 },
+  { name: 'Flipkart', category: 'E-Commerce', cost: 300, u1Cost: 150, u2Cost: 200, baseRent: 150, u1Rent: 225, u2Rent: 300, forcedSale: 150 },
+  { name: 'PhonePe', category: 'FinTech', cost: 400, u1Cost: 200, u2Cost: 250, baseRent: 200, u1Rent: 300, u2Rent: 400, forcedSale: 200 },
+  { name: 'Qure.ai', category: 'HealthTech', cost: 400, u1Cost: 200, u2Cost: 250, baseRent: 200, u1Rent: 300, u2Rent: 400, forcedSale: 200 },
+  { name: 'Physics Wallah', category: 'EdTech', cost: 200, u1Cost: 100, u2Cost: 150, baseRent: 100, u1Rent: 150, u2Rent: 200, forcedSale: 100 },
+  { name: 'Postman', category: 'Developer Tools', cost: 300, u1Cost: 150, u2Cost: 200, baseRent: 150, u1Rent: 225, u2Rent: 300, forcedSale: 150 },
+  { name: 'Cloudflare', category: 'Cybersecurity', cost: 400, u1Cost: 200, u2Cost: 250, baseRent: 200, u1Rent: 300, u2Rent: 400, forcedSale: 200 },
+  { name: 'Ola Electric', category: 'CleanTech / Energy', cost: 500, u1Cost: 250, u2Cost: 300, baseRent: 250, u1Rent: 375, u2Rent: 500, forcedSale: 250 },
+  { name: 'Addverb', category: 'Robotics & Automation', cost: 500, u1Cost: 250, u2Cost: 300, baseRent: 250, u1Rent: 375, u2Rent: 500, forcedSale: 250 },
 ];
 
 export const BONUS_CARDS = [
   { title: 'Startup Grant', effect: '+₹300 Cash from the Bank.' },
-  { title: 'Viral Growth', effect: '+₹200 Cash from the Bank.' },
+  { title: 'Viral Growth', effect: '+₹300 Cash from the Bank.' },
   { title: 'Government Incentive', effect: '+₹200 Cash from the Bank.' },
   { title: 'Premium Deal', effect: 'Receive Cash equal to 50% of the purchase Cost of your most expensive Business (₹100 if you own none).' },
   { title: 'Founder Bonus', effect: 'Receive a Cash bonus based on portfolio size: 0 businesses = ₹50, 1 business = ₹100, 2 businesses = ₹200.' },
@@ -40,10 +40,10 @@ export const BONUS_CARDS = [
 
 export const CRISIS_CARDS = [
   { title: 'Tax Raid', effect: 'Pay −₹300 Cash to the Bank.' },
-  { title: 'Market Crash', effect: 'Pay −₹200 Cash to the Bank.' },
+  { title: 'Market Crash', effect: 'Pay −₹300 Cash to the Bank.' },
   { title: 'Legal Trouble', effect: 'Pay −₹200 Cash to the Bank.' },
   { title: 'Burn Rate Spike', effect: 'Pay −₹100 Cash for every Business owned (₹0 if none).' },
-  { title: 'Bad PR', effect: 'Pay −₹150 Cash to the Bank.' },
+  { title: 'Bad PR', effect: 'Pay −₹100 Cash to the Bank.' },
   { title: 'Investor Pullout', effect: 'Pay −₹400 Cash to the Bank.' },
 ];
 
@@ -287,7 +287,7 @@ export const RulesPage: React.FC = () => (
             <Card title="Business (10 spaces)"><p>Purchase unowned business or pay rent to owner. Maximum 2 per team.</p></Card>
             <Card title="Bonus Card (4 spaces)"><p>Draw Bonus Card determined by movement roll 1–6.</p></Card>
             <Card title="Crisis Card (4 spaces)"><p>Resolve Crisis Card determined by movement roll 1–6.</p></Card>
-            <Card title="Action spaces (3 spaces)"><p>Corner spaces: Action B (Pitch), Action C (Tech Debt), Action D (Steal Talent).</p></Card>
+            <Card title="Action spaces (3 spaces)"><p>Corner spaces: Action B (Pitch), Action C (Tech Debt: pay ₹200), Action D (Steal Talent).</p></Card>
             <Card title="Wildcard (2 spaces)"><p>Draw a Wildcard Chit and perform a quick mandatory physical/social task.</p></Card>
           </div>
         </Section>
@@ -303,6 +303,9 @@ export const RulesPage: React.FC = () => (
                 <p className="mt-1 text-sm font-semibold tabular-nums">Cost: ₹{b.cost} · Forced Sale: ₹{b.forcedSale}</p>
                 <div className="text-xs mt-1 text-neutral-700">
                   Rent: Base ₹{b.baseRent} (50%) | U1 ₹{b.u1Rent} (75%) | U2 ₹{b.u2Rent} (100%)
+                </div>
+                <div className="text-xs text-neutral-700">
+                  Upgrade cost: U1 ₹{b.u1Cost} | U2 ₹{b.u2Cost}
                 </div>
               </li>
             ))}
@@ -344,8 +347,8 @@ export const RulesPage: React.FC = () => (
             </Card>
             <Card title="ACTION C: Tech Debt">
               <Bullets items={[
-                'Landing team selects one Business.',
-                'That selected Business temporarily earns ₹0 rent until that team’s next turn begins.',
+                'Pay ₹200 Cash to the Bank.',
+                'If the team cannot pay, the forced-sale and Debt Recovery rules apply.',
               ]} />
             </Card>
             <Card title="ACTION D: Steal Talent">
@@ -407,11 +410,12 @@ export const RulesPage: React.FC = () => (
             <p className="text-xl sm:text-2xl font-extrabold">The match winner is the eligible team with the highest remaining Cash.</p>
             <p className="font-bold">Gameplay lasts exactly 50 minutes. When time ends, play stops immediately with no final turn.</p>
           </div>
-          <Card title="Tie-break order">
+          <Card title="Ranking order">
             <Bullets ordered items={[
               'Highest remaining Cash.',
-              'If Cash is tied: Most Businesses owned.',
-              'If still tied: Ask the Game Master.',
+              'If Cash is tied: highest total original purchase cost of the Businesses you still own.',
+              'If still tied: most upgrades across your Businesses.',
+              'If all three are equal: the teams share the rank.',
             ]} />
           </Card>
           <Callout tone="important" title="Debt Eligibility">
@@ -434,10 +438,10 @@ export const RulesPage: React.FC = () => (
               <Bullets items={['Roll 6: Free extra roll.', 'Three 6s: Cancel turn and reverse effects.', 'Gameplay: Exactly 50 minutes.']} />
             </Card>
             <Card title="Action Spaces">
-              <Bullets items={['Action B: 30s pitch for owned biz (GM judges).', 'Action C: Selected biz earns ₹0 rent until next turn.', 'Action D: Steal up to ₹100 Cash.']} />
+              <Bullets items={['Action B: 30s pitch for owned biz (GM judges).', 'Action C: Pay ₹200 Cash to the Bank.', 'Action D: Steal up to ₹100 Cash.']} />
             </Card>
             <Card title="Winning">
-              <Bullets items={['Highest remaining Cash wins.', 'Debt at end = ₹0 score (cannot win).', 'Ties: Cash → Businesses → Game Master.']} />
+              <Bullets items={['Highest remaining Cash wins.', 'Debt at end = ₹0 score (cannot win).', 'Ties: Cash → Business cost → Upgrades → shared rank.']} />
             </Card>
           </div>
           <a href="#top" className="self-start text-sm font-bold text-brand-gold underline focus-visible:outline-4 focus-visible:outline-brand-gold">BACK TO TOP ↑</a>

@@ -42,34 +42,34 @@ export interface HandbookSpace {
 
 export const HANDBOOK_BOARD_SPACES: HandbookSpace[] = [
   { index: 0, name: 'START', type: 'START', description: 'Reaching or passing START pays ₹200 from the Bank. There is no Growth Bonus for owning businesses.' },
-  { index: 1, name: 'Physics Wallah', type: 'BUSINESS', description: 'EdTech | Cost: ₹200 | Rent: Base ₹100, U1 ₹150, U2 ₹200 | Forced Sale: ₹100' },
+  { index: 1, name: 'OpenAI', type: 'BUSINESS', description: 'AI / DeepTech | Cost: ₹500 | Upgrade cost: U1 ₹250, U2 ₹300 | Rent: Base ₹250, U1 ₹375, U2 ₹500 | Forced Sale: ₹250' },
   { index: 2, name: 'Bonus Card', type: 'BONUS', description: 'Draw Bonus Card (Cards 1–6 based on movement roll).' },
-  { index: 3, name: 'Zoho', type: 'BUSINESS', description: 'SaaS | Cost: ₹300 | Rent: Base ₹150, U1 ₹225, U2 ₹300 | Forced Sale: ₹150' },
+  { index: 3, name: 'Zoho', type: 'BUSINESS', description: 'SaaS | Cost: ₹300 | Upgrade cost: U1 ₹150, U2 ₹200 | Rent: Base ₹150, U1 ₹225, U2 ₹300 | Forced Sale: ₹150' },
   { index: 4, name: 'Crisis Card', type: 'CRISIS', description: 'Draw Crisis Card (Cards 1–6 based on movement roll).' },
-  { index: 5, name: 'Flipkart', type: 'BUSINESS', description: 'E-Commerce | Cost: ₹300 | Rent: Base ₹150, U1 ₹225, U2 ₹300 | Forced Sale: ₹150' },
+  { index: 5, name: 'PhonePe', type: 'BUSINESS', description: 'FinTech | Cost: ₹400 | Upgrade cost: U1 ₹200, U2 ₹250 | Rent: Base ₹200, U1 ₹300, U2 ₹400 | Forced Sale: ₹200' },
   { index: 6, name: 'Action B: Pitch to Investors', type: 'ACTION_B', description: 'Give a 30s elevator pitch for an owned business. Mandatory if owning ≥1 business (failure/refusal loses next turn); skip penalty-free if owning 0 businesses. Game Master judges.' },
-  { index: 7, name: 'PhonePe', type: 'BUSINESS', description: 'FinTech | Cost: ₹400 | Rent: Base ₹200, U1 ₹300, U2 ₹400 | Forced Sale: ₹200' },
+  { index: 7, name: 'Qure.ai', type: 'BUSINESS', description: 'HealthTech | Cost: ₹400 | Upgrade cost: U1 ₹200, U2 ₹250 | Rent: Base ₹200, U1 ₹300, U2 ₹400 | Forced Sale: ₹200' },
   { index: 8, name: 'Bonus Card', type: 'BONUS', description: 'Draw Bonus Card (Cards 1–6 based on movement roll).' },
-  { index: 9, name: 'Qure.ai', type: 'BUSINESS', description: 'HealthTech | Cost: ₹400 | Rent: Base ₹200, U1 ₹300, U2 ₹400 | Forced Sale: ₹200' },
-  { index: 10, name: 'Crisis Card', type: 'CRISIS', description: 'Draw Crisis Card (Cards 1–6 based on movement roll).' },
-  { index: 11, name: 'Postman', type: 'BUSINESS', description: 'Developer Tools | Cost: ₹300 | Rent: Base ₹150, U1 ₹225, U2 ₹300 | Forced Sale: ₹150' },
-  { index: 12, name: 'Action C: Tech Debt', type: 'ACTION_C', description: 'Temporarily makes one selected Business earn ₹0 rent until that team’s next turn begins.' },
-  { index: 13, name: 'Cloudflare', type: 'BUSINESS', description: 'Cybersecurity | Cost: ₹400 | Rent: Base ₹200, U1 ₹300, U2 ₹400 | Forced Sale: ₹200' },
+  { index: 9, name: 'Wildcard', type: 'WILDCARD', description: 'Draw a Wildcard Chit and immediately perform a quick physical or social challenge.' },
+  { index: 10, name: 'Physics Wallah', type: 'BUSINESS', description: 'EdTech | Cost: ₹200 | Upgrade cost: U1 ₹100, U2 ₹150 | Rent: Base ₹100, U1 ₹150, U2 ₹200 | Forced Sale: ₹100' },
+  { index: 11, name: 'Crisis Card', type: 'CRISIS', description: 'Draw Crisis Card (Cards 1–6 based on movement roll).' },
+  { index: 12, name: 'Action C: Tech Debt', type: 'ACTION_C', description: 'Pay ₹200 Cash to the Bank. If the team cannot pay, the forced-sale and Debt Recovery rules apply.' },
+  { index: 13, name: 'Postman', type: 'BUSINESS', description: 'Developer Tools | Cost: ₹300 | Upgrade cost: U1 ₹150, U2 ₹200 | Rent: Base ₹150, U1 ₹225, U2 ₹300 | Forced Sale: ₹150' },
   { index: 14, name: 'Bonus Card', type: 'BONUS', description: 'Draw Bonus Card (Cards 1–6 based on movement roll).' },
-  { index: 15, name: 'Ola Electric', type: 'BUSINESS', description: 'CleanTech | Cost: ₹500 | Rent: Base ₹250, U1 ₹375, U2 ₹500 | Forced Sale: ₹250' },
+  { index: 15, name: 'Cloudflare', type: 'BUSINESS', description: 'Cybersecurity | Cost: ₹400 | Upgrade cost: U1 ₹200, U2 ₹250 | Rent: Base ₹200, U1 ₹300, U2 ₹400 | Forced Sale: ₹200' },
   { index: 16, name: 'Crisis Card', type: 'CRISIS', description: 'Draw Crisis Card (Cards 1–6 based on movement roll).' },
-  { index: 17, name: 'Addverb', type: 'BUSINESS', description: 'Robotics | Cost: ₹500 | Rent: Base ₹250, U1 ₹375, U2 ₹500 | Forced Sale: ₹250' },
+  { index: 17, name: 'Ola Electric', type: 'BUSINESS', description: 'CleanTech | Cost: ₹500 | Upgrade cost: U1 ₹250, U2 ₹300 | Rent: Base ₹250, U1 ₹375, U2 ₹500 | Forced Sale: ₹250' },
   { index: 18, name: 'Action D: Steal Talent', type: 'ACTION_D', description: 'Steal up to ₹100 available Cash from a chosen team. Valid even if target has ₹0; does not force sale or cause debt.' },
-  { index: 19, name: 'OpenAI', type: 'BUSINESS', description: 'AI / DeepTech | Cost: ₹500 | Rent: Base ₹250, U1 ₹375, U2 ₹500 | Forced Sale: ₹250' },
+  { index: 19, name: 'Addverb', type: 'BUSINESS', description: 'Robotics | Cost: ₹500 | Upgrade cost: U1 ₹250, U2 ₹300 | Rent: Base ₹250, U1 ₹375, U2 ₹500 | Forced Sale: ₹250' },
   { index: 20, name: 'Bonus Card', type: 'BONUS', description: 'Draw Bonus Card (Cards 1–6 based on movement roll).' },
   { index: 21, name: 'Wildcard', type: 'WILDCARD', description: 'Draw a Wildcard Chit and immediately perform a quick physical or social challenge.' },
   { index: 22, name: 'Crisis Card', type: 'CRISIS', description: 'Draw Crisis Card (Cards 1–6 based on movement roll).' },
-  { index: 23, name: 'Wildcard', type: 'WILDCARD', description: 'Draw a Wildcard Chit and immediately perform a quick physical or social challenge.' },
+  { index: 23, name: 'Flipkart', type: 'BUSINESS', description: 'E-Commerce | Cost: ₹300 | Upgrade cost: U1 ₹150, U2 ₹200 | Rent: Base ₹150, U1 ₹225, U2 ₹300 | Forced Sale: ₹150' },
 ];
 
 export const HANDBOOK_BONUS_CARDS = [
   { id: 1, title: 'Startup Grant', effect: '+₹300 Cash from the Bank.' },
-  { id: 2, title: 'Viral Growth', effect: '+₹200 Cash from the Bank.' },
+  { id: 2, title: 'Viral Growth', effect: '+₹300 Cash from the Bank.' },
   { id: 3, title: 'Government Incentive', effect: '+₹200 Cash from the Bank.' },
   { id: 4, title: 'Premium Deal', effect: 'Receive Cash equal to 50% of the purchase Cost of your most expensive Business (₹100 if you own none).' },
   { id: 5, title: 'Founder Bonus', effect: 'Receive a Cash bonus based on portfolio size: 0 businesses = ₹50, 1 business = ₹100, 2 businesses = ₹200.' },
@@ -78,10 +78,10 @@ export const HANDBOOK_BONUS_CARDS = [
 
 export const HANDBOOK_CRISIS_CARDS = [
   { id: 1, title: 'Tax Raid', effect: 'Pay −₹300 Cash to the Bank.' },
-  { id: 2, title: 'Market Crash', effect: 'Pay −₹200 Cash to the Bank.' },
+  { id: 2, title: 'Market Crash', effect: 'Pay −₹300 Cash to the Bank.' },
   { id: 3, title: 'Legal Trouble', effect: 'Pay −₹200 Cash to the Bank.' },
   { id: 4, title: 'Burn Rate Spike', effect: 'Pay −₹100 Cash for every Business owned (₹0 if none).' },
-  { id: 5, title: 'Bad PR', effect: 'Pay −₹150 Cash to the Bank.' },
+  { id: 5, title: 'Bad PR', effect: 'Pay −₹100 Cash to the Bank.' },
   { id: 6, title: 'Investor Pullout', effect: 'Pay −₹400 Cash to the Bank.' },
 ];
 
@@ -276,7 +276,7 @@ export const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose 
                   <strong>Debt Rule:</strong> A team still in debt when the 50 minutes expire scores <strong>₹0</strong> (bankrupt) and <strong>cannot win</strong>.
                 </div>
                 <div className="mt-2 bg-[#F1F5F9] p-2 border-l-4 border-[#3B82F6] text-[11px] text-[#334155] font-sans">
-                  <strong>Tie-Break Order:</strong> (1) Highest remaining Cash → (2) Most Businesses owned → (3) Ask the Game Master.
+                  <strong>Ranking Order:</strong> (1) Highest remaining Cash → (2) Highest total original purchase cost of Businesses owned → (3) Most upgrades. Teams equal on all three share a rank.
                 </div>
               </div>
 
@@ -525,7 +525,7 @@ export const GameRulesModal: React.FC<GameRulesModalProps> = ({ isOpen, onClose 
                       ACTION C: TECH DEBT
                     </div>
                     <p className="text-[11px] text-[#334155] font-sans leading-relaxed">
-                      Landing team selects one Business; that business temporarily earns <strong>₹0 rent</strong> until that owner's next turn begins.
+                      Landing team pays <strong>₹200 Cash</strong> to the Bank. If it cannot pay, the forced-sale and Debt Recovery rules apply.
                     </p>
                   </div>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { PixelCard, StatusPill, Countdown, BigNumber } from '../../ui';
 import { formatINR } from '../../lib/format';
 import { AdminRoomSnapshot } from '../../data/rpc';
+import { MAX_BUSINESSES_PER_TEAM } from '../../domain/economy';
 
 interface ActiveSummaryViewProps {
   snapshot: AdminRoomSnapshot;
@@ -89,7 +90,7 @@ export const ActiveSummaryView: React.FC<ActiveSummaryViewProps> = ({ snapshot }
                     </td>
                     <td className="p-3 text-center">
                       <span className="font-mono bg-brand-cream px-2 py-0.5 border border-brand-navy text-[11px]">
-                        {t.businesses.length}/3
+                        {t.businesses.length}/{MAX_BUSINESSES_PER_TEAM}
                       </span>
                     </td>
                     <td className="p-3 text-center">
