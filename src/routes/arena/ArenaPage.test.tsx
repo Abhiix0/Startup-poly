@@ -33,13 +33,12 @@ describe('ArenaPage', () => {
         name: 'Phoenix Ventures',
         color: '#E52521',
         cash: 1000,
-        cv: 2000,
         is_bankrupt: false,
         version: 1,
         tiebreak_order: null,
         claimed: true,
         businesses: [
-          { business_key: 'quickbite', name: 'QuickBite Cloud Kitchens', level: 1, cost: 500, initial_cv: 800 },
+          { business_key: 'quickbite', name: 'QuickBite Cloud Kitchens', level: 1, cost: 500 },
         ],
       },
       {
@@ -48,13 +47,12 @@ describe('ArenaPage', () => {
         name: 'Quantum Titans',
         color: '#0099FF',
         cash: 1500,
-        cv: 3000,
         is_bankrupt: false,
         version: 1,
         tiebreak_order: null,
         claimed: true,
         businesses: [
-          { business_key: 'finflow', name: 'FinFlow NeoBank', level: 2, cost: 900, initial_cv: 1600 },
+          { business_key: 'finflow', name: 'FinFlow NeoBank', level: 2, cost: 900 },
         ],
       },
       {
@@ -63,7 +61,6 @@ describe('ArenaPage', () => {
         name: 'Cyber Mavericks',
         color: '#22C55E',
         cash: 0,
-        cv: 0,
         is_bankrupt: true,
         version: 1,
         tiebreak_order: null,
@@ -120,13 +117,13 @@ describe('ArenaPage', () => {
     // Screen title
     expect(screen.getByText(/STARTUPOLY ARENA/i)).toBeInTheDocument();
 
-    // Leader should be Quantum Titans with Total 4,500 (3,000 CV + 1,500 Cash)
+    // Leader should be Quantum Titans with the highest cash (1,500)
     expect(screen.getAllByText(/QUANTUM TITANS/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('₹4,500')).toBeInTheDocument();
+    expect(screen.getByText('₹1,500')).toBeInTheDocument();
 
-    // 2nd place should be Phoenix Ventures with Total 3,000 (2,000 CV + 1,000 Cash)
+    // 2nd place should be Phoenix Ventures (1,000 Cash)
     expect(screen.getAllByText(/PHOENIX VENTURES/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('₹3,000').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('₹1,000').length).toBeGreaterThanOrEqual(1);
 
     // Bankrupt team has badge
     expect(screen.getByText(/ELIMINATED/i)).toBeInTheDocument();

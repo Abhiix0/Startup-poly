@@ -31,7 +31,6 @@ export const ResultView: React.FC<ResultViewProps> = ({
     rank: s.rank,
     name: s.name,
     color: teamColorMap.get(s.team_id) || 'var(--color-neutral-500)',
-    cv: s.cv,
     cash: s.cash,
     business_count: s.business_count,
     is_bankrupt: s.is_bankrupt,

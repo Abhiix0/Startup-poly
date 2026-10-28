@@ -66,7 +66,7 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
         </span>
         <div>
           <h3 className="font-pixel text-xs text-amber-800 uppercase">
-            Tied on CV, cash and businesses — record pitch result
+            Tied on cash, business value and upgrades — record pitch result
           </h3>
           <p className="font-mono text-xs text-brand-navy">
             Rulebook §17: Conduct a 30-second physical pitch judged by the Game Master. Arrange the teams in winner order below.
@@ -97,7 +97,7 @@ export const TieBreakOrder: React.FC<TieBreakOrderProps> = ({
                   {team.name}
                 </span>
                 <span className="font-mono text-[11px] text-neutral-500">
-                  (₹{team.cv.toLocaleString('en-IN')} CV, ₹{team.cash.toLocaleString('en-IN')} Cash)
+                  (₹{team.cash.toLocaleString('en-IN')} Cash)
                 </span>
               </div>
 

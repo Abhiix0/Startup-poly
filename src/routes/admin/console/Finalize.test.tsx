@@ -25,7 +25,6 @@ const mockStandings: rpcModule.StandingsRow[] = [
     name: 'Alpha Rockets',
     rank: 1,
     is_bankrupt: false,
-    cv: 1500,
     cash: 500,
     business_count: 3,
     tiebreak_order: null,
@@ -37,7 +36,6 @@ const mockStandings: rpcModule.StandingsRow[] = [
     name: 'Beta Builders',
     rank: 2,
     is_bankrupt: false,
-    cv: 1200,
     cash: 300,
     business_count: 2,
     tiebreak_order: null,
@@ -49,7 +47,6 @@ const mockStandings: rpcModule.StandingsRow[] = [
     name: 'Gamma Guild',
     rank: 3,
     is_bankrupt: false,
-    cv: 1200,
     cash: 300,
     business_count: 2,
     tiebreak_order: null,
@@ -76,7 +73,6 @@ const mockSnapshot: rpcModule.AdminRoomSnapshot = {
       name: 'Alpha Rockets',
       color: '#E52521',
       cash: 1500,
-      cv: 500,
       is_bankrupt: false,
       version: 1,
       tiebreak_order: null,
@@ -89,7 +85,6 @@ const mockSnapshot: rpcModule.AdminRoomSnapshot = {
       name: 'Beta Builders',
       color: '#22B14C',
       cash: 1200,
-      cv: 300,
       is_bankrupt: false,
       version: 1,
       tiebreak_order: null,
@@ -102,7 +97,6 @@ const mockSnapshot: rpcModule.AdminRoomSnapshot = {
       name: 'Gamma Guild',
       color: '#FFCC00',
       cash: 1200,
-      cv: 300,
       is_bankrupt: false,
       version: 1,
       tiebreak_order: null,
@@ -138,7 +132,7 @@ describe('TieBreakOrder', () => {
       />
     );
 
-    expect(screen.getByText(/Tied on CV, cash and businesses/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tied on cash, business value and upgrades/i)).toBeInTheDocument();
 
     // Move team 2 down
     const downButtons = screen.getAllByTitle(/Move lower in tiebreak order/i);

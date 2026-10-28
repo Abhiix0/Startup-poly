@@ -33,7 +33,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     index: 0,
     name: 'START',
     type: 'START',
-    description: 'Pass or land on START: +₹200 Cash. Growth bonus: 2 biz = +200 CV, 3 biz = +500 CV.',
+    description: 'Pass or land on START: +₹200 Cash.',
   },
   // Quadrant 1 (Spaces 1–5)
   {
@@ -41,7 +41,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'AI / DeepTech',
     type: 'BUSINESS',
     businessKey: 'ai_deeptech',
-    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
+    description: 'Cost: ₹500 | U1: ₹250 | U2: ₹300',
   },
   {
     index: 2,
@@ -54,7 +54,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'SaaS',
     type: 'BUSINESS',
     businessKey: 'saas',
-    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
+    description: 'Cost: ₹300 | U1: ₹150 | U2: ₹200',
   },
   {
     index: 4,
@@ -67,7 +67,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'FinTech',
     type: 'BUSINESS',
     businessKey: 'fintech',
-    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    description: 'Cost: ₹400 | U1: ₹200 | U2: ₹250',
   },
   // Corner 2
   {
@@ -82,7 +82,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'HealthTech',
     type: 'BUSINESS',
     businessKey: 'healthtech',
-    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    description: 'Cost: ₹400 | U1: ₹200 | U2: ₹250',
   },
   {
     index: 8,
@@ -101,7 +101,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'EdTech',
     type: 'BUSINESS',
     businessKey: 'edtech',
-    description: 'Cost: ₹200 | Initial CV: 150 | U1: ₹100 (+300 CV) | U2: ₹150 (+400 CV)',
+    description: 'Cost: ₹200 | U1: ₹100 | U2: ₹150',
   },
   {
     index: 11,
@@ -114,7 +114,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     index: 12,
     name: 'Action C: Lose the Feature',
     type: 'ACTION_C',
-    description: 'Tech debt strike: team immediately loses −200 Company Value (floor at 0).',
+    description: 'Tech debt strike: pay ₹200 Cash to the Bank.',
   },
   // Quadrant 3 (Spaces 13–17)
   {
@@ -122,7 +122,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'DevTools / Infrastructure',
     type: 'BUSINESS',
     businessKey: 'devtools',
-    description: 'Cost: ₹300 | Initial CV: 190 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
+    description: 'Cost: ₹300 | U1: ₹150 | U2: ₹200',
   },
   {
     index: 14,
@@ -135,7 +135,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'Cybersecurity',
     type: 'BUSINESS',
     businessKey: 'cybersecurity',
-    description: 'Cost: ₹400 | Initial CV: 220 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    description: 'Cost: ₹400 | U1: ₹200 | U2: ₹250',
   },
   {
     index: 16,
@@ -148,7 +148,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'CleanTech / Energy',
     type: 'BUSINESS',
     businessKey: 'cleantech',
-    description: 'Cost: ₹500 | Initial CV: 240 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
+    description: 'Cost: ₹500 | U1: ₹250 | U2: ₹300',
   },
   // Corner 4
   {
@@ -163,7 +163,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'Robotics & IoT',
     type: 'BUSINESS',
     businessKey: 'robotics',
-    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
+    description: 'Cost: ₹500 | U1: ₹250 | U2: ₹300',
   },
   {
     index: 20,
@@ -188,7 +188,7 @@ export const BOARD_SPACES: BoardSpace[] = [
     name: 'E-Commerce',
     type: 'BUSINESS',
     businessKey: 'ecommerce',
-    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
+    description: 'Cost: ₹300 | U1: ₹150 | U2: ₹200',
   },
 ];
 
@@ -212,25 +212,24 @@ export interface CardOption {
   title: string;
   effectText: string;
   cashDelta: number;
-  cvDelta: number;
 }
 
 export const REAL_BONUS_CARDS: CardOption[] = [
-  { id: 1, title: 'Startup Grant', effectText: '+₹300 Cash', cashDelta: 300, cvDelta: 0 },
-  { id: 2, title: 'Viral Growth', effectText: '+300 Company Value', cashDelta: 0, cvDelta: 300 },
-  { id: 3, title: 'Government Incentive', effectText: '+₹200 Cash & +200 Company Value', cashDelta: 200, cvDelta: 200 },
-  { id: 4, title: 'Premium Deal', effectText: 'Cash equal to purchase cost of most expensive owned business', cashDelta: 0, cvDelta: 0 },
-  { id: 5, title: 'Founder Bonus', effectText: '₹100 × number of businesses owned', cashDelta: 0, cvDelta: 0 },
-  { id: 6, title: 'Lucky Break', effectText: '+₹100 × Roll value in cash (reward roll)', cashDelta: 0, cvDelta: 0 },
+  { id: 1, title: 'Startup Grant', effectText: '+₹300 Cash', cashDelta: 300 },
+  { id: 2, title: 'Viral Growth', effectText: '+₹300 Cash', cashDelta: 300 },
+  { id: 3, title: 'Government Incentive', effectText: '+₹200 Cash', cashDelta: 200 },
+  { id: 4, title: 'Premium Deal', effectText: 'Cash equal to purchase cost of most expensive owned business', cashDelta: 0 },
+  { id: 5, title: 'Founder Bonus', effectText: '₹100 × number of businesses owned', cashDelta: 0 },
+  { id: 6, title: 'Lucky Break', effectText: '+₹100 × Roll value in cash (reward roll)', cashDelta: 0 },
 ];
 
 export const REAL_CRISIS_CARDS: CardOption[] = [
-  { id: 1, title: 'Tax Raid', effectText: '−₹300 Cash', cashDelta: -300, cvDelta: 0 },
-  { id: 2, title: 'Market Crash', effectText: '−300 Company Value', cashDelta: 0, cvDelta: -300 },
-  { id: 3, title: 'Legal Trouble', effectText: '−₹200 Cash & −200 Company Value', cashDelta: -200, cvDelta: -200 },
-  { id: 4, title: 'Burn Rate Spike', effectText: '−₹100 Cash for every Business owned', cashDelta: 0, cvDelta: 0 },
-  { id: 5, title: 'Bad PR', effectText: '−200 Company Value & −₹100 Cash', cashDelta: -100, cvDelta: -200 },
-  { id: 6, title: 'Investor Pullout', effectText: '−₹500 Cash', cashDelta: -500, cvDelta: 0 },
+  { id: 1, title: 'Tax Raid', effectText: '−₹300 Cash', cashDelta: -300 },
+  { id: 2, title: 'Market Crash', effectText: '−₹300 Cash', cashDelta: -300 },
+  { id: 3, title: 'Legal Trouble', effectText: '−₹200 Cash', cashDelta: -200 },
+  { id: 4, title: 'Burn Rate Spike', effectText: '−₹100 Cash for every Business owned', cashDelta: 0 },
+  { id: 5, title: 'Bad PR', effectText: '−₹100 Cash', cashDelta: -100 },
+  { id: 6, title: 'Investor Pullout', effectText: '−₹500 Cash', cashDelta: -500 },
 ];
 
 export const WILDCARD_CHALLENGES: string[] = [

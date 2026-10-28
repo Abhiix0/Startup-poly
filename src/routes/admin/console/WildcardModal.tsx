@@ -90,7 +90,7 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
         </div>
 
         <p className="font-mono text-[11px] text-neutral-500">
-          Rule: One team member must perform the task immediately. No Cash or CV is gained or lost.
+          Rule: One team member must perform the task immediately. No Cash is gained or lost.
         </p>
       </div>
     </Modal>

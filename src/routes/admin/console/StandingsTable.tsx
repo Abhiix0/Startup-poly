@@ -19,7 +19,6 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
           <tr className="bg-brand-navy text-brand-white font-pixel text-[9px] uppercase border-b-2 border-brand-navy">
             <th className="p-2 text-center w-12">RANK</th>
             <th className="p-2">TEAM</th>
-            <th className="p-2 text-right">CV</th>
             <th className="p-2 text-right">CASH</th>
             <th className="p-2 text-center">BIZ</th>
             <th className="p-2 text-center">STATUS</th>
@@ -55,11 +54,6 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                       {row.name}
                     </span>
                   </div>
-                </td>
-
-                {/* CV */}
-                <td className="p-2 text-right font-tabular font-bold text-brand-navy">
-                  ₹{row.cv.toLocaleString('en-IN')}
                 </td>
 
                 {/* Cash */}

@@ -69,45 +69,30 @@ export function formatActivityEvent(
       };
     }
 
-    case 'CV_SET': {
-      const prevCv = event.prev?.cv ?? 0;
-      const newCv = event.new?.cv ?? 0;
-      const delta = newCv - prevCv;
-      const deltaText =
-        delta >= 0
-          ? `+₹${delta.toLocaleString('en-IN')}`
-          : `−₹${Math.abs(delta).toLocaleString('en-IN')}`;
-
+    // Retired metric: only historical rooms still contain these events.
+    case 'CV_SET':
       return {
-        sentence: `${teamName || 'Team'} CV ₹${prevCv.toLocaleString('en-IN')} → ₹${newCv.toLocaleString('en-IN')}`,
+        sentence: `${teamName || 'Team'} legacy value adjustment (retired)`,
         teamName,
         teamColor,
-        deltaText,
-        isPositive: delta >= 0,
-        isNegative: delta < 0,
         note,
         isCorrection,
         category: 'money',
       };
-    }
 
     case 'ADJUSTMENT': {
       const cashDelta = event.new?.cash_delta ?? 0;
-      const cvDelta = event.new?.cv_delta ?? 0;
       const parts: string[] = [];
       if (cashDelta !== 0) {
         parts.push(`${cashDelta >= 0 ? '+' : '−'}₹${Math.abs(cashDelta).toLocaleString('en-IN')} cash`);
-      }
-      if (cvDelta !== 0) {
-        parts.push(`${cvDelta >= 0 ? '+' : '−'}₹${Math.abs(cvDelta).toLocaleString('en-IN')} CV`);
       }
 
       return {
         sentence: `${teamName || 'Team'} adjustment: ${parts.join(', ') || 'No change'}`,
         teamName,
         teamColor,
-        isPositive: cashDelta >= 0 && cvDelta >= 0,
-        isNegative: cashDelta < 0 || cvDelta < 0,
+        isPositive: cashDelta >= 0,
+        isNegative: cashDelta < 0,
         note,
         isCorrection,
         category: 'money',

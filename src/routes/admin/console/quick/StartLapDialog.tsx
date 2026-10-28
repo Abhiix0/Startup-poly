@@ -14,7 +14,6 @@ export interface StartLapDialogProps {
     changes: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
       expected_version: number;
     }>;
     label: string;
@@ -33,7 +32,6 @@ export const StartLapDialog: React.FC<StartLapDialogProps> = ({
 }) => {
   const [teamId, setTeamId] = useState<string>(defaultTeamId || teams[0]?.id || '');
   const [customCash, setCustomCash] = useState<number | undefined>(undefined);
-  const [customCv, setCustomCv] = useState<number | undefined>(undefined);
   const [note, setNote] = useState<string>('');
   const [requestId, setRequestId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -43,7 +41,6 @@ export const StartLapDialog: React.FC<StartLapDialogProps> = ({
     if (isOpen) {
       setTeamId(defaultTeamId || teams[0]?.id || '');
       setCustomCash(undefined);
-      setCustomCv(undefined);
       setNote('');
       setRequestId(safeRandomUUID());
       setError(null);
@@ -52,11 +49,10 @@ export const StartLapDialog: React.FC<StartLapDialogProps> = ({
   }, [isOpen, defaultTeamId, teams]);
 
   const team = teams.find((t) => t.id === teamId);
-  const preview = team ? computeStart(team, customCash, customCv) : null;
+  const preview = team ? computeStart(team, customCash) : null;
 
-  const handleAdjust = (_targetId: string, cashDelta: number, cvDelta: number) => {
+  const handleAdjust = (_targetId: string, cashDelta: number) => {
     setCustomCash(cashDelta);
-    setCustomCv(cvDelta);
   };
 
   const handleConfirm = async () => {
@@ -72,7 +68,6 @@ export const StartLapDialog: React.FC<StartLapDialogProps> = ({
       const changes = preview.changes.map((ch) => ({
         team_id: ch.teamId,
         cash_delta: ch.cashDelta,
-        cv_delta: ch.cvDelta,
         expected_version: ch.expectedVersion,
       }));
 
@@ -103,7 +98,6 @@ export const StartLapDialog: React.FC<StartLapDialogProps> = ({
             onChange={(e) => {
               setTeamId(e.target.value);
               setCustomCash(undefined);
-              setCustomCv(undefined);
             }}
             className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-green"
           >

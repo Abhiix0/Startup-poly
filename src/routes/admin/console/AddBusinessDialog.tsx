@@ -144,7 +144,6 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
 
                   <div className="flex items-center justify-between font-mono text-[11px]">
                     <span className="text-neutral-500">Cost: ₹{b.cost}</span>
-                    <span className="text-brand-navy font-bold">+₹{b.initial_cv} CV</span>
                   </div>
 
                   {isOwned && (
@@ -169,13 +168,13 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
                 className="w-4 h-4 accent-brand-green cursor-pointer"
               />
               <span className="font-sans text-xs font-bold text-brand-navy">
-                Apply purchase (−₹{selectedBiz.cost.toLocaleString('en-IN')}, +{selectedBiz.initial_cv.toLocaleString('en-IN')} CV)
+                Apply purchase (−₹{selectedBiz.cost.toLocaleString('en-IN')})
               </span>
             </label>
             <p className="font-mono text-[11px] text-neutral-500 pl-6">
               {applyPurchase
-                ? `Will deduct ₹${selectedBiz.cost} from team cash and credit ₹${selectedBiz.initial_cv} to CV.`
-                : 'Manual entry only: does not modify team cash or CV.'}
+                ? `Will deduct ₹${selectedBiz.cost} from team cash.`
+                : 'Manual entry only: does not modify team cash.'}
             </p>
           </div>
         )}

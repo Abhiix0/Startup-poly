@@ -32,16 +32,16 @@ export const ArenaPage: React.FC = () => {
     );
   }
 
-  // Calculate live rankings based on Total Company Value (Cash + CV)
+  // Live ranking: cash, then total original cost of owned businesses, then total upgrades
   const rankedTeams = [...snapshot.teams].sort((a, b) => {
     if (a.is_bankrupt !== b.is_bankrupt) {
       return a.is_bankrupt ? 1 : -1;
     }
-    const totalA = a.cash + a.cv;
-    const totalB = b.cash + b.cv;
-    if (totalB !== totalA) return totalB - totalA;
     if (b.cash !== a.cash) return b.cash - a.cash;
-    return b.businesses.length - a.businesses.length;
+    const cost = (t: typeof a) => t.businesses.reduce((n, x) => n + x.cost, 0);
+    if (cost(b) !== cost(a)) return cost(b) - cost(a);
+    const upgrades = (t: typeof a) => t.businesses.reduce((n, x) => n + x.level, 0);
+    return upgrades(b) - upgrades(a);
   });
 
   const leader = rankedTeams[0];
@@ -95,7 +95,7 @@ export const ArenaPage: React.FC = () => {
         <div className="bg-gradient-to-r from-brand-gold via-amber-300 to-brand-gold text-brand-navy py-4 px-6 text-center border-b-4 border-neutral-900 shadow-pixel flex items-center justify-center gap-3 anim-trophy-bob">
           <span className="text-3xl">🏆</span>
           <span className="font-pixel text-xl sm:text-2xl font-black tracking-wide">
-            TOURNAMENT CHAMPION: {leader.name.toUpperCase()} (₹{(leader.cash + leader.cv).toLocaleString('en-IN')})
+            TOURNAMENT CHAMPION: {leader.name.toUpperCase()} (₹{leader.cash.toLocaleString('en-IN')})
           </span>
           <span className="text-3xl">🏆</span>
         </div>
@@ -106,7 +106,6 @@ export const ArenaPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {rankedTeams.map((team, idx) => {
             const rank = idx + 1;
-            const totalValue = team.cash + team.cv;
             const isFirst = rank === 1 && !team.is_bankrupt;
 
             return (
@@ -152,27 +151,11 @@ export const ArenaPage: React.FC = () => {
                 {/* Primary Metric: Total Valuation */}
                 <div className="my-2 text-center bg-black/40 border-2 border-neutral-800 p-3 rounded">
                   <span className="font-pixel text-[10px] text-brand-gold block tracking-widest uppercase">
-                    TOTAL COMPANY VALUE
+                    CASH
                   </span>
                   <span className="font-pixel text-3xl sm:text-4xl text-white font-black tabular-nums tracking-tight">
-                    ₹{totalValue.toLocaleString('en-IN')}
+                    ₹{team.cash.toLocaleString('en-IN')}
                   </span>
-                </div>
-
-                {/* Cash & CV Breakdown */}
-                <div className="grid grid-cols-2 gap-2 text-center my-2">
-                  <div className="bg-neutral-950 p-2 border border-neutral-800">
-                    <span className="font-pixel text-[9px] text-neutral-400 block">CASH</span>
-                    <span className="font-mono text-sm font-bold text-brand-green tabular-nums">
-                      ₹{team.cash.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                  <div className="bg-neutral-950 p-2 border border-neutral-800">
-                    <span className="font-pixel text-[9px] text-neutral-400 block">CV</span>
-                    <span className="font-mono text-sm font-bold text-sky-400 tabular-nums">
-                      ₹{team.cv.toLocaleString('en-IN')}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Business Portfolio Badges */}
@@ -209,7 +192,7 @@ export const ArenaPage: React.FC = () => {
             LIVE COURT FEED
           </span>
           <span className="font-mono text-xs text-neutral-400 truncate max-w-2xl">
-            {leader ? `Current leader: ${leader.name} with ₹${(leader.cash + leader.cv).toLocaleString('en-IN')} total valuation` : 'Tournament in progress'}
+            {leader ? `Current leader: ${leader.name} with ₹${leader.cash.toLocaleString('en-IN')} cash` : 'Tournament in progress'}
           </span>
         </div>
 

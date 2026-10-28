@@ -74,7 +74,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     reversalChanges: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
     }>;
   } | null>(null);
 
@@ -111,7 +110,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     expectedVersion?: number;
     currentVersion?: number;
     cash?: number;
-    cv?: number;
   } | null>(null);
   const [insufficientCashShortfall, setInsufficientCashShortfall] = useState<number | null>(null);
 
@@ -179,7 +177,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const selectedTeam = snapshot.teams.find((t) => t.id === selectedTeamId) || snapshot.teams[0];
   const activeTeams = snapshot.teams.filter((t) => !t.is_bankrupt);
   const leader = snapshot.teams.reduce<(typeof snapshot.teams)[0] | undefined>(
-    (best, t) => (!best || (t.cash + t.cv) > (best.cash + best.cv) ? t : best),
+    (best, t) => (!best || t.cash > best.cash ? t : best),
     undefined
   );
   const totalCash = snapshot.teams.reduce((n, t) => n + t.cash, 0);
@@ -223,7 +221,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         expectedVersion: expectedVer ?? selectedTeam?.version,
         currentVersion: err?.detail?.current_version ?? (selectedTeam?.version ? selectedTeam.version + 1 : undefined),
         cash: err?.detail?.cash,
-        cv: err?.detail?.cv,
       });
       return;
     }
@@ -335,7 +332,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         return {
           team_id: rev.team_id,
           cash_delta: rev.cash_delta,
-          cv_delta: rev.cv_delta,
           expected_version: currentTeam?.version ?? 0,
         };
       });
@@ -360,7 +356,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     changes: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
       expected_version: number;
     }>;
     label: string;
@@ -376,7 +371,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       });
 
       // Play contextual audio feedback
-      if (params.changes.some((c) => c.cash_delta > 0 || c.cv_delta > 0)) {
+      if (params.changes.some((c) => c.cash_delta > 0)) {
         sounds.playCoin();
       } else {
         sounds.playDamage();
@@ -388,7 +383,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         reversalChanges: params.changes.map((ch) => ({
           team_id: ch.team_id,
           cash_delta: -ch.cash_delta,
-          cv_delta: -ch.cv_delta,
         })),
       });
 
@@ -464,25 +458,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         note,
       });
       successToast(`${selectedTeam.name} cash updated.`);
-      triggerFlash(selectedTeam.id, direction);
-      await onRefetch();
-    } catch (err: any) {
-      handleError(err, selectedTeam.version);
-      throw err;
-    }
-  };
-
-  const handleUpdateCv = async (newCv: number, note?: string) => {
-    if (!selectedTeam) return;
-    const direction = newCv >= selectedTeam.cv ? 'up' : 'down';
-    try {
-      await rpcAdminSetTeamValues({
-        team_id: selectedTeam.id,
-        cv: newCv,
-        expected_version: selectedTeam.version,
-        note,
-      });
-      successToast(`${selectedTeam.name} CV updated.`);
       triggerFlash(selectedTeam.id, direction);
       await onRefetch();
     } catch (err: any) {
@@ -894,10 +869,10 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               </div>
               <span
                 className="font-mono text-[10px] sm:text-xs text-neutral-600 block truncate font-bold"
-                title={leader ? `₹${(leader.cash + leader.cv).toLocaleString('en-IN')} (Cash: ₹${leader.cash.toLocaleString('en-IN')} + CV: ₹${leader.cv.toLocaleString('en-IN')})` : ''}
+                title={leader ? `₹${leader.cash.toLocaleString('en-IN')}` : ''}
               >
                 {leader
-                  ? `₹${(leader.cash + leader.cv).toLocaleString('en-IN')} (Cash: ₹${leader.cash.toLocaleString('en-IN')} + CV: ₹${leader.cv.toLocaleString('en-IN')})`
+                  ? `₹${leader.cash.toLocaleString('en-IN')} cash`
                   : 'No active teams'}
               </span>
             </div>
@@ -1026,7 +1001,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               isTimeExpired={isTimeExpired}
               disabled={isEditDisabled}
               onUpdateCash={handleUpdateCash}
-              onUpdateCv={handleUpdateCv}
               onAddBusinessClick={() => setIsAddOpen(true)}
               onUpgradeBusinessClick={(key) => setUpgradeBizKey(key)}
               onEditBusinessClick={(key) => setEditBizKey(key)}
@@ -1271,7 +1245,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           </p>
           <div className="bg-status-danger-bg border-2 border-brand-navy p-3 text-xs text-status-danger-dark font-mono flex flex-col gap-1">
             <span className="font-bold">⚠ FULL TEAM RESET:</span>
-            <span>All team cash resets to ₹1,000, CV resets to ₹0, all purchased businesses are removed, and bankruptcy flags are cleared.</span>
+            <span>All team cash resets to ₹1,000, all purchased businesses are removed, and bankruptcy flags are cleared.</span>
           </div>
           <div className="flex flex-col gap-1">
             <label className="font-pixel text-[10px] uppercase text-brand-navy font-bold">

@@ -26,7 +26,6 @@ describe('TeamDashboardPage', () => {
       name: 'Alpha Rockets',
       color: '#E52521',
       cash: 1450,
-      cv: 1850,
       is_bankrupt: false,
     },
     businesses: [
@@ -35,8 +34,6 @@ describe('TeamDashboardPage', () => {
         name: 'HyperDrive Labs',
         level: 1,
         cost: 500,
-        initial_cv: 750,
-        cv_contribution: 750,
       },
     ],
     final_result: null,
@@ -52,7 +49,6 @@ describe('TeamDashboardPage', () => {
     isStale: false,
     staleAgeSeconds: 0,
     cashFlash: null,
-    cvFlash: null,
     wasClaimReleased: false,
     isSessionLost: false,
   };
@@ -189,7 +185,6 @@ describe('TeamDashboardPage', () => {
       room: { ...baseState.room, status: 'FINALIZED' },
       final_result: {
         rank: 1,
-        cv: 1850,
         cash: 1450,
         business_count: 1,
         is_bankrupt: false,

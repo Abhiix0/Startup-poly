@@ -107,15 +107,15 @@ export const TimeOverModal: React.FC<TimeOverModalProps> = ({
                     </span>
                   </div>
                   <span className="font-mono text-[11px] text-neutral-500">
-                    Cash: ₹{leader.cash.toLocaleString('en-IN')} • CV: ₹{leader.cv.toLocaleString('en-IN')}
+                    Cash: ₹{leader.cash.toLocaleString('en-IN')}
                   </span>
                 </div>
               </div>
 
               <div className="text-right">
-                <span className="font-pixel text-[9px] text-neutral-500 block">TOTAL VALUATION</span>
+                <span className="font-pixel text-[9px] text-neutral-500 block">CASH</span>
                 <span className="font-pixel text-lg font-black text-brand-navy tabular-nums">
-                  ₹{(leader.cash + leader.cv).toLocaleString('en-IN')}
+                  ₹{leader.cash.toLocaleString('en-IN')}
                 </span>
               </div>
             </div>

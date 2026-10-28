@@ -9,7 +9,6 @@ export interface TeamEditorProps {
   isTimeExpired: boolean;
   disabled?: boolean;
   onUpdateCash: (newCash: number, note?: string) => Promise<void>;
-  onUpdateCv: (newCv: number, note?: string) => Promise<void>;
   onAddBusinessClick: () => void;
   onUpgradeBusinessClick: (bizKey: string) => void;
   onEditBusinessClick: (bizKey: string) => void;
@@ -22,15 +21,12 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
   isTimeExpired,
   disabled = false,
   onUpdateCash,
-  onUpdateCv,
   onAddBusinessClick,
   onUpgradeBusinessClick,
   onEditBusinessClick,
   onRemoveBusinessClick,
   onOpenBankruptModal,
 }) => {
-  const totalValuation = team.cash + team.cv;
-
   return (
     <div className="bg-brand-white border-4 border-brand-navy shadow-pixel flex flex-col overflow-hidden w-full">
       {/* Team Header Banner with Arcade Accent */}
@@ -48,7 +44,7 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
         <div className="flex items-center gap-2.5 flex-wrap">
           <div className="font-pixel text-xs sm:text-sm bg-brand-gold text-brand-navy px-2.5 py-1 border-2 border-brand-navy shadow-pixel-sm font-black flex items-center gap-1.5">
             <span className="text-xs">🏆</span>
-            <span>TOTAL: ₹{totalValuation.toLocaleString('en-IN')}</span>
+            <span>CASH: ₹{team.cash.toLocaleString('en-IN')}</span>
           </div>
 
           <span
@@ -100,21 +96,13 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
           </div>
         ) : null}
 
-        {/* Cash & Company Value (CV) Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Cash */}
+        <div className="grid grid-cols-1 gap-3">
           <ValueEditor
             label="Cash Balance"
             teamName={team.name}
             currentValue={team.cash}
             onUpdate={onUpdateCash}
-            isTimeExpired={isTimeExpired}
-            disabled={disabled || team.is_bankrupt}
-          />
-          <ValueEditor
-            label="Company Value (CV)"
-            teamName={team.name}
-            currentValue={team.cv}
-            onUpdate={onUpdateCv}
             isTimeExpired={isTimeExpired}
             disabled={disabled || team.is_bankrupt}
           />

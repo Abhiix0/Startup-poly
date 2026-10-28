@@ -33,7 +33,6 @@ const mockTeams: TeamState[] = [
     name: 'Alpha Rockets',
     color: '#E52521',
     cash: 1000,
-    cv: 500,
     version: 3,
     businesses: [
       {
@@ -41,7 +40,6 @@ const mockTeams: TeamState[] = [
         name: 'SaaS',
         level: 1,
         cost: 300,
-        initial_cv: 180,
       },
     ],
   },
@@ -51,7 +49,6 @@ const mockTeams: TeamState[] = [
     name: 'Beta Builders',
     color: '#22B14C',
     cash: 50, // low cash for shortfall tests
-    cv: 200,
     version: 2,
     businesses: [
       {
@@ -59,7 +56,6 @@ const mockTeams: TeamState[] = [
         name: 'EdTech',
         level: 0,
         cost: 200,
-        initial_cv: 150,
       },
     ],
   },
@@ -69,7 +65,6 @@ const mockTeams: TeamState[] = [
     name: 'Gamma Guild',
     color: '#FFCC00',
     cash: 1200,
-    cv: 800,
     version: 4,
     businesses: [],
   },
@@ -152,7 +147,7 @@ describe('QuickActionsBar', () => {
 });
 
 describe('RentDialog', () => {
-  it('pre-fills correct rent and landing CV and submits atomic changes', async () => {
+  it('pre-fills correct rent and submits atomic changes', async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     const onClose = vi.fn();
 
@@ -168,9 +163,9 @@ describe('RentDialog', () => {
     );
 
     // Default payer is team-1, other team's business is edtech (L0 of team-2)
-    // EdTech cost=200, L0 rent=100, landing CV=75
+    // EdTech cost=200, L0 rent=100
     expect(screen.getByText(/EdTech \(L0\) • Owned by Beta Builders/i)).toBeInTheDocument();
-    expect(screen.getByText(/Rent = 50% of ₹200 = ₹100; owner CV \+75 \(50% of 150\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Rent = 50% of ₹200 = ₹100/i)).toBeInTheDocument();
 
     // Confirm button
     const confirmBtn = screen.getByText(/CONFIRM RENT/i);
@@ -185,14 +180,12 @@ describe('RentDialog', () => {
     expect(callArgs.changes[0]).toEqual({
       team_id: 'team-1',
       cash_delta: -100,
-      cv_delta: 0,
       expected_version: 3,
     });
-    // Owner: team-2 receives 100 cash and 75 cv
+    // Owner: team-2 receives 100 cash
     expect(callArgs.changes[1]).toEqual({
       team_id: 'team-2',
       cash_delta: 100,
-      cv_delta: 75,
       expected_version: 2,
     });
   });
@@ -243,8 +236,7 @@ describe('StartLapDialog', () => {
       />
     );
 
-    // Alpha Rockets has 1 business -> cash: 200, cv: 0
-    expect(screen.getByText(/START lap: \+₹200 cash; \+0 CV \(1 businesses owned\)/i)).toBeInTheDocument();
+        expect(screen.getByText(/START lap: \+₹200 cash/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText(/CONFIRM START LAP/i));
     expect(onSubmit).toHaveBeenCalledWith({
@@ -252,7 +244,6 @@ describe('StartLapDialog', () => {
         {
           team_id: 'team-1',
           cash_delta: 200,
-          cv_delta: 0,
           expected_version: 3,
         },
       ],
@@ -287,13 +278,11 @@ describe('StealDialog', () => {
         {
           team_id: 'team-1',
           cash_delta: 50,
-          cv_delta: 0,
           expected_version: 3,
         },
         {
           team_id: 'team-2',
           cash_delta: -50,
-          cv_delta: 0,
           expected_version: 2,
         },
       ],
@@ -337,7 +326,6 @@ describe('CardDialog', () => {
         {
           team_id: 'team-1',
           cash_delta: 400,
-          cv_delta: 0,
           expected_version: 3,
         },
       ],
@@ -375,7 +363,7 @@ describe('CardDialog', () => {
 });
 
 describe('LoseFeatureDialog', () => {
-  it('applies −200 CV reduction', () => {
+  it('charges ₹200 cash to the Bank (Action C)', () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
 
     render(
@@ -389,15 +377,14 @@ describe('LoseFeatureDialog', () => {
       />
     );
 
-    expect(screen.getByText(/Lose the Feature: −200 CV \(floor 0\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tech Debt Strike: pay ₹200 cash to the Bank/i)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText(/CONFIRM −200 CV/i));
+    fireEvent.click(screen.getByText(/CONFIRM −₹200/i));
     expect(onSubmit).toHaveBeenCalledWith({
       changes: [
         {
           team_id: 'team-1',
-          cash_delta: 0,
-          cv_delta: -200,
+          cash_delta: -200,
           expected_version: 3,
         },
       ],
@@ -479,7 +466,6 @@ describe('AdminConsoleView Keyboard Shortcuts', () => {
         name: 'Alpha Rockets',
         color: '#E52521',
         cash: 1000,
-        cv: 300,
         is_bankrupt: false,
         version: 1,
         tiebreak_order: null,
@@ -490,7 +476,6 @@ describe('AdminConsoleView Keyboard Shortcuts', () => {
             name: 'SaaS',
             level: 0,
             cost: 300,
-            initial_cv: 180,
           },
         ],
       },
@@ -500,7 +485,6 @@ describe('AdminConsoleView Keyboard Shortcuts', () => {
         name: 'Beta Builders',
         color: '#22B14C',
         cash: 800,
-        cv: 200,
         is_bankrupt: false,
         version: 1,
         tiebreak_order: null,

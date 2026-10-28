@@ -8,7 +8,6 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 1,
     name: 'Alpha Rockets',
     color: '#E52521',
-    cv: 1500,
     cash: 500,
     business_count: 3,
     is_bankrupt: false,
@@ -17,7 +16,6 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 2,
     name: 'Beta Builders',
     color: '#22B14C',
-    cv: 1200,
     cash: 300,
     business_count: 2,
     is_bankrupt: false,
@@ -26,7 +24,6 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 3,
     name: 'Gamma Guild',
     color: '#FFCC00',
-    cv: 1200,
     cash: 300,
     business_count: 2,
     is_bankrupt: false,
@@ -36,7 +33,6 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 4,
     name: 'Delta Dynamics',
     color: '#00C0F0',
-    cv: 800,
     cash: 200,
     business_count: 1,
     is_bankrupt: false,
@@ -45,7 +41,6 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 5,
     name: 'Epsilon Enterprises',
     color: '#9933FF',
-    cv: 300,
     cash: 0,
     business_count: 0,
     is_bankrupt: true,
@@ -55,7 +50,7 @@ const mockStandings: LeaderboardEntry[] = [
 describe('enrichStandingsWithPitch', () => {
   it('detects pitch victory between teams tied on mechanicals', () => {
     const enriched = enrichStandingsWithPitch(mockStandings);
-    // Beta Builders (#2) and Gamma Guild (#3) have identical CV (1200), cash (300), business_count (2).
+    // Beta Builders (#2) and Gamma Guild (#3) have identical cash (300), business_count (2).
     // Beta Builders was ranked higher, so they won on pitch.
     expect(enriched[1].won_on_pitch).toBe(true);
     expect(enriched[2].won_on_pitch).toBe(false);

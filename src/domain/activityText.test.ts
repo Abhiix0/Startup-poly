@@ -37,7 +37,7 @@ describe('formatActivityEvent', () => {
     expect(resDown.isNegative).toBe(true);
   });
 
-  it('formats CV_SET events', () => {
+  it('renders legacy CV_SET events from historical rooms without numbers', () => {
     const event = {
       id: 3,
       team_id: 'team-2',
@@ -48,8 +48,8 @@ describe('formatActivityEvent', () => {
       created_at: new Date().toISOString(),
     };
     const res = formatActivityEvent(event, mockTeams);
-    expect(res.sentence).toBe('Beta Builders CV ₹200 → ₹500');
-    expect(res.deltaText).toBe('+₹300');
+    expect(res.sentence).toBe('Beta Builders legacy value adjustment (retired)');
+    expect(res.deltaText).toBeUndefined();
   });
 
   it('formats BUSINESS_ADDED with and without apply_purchase', () => {

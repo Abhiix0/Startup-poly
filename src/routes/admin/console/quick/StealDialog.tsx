@@ -14,7 +14,6 @@ export interface StealDialogProps {
     changes: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
       expected_version: number;
     }>;
     label: string;
@@ -88,7 +87,6 @@ export const StealDialog: React.FC<StealDialogProps> = ({
       const changes = preview.changes.map((ch) => ({
         team_id: ch.teamId,
         cash_delta: ch.cashDelta,
-        cv_delta: ch.cvDelta,
         expected_version: ch.expectedVersion,
       }));
 

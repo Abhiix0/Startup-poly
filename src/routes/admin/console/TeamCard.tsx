@@ -22,8 +22,6 @@ export const TeamCard: React.FC<TeamCardProps> = ({
       ? 'bg-status-danger-bg'
       : '';
 
-  const totalValuation = team.cash + team.cv;
-
   return (
     <button
       type="button"
@@ -86,29 +84,11 @@ export const TeamCard: React.FC<TeamCardProps> = ({
         )}
       </div>
 
-      {/* 3. Primary Metric: Total Company Value */}
-      <div className="flex items-baseline gap-1.5">
-        <span className="font-pixel text-[9px] text-neutral-500 uppercase tracking-wider font-bold">
-          TOTAL
-        </span>
-        <span className="font-pixel text-base sm:text-lg font-black text-brand-navy tabular-nums drop-shadow-[1px_1px_0px_var(--color-brand-white)]">
-          ₹{totalValuation.toLocaleString('en-IN')}
-        </span>
-      </div>
-
       {/* 4. Cash Breakdown */}
       <div className="flex items-baseline gap-1.5">
         <span className="font-pixel text-[9px] text-neutral-500 uppercase">Cash</span>
         <span className="font-mono text-xs sm:text-sm font-bold text-brand-green tabular-nums">
           ₹{team.cash.toLocaleString('en-IN')}
-        </span>
-      </div>
-
-      {/* 5. Company Value (CV) Breakdown */}
-      <div className="flex items-baseline gap-1.5">
-        <span className="font-pixel text-[9px] text-neutral-500 uppercase">CV</span>
-        <span className="font-mono text-xs sm:text-sm font-bold text-sky-700 tabular-nums">
-          ₹{team.cv.toLocaleString('en-IN')}
         </span>
       </div>
 

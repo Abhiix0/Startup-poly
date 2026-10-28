@@ -2,7 +2,6 @@ export interface LeaderboardEntry {
   rank: number;
   name: string;
   color: string;
-  cv: number;
   cash: number;
   business_count: number;
   is_bankrupt: boolean;

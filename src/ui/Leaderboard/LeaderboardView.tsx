@@ -18,7 +18,6 @@ export function enrichStandingsWithPitch(standings: LeaderboardEntry[]): Leaderb
     const tiedWithNext =
       next &&
       next.is_bankrupt === entry.is_bankrupt &&
-      next.cv === entry.cv &&
       next.cash === entry.cash &&
       next.business_count === entry.business_count;
 

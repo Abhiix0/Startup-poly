@@ -18,7 +18,7 @@ const READ_ONLY_RPCS = new Set<FunctionName>([
 
 function canRetrySafely(fnName: FunctionName, args?: Record<string, unknown>): boolean {
   // Reads can be retried. Mutations require an idempotency key; otherwise a
-  // lost response could apply a cash/CV/business mutation twice.
+  // lost response could apply a cash/business mutation twice.
   return READ_ONLY_RPCS.has(fnName) || typeof args?.request_id === 'string';
 }
 
@@ -98,18 +98,15 @@ export async function rpcLeaveTeam() {
 export async function rpcGetMyState() {
   return callRpc<{
     room: { status: string; started_at: string | null; ends_at: string | null; server_now: string };
-    team: { slot: number; name: string; color: string; cash: number; cv: number; is_bankrupt: boolean };
+    team: { slot: number; name: string; color: string; cash: number; is_bankrupt: boolean };
     businesses: Array<{
       business_key: string;
       name: string;
       level: number;
       cost: number;
-      initial_cv: number;
-      cv_contribution: number;
     }>;
     final_result: {
       rank: number;
-      cv: number;
       cash: number;
       business_count: number;
       is_bankrupt: boolean;
@@ -163,7 +160,6 @@ export async function rpcAdminExtendGame(room_id: string, additional_seconds = 6
 export async function rpcAdminSetTeamValues(params: {
   team_id: string;
   cash?: number | null;
-  cv?: number | null;
   expected_version: number;
   request_id?: string;
   note?: string;
@@ -172,7 +168,7 @@ export async function rpcAdminSetTeamValues(params: {
 }
 
 export async function rpcAdminAdjust(params: {
-  changes: Array<{ team_id: string; cash_delta: number; cv_delta: number; expected_version: number }>;
+  changes: Array<{ team_id: string; cash_delta: number; expected_version: number }>;
   label: string;
   note?: string;
   request_id?: string;
@@ -264,7 +260,6 @@ export interface AdminRoomSnapshot {
     name: string;
     color: string;
     cash: number;
-    cv: number;
     board_position?: number;
     is_bankrupt: boolean;
     version: number;
@@ -276,7 +271,6 @@ export interface AdminRoomSnapshot {
       name: string;
       level: number;
       cost: number;
-      initial_cv: number;
     }>;
   }>;
   events: Array<{
@@ -299,7 +293,6 @@ export interface StandingsRow {
   name: string;
   rank: number;
   is_bankrupt: boolean;
-  cv: number;
   cash: number;
   business_count: number;
   tiebreak_order: number | null;
@@ -326,7 +319,6 @@ export interface HistoryDetailResult {
   rank: number;
   name: string;
   color: string;
-  cv: number;
   cash: number;
   business_count: number;
   is_bankrupt: boolean;

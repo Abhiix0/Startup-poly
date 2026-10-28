@@ -14,7 +14,6 @@ export interface LoseFeatureDialogProps {
     changes: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
       expected_version: number;
     }>;
     label: string;
@@ -32,7 +31,6 @@ export const LoseFeatureDialog: React.FC<LoseFeatureDialogProps> = ({
   onSubmit,
 }) => {
   const [teamId, setTeamId] = useState<string>(defaultTeamId || teams[0]?.id || '');
-  const [customCv, setCustomCv] = useState<number | undefined>(undefined);
   const [note, setNote] = useState<string>('');
   const [requestId, setRequestId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -41,7 +39,6 @@ export const LoseFeatureDialog: React.FC<LoseFeatureDialogProps> = ({
   useEffect(() => {
     if (isOpen) {
       setTeamId(defaultTeamId || teams[0]?.id || '');
-      setCustomCv(undefined);
       setNote('');
       setRequestId(safeRandomUUID());
       setError(null);
@@ -50,11 +47,7 @@ export const LoseFeatureDialog: React.FC<LoseFeatureDialogProps> = ({
   }, [isOpen, defaultTeamId, teams]);
 
   const team = teams.find((t) => t.id === teamId);
-  const preview = team ? computeLoseFeature(team, customCv) : null;
-
-  const handleAdjust = (_targetId: string, _cashDelta: number, cvDelta: number) => {
-    setCustomCv(cvDelta);
-  };
+  const preview = team ? computeLoseFeature(team) : null;
 
   const handleConfirm = async () => {
     if (!preview) return;
@@ -69,7 +62,6 @@ export const LoseFeatureDialog: React.FC<LoseFeatureDialogProps> = ({
       const changes = preview.changes.map((ch) => ({
         team_id: ch.teamId,
         cash_delta: ch.cashDelta,
-        cv_delta: ch.cvDelta,
         expected_version: ch.expectedVersion,
       }));
 
@@ -99,13 +91,12 @@ export const LoseFeatureDialog: React.FC<LoseFeatureDialogProps> = ({
             value={teamId}
             onChange={(e) => {
               setTeamId(e.target.value);
-              setCustomCv(undefined);
             }}
             className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-red"
           >
             {teams.map((t) => (
               <option key={t.id} value={t.id}>
-                #{t.slot}: {t.name} (CV: ₹{t.cv.toLocaleString('en-IN')})
+                #{t.slot}: {t.name} (₹{t.cash.toLocaleString('en-IN')})
               </option>
             ))}
           </select>
@@ -118,7 +109,6 @@ export const LoseFeatureDialog: React.FC<LoseFeatureDialogProps> = ({
             isTimeExpired={isTimeExpired}
             note={note}
             onNoteChange={setNote}
-            onAdjustAmount={handleAdjust}
           />
         )}
 
@@ -145,7 +135,7 @@ export const LoseFeatureDialog: React.FC<LoseFeatureDialogProps> = ({
             isLoading={isSubmitting}
             onClick={handleConfirm}
           >
-            CONFIRM −200 CV
+            CONFIRM −₹200
           </PixelButton>
         </div>
       </div>

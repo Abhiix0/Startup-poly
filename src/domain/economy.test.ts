@@ -2,11 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   OFFICIAL_BUSINESSES,
   upgradeCost,
-  upgradeCvGain,
   rentFor,
-  landingCvFor,
   startReward,
-  cvContribution,
   resaleValue,
   canAddBusiness,
   RENT_TABLE,
@@ -20,20 +17,17 @@ describe('Official Rulebook Economy Domain Logic', () => {
     expect(OFFICIAL_BUSINESSES).toHaveLength(10);
   });
 
-  describe('Upgrade Costs and CV Gains', () => {
+  describe('Upgrade Costs', () => {
     OFFICIAL_BUSINESSES.forEach((b) => {
-      it(`calculates upgrade costs and gains for ${b.name}`, () => {
+      it(`calculates upgrade costs for ${b.name}`, () => {
         // Level 0 -> 1
         expect(upgradeCost(b, 0)).toBe(b.u1_cost);
-        expect(upgradeCvGain(b, 0)).toBe(300);
 
         // Level 1 -> 2
         expect(upgradeCost(b, 1)).toBe(b.u2_cost);
-        expect(upgradeCvGain(b, 1)).toBe(400);
 
         // Max Level 2
         expect(upgradeCost(b, 2)).toBe(0);
-        expect(upgradeCvGain(b, 2)).toBe(0);
       });
     });
   });
@@ -78,44 +72,9 @@ describe('Official Rulebook Economy Domain Logic', () => {
     });
   });
 
-  describe('Landing CV (50%, 75%, 100% of Initial CV)', () => {
-    it('calculates landing CV correctly for EdTech (150 initial CV)', () => {
-      const edtech = OFFICIAL_BUSINESSES.find((b) => b.key === 'edtech')!;
-      expect(landingCvFor(edtech, 0)).toBe(75);
-      expect(landingCvFor(edtech, 1)).toBe(113); // round(150 * 0.75) = 113
-      expect(landingCvFor(edtech, 2)).toBe(150);
-    });
-
-    it('calculates landing CV correctly for SaaS (180 initial CV)', () => {
-      const saas = OFFICIAL_BUSINESSES.find((b) => b.key === 'saas')!;
-      expect(landingCvFor(saas, 0)).toBe(90);
-      expect(landingCvFor(saas, 1)).toBe(135);
-      expect(landingCvFor(saas, 2)).toBe(180);
-    });
-  });
-
-  describe('CV Contribution', () => {
-    it('calculates cumulative CV contribution per business', () => {
-      const saas = OFFICIAL_BUSINESSES.find((b) => b.key === 'saas')!;
-      expect(cvContribution(saas, 0)).toBe(180);
-      expect(cvContribution(saas, 1)).toBe(180 + 300); // 480
-      expect(cvContribution(saas, 2)).toBe(180 + 300 + 400); // 880
-    });
-  });
-
   describe('START Lap Rewards', () => {
-    it('gives +₹200 and 0 CV with 0 or 1 business', () => {
-      expect(startReward(0)).toEqual({ cash: 200, cv: 0 });
-      expect(startReward(1)).toEqual({ cash: 200, cv: 0 });
-    });
-
-    it('gives +₹200 and +200 CV with 2 businesses', () => {
-      expect(startReward(2)).toEqual({ cash: 200, cv: 200 });
-    });
-
-    it('gives +₹200 and +500 CV with 3 or more businesses', () => {
-      expect(startReward(3)).toEqual({ cash: 200, cv: 500 });
-      expect(startReward(4)).toEqual({ cash: 200, cv: 500 });
+    it('is a flat +₹200 cash with no other component', () => {
+      expect(startReward()).toEqual({ cash: 200 });
     });
   });
 

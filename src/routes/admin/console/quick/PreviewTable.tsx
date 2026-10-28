@@ -6,7 +6,7 @@ export interface PreviewTableProps {
   isTimeExpired: boolean;
   note: string;
   onNoteChange: (val: string) => void;
-  onAdjustAmount?: (teamId: string, cashDelta: number, cvDelta: number) => void;
+  onAdjustAmount?: (teamId: string, cashDelta: number) => void;
   onDoForcedSale?: (teamId: string, shortfall: number) => void;
   onDeclareBankrupt?: (teamId: string) => void;
 }
@@ -52,14 +52,12 @@ export const PreviewTable: React.FC<PreviewTableProps> = ({
           <thead>
             <tr className="bg-brand-navy text-white font-pixel text-[10px] uppercase">
               <th className="p-2 border-r border-white/20">TEAM</th>
-              <th className="p-2 border-r border-white/20">CASH (BEFORE → AFTER)</th>
-              <th className="p-2">CV (BEFORE → AFTER)</th>
+              <th className="p-2">CASH (BEFORE → AFTER)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-300 bg-brand-white font-mono">
             {preview.changes.map((ch) => {
               const cashPositive = ch.cashDelta >= 0;
-              const cvPositive = ch.cvDelta >= 0;
 
               return (
                 <tr key={ch.teamId} className="hover:bg-brand-cream">
@@ -77,7 +75,7 @@ export const PreviewTable: React.FC<PreviewTableProps> = ({
                   </td>
 
                   {/* Cash Change cell */}
-                  <td className="p-2 border-r border-neutral-300">
+                  <td className="p-2">
                     <div className="flex items-center justify-between gap-1">
                       <span className="text-neutral-500">
                         ₹{ch.cashBefore.toLocaleString('en-IN')} → ₹{ch.cashAfter.toLocaleString('en-IN')}
@@ -101,40 +99,7 @@ export const PreviewTable: React.FC<PreviewTableProps> = ({
                           type="number"
                           value={ch.cashDelta}
                           onChange={(e) =>
-                            onAdjustAmount(ch.teamId, parseInt(e.target.value, 10) || 0, ch.cvDelta)
-                          }
-                          className="w-20 px-1 py-0.5 border border-brand-navy text-xs font-bold"
-                        />
-                      </div>
-                    )}
-                  </td>
-
-                  {/* CV Change cell */}
-                  <td className="p-2">
-                    <div className="flex items-center justify-between gap-1">
-                      <span className="text-neutral-500">
-                        ₹{ch.cvBefore.toLocaleString('en-IN')} → ₹{ch.cvAfter.toLocaleString('en-IN')}
-                      </span>
-                      <span
-                        className={`px-1 py-0.5 border text-[11px] font-bold ${
-                          cvPositive
-                            ? 'bg-status-success-bg text-brand-green border-brand-green'
-                            : 'bg-status-danger-bg text-brand-red border-brand-red'
-                        }`}
-                      >
-                        {cvPositive ? `+₹${ch.cvDelta.toLocaleString('en-IN')}` : `−₹${Math.abs(ch.cvDelta).toLocaleString('en-IN')}`}
-                      </span>
-                    </div>
-
-                    {/* Manual override input if adjustment toggle open */}
-                    {isAdjusting && onAdjustAmount && (
-                      <div className="mt-1 flex items-center gap-1">
-                        <span className="text-[10px] text-neutral-500">Delta:</span>
-                        <input
-                          type="number"
-                          value={ch.cvDelta}
-                          onChange={(e) =>
-                            onAdjustAmount(ch.teamId, ch.cashDelta, parseInt(e.target.value, 10) || 0)
+                            onAdjustAmount(ch.teamId, parseInt(e.target.value, 10) || 0)
                           }
                           className="w-20 px-1 py-0.5 border border-brand-navy text-xs font-bold"
                         />

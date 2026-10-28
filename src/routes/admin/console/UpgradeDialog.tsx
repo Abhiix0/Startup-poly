@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, PixelButton } from '../../../ui';
 import { AdminRoomSnapshot } from '../../../data/rpc';
-import { OFFICIAL_BUSINESSES, upgradeCost, upgradeCvGain } from '../../../domain/economy';
+import { OFFICIAL_BUSINESSES, upgradeCost } from '../../../domain/economy';
 import { Level } from '../../../domain/types';
 
 export interface UpgradeDialogProps {
@@ -41,7 +41,6 @@ export const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
   const currentLevel = (ownedBiz?.level ?? 0) as Level;
   const nextLevel = Math.min(2, currentLevel + 1);
   const cost = catalogBiz ? upgradeCost(catalogBiz, currentLevel) : 0;
-  const cvGain = catalogBiz ? upgradeCvGain(catalogBiz, currentLevel) : 0;
 
   useEffect(() => {
     if (isOpen) {
@@ -103,9 +102,6 @@ export const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
             <span className="bg-status-danger-bg text-brand-red px-2 py-1 border border-brand-red font-bold">
               −₹{cost.toLocaleString('en-IN')}
             </span>
-            <span className="bg-status-success-bg text-brand-green px-2 py-1 border border-brand-green font-bold">
-              +₹{cvGain.toLocaleString('en-IN')} CV
-            </span>
           </div>
         </div>
 
@@ -124,8 +120,8 @@ export const UpgradeDialog: React.FC<UpgradeDialogProps> = ({
           </label>
           <p className="font-mono text-[11px] text-neutral-500 pl-6">
             {applyUpgrade
-              ? `Deducts ₹${cost} from cash and adds ₹${cvGain} to company value.`
-              : 'Does not modify team cash or CV.'}
+              ? `Deducts ₹${cost} from cash.`
+              : 'Does not modify team cash.'}
           </p>
         </div>
 
