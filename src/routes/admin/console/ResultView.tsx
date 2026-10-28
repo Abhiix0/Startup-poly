@@ -34,7 +34,6 @@ export const ResultView: React.FC<ResultViewProps> = ({
     cash: s.cash,
     business_count: s.business_count,
     is_bankrupt: s.is_bankrupt,
-    tiebreak_order: s.tiebreak_order,
   }));
 
   const maxCash = Math.max(0, ...leaderboardEntries.map((e) => e.cash));

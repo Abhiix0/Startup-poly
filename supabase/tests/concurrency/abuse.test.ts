@@ -75,7 +75,7 @@ run('join abuse resistance and request_id misuse (L4, L5, L6, N1)', () => {
     const [, t2, t3] = await teamIds(admin, roomId);
     const rid = uuid();
     const call = (t: { id: string; version: number }, cash: number) =>
-      admin.rpc('admin_set_team_values', { team_id: t.id, cash, cv: null, expected_version: t.version, request_id: rid, note: null });
+      admin.rpc('admin_set_team_values', { team_id: t.id, cash, expected_version: t.version, request_id: rid, note: null });
     expect((await call(t2, 900)).error).toBeNull();
     expect((await call(t3, 800)).error?.message).toBe('REQUEST_ID_REUSED');
     expect((await teamIds(admin, roomId))[2].version).toBe(t3.version);

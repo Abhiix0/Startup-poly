@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(32);
+SELECT plan(30);
 
 -- Set test environment and simulated clock
 SELECT set_config('app.env', 'test', true);
@@ -156,10 +156,10 @@ SELECT lives_ok(
   'admin_start_game force=true succeeds and starts 50:00 timer'
 );
 
--- 13. Cash/CV updates and negative rejection
+-- 13. Cash updates and negative rejection
 SELECT throws_ok(
   $$
-  SELECT public.admin_set_team_values(t.id, -100, NULL, t.version, gen_random_uuid(), 'test')
+  SELECT public.admin_set_team_values(t.id, -100, t.version, gen_random_uuid(), 'test')
   FROM public.teams t WHERE t.slot = 1
   $$,
   'P0001',
@@ -170,16 +170,16 @@ SELECT throws_ok(
 -- Valid update
 SELECT lives_ok(
   $$
-  SELECT public.admin_set_team_values(t.id, 1500, 200, t.version, gen_random_uuid(), 'initial bonus')
+  SELECT public.admin_set_team_values(t.id, 1500, t.version, gen_random_uuid(), 'initial bonus')
   FROM public.teams t WHERE t.slot = 1
   $$,
-  'Valid admin_set_team_values updates cash and CV'
+  'Valid admin_set_team_values updates cash'
 );
 
 -- 14. Version conflict rejection
 SELECT throws_ok(
   $$
-  SELECT public.admin_set_team_values(t.id, 1600, 200, 0, gen_random_uuid(), 'stale update')
+  SELECT public.admin_set_team_values(t.id, 1600, 0, gen_random_uuid(), 'stale update')
   FROM public.teams t WHERE t.slot = 1
   $$,
   'P0001',
@@ -187,7 +187,7 @@ SELECT throws_ok(
   'Stale expected_version rejected with VERSION_CONFLICT'
 );
 
--- 15. Buy business: cash -= cost, cv += initial_cv
+-- 15. Buy business: cash -= cost
 SELECT lives_ok(
   $$
   SELECT public.admin_add_business(t.id, 'saas', true, t.version, gen_random_uuid(), 'bought saas')
@@ -196,16 +196,11 @@ SELECT lives_ok(
   'admin_add_business buys SaaS for team 1'
 );
 
--- Verify cash (1500 - 300 = 1200) and CV (200 + 180 = 380)
+-- Verify cash (1500 - 300 = 1200)
 SELECT is(
   (SELECT cash FROM public.teams WHERE slot = 1),
   1200,
   'Team 1 cash correctly decremented by SaaS cost (300)'
-);
-SELECT is(
-  (SELECT cv FROM public.teams WHERE slot = 1),
-  380,
-  'Team 1 CV correctly incremented by SaaS initial CV (180)'
 );
 
 -- Duplicate business in same room fails
@@ -219,7 +214,7 @@ SELECT throws_ok(
   'Buying already-owned business fails with BUSINESS_OWNED'
 );
 
--- 16. Upgrade business level 0 -> 1: cost 200, +300 CV
+-- 16. Upgrade business level 0 -> 1: cost 150
 SELECT lives_ok(
   $$
   SELECT public.admin_set_business_level(t.id, 'saas', 1::smallint, true, t.version, gen_random_uuid(), 'upgraded saas to L1')
@@ -228,16 +223,11 @@ SELECT lives_ok(
   'admin_set_business_level upgrades SaaS to Level 1'
 );
 
--- Cash = 1200 - 150 = 1050, CV = 380 + 300 = 680
+-- Cash = 1200 - 150 = 1050
 SELECT is(
   (SELECT cash FROM public.teams WHERE slot = 1),
   1050,
   'Team 1 cash decremented by SaaS U1 cost (150)'
-);
-SELECT is(
-  (SELECT cv FROM public.teams WHERE slot = 1),
-  680,
-  'Team 1 CV incremented by SaaS U1 CV (300)'
 );
 
 -- 17. Atomic admin_adjust rolls back fully on shortfall
@@ -245,8 +235,8 @@ SELECT throws_ok(
   $$
   SELECT public.admin_adjust(
     jsonb_build_array(
-      jsonb_build_object('team_id', t1.id, 'cash_delta', -2000, 'cv_delta', 0, 'expected_version', t1.version),
-      jsonb_build_object('team_id', t2.id, 'cash_delta', 2000, 'cv_delta', 0, 'expected_version', t2.version)
+      jsonb_build_object('team_id', t1.id, 'cash_delta', -2000, 'expected_version', t1.version),
+      jsonb_build_object('team_id', t2.id, 'cash_delta', 2000, 'expected_version', t2.version)
     ),
     'RENT',
     'excessive rent',
@@ -280,7 +270,7 @@ SELECT is(
 -- Normal edit without note in TIME_EXPIRED fails
 SELECT throws_ok(
   $$
-  SELECT public.admin_set_team_values(t.id, 1100, NULL, t.version, gen_random_uuid(), NULL)
+  SELECT public.admin_set_team_values(t.id, 1100, t.version, gen_random_uuid(), NULL)
   FROM public.teams t WHERE t.slot = 1
   $$,
   'P0001',
@@ -291,7 +281,7 @@ SELECT throws_ok(
 -- Edit with note succeeds
 SELECT lives_ok(
   $$
-  SELECT public.admin_set_team_values(t.id, 1000 + (t.slot * 50), NULL, t.version, gen_random_uuid(), 'Reconciled physical transaction')
+  SELECT public.admin_set_team_values(t.id, 1000 + (t.slot * 50), t.version, gen_random_uuid(), 'Reconciled physical transaction')
   FROM public.teams t
   $$,
   'Edits during TIME_EXPIRED succeed when note is provided'

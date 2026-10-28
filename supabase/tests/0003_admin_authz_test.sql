@@ -21,7 +21,7 @@ CREATE EXTENSION IF NOT EXISTS pgtap;
 --
 --  Total: 44 tests
 -- ─────────────────────────────────────────────────────────────────────────────
-SELECT plan(44);
+SELECT plan(42);
 
 SELECT set_config('app.env',      'test',                    true);
 SELECT set_config('app.test_now', '2026-03-01 10:00:00+00', true);
@@ -108,7 +108,7 @@ SELECT throws_ok(
 SELECT throws_ok(
   $$SELECT public.admin_set_team_values(
       'f0000000-0000-0000-0000-000000000001'::uuid,
-      1000, 0, 0,
+      1000, 0,
       '99000000-0000-0000-0000-000000000001'::uuid,
       'test note')$$,
   'P0001', 'NOT_ADMIN',
@@ -122,7 +122,6 @@ SELECT throws_ok(
         jsonb_build_object(
           'team_id',         'f0000000-0000-0000-0000-000000000001',
           'cash_delta',      100,
-          'cv_delta',        0,
           'expected_version', 0
         )
       ),
@@ -174,16 +173,6 @@ SELECT throws_ok(
       'test')$$,
   'P0001', 'NOT_ADMIN',
   'A-11: non-admin: admin_set_bankrupt raises NOT_ADMIN'
-);
-
--- A-12  admin_set_tiebreak
-SELECT throws_ok(
-  $$SELECT public.admin_set_tiebreak(
-      'e0000000-0000-0000-0000-000000000001'::uuid,
-      ARRAY['f0000000-0000-0000-0000-000000000001'::uuid],
-      'test')$$,
-  'P0001', 'NOT_ADMIN',
-  'A-12: non-admin: admin_set_tiebreak raises NOT_ADMIN'
 );
 
 -- A-13  get_admin_snapshot
@@ -272,7 +261,7 @@ SELECT throws_ok(
 SELECT throws_ok(
   $$SELECT public.admin_set_team_values(
       'f0000000-0000-0000-0000-000000000001'::uuid,
-      1000, 0, 0,
+      1000, 0,
       '99000000-0000-0000-0000-000000000001'::uuid,
       'test note')$$,
   '42501', NULL,
@@ -286,7 +275,6 @@ SELECT throws_ok(
         jsonb_build_object(
           'team_id',          'f0000000-0000-0000-0000-000000000001',
           'cash_delta',       100,
-          'cv_delta',         0,
           'expected_version', 0
         )
       ),
@@ -338,16 +326,6 @@ SELECT throws_ok(
       'test')$$,
   '42501', NULL,
   'B-11: anon: admin_set_bankrupt is denied EXECUTE (permission denied)'
-);
-
--- B-12  admin_set_tiebreak
-SELECT throws_ok(
-  $$SELECT public.admin_set_tiebreak(
-      'e0000000-0000-0000-0000-000000000001'::uuid,
-      ARRAY['f0000000-0000-0000-0000-000000000001'::uuid],
-      'test')$$,
-  '42501', NULL,
-  'B-12: anon: admin_set_tiebreak is denied EXECUTE (permission denied)'
 );
 
 -- B-13  get_admin_snapshot
@@ -500,7 +478,7 @@ SELECT public.admin_start_game(current_setting('test.conc_room_id')::uuid, true)
 -- F-01: First write succeeds at version 0
 SELECT lives_ok(
   $$SELECT public.admin_set_team_values(
-      t.id, 1200, NULL, t.version,
+      t.id, 1200, t.version,
       gen_random_uuid(),
       NULL
   )
@@ -513,7 +491,7 @@ SELECT lives_ok(
 -- F-02: Stale write (version 0 again) raises VERSION_CONFLICT
 SELECT throws_ok(
   $$SELECT public.admin_set_team_values(
-      t.id, 1300, NULL,
+      t.id, 1300,
       0,
       gen_random_uuid(),
       NULL

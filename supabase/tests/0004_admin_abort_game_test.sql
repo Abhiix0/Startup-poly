@@ -51,13 +51,13 @@ SELECT is(
   'Room status is ACTIVE'
 );
 
--- 2. Mutate team 1: cash, CV, and business
+-- 2. Mutate team 1: cash and business
 SELECT lives_ok(
   $$
-  SELECT public.admin_set_team_values(t.id, 1500, 300, t.version, gen_random_uuid(), NULL)
+  SELECT public.admin_set_team_values(t.id, 1500, t.version, gen_random_uuid(), NULL)
   FROM public.teams t WHERE t.slot = 1
   $$,
-  'Update Team 1 cash to 1500 and CV to 300'
+  'Update Team 1 cash to 1500'
 );
 
 SELECT lives_ok(
@@ -68,7 +68,7 @@ SELECT lives_ok(
   'Team 1 buys saas business'
 );
 
--- Verify Team 1 has business and modified cash/CV
+-- Verify Team 1 has business and modified cash
 SELECT is(
   (SELECT count(*)::int FROM public.team_businesses tb JOIN public.teams t ON tb.team_id = t.id WHERE t.slot = 1),
   1,
@@ -115,11 +115,11 @@ SELECT is(
   'ends_at is NULL after abort'
 );
 
--- 6. Assert all teams are reset to starting baseline (cash=1000, cv=0, bankrupt=false, tiebreak=NULL, zero businesses)
+-- 6. Assert all teams are reset to starting baseline (cash=1000, bankrupt=false, tiebreak=NULL, zero businesses)
 SELECT is(
-  (SELECT count(*)::int FROM public.teams WHERE cash = 1000 AND cv = 0 AND is_bankrupt = false AND tiebreak_order IS NULL),
+  (SELECT count(*)::int FROM public.teams WHERE cash = 1000 AND is_bankrupt = false AND tiebreak_order IS NULL),
   5,
-  'All 5 teams reset to cash=1000, cv=0, is_bankrupt=false, tiebreak_order=NULL'
+  'All 5 teams reset to cash=1000, is_bankrupt=false, tiebreak_order=NULL'
 );
 
 SELECT is(

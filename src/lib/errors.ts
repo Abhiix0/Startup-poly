@@ -111,10 +111,6 @@ export const ERROR_MAP: Record<string, ErrorMeta> = {
     message: 'Action rejected: Team is bankrupt.',
     retryable: false,
   },
-  UNRESOLVED_TIE: {
-    message: 'Tiebreak required: Teams share identical metrics. Set tiebreak order first.',
-    retryable: false,
-  },
   TEAM_ALREADY_CLAIMED: {
     message: 'This team is already connected on another phone. Ask the organiser to release it before rejoining.',
     retryable: false,
@@ -237,7 +233,7 @@ export const CODE_CLASS: Record<string, RpcFailureClass> = {
   TEAM_BANKRUPT: 'DEFINITELY_FAILED',
   TEAMS_NOT_JOINED: 'DEFINITELY_FAILED',
   TOO_MANY_ATTEMPTS: 'DEFINITELY_FAILED',
-  UNRESOLVED_TIE: 'DEFINITELY_FAILED',
+  UNRESOLVED_TIE: 'DEFINITELY_FAILED', // retired: still raised by migrations before 0029
   VERSION_CONFLICT: 'CONFLICT',
   IMMUTABLE: 'ROOM_NOT_ACTIVE',
   ROOM_FINALIZED: 'ROOM_NOT_ACTIVE',

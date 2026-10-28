@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StandingsTable } from './StandingsTable';
-import { TieBreakOrder } from './TieBreakOrder';
 import { FinalizePanel } from './FinalizePanel';
 import { ResultView } from './ResultView';
 import { ToastProvider } from '../../../ui';
@@ -13,7 +12,6 @@ vi.mock('../../../data/rpc', async () => {
   return {
     ...actual,
     rpcGetStandings: vi.fn(),
-    rpcAdminSetTiebreak: vi.fn(),
     rpcAdminFinalize: vi.fn(),
   };
 });
@@ -27,8 +25,8 @@ const mockStandings: rpcModule.StandingsRow[] = [
     is_bankrupt: false,
     cash: 500,
     business_count: 3,
-    tiebreak_order: null,
-    tie_unresolved: false,
+    business_cost: 0,
+    upgrade_count: 0,
   },
   {
     team_id: 'team-2',
@@ -38,8 +36,8 @@ const mockStandings: rpcModule.StandingsRow[] = [
     is_bankrupt: false,
     cash: 300,
     business_count: 2,
-    tiebreak_order: null,
-    tie_unresolved: true,
+    business_cost: 0,
+    upgrade_count: 0,
   },
   {
     team_id: 'team-3',
@@ -49,8 +47,8 @@ const mockStandings: rpcModule.StandingsRow[] = [
     is_bankrupt: false,
     cash: 300,
     business_count: 2,
-    tiebreak_order: null,
-    tie_unresolved: true,
+    business_cost: 0,
+    upgrade_count: 0,
   },
 ];
 
@@ -108,43 +106,16 @@ const mockSnapshot: rpcModule.AdminRoomSnapshot = {
 };
 
 describe('StandingsTable', () => {
-  it('renders ranks, names, metrics, and flags unresolved ties', () => {
+  it('renders ranks, names and the ranking criteria columns', () => {
     render(<StandingsTable standings={mockStandings} teams={mockSnapshot.teams} />);
 
     expect(screen.getByText('Alpha Rockets')).toBeInTheDocument();
     expect(screen.getByText('Beta Builders')).toBeInTheDocument();
     expect(screen.getByText('Gamma Guild')).toBeInTheDocument();
 
-    // Two teams have unresolved ties
-    const tieBadges = screen.getAllByText(/⚠ UNRESOLVED TIE/i);
-    expect(tieBadges).toHaveLength(2);
-  });
-});
-
-describe('TieBreakOrder', () => {
-  it('allows reordering tied teams and submits pitch decision', async () => {
-    const onSubmit = vi.fn().mockResolvedValue(undefined);
-
-    render(
-      <TieBreakOrder
-        tiedTeams={[mockStandings[1], mockStandings[2]]}
-        onSubmit={onSubmit}
-      />
-    );
-
-    expect(screen.getByText(/Tied on cash, business value and upgrades/i)).toBeInTheDocument();
-
-    // Move team 2 down
-    const downButtons = screen.getAllByTitle(/Move lower in tiebreak order/i);
-    fireEvent.click(downButtons[0]);
-
-    // Fill note
-    const input = screen.getByPlaceholderText(/Winner decided by/i);
-    fireEvent.change(input, { target: { value: 'Beta had better pitch' } });
-
-    fireEvent.click(screen.getByRole('button', { name: /RECORD PITCH RESULT/i }));
-
-    expect(onSubmit).toHaveBeenCalledWith(['team-3', 'team-2'], 'Beta had better pitch');
+    expect(screen.getByRole('columnheader', { name: 'BIZ COST' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'UPGRADES' })).toBeInTheDocument();
+    expect(screen.queryByText(/TIE STATUS|UNRESOLVED TIE/i)).not.toBeInTheDocument();
   });
 });
 
@@ -153,33 +124,9 @@ describe('FinalizePanel', () => {
     vi.clearAllMocks();
   });
 
-  it('disables finalize button when unresolved ties exist', async () => {
-    vi.mocked(rpcModule.rpcGetStandings).mockResolvedValue({
-      standings: mockStandings,
-      has_unresolved_tie: true,
-    });
-
-    render(
-      <ToastProvider>
-        <FinalizePanel
-          roomId="room-1"
-          snapshot={mockSnapshot}
-          onRefetch={vi.fn().mockResolvedValue(undefined)}
-        />
-      </ToastProvider>
-    );
-
-    expect(await screen.findByText(/TIEBREAK REQUIRED BEFORE FINALIZING/i)).toBeInTheDocument();
-    const finalizeBtn = screen.getByRole('button', { name: /FINALIZE MATCH/i });
-    expect(finalizeBtn).toBeDisabled();
-  });
-
-  it('enables finalize button when no unresolved ties and confirms finalization', async () => {
-    const resolvedStandings = mockStandings.map((s) => ({ ...s, tie_unresolved: false }));
-    vi.mocked(rpcModule.rpcGetStandings).mockResolvedValue({
-      standings: resolvedStandings,
-      has_unresolved_tie: false,
-    });
+  it('lets tied teams finalize without a judged order and confirms finalization', async () => {
+    const resolvedStandings = mockStandings;
+    vi.mocked(rpcModule.rpcGetStandings).mockResolvedValue({ standings: resolvedStandings });
     vi.mocked(rpcModule.rpcAdminFinalize).mockResolvedValue({
       room_id: 'room-1',
       winner_team_id: 'team-1',
@@ -197,7 +144,7 @@ describe('FinalizePanel', () => {
       </ToastProvider>
     );
 
-    expect(await screen.findByText(/ALL TIES RESOLVED/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Equal teams share a rank/i)).toBeInTheDocument();
     const finalizeBtn = screen.getByRole('button', { name: /FINALIZE MATCH/i });
     expect(finalizeBtn).not.toBeDisabled();
 
@@ -214,10 +161,7 @@ describe('FinalizePanel', () => {
 
 describe('ResultView', () => {
   it('renders final leaderboard, winner, and Start New Match button', async () => {
-    vi.mocked(rpcModule.rpcGetStandings).mockResolvedValue({
-      standings: mockStandings.map((s) => ({ ...s, tie_unresolved: false })),
-      has_unresolved_tie: false,
-    });
+    vi.mocked(rpcModule.rpcGetStandings).mockResolvedValue({ standings: mockStandings });
 
     const finalizedSnapshot: rpcModule.AdminRoomSnapshot = {
       ...mockSnapshot,

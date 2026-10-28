@@ -226,10 +226,6 @@ export async function rpcAdminSetBankrupt(params: {
   return mutate<any>('admin_set_bankrupt', params);
 }
 
-export async function rpcAdminSetTiebreak(room_id: string, ordered_team_ids: string[], note?: string) {
-  return callRpc<any>('admin_set_tiebreak', { room_id, ordered_team_ids, note });
-}
-
 export async function rpcAdminMoveTeam(params: {
   team_id: string;
   steps: number;
@@ -295,13 +291,12 @@ export interface StandingsRow {
   is_bankrupt: boolean;
   cash: number;
   business_count: number;
-  tiebreak_order: number | null;
-  tie_unresolved: boolean;
+  business_cost: number;
+  upgrade_count: number;
 }
 
 export interface StandingsResponse {
   standings: StandingsRow[];
-  has_unresolved_tie: boolean;
 }
 
 export interface HistoryRoomSummary {

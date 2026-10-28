@@ -61,12 +61,6 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                         YOU
                       </span>
                     )}
-
-                    {entry.won_on_pitch && (
-                      <span className="font-pixel text-[9px] bg-status-warning-bg text-status-warning-text border border-status-warning-text px-1 py-0.5 shadow-[1px_1px_0px_var(--color-status-warning-text)]">
-                        ★ won on pitch
-                      </span>
-                    )}
                   </div>
                 </td>
 

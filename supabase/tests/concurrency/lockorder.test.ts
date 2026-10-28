@@ -57,7 +57,7 @@ run('lock order: no deadlocks (L1, L7)', () => {
     const r = await race(async () => {
       const [t1] = await teamIds(a, roomId);
       return () => Promise.all([
-        a.rpc('admin_set_team_values', { team_id: t1.id, cash: 1000, cv: 0, expected_version: t1.version, request_id: uuid() }),
+        a.rpc('admin_set_team_values', { team_id: t1.id, cash: 1000, expected_version: t1.version, request_id: uuid() }),
         b.rpc('admin_add_business', { team_id: t1.id, business_key: 'edtech', apply_purchase: false, expected_version: t1.version, request_id: uuid() }),
       ]);
     });
@@ -80,7 +80,7 @@ run('lock order: no deadlocks (L1, L7)', () => {
     const r = await race(async (i) => {
       await freshGame();
       const [t1, t2] = await teamIds(a, roomId);
-      const changes = [t1, t2].map((t) => ({ team_id: t.id, cash_delta: 10, cv_delta: 0, expected_version: t.version }));
+      const changes = [t1, t2].map((t) => ({ team_id: t.id, cash_delta: 10, expected_version: t.version }));
       return () => Promise.all([
         a.rpc('admin_adjust', { changes, label: 'race', note: `n${i}`, request_id: uuid() }),
         b.rpc('admin_abort_game', { p_room_id: roomId, note: `race ${i}` }),
@@ -102,7 +102,6 @@ run('lock order: no deadlocks (L1, L7)', () => {
       await svc.from('rooms').update({ ends_at: new Date(Date.now() - 1000).toISOString() }).eq('id', id);
       await a.rpc('expire_if_due', { p_room_id: id });
       const fresh = await teamIds(a, id);
-      await a.rpc('admin_set_tiebreak', { room_id: id, ordered_team_ids: fresh.map((t) => t.id), note: 'order' });
       const res = await Promise.all([
         a.rpc('admin_set_business_level', { team_id: fresh[0].id, business_key: 'saas', new_level: 1, apply_upgrade: false, expected_version: fresh[0].version, request_id: uuid(), note: 'fix' }),
         b.rpc('admin_finalize', { p_room_id: id }),

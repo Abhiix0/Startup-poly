@@ -33,7 +33,7 @@ run('money RPCs under concurrency and random sequences (L4, L8)', () => {
   it('same request_id sent twice at once: one effect, identical response, no spurious conflict', async () => {
     const [t1] = await teamIds(a, roomId);
     const rid = uuid();
-    const args = { team_id: t1.id, cash: 777, cv: null, expected_version: t1.version, request_id: rid, note: null };
+    const args = { team_id: t1.id, cash: 777, expected_version: t1.version, request_id: rid, note: null };
     const [x, y] = await Promise.all([a.rpc('admin_set_team_values', args), a.rpc('admin_set_team_values', args)]);
     expect(x.error).toBeNull();
     expect(y.error).toBeNull();
@@ -54,8 +54,8 @@ run('money RPCs under concurrency and random sequences (L4, L8)', () => {
   it('request_id reused for a different team is REQUEST_ID_REUSED and has no effect (L4)', async () => {
     const [, , t3, t4] = await teamIds(a, roomId);
     const rid = uuid();
-    expect((await a.rpc('admin_set_team_values', { team_id: t3.id, cash: 900, cv: null, expected_version: t3.version, request_id: rid, note: null })).error).toBeNull();
-    const bad = await a.rpc('admin_set_team_values', { team_id: t4.id, cash: 800, cv: null, expected_version: t4.version, request_id: rid, note: null });
+    expect((await a.rpc('admin_set_team_values', { team_id: t3.id, cash: 900, expected_version: t3.version, request_id: rid, note: null })).error).toBeNull();
+    const bad = await a.rpc('admin_set_team_values', { team_id: t4.id, cash: 800, expected_version: t4.version, request_id: rid, note: null });
     expect(bad.error?.message).toBe('REQUEST_ID_REUSED');
     expect((await teamIds(a, roomId))[3].version).toBe(t4.version);
   });
@@ -66,17 +66,17 @@ run('money RPCs under concurrency and random sequences (L4, L8)', () => {
     const rawErrors: string[] = [];
 
     for (let i = 0; i < 200; i++) {
-      const ts = (await svc.from('teams').select('id,version,cash,cv,slot,is_bankrupt').eq('room_id', roomId).order('slot')).data!;
+      const ts = (await svc.from('teams').select('id,version,cash,slot,is_bankrupt').eq('room_id', roomId).order('slot')).data!;
       const t = pick(ts);
       const client = rand() < 0.5 ? a : b;
       const rid = uuid();
       const op = Math.floor(rand() * 6);
       let res: { error: { code?: string; message?: string } | null };
       if (op === 0) {
-        res = await client.rpc('admin_set_team_values', { team_id: t.id, cash: Math.floor(rand() * 3000), cv: Math.floor(rand() * 3000), expected_version: t.version, request_id: rid, note: null });
+        res = await client.rpc('admin_set_team_values', { team_id: t.id, cash: Math.floor(rand() * 3000), expected_version: t.version, request_id: rid, note: null });
       } else if (op === 1) {
         const u = pick(ts.filter((x) => x.id !== t.id));
-        res = await client.rpc('admin_adjust', { changes: [t, u].map((x) => ({ team_id: x.id, cash_delta: Math.floor(rand() * 400) - 200, cv_delta: Math.floor(rand() * 200) - 100, expected_version: x.version })), label: 'rnd', note: 'n', request_id: rid });
+        res = await client.rpc('admin_adjust', { changes: [t, u].map((x) => ({ team_id: x.id, cash_delta: Math.floor(rand() * 400) - 200, expected_version: x.version })), label: 'rnd', note: 'n', request_id: rid });
       } else if (op === 2) {
         res = await client.rpc('admin_add_business', { team_id: t.id, business_key: pick(KEYS), apply_purchase: rand() < 0.7, expected_version: t.version, request_id: rid, note: 'n' });
       } else if (op === 3) {
@@ -96,22 +96,20 @@ run('money RPCs under concurrency and random sequences (L4, L8)', () => {
     }
     expect(rawErrors).toEqual([]);
 
-    const teams = (await svc.from('teams').select('id,cash,cv').eq('room_id', roomId)).data!;
+    const teams = (await svc.from('teams').select('id,cash').eq('room_id', roomId)).data!;
     const biz = (await svc.from('team_businesses').select('team_id,business_key').eq('room_id', roomId)).data!;
     const events = (await svc.from('activity_events').select('team_id,prev,new').eq('room_id', roomId).not('team_id', 'is', null)).data!;
 
     for (const t of teams) {
       expect(t.cash).toBeGreaterThanOrEqual(0);
-      expect(t.cv).toBeGreaterThanOrEqual(0);
-      expect(biz.filter((x) => x.team_id === t.id).length).toBeLessThanOrEqual(3);
-      // sum of audited deltas must reproduce the balance (start: cash 1000, cv 0)
-      let cash = 1000, cv = 0;
+      expect(biz.filter((x) => x.team_id === t.id).length).toBeLessThanOrEqual(2);
+      // sum of audited deltas must reproduce the balance (start: cash 1000)
+      let cash = 1000;
       for (const e of events.filter((x) => x.team_id === t.id)) {
         const p = (e.prev ?? {}) as Record<string, unknown>, n = (e.new ?? {}) as Record<string, unknown>;
         if (typeof p.cash === 'number' && typeof n.cash === 'number') cash += n.cash - p.cash;
-        if (typeof p.cv === 'number' && typeof n.cv === 'number') cv += n.cv - p.cv;
       }
-      expect({ cash, cv }).toEqual({ cash: t.cash, cv: t.cv });
+      expect(cash).toEqual(t.cash);
     }
     const keys = biz.map((x) => x.business_key);
     expect(new Set(keys).size).toBe(keys.length);

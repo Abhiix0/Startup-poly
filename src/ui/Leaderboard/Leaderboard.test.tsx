@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { LeaderboardView, enrichStandingsWithPitch } from './LeaderboardView';
+import { LeaderboardView } from './LeaderboardView';
 import { formatStandingsAsText, exportStandingsToCsv, LeaderboardEntry } from './exportHelpers';
 
 const mockStandings: LeaderboardEntry[] = [
@@ -27,7 +27,6 @@ const mockStandings: LeaderboardEntry[] = [
     cash: 300,
     business_count: 2,
     is_bankrupt: false,
-    won_on_pitch: false,
   },
   {
     rank: 4,
@@ -46,16 +45,6 @@ const mockStandings: LeaderboardEntry[] = [
     is_bankrupt: true,
   },
 ];
-
-describe('enrichStandingsWithPitch', () => {
-  it('detects pitch victory between teams tied on mechanicals', () => {
-    const enriched = enrichStandingsWithPitch(mockStandings);
-    // Beta Builders (#2) and Gamma Guild (#3) have identical cash (300), business_count (2).
-    // Beta Builders was ranked higher, so they won on pitch.
-    expect(enriched[1].won_on_pitch).toBe(true);
-    expect(enriched[2].won_on_pitch).toBe(false);
-  });
-});
 
 describe('LeaderboardView', () => {
   it('renders winner banner, podium top 3, and full table for all teams', () => {
@@ -86,8 +75,7 @@ describe('LeaderboardView', () => {
     // Bankrupt team has ELIMINATED tag
     expect(screen.getByText('ELIMINATED')).toBeInTheDocument();
 
-    // Won on pitch badge
-    expect(screen.getByText(/★ won on pitch/i)).toBeInTheDocument();
+    expect(screen.queryByText(/won on pitch/i)).not.toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: 'CASH' })).toBeInTheDocument();
     expect(screen.queryByRole('columnheader', { name: /TOTAL VALUE/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('columnheader', { name: 'CV' })).not.toBeInTheDocument();

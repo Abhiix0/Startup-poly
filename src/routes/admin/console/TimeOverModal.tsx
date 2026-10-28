@@ -7,7 +7,6 @@ export interface TimeOverModalProps {
   onClose: () => void;
   snapshot: AdminRoomSnapshot;
   standings: StandingsRow[];
-  hasUnresolvedTie: boolean;
   onExtendTenMinutes: () => Promise<void>;
   onOpenFinalize: () => void;
   isExtending?: boolean;
@@ -18,7 +17,6 @@ export const TimeOverModal: React.FC<TimeOverModalProps> = ({
   onClose,
   snapshot,
   standings,
-  hasUnresolvedTie,
   onExtendTenMinutes,
   onOpenFinalize,
   isExtending = false,
@@ -118,13 +116,6 @@ export const TimeOverModal: React.FC<TimeOverModalProps> = ({
                   ₹{leader.cash.toLocaleString('en-IN')}
                 </span>
               </div>
-            </div>
-          )}
-
-          {hasUnresolvedTie && (
-            <div className="bg-status-warning-bg border-2 border-status-warning-dark p-2 text-status-warning-text font-pixel text-[10px] flex items-center gap-2">
-              <span>⚠</span>
-              <span>A tie exists among active teams. A 30s pitch tiebreak will resolve the winner before locking.</span>
             </div>
           )}
         </div>

@@ -129,7 +129,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const [abortError, setAbortError] = useState<string | null>(null);
 
   // Standings & Time Over states
-  const { standings, hasUnresolvedTie } = useStandings(snapshot.room.id, isTimeExpired);
+  const { standings } = useStandings(snapshot.room.id, isTimeExpired);
   const [isTimeOverModalOpen, setIsTimeOverModalOpen] = useState<boolean>(false);
   const [isExtendingTime, setIsExtendingTime] = useState<boolean>(false);
   const hasTriggeredTimeOverPopupRef = React.useRef<boolean>(false);
@@ -1176,7 +1176,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         onClose={() => setIsTimeOverModalOpen(false)}
         snapshot={snapshot}
         standings={standings}
-        hasUnresolvedTie={hasUnresolvedTie}
         onExtendTenMinutes={handleExtendTenMinutes}
         onOpenFinalize={() => {
           setIsTimeOverModalOpen(false);

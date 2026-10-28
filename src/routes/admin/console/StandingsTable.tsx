@@ -21,8 +21,9 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
             <th className="p-2">TEAM</th>
             <th className="p-2 text-right">CASH</th>
             <th className="p-2 text-center">BIZ</th>
+            <th className="p-2 text-right">BIZ COST</th>
+            <th className="p-2 text-center">UPGRADES</th>
             <th className="p-2 text-center">STATUS</th>
-            <th className="p-2 text-center">TIE STATUS</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-300">
@@ -34,7 +35,6 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                 key={row.team_id}
                 className={`
                   hover:bg-brand-cream transition-colors
-                  ${row.tie_unresolved ? 'bg-brand-cream-light' : ''}
                   ${row.is_bankrupt ? 'bg-status-danger-bg/40 opacity-70' : ''}
                 `}
               >
@@ -66,6 +66,11 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                   {row.business_count} / 3
                 </td>
 
+                <td className="p-2 text-right font-tabular font-bold text-brand-navy">
+                  ₹{row.business_cost.toLocaleString('en-IN')}
+                </td>
+                <td className="p-2 text-center font-mono">{row.upgrade_count}</td>
+
                 {/* Status */}
                 <td className="p-2 text-center">
                   {row.is_bankrupt ? (
@@ -76,21 +81,6 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                     <span className="font-pixel text-[9px] bg-status-success-bg text-brand-green px-1.5 py-0.5 border border-brand-green uppercase">
                       ACTIVE
                     </span>
-                  )}
-                </td>
-
-                {/* Tie Status */}
-                <td className="p-2 text-center">
-                  {row.tie_unresolved ? (
-                    <span className="font-pixel text-[9px] bg-status-warning-bg text-status-warning-dark border border-brand-gold px-1.5 py-0.5 animate-pulse">
-                      ⚠ UNRESOLVED TIE
-                    </span>
-                  ) : row.tiebreak_order ? (
-                    <span className="font-pixel text-[9px] bg-status-info-bg text-status-info-dark border border-blue-400 px-1.5 py-0.5">
-                      Pitch Order #{row.tiebreak_order}
-                    </span>
-                  ) : (
-                    <span className="font-mono text-[10px] text-neutral-400">—</span>
                   )}
                 </td>
               </tr>

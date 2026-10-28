@@ -24,7 +24,7 @@ INSERT INTO exp_funcs VALUES
   ('admin_cancel_room', false, true),
   ('admin_create_room', false, true), ('admin_move_team', false, true), ('admin_extend_game', false, true), ('admin_finalize', false, true), ('admin_open_lobby', false, true),
   ('admin_release_team', false, true), ('admin_remove_business', false, true), ('admin_set_bankrupt', false, true),
-  ('admin_set_business_level', false, true), ('admin_set_team_values', false, true), ('admin_set_tiebreak', false, true),
+  ('admin_set_business_level', false, true), ('admin_set_team_values', false, true),
   ('admin_start_game', false, true), ('admin_update_team_config', false, true),
   ('get_admin_snapshot', false, true), ('get_history_detail', false, true), ('get_standings', false, true),
   ('list_history', false, true), ('expire_if_due', false, true),
@@ -104,7 +104,7 @@ SELECT r.code AS code, r.id AS room_id,
        (SELECT id FROM public.teams WHERE room_id = r.id AND slot = 2) AS team_b
 FROM public.rooms r \gset
 SELECT public.admin_start_game(:'room_id'::uuid, true);
-SELECT public.admin_set_team_values(:'team_b'::uuid, 5000, 700, 0, gen_random_uuid(), NULL);
+SELECT public.admin_set_team_values(:'team_b'::uuid, 5000, 0, gen_random_uuid(), NULL);
 
 SELECT set_config('request.jwt.claims', '{"sub": "c1000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
 SELECT public.join_team(:'code', 1, :'pin1');
@@ -114,7 +114,7 @@ SELECT public.join_team(:'code', 2, :'pin2');
 -- Team A (claimed player) cannot see Team B or any secret
 SELECT set_config('request.jwt.claims', '{"sub": "c1000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
 SELECT is((SELECT count(*)::int FROM public.teams), 1, 'team A sees exactly one teams row');
-SELECT is((SELECT count(*)::int FROM public.teams WHERE id = :'team_b'::uuid), 0, 'team A cannot read team B row (cash/CV)');
+SELECT is((SELECT count(*)::int FROM public.teams WHERE id = :'team_b'::uuid), 0, 'team A cannot read team B row (cash)');
 SELECT is((SELECT count(*)::int FROM public.team_secrets), 0, 'team A cannot read any PIN');
 SELECT is((SELECT count(*)::int FROM public.activity_events), 0, 'team A cannot read the activity log');
 SELECT is((SELECT count(*)::int FROM public.team_claims), 1, 'team A sees only its own claim');

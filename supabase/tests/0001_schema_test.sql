@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(21);
+SELECT plan(20);
 
 -- 1. Catalog Seed Test
 SELECT results_eq(
@@ -73,7 +73,7 @@ SELECT throws_ok(
   'Team color with invalid hex format is rejected'
 );
 
--- Negative cash/cv
+-- Negative cash
 SELECT throws_ok(
   $$INSERT INTO public.teams (room_id, slot, name, color, cash) VALUES ('11111111-1111-1111-1111-111111111111', 1, 'Team 1', '#FF0000', -100)$$,
   '23514',
@@ -81,18 +81,11 @@ SELECT throws_ok(
   'Negative cash is rejected'
 );
 
-SELECT throws_ok(
-  $$INSERT INTO public.teams (room_id, slot, name, color, cv) VALUES ('11111111-1111-1111-1111-111111111111', 1, 'Team 1', '#FF0000', -50)$$,
-  '23514',
-  NULL,
-  'Negative CV is rejected'
-);
-
 -- Insert valid teams
-INSERT INTO public.teams (id, room_id, slot, name, color, cash, cv)
+INSERT INTO public.teams (id, room_id, slot, name, color, cash)
 VALUES 
-  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 1, 'Team Alpha', '#FF0000', 1000, 0),
-  ('33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 2, 'Team Beta', '#00FF00', 1000, 0);
+  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 1, 'Team Alpha', '#FF0000', 1000),
+  ('33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 2, 'Team Beta', '#00FF00', 1000);
 
 -- 4. Business Constraints & Cap Trigger
 -- Level 3 rejected
@@ -171,8 +164,8 @@ SELECT throws_ok(
   'Deleting activity_events is rejected with IMMUTABLE'
 );
 
-INSERT INTO public.final_results (room_id, team_id, rank, cv, cash, business_count, is_bankrupt)
-VALUES ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 1, 0, 1000, 3, false);
+INSERT INTO public.final_results (room_id, team_id, rank, cash, business_count, is_bankrupt)
+VALUES ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 1, 1000, 3, false);
 
 SELECT throws_ok(
   $$UPDATE public.final_results SET rank = 2 WHERE room_id = '11111111-1111-1111-1111-111111111111'$$,
