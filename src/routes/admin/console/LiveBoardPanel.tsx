@@ -7,8 +7,10 @@ import './LiveBoardPanel.css';
 type Team = AdminRoomSnapshot['teams'][number];
 
 const spaceColors: Record<BoardSpace['type'], string> = {
-  START: '#08b858', BUSINESS: '#078bea', BONUS: '#ffc400', CRISIS: '#e72c38',
-  WILDCARD: '#9b42e8', ACTION_B: '#f77a0a', ACTION_C: '#e72c38', ACTION_D: '#05aaa6',
+  START: 'var(--color-board-start)', BUSINESS: 'var(--color-board-business)',
+  BONUS: 'var(--color-board-bonus)', CRISIS: 'var(--color-board-crisis)',
+  WILDCARD: 'var(--color-board-wildcard)', ACTION_B: 'var(--color-board-action-b)',
+  ACTION_C: 'var(--color-board-action-c)', ACTION_D: 'var(--color-board-action-d)',
 };
 
 function BoardIcon({ space }: { space: BoardSpace }) {
@@ -217,7 +219,7 @@ export const LiveBoardPanel: React.FC<LiveBoardPanelProps> = ({
                 const destination = getBoardSpace(event.new?.board_position ?? 0);
                 return (
                   <li key={event.id} className="font-mono text-[11px] text-brand-navy flex gap-1.5">
-                    <span className="mt-0.5 w-2.5 h-2.5 rounded-full border border-brand-navy shrink-0" style={{ backgroundColor: team?.color ?? '#94a3b8' }} />
+                    <span className="mt-0.5 w-2.5 h-2.5 rounded-full border border-brand-navy shrink-0" style={{ backgroundColor: team?.color ?? 'var(--color-neutral-400)' }} />
                     <span><strong>{team?.name ?? 'Team'}</strong> → #{destination.index} {destination.name}</span>
                   </li>
                 );

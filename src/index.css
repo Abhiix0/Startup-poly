@@ -76,6 +76,18 @@
   --color-team-6: #FF5B00;
 
   /* ========================================================================= */
+  /* LIVE BOARD SPACE TYPES (admin LiveBoardPanel cell backgrounds)            */
+  /* ========================================================================= */
+  --color-board-start: #08b858;
+  --color-board-business: #078bea;
+  --color-board-bonus: #ffc400;
+  --color-board-crisis: #e72c38;
+  --color-board-wildcard: #9b42e8;
+  --color-board-action-b: #f77a0a;
+  --color-board-action-c: #e72c38;
+  --color-board-action-d: #05aaa6;
+
+  /* ========================================================================= */
   /* CANONICAL BRAND ALIASES (Backward-compatible shortcuts for utility classes)*/
   /* ========================================================================= */
   --color-nes-sky: var(--color-brand-sky);

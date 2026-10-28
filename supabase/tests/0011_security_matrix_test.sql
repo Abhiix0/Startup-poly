@@ -22,7 +22,7 @@ CREATE TEMP TABLE exp_funcs (f text PRIMARY KEY, anon_x bool, auth_x bool) ON CO
 INSERT INTO exp_funcs VALUES
   ('admin_abort_game', false, true), ('admin_add_business', false, true), ('admin_adjust', false, true),
   ('admin_cancel_room', false, true),
-  ('admin_create_room', false, true), ('admin_extend_game', false, true), ('admin_finalize', false, true), ('admin_open_lobby', false, true),
+  ('admin_create_room', false, true), ('admin_move_team', false, true), ('admin_extend_game', false, true), ('admin_finalize', false, true), ('admin_open_lobby', false, true),
   ('admin_release_team', false, true), ('admin_remove_business', false, true), ('admin_set_bankrupt', false, true),
   ('admin_set_business_level', false, true), ('admin_set_team_values', false, true), ('admin_set_tiebreak', false, true),
   ('admin_start_game', false, true), ('admin_update_team_config', false, true),
@@ -33,7 +33,7 @@ INSERT INTO exp_funcs VALUES
   ('is_admin', true, true), ('server_time', true, true),
   ('app_now', false, false), ('raise_error', false, false), ('get_team_snapshot', false, false),
   ('room_standings', false, false), ('lifecycle_replay_check', false, false), ('money_replay_check', false, false),
-  ('max_money', false, false),
+  ('max_money', false, false), ('reset_board_positions_after_abort', false, false),
   ('fn_check_business_cap', false, false), ('fn_check_immutable_table', false, false), ('fn_check_room_immutable', false, false),
   ('fn_check_room_status_transition', false, false), ('fn_check_team_business_room_immutable', false, false),
   ('fn_check_team_room_immutable', false, false);
