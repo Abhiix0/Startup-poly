@@ -10,14 +10,12 @@ export interface RentDialogProps {
   teams: TeamState[];
   defaultPayerId?: string;
   isTimeExpired: boolean;
+  /** The server derives the owner and the amount; only identities and versions are sent. */
   onSubmit: (params: {
-    changes: Array<{
-      team_id: string;
-      cash_delta: number;
-      cv_delta: number;
-      expected_version: number;
-    }>;
-    label: string;
+    payerTeamId: string;
+    businessKey: string;
+    payerExpectedVersion: number;
+    ownerExpectedVersion: number;
     note?: string;
     requestId: string;
   }) => Promise<void>;
@@ -37,8 +35,6 @@ export const RentDialog: React.FC<RentDialogProps> = ({
 }) => {
   const [payerId, setPayerId] = useState<string>(defaultPayerId || teams[0]?.id || '');
   const [businessKey, setBusinessKey] = useState<string>('');
-  const [customRent, setCustomRent] = useState<number | undefined>(undefined);
-  const [customCv, setCustomCv] = useState<number | undefined>(undefined);
   const [note, setNote] = useState<string>('');
   const [requestId, setRequestId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -59,8 +55,6 @@ export const RentDialog: React.FC<RentDialogProps> = ({
   useEffect(() => {
     if (isOpen) {
       setPayerId(defaultPayerId || teams[0]?.id || '');
-      setCustomRent(undefined);
-      setCustomCv(undefined);
       setNote('');
       setRequestId(safeRandomUUID());
       setError(null);
@@ -80,17 +74,8 @@ export const RentDialog: React.FC<RentDialogProps> = ({
 
   const preview =
     payer && owner && businessKey
-      ? computeRent(payer, businessKey, owner, customRent, customCv)
+      ? computeRent(payer, businessKey, owner)
       : null;
-
-  const handleAdjust = (teamId: string, cashDelta: number, cvDelta: number) => {
-    if (payer && teamId === payer.id) {
-      setCustomRent(Math.abs(cashDelta));
-    } else if (owner && teamId === owner.id) {
-      setCustomRent(cashDelta);
-      setCustomCv(cvDelta);
-    }
-  };
 
   const handleConfirm = async () => {
     if (!preview || preview.hasShortfall) return;
@@ -102,16 +87,11 @@ export const RentDialog: React.FC<RentDialogProps> = ({
     try {
       setIsSubmitting(true);
       setError(null);
-      const changes = preview.changes.map((ch) => ({
-        team_id: ch.teamId,
-        cash_delta: ch.cashDelta,
-        cv_delta: ch.cvDelta,
-        expected_version: ch.expectedVersion,
-      }));
-
       await onSubmit({
-        changes,
-        label: 'RENT',
+        payerTeamId: payer!.id,
+        businessKey,
+        payerExpectedVersion: payer!.version,
+        ownerExpectedVersion: owner!.version,
         note: note.trim() || undefined,
         requestId,
       });
@@ -137,8 +117,6 @@ export const RentDialog: React.FC<RentDialogProps> = ({
               value={payerId}
               onChange={(e) => {
                 setPayerId(e.target.value);
-                setCustomRent(undefined);
-                setCustomCv(undefined);
               }}
               className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold"
             >
@@ -164,8 +142,6 @@ export const RentDialog: React.FC<RentDialogProps> = ({
                 value={businessKey}
                 onChange={(e) => {
                   setBusinessKey(e.target.value);
-                  setCustomRent(undefined);
-                  setCustomCv(undefined);
                 }}
                 className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold"
               >
@@ -186,7 +162,6 @@ export const RentDialog: React.FC<RentDialogProps> = ({
             isTimeExpired={isTimeExpired}
             note={note}
             onNoteChange={setNote}
-            onAdjustAmount={handleAdjust}
             onDoForcedSale={onDoForcedSale}
             onDeclareBankrupt={onDeclareBankrupt}
           />

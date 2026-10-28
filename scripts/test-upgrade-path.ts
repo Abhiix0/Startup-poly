@@ -3,9 +3,9 @@
  * game created under 0015, not just on an empty one.
  *
  *   1. supabase db reset --version 0015      (schema as it was before the hardening migrations)
- *   2. seed a mid-game state with the 0015 functions (room ACTIVE, a claimed team, cash/CV edits, a business)
+ *   2. seed a mid-game state with the 0015 functions (room ACTIVE, a claimed team, cash edits, a business)
  *   3. supabase migration up                 (applies 0016 ... latest on top of that data)
- *   4. assert the data survived and the new code finishes the existing game (expire, tiebreak, finalize+snapshot)
+ *   4. assert the data survived and the new code finishes the existing game (expire, finalize+snapshot)
  *
  * It resets the local database (that is its job). It talks only to the local Supabase Docker container and
  * refuses to run if that container is not the local one for this project.
@@ -71,8 +71,9 @@ psql(`${asAdmin}
   SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot = 1), 1400, 250, 0, gen_random_uuid(), NULL);
   SELECT public.admin_add_business((SELECT id FROM public.teams WHERE slot = 1), 'saas', true, 1, gen_random_uuid(), NULL);
 `);
-const before = psql(`SELECT cash || ',' || cv || ',' || version FROM public.teams WHERE slot = 1;`);
-console.log(`   seeded room ${room}; team 1 = ${before}`);
+// The 0015-era schema still has teams.cv; only cash and version must survive the upgrade (migration 0029 drops cv).
+const before = psql(`SELECT cash || ',' || version FROM public.teams WHERE slot = 1;`);
+console.log(`   seeded room ${room}; team 1 (cash,version) = ${before}`);
 
 console.log('== 3. apply 0016+ on top of the live data');
 sh(`${SB} migration up`);
@@ -86,24 +87,24 @@ const check = (name: string, got: string, want: string) => {
 };
 
 check('room still ACTIVE', psql(`SELECT status FROM public.rooms WHERE id = '${room}';`), 'ACTIVE');
-check('team 1 cash/cv/version unchanged', psql(`SELECT cash || ',' || cv || ',' || version FROM public.teams WHERE slot = 1;`), before);
+check('team 1 cash/version unchanged', psql(`SELECT cash || ',' || version FROM public.teams WHERE slot = 1;`), before);
+check('company value columns removed', psql(`SELECT count(*) FROM information_schema.columns WHERE table_schema = 'public' AND column_name ~* 'cv';`), '0');
 check('business kept', psql(`SELECT count(*) FROM public.team_businesses;`), '1');
 check('claim kept', psql(`SELECT count(*) FROM public.team_claims;`), '1');
 check('GAME_STARTED event kept', psql(`SELECT count(*) FROM public.activity_events WHERE type = 'GAME_STARTED';`), '1');
-check('money cap constraints validated', psql(`SELECT count(*) FROM pg_constraint WHERE conname IN ('teams_cash_cap','teams_cv_cap') AND convalidated;`), '2');
+check('money cap constraints validated', psql(`SELECT count(*) FROM pg_constraint WHERE conname = 'teams_cash_cap' AND convalidated;`), '1');
 
-// New code on the old game: a replayed edit, an expired deadline, tiebreak, finalize with snapshot.
+// New code on the old game: a replayed edit, an expired deadline, finalize with snapshot.
 const rid = psql(`SELECT gen_random_uuid();`);
-const edit = `SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot = 1), 1500, NULL, (SELECT version FROM public.teams WHERE slot = 1), '${rid}', NULL);`;
+const edit = `SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot = 1), 1500, (SELECT version FROM public.teams WHERE slot = 1), '${rid}', NULL);`;
 psql(`${asAdmin} ${edit}`);
 // Same request_id with stale args: must replay, not apply.
-psql(`${asAdmin} SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot = 1), 9999, NULL, 0, '${rid}', NULL);`);
+psql(`${asAdmin} SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot = 1), 9999, 0, '${rid}', NULL);`);
 check('replayed request_id applied once', psql(`SELECT cash FROM public.teams WHERE slot = 1;`), '1500');
 
 psql(`UPDATE public.rooms SET ends_at = now() - interval '1 minute' WHERE id = '${room}';`);
 psql(`${asAdmin}
   SELECT public.expire_if_due('${room}');
-  SELECT public.admin_set_tiebreak('${room}', ARRAY(SELECT id FROM public.teams WHERE slot > 1 ORDER BY slot), 'order');
   SELECT public.admin_finalize('${room}', gen_random_uuid());
 `);
 check('room FINALIZED with snapshot flag', psql(`SELECT status || ',' || businesses_snapshotted FROM public.rooms WHERE id = '${room}';`), 'FINALIZED,true');

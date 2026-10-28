@@ -49,8 +49,6 @@ run('lifecycle under concurrency (L2, L3, L15)', () => {
   });
 
   it('finalize x2 concurrently with one request_id: one GAME_FINALIZED, identical payloads', async () => {
-    const ids = (await serviceClient().from('teams').select('id').eq('room_id', roomId).order('slot')).data!.map((t) => t.id);
-    expect((await a.rpc('admin_set_tiebreak', { room_id: roomId, ordered_team_ids: ids, note: 'order' })).error).toBeNull();
     const rid = uuid();
     const [x, y] = await Promise.all([a.rpc('admin_finalize', { p_room_id: roomId, request_id: rid }), b.rpc('admin_finalize', { p_room_id: roomId, request_id: rid })]);
     expect(x.error).toBeNull();

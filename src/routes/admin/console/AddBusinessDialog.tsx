@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, PixelButton } from '../../../ui';
 import { AdminRoomSnapshot } from '../../../data/rpc';
-import { OFFICIAL_BUSINESSES } from '../../../domain/economy';
+import { OFFICIAL_BUSINESSES, MAX_BUSINESSES_PER_TEAM, canAddBusiness } from '../../../domain/economy';
 
 export interface AddBusinessDialogProps {
   isOpen: boolean;
@@ -27,8 +27,10 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const noteRef = useRef<HTMLInputElement>(null);
+  // A free (manual) entry bypasses the purchase rules, so it is explained and audited like a post-game correction.
+  const needsNote = isTimeExpired || !applyPurchase;
 
-  const isCapReached = team.businesses.length >= 3;
+  const isCapReached = !canAddBusiness(team.businesses.length);
 
   // Build a map of business_key -> owner team name across all teams
   const ownerMap = new Map<string, string>();
@@ -59,8 +61,8 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
       setError('Please choose a business to acquire.');
       return;
     }
-    if (isTimeExpired && !note.trim()) {
-      setError('Note is required for post-game adjustments.');
+    if (needsNote && !note.trim()) {
+      setError(applyPurchase ? 'Note is required for post-game adjustments.' : 'A note is required for a manual business entry.');
       return;
     }
 
@@ -95,7 +97,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         {isCapReached && (
           <div className="bg-status-danger-bg border-2 border-brand-red p-2 text-center">
             <p className="font-mono text-xs text-brand-red font-bold">
-              ⚠ Team has reached the business cap (3/3). Forced sale or removal required before adding.
+              ⚠ Team has reached the business cap ({MAX_BUSINESSES_PER_TEAM}/{MAX_BUSINESSES_PER_TEAM}). Forced sale or removal required before adding.
             </p>
           </div>
         )}
@@ -103,7 +105,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         {/* 10 Catalog Businesses Picker */}
         <div className="flex flex-col gap-2">
           <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
-            Select Catalog Business ({team.businesses.length}/3 Owned)
+            Select Catalog Business ({team.businesses.length}/{MAX_BUSINESSES_PER_TEAM} Owned)
           </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-1">
@@ -144,7 +146,6 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
 
                   <div className="flex items-center justify-between font-mono text-[11px]">
                     <span className="text-neutral-500">Cost: ₹{b.cost}</span>
-                    <span className="text-brand-navy font-bold">+₹{b.initial_cv} CV</span>
                   </div>
 
                   {isOwned && (
@@ -169,22 +170,22 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
                 className="w-4 h-4 accent-brand-green cursor-pointer"
               />
               <span className="font-sans text-xs font-bold text-brand-navy">
-                Apply purchase (−₹{selectedBiz.cost.toLocaleString('en-IN')}, +{selectedBiz.initial_cv.toLocaleString('en-IN')} CV)
+                Apply purchase (−₹{selectedBiz.cost.toLocaleString('en-IN')})
               </span>
             </label>
             <p className="font-mono text-[11px] text-neutral-500 pl-6">
               {applyPurchase
-                ? `Will deduct ₹${selectedBiz.cost} from team cash and credit ₹${selectedBiz.initial_cv} to CV.`
-                : 'Manual entry only: does not modify team cash or CV.'}
+                ? `Will deduct ₹${selectedBiz.cost} from team cash.`
+                : 'Manual entry only: does not modify team cash.'}
             </p>
           </div>
         )}
 
         {/* Note requirement for post-match adjustments */}
-        {isTimeExpired && (
+        {needsNote && (
           <div className="flex flex-col gap-1">
             <label className="font-pixel text-[10px] uppercase text-brand-red font-bold">
-              ⚠ NOTE REQUIRED (GAME OVER ADJUSTMENT)
+              ⚠ NOTE REQUIRED ({isTimeExpired ? 'GAME OVER ADJUSTMENT' : 'MANUAL ENTRY'})
             </label>
             <input
               ref={noteRef}
@@ -225,7 +226,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
             type="submit"
             variant="primary"
             size="md"
-            disabled={!selectedKey || isCapReached || isSubmitting || (isTimeExpired && !note.trim())}
+            disabled={!selectedKey || isCapReached || isSubmitting || (needsNote && !note.trim())}
             isLoading={isSubmitting}
           >
             CONFIRM ACQUISITION

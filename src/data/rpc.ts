@@ -18,7 +18,7 @@ const READ_ONLY_RPCS = new Set<FunctionName>([
 
 function canRetrySafely(fnName: FunctionName, args?: Record<string, unknown>): boolean {
   // Reads can be retried. Mutations require an idempotency key; otherwise a
-  // lost response could apply a cash/CV/business mutation twice.
+  // lost response could apply a cash/business mutation twice.
   return READ_ONLY_RPCS.has(fnName) || typeof args?.request_id === 'string';
 }
 
@@ -98,18 +98,15 @@ export async function rpcLeaveTeam() {
 export async function rpcGetMyState() {
   return callRpc<{
     room: { status: string; started_at: string | null; ends_at: string | null; server_now: string };
-    team: { slot: number; name: string; color: string; cash: number; cv: number; is_bankrupt: boolean };
+    team: { slot: number; name: string; color: string; cash: number; debt: number; is_bankrupt: boolean };
     businesses: Array<{
       business_key: string;
       name: string;
       level: number;
       cost: number;
-      initial_cv: number;
-      cv_contribution: number;
     }>;
     final_result: {
       rank: number;
-      cv: number;
       cash: number;
       business_count: number;
       is_bankrupt: boolean;
@@ -163,7 +160,6 @@ export async function rpcAdminExtendGame(room_id: string, additional_seconds = 6
 export async function rpcAdminSetTeamValues(params: {
   team_id: string;
   cash?: number | null;
-  cv?: number | null;
   expected_version: number;
   request_id?: string;
   note?: string;
@@ -172,7 +168,7 @@ export async function rpcAdminSetTeamValues(params: {
 }
 
 export async function rpcAdminAdjust(params: {
-  changes: Array<{ team_id: string; cash_delta: number; cv_delta: number; expected_version: number }>;
+  changes: Array<{ team_id: string; cash_delta: number; expected_version: number }>;
   label: string;
   note?: string;
   request_id?: string;
@@ -183,6 +179,17 @@ export async function rpcAdminAdjust(params: {
     note: params.note,
     request_id: params.request_id,
   });
+}
+
+export async function rpcAdminChargeRent(params: {
+  payer_team_id: string;
+  business_key: string;
+  payer_expected_version: number;
+  owner_expected_version: number;
+  request_id?: string;
+  note?: string;
+}) {
+  return mutate<any>('admin_charge_rent', params);
 }
 
 export async function rpcAdminAddBusiness(params: {
@@ -230,10 +237,6 @@ export async function rpcAdminSetBankrupt(params: {
   return mutate<any>('admin_set_bankrupt', params);
 }
 
-export async function rpcAdminSetTiebreak(room_id: string, ordered_team_ids: string[], note?: string) {
-  return callRpc<any>('admin_set_tiebreak', { room_id, ordered_team_ids, note });
-}
-
 export async function rpcAdminMoveTeam(params: {
   team_id: string;
   steps: number;
@@ -264,7 +267,7 @@ export interface AdminRoomSnapshot {
     name: string;
     color: string;
     cash: number;
-    cv: number;
+    debt: number;
     board_position?: number;
     is_bankrupt: boolean;
     version: number;
@@ -276,7 +279,6 @@ export interface AdminRoomSnapshot {
       name: string;
       level: number;
       cost: number;
-      initial_cv: number;
     }>;
   }>;
   events: Array<{
@@ -299,16 +301,15 @@ export interface StandingsRow {
   name: string;
   rank: number;
   is_bankrupt: boolean;
-  cv: number;
+  debt: number;
   cash: number;
   business_count: number;
-  tiebreak_order: number | null;
-  tie_unresolved: boolean;
+  business_cost: number;
+  upgrade_count: number;
 }
 
 export interface StandingsResponse {
   standings: StandingsRow[];
-  has_unresolved_tie: boolean;
 }
 
 export interface HistoryRoomSummary {
@@ -326,7 +327,6 @@ export interface HistoryDetailResult {
   rank: number;
   name: string;
   color: string;
-  cv: number;
   cash: number;
   business_count: number;
   is_bankrupt: boolean;

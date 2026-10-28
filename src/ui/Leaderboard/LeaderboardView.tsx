@@ -11,26 +11,6 @@ export interface LeaderboardViewProps {
   allowPresentationMode?: boolean;
 }
 
-export function enrichStandingsWithPitch(standings: LeaderboardEntry[]): LeaderboardEntry[] {
-  return standings.map((entry, idx) => {
-    const next = standings[idx + 1];
-
-    const tiedWithNext =
-      next &&
-      next.is_bankrupt === entry.is_bankrupt &&
-      next.cv === entry.cv &&
-      next.cash === entry.cash &&
-      next.business_count === entry.business_count;
-
-    const wonOnPitch = Boolean(tiedWithNext);
-
-    return {
-      ...entry,
-      won_on_pitch: entry.won_on_pitch ?? wonOnPitch,
-    };
-  });
-}
-
 export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
   standings,
   highlightTeamName,
@@ -57,8 +37,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
     };
   }, [isPresentation]);
 
-  const enrichedStandings = enrichStandingsWithPitch(standings);
-  const winner = enrichedStandings.find((s) => s.rank === 1 && !s.is_bankrupt);
+  const winner = standings.find((s) => s.rank === 1 && !s.is_bankrupt);
 
   const content = (
     <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
@@ -79,7 +58,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
 
       {/* Top 3 Podium */}
       <Podium
-        topTeams={enrichedStandings.slice(0, 3)}
+        topTeams={standings.slice(0, 3)}
         highlightTeamName={highlightTeamName}
         presentationMode={isPresentation}
       />
@@ -105,7 +84,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
         </div>
 
         <LeaderboardTable
-          standings={enrichedStandings}
+          standings={standings}
           highlightTeamName={highlightTeamName}
           presentationMode={isPresentation}
         />

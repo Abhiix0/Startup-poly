@@ -7,7 +7,6 @@ export interface TimeOverModalProps {
   onClose: () => void;
   snapshot: AdminRoomSnapshot;
   standings: StandingsRow[];
-  hasUnresolvedTie: boolean;
   onExtendTenMinutes: () => Promise<void>;
   onOpenFinalize: () => void;
   isExtending?: boolean;
@@ -18,7 +17,6 @@ export const TimeOverModal: React.FC<TimeOverModalProps> = ({
   onClose,
   snapshot,
   standings,
-  hasUnresolvedTie,
   onExtendTenMinutes,
   onOpenFinalize,
   isExtending = false,
@@ -107,24 +105,17 @@ export const TimeOverModal: React.FC<TimeOverModalProps> = ({
                     </span>
                   </div>
                   <span className="font-mono text-[11px] text-neutral-500">
-                    Cash: ₹{leader.cash.toLocaleString('en-IN')} • CV: ₹{leader.cv.toLocaleString('en-IN')}
+                    Cash: ₹{leader.cash.toLocaleString('en-IN')}
                   </span>
                 </div>
               </div>
 
               <div className="text-right">
-                <span className="font-pixel text-[9px] text-neutral-500 block">TOTAL VALUATION</span>
+                <span className="font-pixel text-[9px] text-neutral-500 block">CASH</span>
                 <span className="font-pixel text-lg font-black text-brand-navy tabular-nums">
-                  ₹{(leader.cash + leader.cv).toLocaleString('en-IN')}
+                  ₹{leader.cash.toLocaleString('en-IN')}
                 </span>
               </div>
-            </div>
-          )}
-
-          {hasUnresolvedTie && (
-            <div className="bg-status-warning-bg border-2 border-status-warning-dark p-2 text-status-warning-text font-pixel text-[10px] flex items-center gap-2">
-              <span>⚠</span>
-              <span>A tie exists among active teams. A 30s pitch tiebreak will resolve the winner before locking.</span>
             </div>
           )}
         </div>

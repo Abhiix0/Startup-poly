@@ -7,6 +7,7 @@ import { ActivityLog } from './ActivityLog';
 import { ConsoleTopBar } from './ConsoleTopBar';
 import { ConnectionStatus } from '../../../ui/ConnectionPill';
 import { PixelButton, useToast } from '../../../ui';
+import { MAX_BUSINESSES_PER_TEAM } from '../../../domain/economy';
 
 export interface ResultViewProps {
   snapshot: AdminRoomSnapshot;
@@ -31,11 +32,9 @@ export const ResultView: React.FC<ResultViewProps> = ({
     rank: s.rank,
     name: s.name,
     color: teamColorMap.get(s.team_id) || 'var(--color-neutral-500)',
-    cv: s.cv,
     cash: s.cash,
     business_count: s.business_count,
     is_bankrupt: s.is_bankrupt,
-    tiebreak_order: s.tiebreak_order,
   }));
 
   const maxCash = Math.max(0, ...leaderboardEntries.map((e) => e.cash));
@@ -140,7 +139,7 @@ export const ResultView: React.FC<ResultViewProps> = ({
                     <div className="flex items-center gap-2 mb-1">
                       <span className="w-3.5 h-3.5 border-2 border-brand-navy" style={{ backgroundColor: e.color }} />
                       <span className="font-pixel text-xs font-bold truncate">#{e.rank} {e.name}</span>
-                      <span className="font-mono text-[11px] ml-auto">{e.business_count}/3 businesses</span>
+                      <span className="font-mono text-[11px] ml-auto">{e.business_count}/{MAX_BUSINESSES_PER_TEAM} businesses</span>
                     </div>
                     <div className="flex items-center gap-2 text-[11px] font-mono">
                       <span className="w-24 shrink-0">Cash</span>

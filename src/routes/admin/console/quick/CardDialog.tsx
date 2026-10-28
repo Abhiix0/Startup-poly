@@ -15,7 +15,6 @@ export interface CardDialogProps {
     changes: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
       expected_version: number;
     }>;
     label: string;
@@ -28,20 +27,20 @@ export interface CardDialogProps {
 
 const BONUS_CARD_DESCRIPTIONS: Record<number, string> = {
   1: 'Bonus #1: +₹300 Cash',
-  2: 'Bonus #2: +300 Company Value',
-  3: 'Bonus #3: +₹200 Cash & +200 Company Value',
-  4: 'Bonus #4: Cash equal to most expensive business owned',
-  5: 'Bonus #5: +₹100 Cash per business owned',
+  2: 'Bonus #2: +₹300 Cash',
+  3: 'Bonus #3: +₹200 Cash',
+  4: 'Bonus #4: 50% of the most expensive business owned in Cash (₹100 if none)',
+  5: 'Bonus #5: Cash by portfolio size (0 = ₹50, 1 = ₹100, 2 = ₹200)',
   6: 'Bonus #6 (Lucky Break): Roll a die, get ₹100 × roll',
 };
 
 const CRISIS_CARD_DESCRIPTIONS: Record<number, string> = {
   1: 'Crisis #1: −₹300 Cash',
-  2: 'Crisis #2: −300 Company Value',
-  3: 'Crisis #3: −₹200 Cash & −200 Company Value',
+  2: 'Crisis #2: −₹300 Cash',
+  3: 'Crisis #3: −₹200 Cash',
   4: 'Crisis #4: −₹100 Cash per business owned',
-  5: 'Crisis #5: −₹100 Cash & −200 Company Value',
-  6: 'Crisis #6: −₹500 Cash',
+  5: 'Crisis #5: −₹100 Cash',
+  6: 'Crisis #6: −₹400 Cash',
 };
 
 export const CardDialog: React.FC<CardDialogProps> = ({
@@ -60,7 +59,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
   const [cardNo, setCardNo] = useState<number>(1);
   const [rewardRoll, setRewardRoll] = useState<number>(1);
   const [customCash, setCustomCash] = useState<number | undefined>(undefined);
-  const [customCv, setCustomCv] = useState<number | undefined>(undefined);
   const [note, setNote] = useState<string>('');
   const [requestId, setRequestId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -73,7 +71,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
       setCardNo(1);
       setRewardRoll(1);
       setCustomCash(undefined);
-      setCustomCv(undefined);
       setNote('');
       setRequestId(safeRandomUUID());
       setError(null);
@@ -85,13 +82,12 @@ export const CardDialog: React.FC<CardDialogProps> = ({
 
   const preview = team
     ? mode === 'BONUS'
-      ? computeBonus(team, cardNo, rewardRoll, customCash, customCv)
-      : computeCrisis(team, cardNo, customCash, customCv)
+      ? computeBonus(team, cardNo, rewardRoll, customCash)
+      : computeCrisis(team, cardNo, customCash)
     : null;
 
-  const handleAdjust = (_targetId: string, cashDelta: number, cvDelta: number) => {
+  const handleAdjust = (_targetId: string, cashDelta: number) => {
     setCustomCash(cashDelta);
-    setCustomCv(cvDelta);
   };
 
   const handleConfirm = async () => {
@@ -111,7 +107,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
       const changes = preview.changes.map((ch) => ({
         team_id: ch.teamId,
         cash_delta: ch.cashDelta,
-        cv_delta: ch.cvDelta,
         expected_version: ch.expectedVersion,
       }));
 
@@ -144,7 +139,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
             onClick={() => {
               setMode('BONUS');
               setCustomCash(undefined);
-              setCustomCv(undefined);
             }}
             className={`flex-1 py-2 font-pixel text-xs uppercase cursor-pointer transition-colors ${
               mode === 'BONUS'
@@ -159,7 +153,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
             onClick={() => {
               setMode('CRISIS');
               setCustomCash(undefined);
-              setCustomCv(undefined);
             }}
             className={`flex-1 py-2 font-pixel text-xs uppercase cursor-pointer border-l-2 border-brand-navy transition-colors ${
               mode === 'CRISIS'
@@ -181,7 +174,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
             onChange={(e) => {
               setTeamId(e.target.value);
               setCustomCash(undefined);
-              setCustomCv(undefined);
             }}
             className="p-2 border-2 border-brand-navy bg-brand-white font-sans text-xs font-bold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-sky"
           >
@@ -206,7 +198,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
                 onClick={() => {
                   setCardNo(num);
                   setCustomCash(undefined);
-                  setCustomCv(undefined);
                 }}
                 className={`py-2 border-2 border-brand-navy font-pixel text-xs cursor-pointer shadow-pixel-sm ${
                   cardNo === num
@@ -239,7 +230,6 @@ export const CardDialog: React.FC<CardDialogProps> = ({
                   onClick={() => {
                     setRewardRoll(roll);
                     setCustomCash(undefined);
-                    setCustomCv(undefined);
                   }}
                   className={`w-7 h-7 border border-brand-navy font-pixel text-xs cursor-pointer ${
                     rewardRoll === roll

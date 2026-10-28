@@ -16,7 +16,7 @@ export type ActivityEventType =
   | 'TEAM_RELEASED'
   | 'GAME_STARTED'
   | 'CASH_SET'
-  | 'CV_SET'
+  | 'CV_SET' // retired: only present in historical rooms
   | 'ADJUSTMENT'
   | 'BUSINESS_ADDED'
   | 'BUSINESS_LEVEL_SET'
@@ -105,7 +105,7 @@ export interface Database {
           name: string;
           color: string;
           cash: number;
-          cv: number;
+          debt: number;
           board_position: number;
           is_bankrupt: boolean;
           tiebreak_order: number | null;
@@ -119,7 +119,7 @@ export interface Database {
           name: string;
           color: string;
           cash?: number;
-          cv?: number;
+          debt?: number;
           board_position?: number;
           is_bankrupt?: boolean;
           tiebreak_order?: number | null;
@@ -133,7 +133,7 @@ export interface Database {
           name?: string;
           color?: string;
           cash?: number;
-          cv?: number;
+          debt?: number;
           board_position?: number;
           is_bankrupt?: boolean;
           tiebreak_order?: number | null;
@@ -228,11 +228,9 @@ export interface Database {
           key: string;
           name: string;
           cost: number;
-          initial_cv: number;
           u1_cost: number;
           u2_cost: number;
-          u1_cv: number;
-          u2_cv: number;
+          board_position: number;
           is_provisional: boolean;
           sort_order: number;
         };
@@ -240,11 +238,9 @@ export interface Database {
           key: string;
           name: string;
           cost: number;
-          initial_cv: number;
           u1_cost: number;
           u2_cost: number;
-          u1_cv?: number;
-          u2_cv?: number;
+          board_position: number;
           is_provisional?: boolean;
           sort_order: number;
         };
@@ -252,11 +248,9 @@ export interface Database {
           key?: string;
           name?: string;
           cost?: number;
-          initial_cv?: number;
           u1_cost?: number;
           u2_cost?: number;
-          u1_cv?: number;
-          u2_cv?: number;
+          board_position?: number;
           is_provisional?: boolean;
           sort_order?: number;
         };
@@ -372,7 +366,6 @@ export interface Database {
           room_id: string;
           team_id: string;
           rank: number;
-          cv: number;
           cash: number;
           business_count: number;
           is_bankrupt: boolean;
@@ -381,7 +374,6 @@ export interface Database {
           room_id: string;
           team_id: string;
           rank: number;
-          cv: number;
           cash: number;
           business_count: number;
           is_bankrupt: boolean;
@@ -390,7 +382,6 @@ export interface Database {
           room_id?: string;
           team_id?: string;
           rank?: number;
-          cv?: number;
           cash?: number;
           business_count?: number;
           is_bankrupt?: boolean;
@@ -455,7 +446,6 @@ export interface Database {
         Args: {
           team_id: string;
           cash?: number | null;
-          cv?: number | null;
           expected_version?: number;
           request_id?: string | null;
           note?: string | null;
@@ -516,10 +506,13 @@ export interface Database {
         };
         Returns: Json;
       };
-      admin_set_tiebreak: {
+      admin_charge_rent: {
         Args: {
-          room_id: string;
-          ordered_team_ids: string[];
+          payer_team_id: string;
+          business_key: string;
+          payer_expected_version: number;
+          owner_expected_version: number;
+          request_id?: string | null;
           note?: string | null;
         };
         Returns: Json;
@@ -560,11 +553,11 @@ export interface Database {
           name: string;
           rank: number;
           is_bankrupt: boolean;
-          cv: number;
+          debt: number;
           cash: number;
           business_count: number;
-          tiebreak_order: number | null;
-          tie_unresolved: boolean;
+          business_cost: number;
+          upgrade_count: number;
         }[];
       };
       get_standings: {

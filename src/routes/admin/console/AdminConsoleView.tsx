@@ -24,12 +24,12 @@ import {
   rpcAdminAbortGame,
   rpcAdminExtendGame,
   rpcAdminMoveTeam,
+  rpcAdminChargeRent,
   rpcRoomStatus,
 } from '../../../data/rpc';
 import {
   QuickActionsBar,
   RentDialog,
-  StartLapDialog,
   StealDialog,
   CardDialog,
   LoseFeatureDialog,
@@ -74,7 +74,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     reversalChanges: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
     }>;
   } | null>(null);
 
@@ -93,7 +92,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
   // Quick actions modal state
   const [isRentOpen, setIsRentOpen] = useState<boolean>(false);
-  const [isStartLapOpen, setIsStartLapOpen] = useState<boolean>(false);
   const [isStealOpen, setIsStealOpen] = useState<boolean>(false);
   const [isCardOpen, setIsCardOpen] = useState<boolean>(false);
   const [cardMode, setCardMode] = useState<'BONUS' | 'CRISIS'>('BONUS');
@@ -111,7 +109,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     expectedVersion?: number;
     currentVersion?: number;
     cash?: number;
-    cv?: number;
   } | null>(null);
   const [insufficientCashShortfall, setInsufficientCashShortfall] = useState<number | null>(null);
 
@@ -131,7 +128,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const [abortError, setAbortError] = useState<string | null>(null);
 
   // Standings & Time Over states
-  const { standings, hasUnresolvedTie } = useStandings(snapshot.room.id, isTimeExpired);
+  const { standings } = useStandings(snapshot.room.id, isTimeExpired);
   const [isTimeOverModalOpen, setIsTimeOverModalOpen] = useState<boolean>(false);
   const [isExtendingTime, setIsExtendingTime] = useState<boolean>(false);
   const hasTriggeredTimeOverPopupRef = React.useRef<boolean>(false);
@@ -179,7 +176,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const selectedTeam = snapshot.teams.find((t) => t.id === selectedTeamId) || snapshot.teams[0];
   const activeTeams = snapshot.teams.filter((t) => !t.is_bankrupt);
   const leader = snapshot.teams.reduce<(typeof snapshot.teams)[0] | undefined>(
-    (best, t) => (!best || (t.cash + t.cv) > (best.cash + best.cv) ? t : best),
+    (best, t) => (t.debt > 0 || t.is_bankrupt ? best : !best || t.cash > best.cash ? t : best),
     undefined
   );
   const totalCash = snapshot.teams.reduce((n, t) => n + t.cash, 0);
@@ -223,7 +220,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         expectedVersion: expectedVer ?? selectedTeam?.version,
         currentVersion: err?.detail?.current_version ?? (selectedTeam?.version ? selectedTeam.version + 1 : undefined),
         cash: err?.detail?.cash,
-        cv: err?.detail?.cv,
       });
       return;
     }
@@ -261,7 +257,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
       if (e.key === 'Escape') {
         setIsRentOpen(false);
-        setIsStartLapOpen(false);
         setIsStealOpen(false);
         setIsCardOpen(false);
         setIsLoseFeatureOpen(false);
@@ -285,9 +280,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       if (key === 'r') {
         e.preventDefault();
         setIsRentOpen(true);
-      } else if (key === 's') {
-        e.preventDefault();
-        setIsStartLapOpen(true);
       } else if (key === 'b') {
         e.preventDefault();
         setIsAddOpen(true);
@@ -335,7 +327,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         return {
           team_id: rev.team_id,
           cash_delta: rev.cash_delta,
-          cv_delta: rev.cv_delta,
           expected_version: currentTeam?.version ?? 0,
         };
       });
@@ -360,7 +351,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     changes: Array<{
       team_id: string;
       cash_delta: number;
-      cv_delta: number;
       expected_version: number;
     }>;
     label: string;
@@ -376,7 +366,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       });
 
       // Play contextual audio feedback
-      if (params.changes.some((c) => c.cash_delta > 0 || c.cv_delta > 0)) {
+      if (params.changes.some((c) => c.cash_delta > 0)) {
         sounds.playCoin();
       } else {
         sounds.playDamage();
@@ -388,7 +378,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         reversalChanges: params.changes.map((ch) => ({
           team_id: ch.team_id,
           cash_delta: -ch.cash_delta,
-          cv_delta: -ch.cv_delta,
         })),
       });
 
@@ -396,6 +385,44 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       params.changes.forEach((ch) => {
         triggerFlash(ch.team_id, ch.cash_delta >= 0 ? 'up' : 'down');
       });
+      setInsufficientCashShortfall(null);
+      await onRefetch();
+    } catch (err: any) {
+      handleError(err);
+      throw err;
+    }
+  };
+
+  const handleChargeRent = async (params: {
+    payerTeamId: string;
+    businessKey: string;
+    payerExpectedVersion: number;
+    ownerExpectedVersion: number;
+    note?: string;
+    requestId: string;
+  }) => {
+    const cashBefore = new Map(snapshot.teams.map((t) => [t.id, t.cash]));
+    try {
+      const result = await rpcAdminChargeRent({
+        payer_team_id: params.payerTeamId,
+        business_key: params.businessKey,
+        payer_expected_version: params.payerExpectedVersion,
+        owner_expected_version: params.ownerExpectedVersion,
+        note: params.note,
+        request_id: params.requestId,
+      });
+      // The server chose the amount: derive the undo and the flash from what it actually applied.
+      const applied = (Array.isArray(result) ? result : []).map((r: { team: { id: string; cash: number } }) => ({
+        team_id: r.team.id,
+        cash_delta: r.team.cash - (cashBefore.get(r.team.id) ?? r.team.cash),
+      }));
+      sounds.playCoin();
+      setLastUndoableAction({
+        label: 'RENT',
+        reversalChanges: applied.map((c) => ({ team_id: c.team_id, cash_delta: -c.cash_delta })),
+      });
+      successToast('Action RENT recorded.');
+      applied.forEach((c) => triggerFlash(c.team_id, c.cash_delta >= 0 ? 'up' : 'down'));
       setInsufficientCashShortfall(null);
       await onRefetch();
     } catch (err: any) {
@@ -464,25 +491,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         note,
       });
       successToast(`${selectedTeam.name} cash updated.`);
-      triggerFlash(selectedTeam.id, direction);
-      await onRefetch();
-    } catch (err: any) {
-      handleError(err, selectedTeam.version);
-      throw err;
-    }
-  };
-
-  const handleUpdateCv = async (newCv: number, note?: string) => {
-    if (!selectedTeam) return;
-    const direction = newCv >= selectedTeam.cv ? 'up' : 'down';
-    try {
-      await rpcAdminSetTeamValues({
-        team_id: selectedTeam.id,
-        cv: newCv,
-        expected_version: selectedTeam.version,
-        note,
-      });
-      successToast(`${selectedTeam.name} CV updated.`);
       triggerFlash(selectedTeam.id, direction);
       await onRefetch();
     } catch (err: any) {
@@ -657,7 +665,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
   const handleResolveBoardSpace = (space: BoardSpace) => {
     switch (space.type) {
-      case 'START': setIsStartLapOpen(true); break;
+      case 'START': infoToast('START is paid automatically when a token reaches or passes it.'); break;
       case 'BUSINESS': setIsAddOpen(true); break;
       case 'BONUS': setCardMode('BONUS'); setIsCardOpen(true); break;
       case 'CRISIS': setCardMode('CRISIS'); setIsCardOpen(true); break;
@@ -894,10 +902,10 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               </div>
               <span
                 className="font-mono text-[10px] sm:text-xs text-neutral-600 block truncate font-bold"
-                title={leader ? `₹${(leader.cash + leader.cv).toLocaleString('en-IN')} (Cash: ₹${leader.cash.toLocaleString('en-IN')} + CV: ₹${leader.cv.toLocaleString('en-IN')})` : ''}
+                title={leader ? `₹${leader.cash.toLocaleString('en-IN')}` : ''}
               >
                 {leader
-                  ? `₹${(leader.cash + leader.cv).toLocaleString('en-IN')} (Cash: ₹${leader.cash.toLocaleString('en-IN')} + CV: ₹${leader.cv.toLocaleString('en-IN')})`
+                  ? `₹${leader.cash.toLocaleString('en-IN')} cash`
                   : 'No active teams'}
               </span>
             </div>
@@ -946,7 +954,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           <QuickActionsBar
             disabled={isEditDisabled}
             onOpenRent={() => setIsRentOpen(true)}
-            onOpenStartLap={() => setIsStartLapOpen(true)}
             onOpenBuy={() => setIsAddOpen(true)}
             onOpenUpgrade={() => {
               if (selectedTeam.businesses.length > 0) {
@@ -1026,7 +1033,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               isTimeExpired={isTimeExpired}
               disabled={isEditDisabled}
               onUpdateCash={handleUpdateCash}
-              onUpdateCv={handleUpdateCv}
               onAddBusinessClick={() => setIsAddOpen(true)}
               onUpgradeBusinessClick={(key) => setUpgradeBizKey(key)}
               onEditBusinessClick={(key) => setEditBizKey(key)}
@@ -1126,18 +1132,9 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         teams={snapshot.teams}
         defaultPayerId={selectedTeam.id}
         isTimeExpired={isTimeExpired}
-        onSubmit={handleQuickAdjust}
+        onSubmit={handleChargeRent}
         onDoForcedSale={handleDoForcedSale}
         onDeclareBankrupt={handleDeclareBankrupt}
-      />
-
-      <StartLapDialog
-        isOpen={isStartLapOpen}
-        onClose={() => setIsStartLapOpen(false)}
-        teams={snapshot.teams}
-        defaultTeamId={selectedTeam.id}
-        isTimeExpired={isTimeExpired}
-        onSubmit={handleQuickAdjust}
       />
 
       <StealDialog
@@ -1202,7 +1199,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         onClose={() => setIsTimeOverModalOpen(false)}
         snapshot={snapshot}
         standings={standings}
-        hasUnresolvedTie={hasUnresolvedTie}
         onExtendTenMinutes={handleExtendTenMinutes}
         onOpenFinalize={() => {
           setIsTimeOverModalOpen(false);
@@ -1271,7 +1267,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           </p>
           <div className="bg-status-danger-bg border-2 border-brand-navy p-3 text-xs text-status-danger-dark font-mono flex flex-col gap-1">
             <span className="font-bold">⚠ FULL TEAM RESET:</span>
-            <span>All team cash resets to ₹1,000, CV resets to ₹0, all purchased businesses are removed, and bankruptcy flags are cleared.</span>
+            <span>All team cash resets to ₹1,000, all purchased businesses are removed, and bankruptcy flags are cleared.</span>
           </div>
           <div className="flex flex-col gap-1">
             <label className="font-pixel text-[10px] uppercase text-brand-navy font-bold">

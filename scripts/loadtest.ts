@@ -170,7 +170,6 @@ async function runLoadTest() {
               {
                 team_id: targetTeam.id,
                 cash_delta: 50,
-                cv_delta: 25,
                 expected_version: targetTeam.version++,
               },
             ],

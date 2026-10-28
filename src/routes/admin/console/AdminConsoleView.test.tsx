@@ -43,7 +43,7 @@ describe('AdminConsoleView', () => {
         name: 'Alpha Rockets',
         color: '#E52521',
         cash: 1000,
-        cv: 300,
+        debt: 0,
         is_bankrupt: false,
         version: 1,
         tiebreak_order: null,
@@ -54,7 +54,6 @@ describe('AdminConsoleView', () => {
             name: 'SaaS',
             level: 0,
             cost: 300,
-            initial_cv: 180,
           },
         ],
       },
@@ -64,7 +63,7 @@ describe('AdminConsoleView', () => {
         name: 'Beta Builders',
         color: '#0099FF',
         cash: 1500,
-        cv: 800,
+        debt: 0,
         is_bankrupt: false,
         version: 2,
         tiebreak_order: null,
@@ -75,7 +74,6 @@ describe('AdminConsoleView', () => {
             name: 'EdTech',
             level: 2,
             cost: 200,
-            initial_cv: 150,
           },
         ],
       },
@@ -85,7 +83,7 @@ describe('AdminConsoleView', () => {
         name: 'Gamma Gigabytes',
         color: '#22B14C',
         cash: 500,
-        cv: 1200,
+        debt: 0,
         is_bankrupt: true,
         version: 3,
         tiebreak_order: null,
@@ -181,7 +179,7 @@ describe('AdminConsoleView', () => {
     });
   });
 
-  it('blocks negative numbers in cash and CV input fields', () => {
+  it('blocks negative numbers in cash input fields', () => {
     renderComponent();
 
     fireEvent.click(screen.getByRole('button', { name: /Adjust Cash Balance/i }));
@@ -249,7 +247,6 @@ describe('AdminConsoleView', () => {
       expected_version: 1,
       current_version: 2,
       cash: 1400,
-      cv: 600,
     };
     vi.mocked(rpcModule.rpcAdminSetTeamValues).mockRejectedValue(conflictErr);
 

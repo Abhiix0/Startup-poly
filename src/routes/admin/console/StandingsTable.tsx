@@ -1,5 +1,6 @@
 import React from 'react';
 import { StandingsRow, AdminRoomSnapshot } from '../../../data/rpc';
+import { MAX_BUSINESSES_PER_TEAM } from '../../../domain/economy';
 
 export interface StandingsTableProps {
   standings: StandingsRow[];
@@ -19,11 +20,11 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
           <tr className="bg-brand-navy text-brand-white font-pixel text-[9px] uppercase border-b-2 border-brand-navy">
             <th className="p-2 text-center w-12">RANK</th>
             <th className="p-2">TEAM</th>
-            <th className="p-2 text-right">CV</th>
             <th className="p-2 text-right">CASH</th>
             <th className="p-2 text-center">BIZ</th>
+            <th className="p-2 text-right">BIZ COST</th>
+            <th className="p-2 text-center">UPGRADES</th>
             <th className="p-2 text-center">STATUS</th>
-            <th className="p-2 text-center">TIE STATUS</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-300">
@@ -35,7 +36,6 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                 key={row.team_id}
                 className={`
                   hover:bg-brand-cream transition-colors
-                  ${row.tie_unresolved ? 'bg-brand-cream-light' : ''}
                   ${row.is_bankrupt ? 'bg-status-danger-bg/40 opacity-70' : ''}
                 `}
               >
@@ -57,11 +57,6 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                   </div>
                 </td>
 
-                {/* CV */}
-                <td className="p-2 text-right font-tabular font-bold text-brand-navy">
-                  ₹{row.cv.toLocaleString('en-IN')}
-                </td>
-
                 {/* Cash */}
                 <td className="p-2 text-right font-tabular font-bold text-brand-green">
                   ₹{row.cash.toLocaleString('en-IN')}
@@ -69,8 +64,13 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 
                 {/* Businesses */}
                 <td className="p-2 text-center font-mono">
-                  {row.business_count} / 3
+                  {row.business_count} / {MAX_BUSINESSES_PER_TEAM}
                 </td>
+
+                <td className="p-2 text-right font-tabular font-bold text-brand-navy">
+                  ₹{row.business_cost.toLocaleString('en-IN')}
+                </td>
+                <td className="p-2 text-center font-mono">{row.upgrade_count}</td>
 
                 {/* Status */}
                 <td className="p-2 text-center">
@@ -78,25 +78,14 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                     <span className="font-pixel text-[9px] bg-brand-red text-brand-white px-1.5 py-0.5 border border-brand-navy uppercase">
                       ELIMINATED
                     </span>
+                  ) : row.debt > 0 ? (
+                    <span className="font-pixel text-[9px] bg-status-danger-bg text-brand-red px-1.5 py-0.5 border border-brand-red uppercase">
+                      IN DEBT ₹{row.debt.toLocaleString('en-IN')}
+                    </span>
                   ) : (
                     <span className="font-pixel text-[9px] bg-status-success-bg text-brand-green px-1.5 py-0.5 border border-brand-green uppercase">
                       ACTIVE
                     </span>
-                  )}
-                </td>
-
-                {/* Tie Status */}
-                <td className="p-2 text-center">
-                  {row.tie_unresolved ? (
-                    <span className="font-pixel text-[9px] bg-status-warning-bg text-status-warning-dark border border-brand-gold px-1.5 py-0.5 animate-pulse">
-                      ⚠ UNRESOLVED TIE
-                    </span>
-                  ) : row.tiebreak_order ? (
-                    <span className="font-pixel text-[9px] bg-status-info-bg text-status-info-dark border border-blue-400 px-1.5 py-0.5">
-                      Pitch Order #{row.tiebreak_order}
-                    </span>
-                  ) : (
-                    <span className="font-mono text-[10px] text-neutral-400">—</span>
                   )}
                 </td>
               </tr>

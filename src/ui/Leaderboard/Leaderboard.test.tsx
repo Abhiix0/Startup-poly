@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { LeaderboardView, enrichStandingsWithPitch } from './LeaderboardView';
+import { LeaderboardView } from './LeaderboardView';
 import { formatStandingsAsText, exportStandingsToCsv, LeaderboardEntry } from './exportHelpers';
 
 const mockStandings: LeaderboardEntry[] = [
@@ -8,16 +8,14 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 1,
     name: 'Alpha Rockets',
     color: '#E52521',
-    cv: 1500,
     cash: 500,
-    business_count: 3,
+    business_count: 2,
     is_bankrupt: false,
   },
   {
     rank: 2,
     name: 'Beta Builders',
     color: '#22B14C',
-    cv: 1200,
     cash: 300,
     business_count: 2,
     is_bankrupt: false,
@@ -26,17 +24,14 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 3,
     name: 'Gamma Guild',
     color: '#FFCC00',
-    cv: 1200,
     cash: 300,
     business_count: 2,
     is_bankrupt: false,
-    won_on_pitch: false,
   },
   {
     rank: 4,
     name: 'Delta Dynamics',
     color: '#00C0F0',
-    cv: 800,
     cash: 200,
     business_count: 1,
     is_bankrupt: false,
@@ -45,22 +40,11 @@ const mockStandings: LeaderboardEntry[] = [
     rank: 5,
     name: 'Epsilon Enterprises',
     color: '#9933FF',
-    cv: 300,
     cash: 0,
     business_count: 0,
     is_bankrupt: true,
   },
 ];
-
-describe('enrichStandingsWithPitch', () => {
-  it('detects pitch victory between teams tied on mechanicals', () => {
-    const enriched = enrichStandingsWithPitch(mockStandings);
-    // Beta Builders (#2) and Gamma Guild (#3) have identical CV (1200), cash (300), business_count (2).
-    // Beta Builders was ranked higher, so they won on pitch.
-    expect(enriched[1].won_on_pitch).toBe(true);
-    expect(enriched[2].won_on_pitch).toBe(false);
-  });
-});
 
 describe('LeaderboardView', () => {
   it('renders winner banner, podium top 3, and full table for all teams', () => {
@@ -91,8 +75,7 @@ describe('LeaderboardView', () => {
     // Bankrupt team has ELIMINATED tag
     expect(screen.getByText('ELIMINATED')).toBeInTheDocument();
 
-    // Won on pitch badge
-    expect(screen.getByText(/★ won on pitch/i)).toBeInTheDocument();
+    expect(screen.queryByText(/won on pitch/i)).not.toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: 'CASH' })).toBeInTheDocument();
     expect(screen.queryByRole('columnheader', { name: /TOTAL VALUE/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('columnheader', { name: 'CV' })).not.toBeInTheDocument();
@@ -137,8 +120,8 @@ describe('exportHelpers', () => {
     const text = formatStandingsAsText('ROOM42', mockStandings, '2026-09-21T12:00:00Z');
     expect(text).toContain('★ STARTUPOLY TOURNAMENT RESULTS ★');
     expect(text).toContain('Room Code: ROOM42');
-    expect(text).toContain('#1 Alpha Rockets — ₹500 Cash | 3/3 Businesses');
-    expect(text).toContain('#5 Epsilon Enterprises — ₹0 Cash | 0/3 Businesses [ELIMINATED]');
+    expect(text).toContain('#1 Alpha Rockets — ₹500 Cash | 2/2 Businesses');
+    expect(text).toContain('#5 Epsilon Enterprises — ₹0 Cash | 0/2 Businesses [ELIMINATED]');
   });
 
   it('exports standings to CSV', () => {

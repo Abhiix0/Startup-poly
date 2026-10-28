@@ -20,7 +20,6 @@ export interface UseMyTeamResult {
   isStale: boolean;
   staleAgeSeconds: number;
   cashFlash: FlashDirection;
-  cvFlash: FlashDirection;
   wasClaimReleased: boolean;
   isSessionLost: boolean;
 }
@@ -53,19 +52,16 @@ export function useMyTeam(): UseMyTeamResult {
 
   // Flash animations
   const [cashFlash, setCashFlash] = useState<FlashDirection>(null);
-  const [cvFlash, setCvFlash] = useState<FlashDirection>(null);
 
   // Claim revocation flag
   const [wasClaimReleased, setWasClaimReleased] = useState<boolean>(false);
 
   const prevCashRef = useRef<number | null>(null);
-  const prevCvRef = useRef<number | null>(null);
   const hadStateRef = useRef<boolean>(false);
   const isMountedRef = useRef<boolean>(true);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const maxWaitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cashFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const cvFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestRequestIdRef = useRef<number>(0);
 
   // Monotonic request counter to ignore out-of-order responses
@@ -107,7 +103,7 @@ export function useMyTeam(): UseMyTeamResult {
         } catch {}
       }
 
-      // Compare previous cash and CV for flash animation
+      // Compare previous cash for flash animation
       if (prevCashRef.current !== null) {
         if (data.team.cash > prevCashRef.current) {
           setCashFlash('up');
@@ -124,23 +120,6 @@ export function useMyTeam(): UseMyTeamResult {
         }
       }
       prevCashRef.current = data.team.cash;
-
-      if (prevCvRef.current !== null) {
-        if (data.team.cv > prevCvRef.current) {
-          setCvFlash('up');
-          if (cvFlashTimerRef.current) clearTimeout(cvFlashTimerRef.current);
-          cvFlashTimerRef.current = setTimeout(() => {
-            if (isMountedRef.current) setCvFlash(null);
-          }, 600);
-        } else if (data.team.cv < prevCvRef.current) {
-          setCvFlash('down');
-          if (cvFlashTimerRef.current) clearTimeout(cvFlashTimerRef.current);
-          cvFlashTimerRef.current = setTimeout(() => {
-            if (isMountedRef.current) setCvFlash(null);
-          }, 600);
-        }
-      }
-      prevCvRef.current = data.team.cv;
 
       setState(data);
       setStatus('ready');
@@ -241,7 +220,6 @@ export function useMyTeam(): UseMyTeamResult {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
       if (maxWaitTimerRef.current) clearTimeout(maxWaitTimerRef.current);
       if (cashFlashTimerRef.current) clearTimeout(cashFlashTimerRef.current);
-      if (cvFlashTimerRef.current) clearTimeout(cvFlashTimerRef.current);
       clearInterval(pollInterval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       sub.unsubscribe();
@@ -285,7 +263,6 @@ export function useMyTeam(): UseMyTeamResult {
     isStale,
     staleAgeSeconds,
     cashFlash,
-    cvFlash,
     wasClaimReleased,
     isSessionLost,
   };

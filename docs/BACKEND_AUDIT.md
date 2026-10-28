@@ -1,5 +1,7 @@
 # STARTUPOLY Backend Audit (Phase 1, audit-only)
 
+> **Historical document.** This describes the system as it was before Company Value (CV) was removed and before the rulebook alignment (business cap 2, new upgrade costs, Debt Recovery, server-side START/purchase/rent rules). It is kept as history and is not updated. Current rules: `docs/SCORING_RULES.md`, the Player Handbook in `src/routes/public/RulesPage.tsx`, and the migrations from `0028` on.
+
 Method: source read of migrations 0001–0015 plus experiments against the LOCAL Supabase stack
 (`supabase start`, 127.0.0.1). Experiments minted local JWTs with the local JWT secret
 (local GoTrue has the email provider off). Nothing here touched a deployed project.

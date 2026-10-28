@@ -2,8 +2,9 @@ import React from 'react';
 import { PixelLevelPips } from '../../../ui/pixel';
 import { PixelButton } from '../../../ui';
 import { AdminRoomSnapshot } from '../../../data/rpc';
-import { OFFICIAL_BUSINESSES, cvContribution, upgradeCost, upgradeCvGain } from '../../../domain/economy';
+import { OFFICIAL_BUSINESSES, upgradeCost } from '../../../domain/economy';
 import { Level } from '../../../domain/types';
+import { MAX_BUSINESSES_PER_TEAM } from '../../../domain/economy';
 
 export interface BusinessListProps {
   team: AdminRoomSnapshot['teams'][0];
@@ -31,11 +32,11 @@ export const BusinessList: React.FC<BusinessListProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-base">🏢</span>
           <h3 className="font-pixel text-xs sm:text-sm uppercase tracking-wider text-brand-navy font-black">
-            BUSINESSES ({team.businesses.length}/3)
+            BUSINESSES ({team.businesses.length}/{MAX_BUSINESSES_PER_TEAM})
           </h3>
           {isCapReached && (
             <span className="font-pixel text-[9px] bg-brand-red text-brand-white px-2 py-0.5 border border-brand-navy font-bold shadow-pixel-sm">
-              CAP REACHED (3/3)
+              CAP REACHED ({MAX_BUSINESSES_PER_TEAM}/{MAX_BUSINESSES_PER_TEAM})
             </span>
           )}
         </div>
@@ -66,10 +67,8 @@ export const BusinessList: React.FC<BusinessListProps> = ({
           {team.businesses.map((tb) => {
             const catalogBiz = OFFICIAL_BUSINESSES.find((b) => b.key === tb.business_key);
             const level = (tb.level ?? 0) as Level;
-            const currentCv = catalogBiz ? cvContribution(catalogBiz, level) : tb.initial_cv;
             const canUpgrade = level < 2;
             const nextCost = catalogBiz && canUpgrade ? upgradeCost(catalogBiz, level) : 0;
-            const nextCvGain = catalogBiz && canUpgrade ? upgradeCvGain(catalogBiz, level) : 0;
 
             return (
               <div
@@ -79,7 +78,7 @@ export const BusinessList: React.FC<BusinessListProps> = ({
                   flex flex-wrap items-center justify-between gap-3 hover:-translate-y-0.5 transition-transform
                 "
               >
-                {/* Left info: Name, Level pips, CV contribution */}
+                {/* Left info: Name, Level pips */}
                 <div className="flex flex-col gap-1 min-w-[180px]">
                   <div className="flex items-center gap-2">
                     <span className="font-pixel text-xs sm:text-sm text-brand-navy font-black">
@@ -92,10 +91,6 @@ export const BusinessList: React.FC<BusinessListProps> = ({
                   </div>
                   <div className="flex items-center gap-2 font-mono text-[11px] text-neutral-600">
                     <span>Cost: ₹{tb.cost}</span>
-                    <span>•</span>
-                    <span className="text-brand-navy font-bold">
-                      CV contribution: ₹{currentCv.toLocaleString('en-IN')}
-                    </span>
                   </div>
                 </div>
 
@@ -106,14 +101,14 @@ export const BusinessList: React.FC<BusinessListProps> = ({
                       type="button"
                       disabled={disabled}
                       onClick={() => onUpgradeClick(tb.business_key)}
-                      title={`Upgrade to Level ${level + 1} (−₹${nextCost}, +₹${nextCvGain} CV)`}
+                      title={`Upgrade to Level ${level + 1} (−₹${nextCost})`}
                       className="
                         font-pixel text-[10px] uppercase px-3 py-1.5 bg-brand-green text-brand-white font-bold
                         border-2 border-brand-navy shadow-pixel-sm hover:bg-interactive-green-hover
                         active:translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all
                       "
                     >
-                      UPGRADE → L{level + 1} (−₹{nextCost}/+{nextCvGain}CV)
+                      UPGRADE → L{level + 1} (−₹{nextCost})
                     </button>
                   )}
 

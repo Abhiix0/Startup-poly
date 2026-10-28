@@ -97,7 +97,6 @@ COPY (
     r.created_at,
     fr.rank,
     fr.team_name,
-    fr.cv,
     fr.cash,
     fr.business_count,
     fr.is_bankrupt
@@ -175,7 +174,7 @@ A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock
 
 ## Money RPC rules (migration 0018)
 - `request_id` replay is decided after the room and team locks. A retry of an in-flight call waits, then gets the first call's result. Reusing an id for another team, action or admin raises `REQUEST_ID_REUSED` and changes nothing. `admin_adjust` replays as the array of team snapshots.
-- Cash and CV are capped at `public.max_money()` (1,000,000,000). Out-of-range input or results raise `INVALID_VALUE` with the field, never a raw `22003`.
+- Cash and debt are capped at `public.max_money()` (1,000,000,000). Out-of-range input or results raise `INVALID_VALUE` with the field, never a raw `22003`.
 - `admin_adjust` requires an array of 1 to 6 items with a uuid `team_id`, integer deltas, a required `expected_version`, no duplicate team, one room.
 - After TIME_EXPIRED these remain editable as corrections (note required): set values, adjust, add/level/remove business, bankruptcy. After FINALIZED all raise `ROOM_NOT_EDITABLE`.
 
@@ -197,7 +196,7 @@ A new RPC that touches a team must resolve `room_id` with a plain `SELECT`, lock
 
 | Class | Meaning | Codes |
 |-------|---------|-------|
-| DEFINITELY_FAILED | Rejected, nothing written | BAD_CODE_OR_PIN, BUSINESS_CAP, BUSINESS_NOT_OWNED, INSUFFICIENT_CASH, INVALID_INITIAL_STATE, INVALID_VALUE, NON_FINAL_ROOM_EXISTS, NOTE_REQUIRED, REQUEST_ID_REUSED, ROOM_NOT_FOUND, TEAM_ALREADY_CLAIMED, TEAM_BANKRUPT, TEAMS_NOT_JOINED, TOO_MANY_ATTEMPTS, UNRESOLVED_TIE |
+| DEFINITELY_FAILED | Rejected, nothing written | BAD_CODE_OR_PIN, BUSINESS_CAP, BUSINESS_NOT_OWNED, IN_DEBT, INSUFFICIENT_CASH, INVALID_INITIAL_STATE, INVALID_VALUE, NON_FINAL_ROOM_EXISTS, NOT_ON_BUSINESS_SPACE, NOTE_REQUIRED, REQUEST_ID_REUSED, ROOM_NOT_FOUND, TEAM_ALREADY_CLAIMED, TEAM_BANKRUPT, TEAMS_NOT_JOINED, TOO_MANY_ATTEMPTS, UNRESOLVED_TIE |
 | CONFLICT | Someone changed it first: refetch and retry | VERSION_CONFLICT, BUSINESS_OWNED |
 | SESSION_EXPIRED | Sign in again | NOT_AUTHENTICATED, PGRST301 |
 | NOT_ADMIN | Account may not do this | NOT_ADMIN |

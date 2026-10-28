@@ -1,13 +1,12 @@
+import { MAX_BUSINESSES_PER_TEAM } from '../../domain/economy';
+
 export interface LeaderboardEntry {
   rank: number;
   name: string;
   color: string;
-  cv: number;
   cash: number;
   business_count: number;
   is_bankrupt: boolean;
-  tiebreak_order?: number | null;
-  won_on_pitch?: boolean;
 }
 
 export function formatStandingsAsText(
@@ -20,22 +19,20 @@ export function formatStandingsAsText(
 
   const rows = standings.map((s) => {
     const statusTag = s.is_bankrupt ? ' [ELIMINATED]' : '';
-    const pitchTag = s.won_on_pitch ? ' (won on pitch)' : '';
-    return `#${s.rank} ${s.name} — ₹${s.cash.toLocaleString('en-IN')} Cash | ${s.business_count}/3 Businesses${statusTag}${pitchTag}`;
+    return `#${s.rank} ${s.name} — ₹${s.cash.toLocaleString('en-IN')} Cash | ${s.business_count}/${MAX_BUSINESSES_PER_TEAM} Businesses${statusTag}`;
   });
 
   return header + rows.join('\n');
 }
 
 export function exportStandingsToCsv(roomCode: string, standings: LeaderboardEntry[]): void {
-  const headers = ['Rank', 'Team', 'Cash', 'Businesses Held', 'Status', 'Decided By Pitch'];
+  const headers = ['Rank', 'Team', 'Cash', 'Businesses Held', 'Status'];
   const rows = standings.map((s) => [
     s.rank,
     `"${s.name.replace(/"/g, '""')}"`,
     s.cash,
     s.business_count,
     s.is_bankrupt ? 'ELIMINATED' : 'ACTIVE',
-    s.won_on_pitch ? 'YES' : 'NO',
   ]);
 
   const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');

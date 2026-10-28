@@ -1,4 +1,4 @@
-import { OFFICIAL_BUSINESSES, rentFor, landingCvFor, startReward } from './economy';
+import { OFFICIAL_BUSINESSES, rentFor } from './economy';
 import { Level } from './types';
 
 export interface TeamState {
@@ -7,7 +7,7 @@ export interface TeamState {
   slot?: number;
   color: string;
   cash: number;
-  cv: number;
+  debt?: number;
   is_bankrupt?: boolean;
   version: number;
   businesses: Array<{
@@ -15,7 +15,6 @@ export interface TeamState {
     name: string;
     level: number;
     cost: number;
-    initial_cv: number;
   }>;
 }
 
@@ -27,9 +26,9 @@ export interface TeamChangePreview {
   cashBefore: number;
   cashDelta: number;
   cashAfter: number;
-  cvBefore: number;
-  cvDelta: number;
-  cvAfter: number;
+  debtBefore: number;
+  debtAfter: number;
+  /** Unpayable amount of a team that still owns a business: it must force-sell first. */
   shortfall: number;
 }
 
@@ -47,12 +46,29 @@ export interface QuickActionPreview {
 
 function buildChange(
   team: TeamState,
-  cashDelta: number,
-  cvDelta: number
+  cashDelta: number
 ): TeamChangePreview {
-  const cashAfter = team.cash + cashDelta;
-  const cvAfter = Math.max(0, team.cv + cvDelta);
-  const shortfall = cashAfter < 0 ? Math.abs(cashAfter) : 0;
+  const debt = team.debt ?? 0;
+  let cashAfter: number;
+  let debtAfter = debt;
+  let shortfall = 0;
+
+  if (cashDelta >= 0) {
+    // Incoming money clears debt first; the remainder is cash.
+    const toDebt = Math.min(debt, cashDelta);
+    debtAfter = debt - toDebt;
+    cashAfter = team.cash + cashDelta - toDebt;
+  } else if (team.cash + cashDelta >= 0) {
+    cashAfter = team.cash + cashDelta;
+  } else if (team.businesses.length > 0) {
+    // Must force-sell a business before an unaffordable payment.
+    cashAfter = team.cash + cashDelta;
+    shortfall = Math.abs(cashAfter);
+  } else {
+    // Nothing left to sell: the unpaid part becomes debt.
+    cashAfter = 0;
+    debtAfter = debt - (team.cash + cashDelta);
+  }
 
   return {
     teamId: team.id,
@@ -62,9 +78,8 @@ function buildChange(
     cashBefore: team.cash,
     cashDelta,
     cashAfter,
-    cvBefore: team.cv,
-    cvDelta,
-    cvAfter,
+    debtBefore: debt,
+    debtAfter,
     shortfall,
   };
 }
@@ -73,28 +88,23 @@ function buildChange(
 export function computeRent(
   payer: TeamState,
   businessKey: string,
-  owner: TeamState,
-  customRent?: number,
-  customCv?: number
+  owner: TeamState
 ): QuickActionPreview {
   const ownedBiz = owner.businesses.find((b) => b.business_key === businessKey);
   const catalogBiz = OFFICIAL_BUSINESSES.find((b) => b.key === businessKey);
 
   const level = (ownedBiz?.level ?? 0) as Level;
   const cost = catalogBiz?.cost ?? ownedBiz?.cost ?? 200;
-  const initialCv = catalogBiz?.initial_cv ?? ownedBiz?.initial_cv ?? 150;
 
   const defaultRent = catalogBiz ? rentFor(catalogBiz, level) : Math.round(cost * (level === 0 ? 0.5 : level === 1 ? 0.75 : 1));
-  const defaultOwnerCv = catalogBiz ? landingCvFor(catalogBiz, level) : Math.round(initialCv * (level === 0 ? 0.5 : level === 1 ? 0.75 : 1));
 
-  const rent = customRent !== undefined ? customRent : defaultRent;
-  const ownerCv = customCv !== undefined ? customCv : defaultOwnerCv;
+  const rent = defaultRent;
 
   const pct = level === 0 ? '50%' : level === 1 ? '75%' : '100%';
-  const ruleExplanation = `Rent = ${pct} of ₹${cost} = ₹${rent}; owner CV +${ownerCv} (${pct} of ${initialCv})`;
+  const ruleExplanation = `Rent = ${pct} of ₹${cost} = ₹${rent}`;
 
-  const payerChange = buildChange(payer, -rent, 0);
-  const ownerChange = buildChange(owner, rent, ownerCv);
+  const payerChange = buildChange(payer, -rent);
+  const ownerChange = buildChange(owner, rent);
 
   const changes = [payerChange, ownerChange];
   const hasShortfall = payerChange.shortfall > 0;
@@ -107,27 +117,6 @@ export function computeRent(
     shortfallTeam: hasShortfall
       ? { id: payer.id, name: payer.name, shortfall: payerChange.shortfall }
       : undefined,
-  };
-}
-
-// 2. START LAP: Team passes or lands on START
-export function computeStart(
-  team: TeamState,
-  customCash?: number,
-  customCv?: number
-): QuickActionPreview {
-  const reward = startReward(team.businesses.length);
-  const cashDelta = customCash !== undefined ? customCash : reward.cash;
-  const cvDelta = customCv !== undefined ? customCv : reward.cv;
-
-  const ruleExplanation = `START lap: +₹${cashDelta} cash; +${cvDelta} CV (${team.businesses.length} businesses owned)`;
-  const teamChange = buildChange(team, cashDelta, cvDelta);
-
-  return {
-    label: 'START_LAP',
-    ruleExplanation,
-    changes: [teamChange],
-    hasShortfall: false,
   };
 }
 
@@ -145,8 +134,8 @@ export function computeSteal(
       ? `Steal Talent: ${thief.name} takes ₹${amount} from ${victim.name}`
       : `Steal Talent: ${thief.name} takes ₹${amount} (all ${victim.name} had: ₹${victim.cash})`;
 
-  const thiefChange = buildChange(thief, amount, 0);
-  const victimChange = buildChange(victim, amount === 0 ? 0 : -amount, 0);
+  const thiefChange = buildChange(thief, amount);
+  const victimChange = buildChange(victim, amount === 0 ? 0 : -amount);
 
   const changes = [thiefChange, victimChange];
   const hasShortfall = victimChange.shortfall > 0;
@@ -167,46 +156,40 @@ export function computeBonus(
   team: TeamState,
   cardNo: number,
   rewardRoll?: number,
-  customCash?: number,
-  customCv?: number
+  customCash?: number
 ): QuickActionPreview {
   let defaultCash = 0;
-  let defaultCv = 0;
   let ruleText = '';
 
   switch (cardNo) {
     case 1:
       defaultCash = 300;
-      defaultCv = 0;
       ruleText = 'Bonus #1: +₹300 cash';
       break;
     case 2:
-      defaultCash = 0;
-      defaultCv = 300;
-      ruleText = 'Bonus #2: +300 CV';
+      defaultCash = 300;
+      ruleText = 'Bonus #2: +₹300 cash';
       break;
     case 3:
       defaultCash = 200;
-      defaultCv = 200;
-      ruleText = 'Bonus #3: +₹200 cash, +200 CV';
+      ruleText = 'Bonus #3: +₹200 cash';
       break;
     case 4: {
+      // Premium Deal: 50% of the purchase cost of the most expensive owned business (₹100 if none).
       const maxCost = team.businesses.reduce((acc, b) => Math.max(acc, b.cost), 0);
-      defaultCash = maxCost;
-      defaultCv = 0;
-      ruleText = `Bonus #4: +₹${maxCost} cash (most expensive owned business)`;
+      defaultCash = maxCost > 0 ? maxCost / 2 : 100;
+      ruleText = `Bonus #4: +₹${defaultCash} cash (50% of the most expensive owned business, ₹100 if none)`;
       break;
     }
     case 5: {
-      defaultCash = 100 * team.businesses.length;
-      defaultCv = 0;
-      ruleText = `Bonus #5: ₹100 × ${team.businesses.length} businesses = +₹${defaultCash} cash`;
+      // Founder Bonus by portfolio size: 0 businesses ₹50, 1 business ₹100, 2 businesses ₹200.
+      defaultCash = [50, 100, 200][Math.min(2, team.businesses.length)];
+      ruleText = `Bonus #5: ${team.businesses.length} businesses = +₹${defaultCash} cash`;
       break;
     }
     case 6: {
       const roll = Math.min(6, Math.max(1, rewardRoll ?? 1));
       defaultCash = 100 * roll;
-      defaultCv = 0;
       ruleText = `Bonus #6 (Lucky Break): ₹100 × roll ${roll} = +₹${defaultCash} cash`;
       break;
     }
@@ -215,9 +198,8 @@ export function computeBonus(
   }
 
   const cashDelta = customCash !== undefined ? customCash : defaultCash;
-  const cvDelta = customCv !== undefined ? customCv : defaultCv;
 
-  const teamChange = buildChange(team, cashDelta, cvDelta);
+  const teamChange = buildChange(team, cashDelta);
 
   return {
     label: `BONUS_CARD_${cardNo}`,
@@ -231,53 +213,44 @@ export function computeBonus(
 export function computeCrisis(
   team: TeamState,
   cardNo: number,
-  customCash?: number,
-  customCv?: number
+  customCash?: number
 ): QuickActionPreview {
   let defaultCash = 0;
-  let defaultCv = 0;
   let ruleText = '';
 
   switch (cardNo) {
     case 1:
       defaultCash = -300;
-      defaultCv = 0;
       ruleText = 'Crisis #1: −₹300 cash';
       break;
     case 2:
-      defaultCash = 0;
-      defaultCv = -300;
-      ruleText = 'Crisis #2: −300 CV';
+      defaultCash = -300;
+      ruleText = 'Crisis #2: −₹300 cash';
       break;
     case 3:
       defaultCash = -200;
-      defaultCv = -200;
-      ruleText = 'Crisis #3: −₹200 cash, −200 CV';
+      ruleText = 'Crisis #3: −₹200 cash';
       break;
     case 4: {
       defaultCash = -100 * team.businesses.length;
-      defaultCv = 0;
       ruleText = `Crisis #4: −₹100 × ${team.businesses.length} businesses = −₹${Math.abs(defaultCash)} cash`;
       break;
     }
     case 5:
       defaultCash = -100;
-      defaultCv = -200;
-      ruleText = 'Crisis #5: −₹100 cash, −200 CV';
+      ruleText = 'Crisis #5: −₹100 cash';
       break;
     case 6:
-      defaultCash = -500;
-      defaultCv = 0;
-      ruleText = 'Crisis #6: −₹500 cash';
+      defaultCash = -400;
+      ruleText = 'Crisis #6: −₹400 cash';
       break;
     default:
       ruleText = `Crisis #${cardNo}`;
   }
 
   const cashDelta = customCash !== undefined ? customCash : defaultCash;
-  const cvDelta = customCv !== undefined ? customCv : defaultCv;
 
-  const teamChange = buildChange(team, cashDelta, cvDelta);
+  const teamChange = buildChange(team, cashDelta);
   const hasShortfall = teamChange.shortfall > 0;
 
   return {
@@ -291,19 +264,22 @@ export function computeCrisis(
   };
 }
 
-// 6. LOSE FEATURE: −200 CV (floor 0)
+// 6. ACTION C (Lose the Feature): pay ₹200 cash to the Bank
 export function computeLoseFeature(
   team: TeamState,
-  customCv?: number
+  customCash?: number
 ): QuickActionPreview {
-  const cvDelta = customCv !== undefined ? customCv : -200;
-  const ruleExplanation = 'Lose the Feature: −200 CV (floor 0)';
-  const teamChange = buildChange(team, 0, cvDelta);
+  const cashDelta = customCash !== undefined ? customCash : -200;
+  const teamChange = buildChange(team, cashDelta);
+  const hasShortfall = teamChange.shortfall > 0;
 
   return {
     label: 'LOSE_FEATURE',
-    ruleExplanation,
+    ruleExplanation: 'Tech Debt Strike: pay ₹200 cash to the Bank',
     changes: [teamChange],
-    hasShortfall: false,
+    hasShortfall,
+    shortfallTeam: hasShortfall
+      ? { id: team.id, name: team.name, shortfall: teamChange.shortfall }
+      : undefined,
   };
 }

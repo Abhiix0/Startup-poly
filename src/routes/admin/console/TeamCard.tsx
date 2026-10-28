@@ -1,6 +1,7 @@
 import React from 'react';
 import { PixelLevelPips } from '../../../ui/pixel';
 import { AdminRoomSnapshot } from '../../../data/rpc';
+import { MAX_BUSINESSES_PER_TEAM } from '../../../domain/economy';
 
 export interface TeamCardProps {
   team: AdminRoomSnapshot['teams'][0];
@@ -21,8 +22,6 @@ export const TeamCard: React.FC<TeamCardProps> = ({
       : flash === 'down'
       ? 'bg-status-danger-bg'
       : '';
-
-  const totalValuation = team.cash + team.cv;
 
   return (
     <button
@@ -86,16 +85,6 @@ export const TeamCard: React.FC<TeamCardProps> = ({
         )}
       </div>
 
-      {/* 3. Primary Metric: Total Company Value */}
-      <div className="flex items-baseline gap-1.5">
-        <span className="font-pixel text-[9px] text-neutral-500 uppercase tracking-wider font-bold">
-          TOTAL
-        </span>
-        <span className="font-pixel text-base sm:text-lg font-black text-brand-navy tabular-nums drop-shadow-[1px_1px_0px_var(--color-brand-white)]">
-          ₹{totalValuation.toLocaleString('en-IN')}
-        </span>
-      </div>
-
       {/* 4. Cash Breakdown */}
       <div className="flex items-baseline gap-1.5">
         <span className="font-pixel text-[9px] text-neutral-500 uppercase">Cash</span>
@@ -104,18 +93,19 @@ export const TeamCard: React.FC<TeamCardProps> = ({
         </span>
       </div>
 
-      {/* 5. Company Value (CV) Breakdown */}
-      <div className="flex items-baseline gap-1.5">
-        <span className="font-pixel text-[9px] text-neutral-500 uppercase">CV</span>
-        <span className="font-mono text-xs sm:text-sm font-bold text-sky-700 tabular-nums">
-          ₹{team.cv.toLocaleString('en-IN')}
-        </span>
-      </div>
+      {team.debt > 0 && (
+        <div className="flex items-baseline gap-1.5">
+          <span className="font-pixel text-[9px] text-brand-red uppercase font-bold">Debt</span>
+          <span className="font-mono text-xs sm:text-sm font-bold text-brand-red tabular-nums">
+            ₹{team.debt.toLocaleString('en-IN')}
+          </span>
+        </div>
+      )}
 
       {/* 6. Business Portfolio (Max 2 businesses) */}
       <div className="col-span-2 md:col-span-1 flex items-center gap-1.5 flex-wrap">
         <span className="font-pixel text-[9px] text-brand-navy font-bold">
-          BIZ {team.businesses.length}/3
+          BIZ {team.businesses.length}/{MAX_BUSINESSES_PER_TEAM}
         </span>
         {team.businesses.map((biz) => (
           <span

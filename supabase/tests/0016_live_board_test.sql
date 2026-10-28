@@ -7,7 +7,7 @@ SELECT set_config('app.env', 'test', true);
 SELECT set_config('app.test_now', '2026-10-27 12:00:00+00', true);
 
 SELECT throws_ok(
-  $$SELECT public.admin_move_team('00000000-0000-0000-0000-000000000000'::uuid, 1, 0)$$,
+  $$SELECT public.admin_move_team('00000000-0000-0000-0000-000000000000'::uuid, 1::smallint, 0)$$,
   'P0001', 'NOT_ADMIN', 'move requires an admin'
 );
 
@@ -29,13 +29,13 @@ SELECT is((SELECT count(*)::int FROM public.teams WHERE board_position = 0), 5, 
 SELECT public.admin_open_lobby((SELECT id FROM public.rooms));
 SELECT public.admin_start_game((SELECT id FROM public.rooms), true);
 
-SELECT lives_ok($$SELECT public.admin_move_team((SELECT id FROM public.teams WHERE slot = 1), 6, 0, '00000000-0000-0000-0000-000000000027'::uuid)$$, 'admin moves a token');
+SELECT lives_ok($$SELECT public.admin_move_team((SELECT id FROM public.teams WHERE slot = 1), 6::smallint, 0, '00000000-0000-0000-0000-000000000027'::uuid)$$, 'admin moves a token');
 SELECT is((SELECT board_position FROM public.teams WHERE slot = 1), 6::smallint, 'position is persisted');
 SELECT is((SELECT count(*)::int FROM public.activity_events WHERE type = 'TEAM_MOVED'), 1, 'movement is recorded in the audit trail');
 
-SELECT lives_ok($$SELECT public.admin_move_team((SELECT id FROM public.teams WHERE slot = 1), 6, 0, '00000000-0000-0000-0000-000000000027'::uuid)$$, 'same request safely replays');
+SELECT lives_ok($$SELECT public.admin_move_team((SELECT id FROM public.teams WHERE slot = 1), 6::smallint, 0, '00000000-0000-0000-0000-000000000027'::uuid)$$, 'same request safely replays');
 SELECT is((SELECT count(*)::int FROM public.activity_events WHERE type = 'TEAM_MOVED'), 1, 'replay does not create a duplicate move');
-SELECT throws_ok($$SELECT public.admin_move_team((SELECT id FROM public.teams WHERE slot = 1), 7, 1)$$, 'P0001', 'INVALID_VALUE', 'only normal dice rolls are accepted');
+SELECT throws_ok($$SELECT public.admin_move_team((SELECT id FROM public.teams WHERE slot = 1), 7::smallint, 1)$$, 'P0001', 'INVALID_VALUE', 'only normal dice rolls are accepted');
 
 SELECT * FROM finish();
 ROLLBACK;

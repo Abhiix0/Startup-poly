@@ -81,7 +81,7 @@ export const EditBusinessDialog: React.FC<EditBusinessDialogProps> = ({
         <div className="bg-brand-cream-light border-2 border-brand-navy p-3 text-xs text-amber-800">
           <p className="font-bold">⚠ Manual Level Correction</p>
           <p className="mt-0.5">
-            This bypasses standard purchase calculations and changes the upgrade level directly. Team cash and CV will NOT be adjusted automatically. A mandatory note is required for the audit log.
+            This bypasses standard purchase calculations and changes the upgrade level directly. Team cash will NOT be adjusted automatically. A mandatory note is required for the audit log.
           </p>
         </div>
 

@@ -2,13 +2,14 @@ import { describe, it, expect } from 'vitest';
 import {
   OFFICIAL_BUSINESSES,
   upgradeCost,
-  upgradeCvGain,
   rentFor,
-  landingCvFor,
   startReward,
-  cvContribution,
   resaleValue,
+  forcedSaleValue,
   canAddBusiness,
+  RENT_TABLE,
+  UPGRADE_COST_TABLE,
+  MAX_BUSINESSES_PER_TEAM,
   formatINR,
 } from './economy';
 
@@ -17,21 +18,35 @@ describe('Official Rulebook Economy Domain Logic', () => {
     expect(OFFICIAL_BUSINESSES).toHaveLength(10);
   });
 
-  describe('Upgrade Costs and CV Gains', () => {
+  describe('Upgrade Costs', () => {
     OFFICIAL_BUSINESSES.forEach((b) => {
-      it(`calculates upgrade costs and gains for ${b.name}`, () => {
+      it(`calculates upgrade costs for ${b.name}`, () => {
         // Level 0 -> 1
         expect(upgradeCost(b, 0)).toBe(b.u1_cost);
-        expect(upgradeCvGain(b, 0)).toBe(300);
 
         // Level 1 -> 2
         expect(upgradeCost(b, 1)).toBe(b.u2_cost);
-        expect(upgradeCvGain(b, 1)).toBe(400);
 
         // Max Level 2
         expect(upgradeCost(b, 2)).toBe(0);
-        expect(upgradeCvGain(b, 2)).toBe(0);
       });
+    });
+  });
+
+  describe('Approved rent and upgrade tables', () => {
+    it.each([
+      [200, [100, 150, 200], [100, 150]],
+      [300, [150, 225, 300], [150, 200]],
+      [400, [200, 300, 400], [200, 250]],
+      [500, [250, 375, 500], [250, 300]],
+    ])('cost %i tier', (cost, rent, upgrades) => {
+      expect(RENT_TABLE[cost]).toEqual(rent);
+      expect(UPGRADE_COST_TABLE[cost]).toEqual(upgrades);
+      for (const b of OFFICIAL_BUSINESSES.filter((x) => x.cost === cost)) {
+        expect([rentFor(b, 0), rentFor(b, 1), rentFor(b, 2)]).toEqual(rent);
+        expect([upgradeCost(b, 0), upgradeCost(b, 1), upgradeCost(b, 2)]).toEqual([...upgrades, 0]);
+        expect([b.u1_cost, b.u2_cost]).toEqual(upgrades);
+      }
     });
   });
 
@@ -58,59 +73,25 @@ describe('Official Rulebook Economy Domain Logic', () => {
     });
   });
 
-  describe('Landing CV (50%, 75%, 100% of Initial CV)', () => {
-    it('calculates landing CV correctly for EdTech (150 initial CV)', () => {
-      const edtech = OFFICIAL_BUSINESSES.find((b) => b.key === 'edtech')!;
-      expect(landingCvFor(edtech, 0)).toBe(75);
-      expect(landingCvFor(edtech, 1)).toBe(113); // round(150 * 0.75) = 113
-      expect(landingCvFor(edtech, 2)).toBe(150);
-    });
-
-    it('calculates landing CV correctly for SaaS (180 initial CV)', () => {
-      const saas = OFFICIAL_BUSINESSES.find((b) => b.key === 'saas')!;
-      expect(landingCvFor(saas, 0)).toBe(90);
-      expect(landingCvFor(saas, 1)).toBe(135);
-      expect(landingCvFor(saas, 2)).toBe(180);
-    });
-  });
-
-  describe('CV Contribution', () => {
-    it('calculates cumulative CV contribution per business', () => {
-      const saas = OFFICIAL_BUSINESSES.find((b) => b.key === 'saas')!;
-      expect(cvContribution(saas, 0)).toBe(180);
-      expect(cvContribution(saas, 1)).toBe(180 + 300); // 480
-      expect(cvContribution(saas, 2)).toBe(180 + 300 + 400); // 880
-    });
-  });
-
   describe('START Lap Rewards', () => {
-    it('gives +₹200 and 0 CV with 0 or 1 business', () => {
-      expect(startReward(0)).toEqual({ cash: 200, cv: 0 });
-      expect(startReward(1)).toEqual({ cash: 200, cv: 0 });
-    });
-
-    it('gives +₹200 and +200 CV with 2 businesses', () => {
-      expect(startReward(2)).toEqual({ cash: 200, cv: 200 });
-    });
-
-    it('gives +₹200 and +500 CV with 3 or more businesses', () => {
-      expect(startReward(3)).toEqual({ cash: 200, cv: 500 });
-      expect(startReward(4)).toEqual({ cash: 200, cv: 500 });
+    it('is a flat +₹200 cash with no other component', () => {
+      expect(startReward()).toEqual({ cash: 200 });
     });
   });
 
   describe('Business Cap and Resale', () => {
-    it('enforces maximum 3 businesses per team', () => {
+    it('enforces maximum 2 businesses per team', () => {
+      expect(MAX_BUSINESSES_PER_TEAM).toBe(2);
       expect(canAddBusiness(0)).toBe(true);
       expect(canAddBusiness(1)).toBe(true);
-      expect(canAddBusiness(2)).toBe(true);
+      expect(canAddBusiness(2)).toBe(false);
       expect(canAddBusiness(3)).toBe(false);
-      expect(canAddBusiness(4)).toBe(false);
     });
 
-    it('calculates resale value equal to purchase cost', () => {
+    it('pays 50% of the purchase cost on a forced sale, whatever the upgrade level', () => {
       const fintech = OFFICIAL_BUSINESSES.find((b) => b.key === 'fintech')!;
-      expect(resaleValue(fintech)).toBe(400);
+      expect(resaleValue(fintech)).toBe(200);
+      expect([200, 300, 400, 500].map(forcedSaleValue)).toEqual([100, 150, 200, 250]);
     });
   });
 

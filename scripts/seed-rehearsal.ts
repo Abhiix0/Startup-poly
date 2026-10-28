@@ -143,7 +143,7 @@ async function seedRehearsal() {
       p_request_id: `rehearsal-buy-${Date.now()}-1`,
       p_note: 'Initial board landing purchase',
     });
-    console.log(`✔ FinFlow bought FinTech (-₹400, +200 CV)`);
+    console.log(`✔ FinFlow bought FinTech (-₹400)`);
 
     // Team 2 buys 'saas'
     await client.rpc('admin_add_business', {
@@ -154,7 +154,7 @@ async function seedRehearsal() {
       p_request_id: `rehearsal-buy-${Date.now()}-2`,
       p_note: 'Initial board landing purchase',
     });
-    console.log(`✔ CloudScale bought SaaS (-₹300, +180 CV)`);
+    console.log(`✔ CloudScale bought SaaS (-₹300)`);
 
     // Team 3 passes START lap
     await client.rpc('admin_adjust', {
@@ -162,7 +162,6 @@ async function seedRehearsal() {
         {
           team_id: teams[2].id,
           cash_delta: 200,
-          cv_delta: 0,
           expected_version: teams[2].version,
         },
       ],

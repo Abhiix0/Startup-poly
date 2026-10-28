@@ -46,14 +46,13 @@ SELECT throws_ok($$SELECT public.admin_start_game((SELECT id FROM public.rooms),
 SELECT throws_ok($$SELECT public.admin_start_game((SELECT id FROM public.rooms), true, (SELECT v FROM ids WHERE k='open'))$$, 'P0001', 'REQUEST_ID_REUSED', 'a lobby-open request_id cannot be replayed as start');
 
 -- L2: abort after the deadline is refused and nothing is wiped
-SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot = 1), 1500, 300, (SELECT version FROM public.teams WHERE slot = 1), gen_random_uuid(), NULL);
+SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot = 1), 1500, (SELECT version FROM public.teams WHERE slot = 1), gen_random_uuid(), NULL);
 SELECT set_config('app.test_now', '2026-03-01 11:00:00+00', true);
 SELECT throws_ok($$SELECT public.admin_abort_game((SELECT id FROM public.rooms), 'too late')$$, 'P0001', 'ROOM_ALREADY_EXPIRED', 'abort after deadline raises ROOM_ALREADY_EXPIRED');
 SELECT is((SELECT count(*)::int FROM public.activity_events WHERE type = 'GAME_ABORTED'), 0, 'refused abort wrote no GAME_ABORTED event');
 SELECT is((SELECT cash FROM public.teams WHERE slot = 1), 1500, 'refused abort kept the team cash');
 
--- finalize: needs the tie resolved, then idempotent
-SELECT public.admin_set_tiebreak((SELECT id FROM public.rooms), ARRAY(SELECT id FROM public.teams WHERE slot > 1 ORDER BY slot), 'order');
+-- finalize is idempotent
 SELECT lives_ok($$SELECT public.admin_finalize((SELECT id FROM public.rooms), (SELECT v FROM ids WHERE k='fin'))$$, 'finalize first call');
 SELECT is(public.admin_finalize((SELECT id FROM public.rooms), (SELECT v FROM ids WHERE k='fin'))->>'winner_team_id', (SELECT winner_team_id::text FROM public.rooms), 'finalize replay returns the original winner');
 SELECT is((SELECT count(*)::int FROM public.activity_events WHERE type = 'GAME_FINALIZED'), 1, 'exactly one GAME_FINALIZED event');

@@ -17,11 +17,10 @@ run('finalize vs a concurrent correction (P7)', () => {
       await svc.from('rooms').update({ ends_at: new Date(Date.now() - 1000).toISOString() }).eq('id', roomId);
       await a.rpc('expire_if_due', { p_room_id: roomId });
       const ts = await teamIds(a, roomId);
-      expect((await a.rpc('admin_set_tiebreak', { room_id: roomId, ordered_team_ids: ts.map((t) => t.id), note: 'order' })).error).toBeNull();
 
       const [fin, fix] = await Promise.all([
         a.rpc('admin_finalize', { p_room_id: roomId }),
-        b.rpc('admin_set_team_values', { team_id: ts[0].id, cash: 777, cv: 50, expected_version: ts[0].version, request_id: uuid(), note: 'correction' }),
+        b.rpc('admin_set_team_values', { team_id: ts[0].id, cash: 777, expected_version: ts[0].version, request_id: uuid(), note: 'correction' }),
       ]);
       expect(fin.error?.message ?? null).toBeNull();
       if (fix.error) {
@@ -31,11 +30,11 @@ run('finalize vs a concurrent correction (P7)', () => {
         correctionFirst++;
       }
 
-      const teams = (await svc.from('teams').select('id,cash,cv').eq('room_id', roomId)).data!;
-      const results = (await svc.from('final_results').select('team_id,cash,cv').eq('room_id', roomId)).data!;
+      const teams = (await svc.from('teams').select('id,cash').eq('room_id', roomId)).data!;
+      const results = (await svc.from('final_results').select('team_id,cash').eq('room_id', roomId)).data!;
       expect(results).toHaveLength(teams.length);
       for (const t of teams) {
-        expect(results.find((r) => r.team_id === t.id), `team ${t.id}`).toMatchObject({ cash: t.cash, cv: t.cv });
+        expect(results.find((r) => r.team_id === t.id), `team ${t.id}`).toMatchObject({ cash: t.cash });
       }
     }
     // Both orders should occur for the race to mean anything; report rather than fail on a lucky streak.

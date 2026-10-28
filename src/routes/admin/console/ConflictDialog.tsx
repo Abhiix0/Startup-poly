@@ -9,7 +9,6 @@ export interface ConflictDialogProps {
     expectedVersion?: number;
     currentVersion?: number;
     cash?: number;
-    cv?: number;
   } | null;
 }
 
@@ -44,11 +43,6 @@ export const ConflictDialog: React.FC<ConflictDialogProps> = ({
             {conflictDetails.cash !== undefined && (
               <div>
                 Latest Cash on server: <strong className="text-brand-navy">₹{conflictDetails.cash.toLocaleString('en-IN')}</strong>
-              </div>
-            )}
-            {conflictDetails.cv !== undefined && (
-              <div>
-                Latest CV on server: <strong className="text-brand-navy">₹{conflictDetails.cv.toLocaleString('en-IN')}</strong>
               </div>
             )}
           </div>

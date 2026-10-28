@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { AdminRoomSnapshot, rpcAdminSetTiebreak, rpcAdminFinalize, rpcRoomStatus } from '../../../data/rpc';
+import { AdminRoomSnapshot, rpcAdminFinalize, rpcRoomStatus } from '../../../data/rpc';
 import { lifecycleAlreadyDone } from '../../../lib/lifecycle';
 import { useStandings } from '../../../data/useStandings';
 import { StandingsTable } from './StandingsTable';
-import { TieBreakOrder } from './TieBreakOrder';
 import { Modal, PixelButton, useToast } from '../../../ui';
 
 export interface FinalizePanelProps {
@@ -19,12 +18,11 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
   onRefetch,
   isOffline = false,
 }) => {
-  const { standings, hasUnresolvedTie, isLoading, refetch: refetchStandings } = useStandings(
+  const { standings, isLoading, refetch: refetchStandings } = useStandings(
     roomId,
     snapshot.room.status === 'TIME_EXPIRED'
   );
 
-  const [isTiebreakSubmitting, setIsTiebreakSubmitting] = useState<boolean>(false);
   const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState<boolean>(false);
   const [isFinalizing, setIsFinalizing] = useState<boolean>(false);
   const [panelError, setPanelError] = useState<string | null>(null);
@@ -35,26 +33,6 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
   useEffect(() => {
     refetchStandings();
   }, [snapshot, refetchStandings]);
-
-  // Teams needing tiebreak
-  const unresolvedTiedTeams = standings.filter((s) => s.tie_unresolved);
-
-  const handleSetTiebreak = async (orderedTeamIds: string[], note: string) => {
-    try {
-      setIsTiebreakSubmitting(true);
-      setPanelError(null);
-      await rpcAdminSetTiebreak(roomId, orderedTeamIds, note);
-      successToast('Tie-break pitch order recorded.');
-      await refetchStandings();
-      await onRefetch();
-    } catch (err: any) {
-      const msg = err?.message || 'Failed to record tie-break order.';
-      setPanelError(msg);
-      errorToast(msg);
-    } finally {
-      setIsTiebreakSubmitting(false);
-    }
-  };
 
   const handleConfirmFinalize = async () => {
     try {
@@ -93,51 +71,20 @@ export const FinalizePanel: React.FC<FinalizePanelProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {hasUnresolvedTie ? (
-            <>
-              <span className="font-pixel text-[10px] bg-status-warning-bg text-status-warning-dark border border-brand-gold px-2.5 py-1 animate-pulse">
-                ⚠ TIEBREAK REQUIRED BEFORE FINALIZING
-              </span>
-              <button
-                type="button"
-                disabled={isFinalizing || isTiebreakSubmitting || isOffline}
-                onClick={async () => {
-                  await handleSetTiebreak(
-                    unresolvedTiedTeams.map((t) => t.team_id),
-                    'Auto-resolved ties in current provisional standings order'
-                  );
-                }}
-                className="font-pixel text-[10px] bg-brand-green text-brand-navy font-bold px-3 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-interactive-green-hover hover:text-brand-white cursor-pointer active:translate-y-0.5"
-                title="Auto-resolve ties in current order and unlock finalization"
-              >
-                ⚡ AUTO-RESOLVE TIES
-              </button>
-            </>
-          ) : (
-            <span className="font-pixel text-[10px] bg-status-success-bg text-brand-green border border-brand-green px-2.5 py-1">
-              ✓ ALL TIES RESOLVED
-            </span>
-          )}
+          <span className="font-pixel text-[10px] bg-status-info-bg text-status-info-dark border border-status-info px-2.5 py-1">
+            Ranked by cash, owned business cost, then upgrades. Equal teams share a rank.
+          </span>
 
           <PixelButton
             variant="danger"
             size="sm"
-            disabled={hasUnresolvedTie || isFinalizing || isOffline || isLoading}
+            disabled={isFinalizing || isOffline || isLoading}
             onClick={() => setIsFinalizeModalOpen(true)}
           >
             FINALIZE MATCH
           </PixelButton>
         </div>
       </div>
-
-      {/* Tie-break entry box if ties exist */}
-      {unresolvedTiedTeams.length > 0 && (
-        <TieBreakOrder
-          tiedTeams={unresolvedTiedTeams}
-          onSubmit={handleSetTiebreak}
-          isSubmitting={isTiebreakSubmitting}
-        />
-      )}
 
       {/* Standings Table */}
       <StandingsTable standings={standings} teams={snapshot.teams} />

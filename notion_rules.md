@@ -1,3 +1,5 @@
+> **Historical document.** This Notion export predates the approved rulebook alignment: it still describes Company Value (CV), a business cap of 3, the START growth bonus, 100% forced sales and a pitch tie-break. Do not use it for rules. Current rules: the Player Handbook (`src/routes/public/RulesPage.tsx`, `src/routes/public/rules/GameRulesModal.tsx`) and `docs/SCORING_RULES.md`. Its remaining CV mentions are historical.
+
 # Startupoly
 
 > 

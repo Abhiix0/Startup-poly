@@ -77,3 +77,15 @@ export async function teamIds(admin: SupabaseClient, roomId: string) {
 export const localUrl = () => url!;
 
 export const isDeadlock = (e: { code?: string } | null) => e?.code === '40P01';
+
+/** Board space of each business (supabase/migrations/0030); a purchase is only accepted while the token stands there. */
+export const BUSINESS_SPACE: Record<string, number> = {
+  ai_deeptech: 1, saas: 3, fintech: 5, healthtech: 7, edtech: 10,
+  devtools: 13, cybersecurity: 15, cleantech: 17, robotics: 19, ecommerce: 23,
+};
+
+/** Put a team's token on a business's space (service role; does not bump the version). */
+export async function placeOn(teamId: string, businessKey: string) {
+  const { error } = await serviceClient().from('teams').update({ board_position: BUSINESS_SPACE[businessKey] }).eq('id', teamId);
+  if (error) throw error;
+}

@@ -59,14 +59,14 @@ SELECT public.join_team(:'room_code', 1, :'pin1');
 SELECT set_config('request.jwt.claims', '{"sub": "b5000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
 SELECT public.join_team(:'room_code', 2, :'pin2');
 
--- 4. Admin starts game, gives Team 1 more CV, advances to expiration, and finalizes
+-- 4. Admin starts game, gives Team 1 more cash, advances to expiration, and finalizes
 SELECT set_config('request.jwt.claims', '{"sub": "a5000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
 SELECT public.admin_start_game(id, true) FROM public.rooms WHERE status = 'LOBBY';
 
--- Team 1 gets +500 CV to guarantee distinct ranks
+-- Team 1 gets more cash to guarantee the lead
 SELECT public.admin_set_team_values(
   (SELECT id FROM public.teams WHERE slot = 1),
-  1000, 500,
+  1500,
   (SELECT version FROM public.teams WHERE slot = 1),
   gen_random_uuid(),
   'award lead'
@@ -75,11 +75,6 @@ SELECT public.admin_set_team_values(
 -- Advance clock past 50 minutes and finalize
 SELECT set_config('app.test_now', '2026-03-01 10:55:00+00', true);
 SELECT public.expire_if_due(id) FROM public.rooms;
--- Slots 2-5 tie on cash/CV; resolve explicitly so finalize does not raise UNRESOLVED_TIE.
-SELECT public.admin_set_tiebreak(
-  (SELECT id FROM public.rooms),
-  ARRAY(SELECT id FROM public.teams WHERE slot > 1 ORDER BY slot)
-);
 SELECT public.admin_finalize(id) FROM public.rooms;
 
 -- 5. Test Player 1 Privacy as claimed anonymous/authenticated role

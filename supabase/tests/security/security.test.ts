@@ -11,7 +11,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createHmac } from 'node:crypto';
-import { harnessEnabled, newAdmin, newPlayer, anonClient, createLobbyRoom, teamIds, serviceClient, tokenOf, localUrl } from '../concurrency/harness';
+import { harnessEnabled, newAdmin, newPlayer, anonClient, createLobbyRoom, teamIds, serviceClient, tokenOf, localUrl, placeOn } from '../concurrency/harness';
 
 const run = harnessEnabled ? describe : describe.skip;
 const uuid = () => crypto.randomUUID();
@@ -19,6 +19,7 @@ const uuid = () => crypto.randomUUID();
 const ADMIN_RPC_PARAMS: Record<string, string[]> = {
   admin_abort_game: ['p_room_id', 'note', 'request_id'],
   admin_cancel_room: ['p_room_id', 'note', 'request_id'],
+  admin_charge_rent: ['payer_team_id', 'business_key', 'payer_expected_version', 'owner_expected_version', 'request_id', 'note'],
   admin_add_business: ['team_id', 'business_key', 'apply_purchase', 'expected_version', 'request_id', 'note'],
   admin_adjust: ['changes', 'label', 'note', 'request_id'],
   admin_create_room: ['team_count', 'teams'],
@@ -29,8 +30,7 @@ const ADMIN_RPC_PARAMS: Record<string, string[]> = {
   admin_remove_business: ['team_id', 'business_key', 'reason', 'credit_resale', 'expected_version', 'request_id', 'note'],
   admin_set_bankrupt: ['team_id', 'value', 'expected_version', 'request_id', 'note'],
   admin_set_business_level: ['team_id', 'business_key', 'new_level', 'apply_upgrade', 'expected_version', 'request_id', 'note'],
-  admin_set_team_values: ['team_id', 'cash', 'cv', 'expected_version', 'request_id', 'note'],
-  admin_set_tiebreak: ['room_id', 'ordered_team_ids', 'note'],
+  admin_set_team_values: ['team_id', 'cash', 'expected_version', 'request_id', 'note'],
   admin_start_game: ['room_id', 'force', 'request_id'],
   admin_update_team_config: ['team_id', 'name', 'color'],
   get_admin_snapshot: ['room_id'],
@@ -64,7 +64,8 @@ run('security matrix over HTTP', () => {
     expect((await playerA.rpc('join_team', { code, slot: 1, pin: await pin(teamA) })).data.team_id).toBe(teamA);
     expect((await playerB.rpc('join_team', { code, slot: 2, pin: await pin(teamB) })).data.team_id).toBe(teamB);
     expect((await admin.rpc('admin_start_game', { room_id: roomId, force: true })).error).toBeNull();
-    expect((await admin.rpc('admin_set_team_values', { team_id: teamB, cash: 5000, cv: 700, expected_version: 0, request_id: uuid(), note: null })).error).toBeNull();
+    expect((await admin.rpc('admin_set_team_values', { team_id: teamB, cash: 5000, expected_version: 0, request_id: uuid(), note: null })).error).toBeNull();
+    await placeOn(teamB, 'saas');
     expect((await admin.rpc('admin_add_business', { team_id: teamB, business_key: 'saas', apply_purchase: true, expected_version: 1, request_id: uuid() })).error).toBeNull();
   });
 
@@ -168,12 +169,12 @@ run('security matrix over HTTP', () => {
     // Realtime can lag right after `supabase db reset`: nudge team 3 until its own event arrives (proves the subscription works).
     for (let i = 0; i < 10 && !received.some((e) => e.table === 'teams' && e.row.id === t3.id); i++) {
       const [, , cur] = await teamIds(admin, roomId);
-      await admin.rpc('admin_set_team_values', { team_id: cur.id, cash: 1100 + i, cv: 10, expected_version: cur.version, request_id: uuid(), note: null });
+      await admin.rpc('admin_set_team_values', { team_id: cur.id, cash: 1100 + i, expected_version: cur.version, request_id: uuid(), note: null });
       await new Promise((r) => setTimeout(r, 1500));
     }
     const [ta, tb] = await teamIds(admin, roomId);
-    await admin.rpc('admin_set_team_values', { team_id: tb.id, cash: 4000, cv: 900, expected_version: tb.version, request_id: uuid(), note: null });
-    await admin.rpc('admin_set_team_values', { team_id: ta.id, cash: 3000, cv: 800, expected_version: ta.version, request_id: uuid(), note: null });
+    await admin.rpc('admin_set_team_values', { team_id: tb.id, cash: 4000, expected_version: tb.version, request_id: uuid(), note: null });
+    await admin.rpc('admin_set_team_values', { team_id: ta.id, cash: 3000, expected_version: ta.version, request_id: uuid(), note: null });
     await admin.rpc('admin_add_business', { team_id: tb.id, business_key: 'fintech', apply_purchase: false, expected_version: tb.version + 1, request_id: uuid(), note: 'rival' });
     await new Promise((r) => setTimeout(r, 3000));
     await rt.removeChannel(ch);
