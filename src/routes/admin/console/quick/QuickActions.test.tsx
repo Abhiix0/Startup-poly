@@ -369,9 +369,9 @@ describe('ForcedSaleDialog', () => {
 
     expect(screen.getByText(/Shortfall Target: ₹250/i)).toBeInTheDocument();
     expect(screen.getByText(/EdTech/i)).toBeInTheDocument();
-    expect(screen.getByText(/Resale payout: \+₹200/i)).toBeInTheDocument();
+    expect(screen.getByText(/Forced-sale payout: \+₹100/i)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText(/SELL \(\+₹200\)/i));
+    fireEvent.click(screen.getByText(/SELL \(\+₹100\)/i));
     expect(onSellBusiness).toHaveBeenCalledWith({
       teamId: 'team-2',
       businessKey: 'edtech',
@@ -422,6 +422,7 @@ describe('AdminConsoleView Keyboard Shortcuts', () => {
         name: 'Alpha Rockets',
         color: '#E52521',
         cash: 1000,
+        debt: 0,
         is_bankrupt: false,
         version: 1,
         tiebreak_order: null,
@@ -441,6 +442,7 @@ describe('AdminConsoleView Keyboard Shortcuts', () => {
         name: 'Beta Builders',
         color: '#22B14C',
         cash: 800,
+        debt: 0,
         is_bankrupt: false,
         version: 1,
         tiebreak_order: null,

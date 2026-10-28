@@ -7,6 +7,7 @@ export interface TeamState {
   slot?: number;
   color: string;
   cash: number;
+  debt?: number;
   is_bankrupt?: boolean;
   version: number;
   businesses: Array<{
@@ -25,6 +26,9 @@ export interface TeamChangePreview {
   cashBefore: number;
   cashDelta: number;
   cashAfter: number;
+  debtBefore: number;
+  debtAfter: number;
+  /** Unpayable amount of a team that still owns a business: it must force-sell first. */
   shortfall: number;
 }
 
@@ -44,8 +48,27 @@ function buildChange(
   team: TeamState,
   cashDelta: number
 ): TeamChangePreview {
-  const cashAfter = team.cash + cashDelta;
-  const shortfall = cashAfter < 0 ? Math.abs(cashAfter) : 0;
+  const debt = team.debt ?? 0;
+  let cashAfter: number;
+  let debtAfter = debt;
+  let shortfall = 0;
+
+  if (cashDelta >= 0) {
+    // Incoming money clears debt first; the remainder is cash.
+    const toDebt = Math.min(debt, cashDelta);
+    debtAfter = debt - toDebt;
+    cashAfter = team.cash + cashDelta - toDebt;
+  } else if (team.cash + cashDelta >= 0) {
+    cashAfter = team.cash + cashDelta;
+  } else if (team.businesses.length > 0) {
+    // Must force-sell a business before an unaffordable payment.
+    cashAfter = team.cash + cashDelta;
+    shortfall = Math.abs(cashAfter);
+  } else {
+    // Nothing left to sell: the unpaid part becomes debt.
+    cashAfter = 0;
+    debtAfter = debt - (team.cash + cashDelta);
+  }
 
   return {
     teamId: team.id,
@@ -55,6 +78,8 @@ function buildChange(
     cashBefore: team.cash,
     cashDelta,
     cashAfter,
+    debtBefore: debt,
+    debtAfter,
     shortfall,
   };
 }
@@ -150,14 +175,16 @@ export function computeBonus(
       ruleText = 'Bonus #3: +₹200 cash';
       break;
     case 4: {
+      // Premium Deal: 50% of the purchase cost of the most expensive owned business (₹100 if none).
       const maxCost = team.businesses.reduce((acc, b) => Math.max(acc, b.cost), 0);
-      defaultCash = maxCost;
-      ruleText = `Bonus #4: +₹${maxCost} cash (most expensive owned business)`;
+      defaultCash = maxCost > 0 ? maxCost / 2 : 100;
+      ruleText = `Bonus #4: +₹${defaultCash} cash (50% of the most expensive owned business, ₹100 if none)`;
       break;
     }
     case 5: {
-      defaultCash = 100 * team.businesses.length;
-      ruleText = `Bonus #5: ₹100 × ${team.businesses.length} businesses = +₹${defaultCash} cash`;
+      // Founder Bonus by portfolio size: 0 businesses ₹50, 1 business ₹100, 2 businesses ₹200.
+      defaultCash = [50, 100, 200][Math.min(2, team.businesses.length)];
+      ruleText = `Bonus #5: ${team.businesses.length} businesses = +₹${defaultCash} cash`;
       break;
     }
     case 6: {
@@ -214,8 +241,8 @@ export function computeCrisis(
       ruleText = 'Crisis #5: −₹100 cash';
       break;
     case 6:
-      defaultCash = -500;
-      ruleText = 'Crisis #6: −₹500 cash';
+      defaultCash = -400;
+      ruleText = 'Crisis #6: −₹400 cash';
       break;
     default:
       ruleText = `Crisis #${cardNo}`;

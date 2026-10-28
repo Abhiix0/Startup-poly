@@ -67,6 +67,7 @@ export const AdminRoomHistoryPage: React.FC = () => {
     name: r.name,
     color: r.color,
     cash: r.cash,
+    debt: 0,
     is_bankrupt: r.is_bankrupt,
     version: 1,
     tiebreak_order: null,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PixelLevelPips } from '../../../ui/pixel';
 import { AdminRoomSnapshot } from '../../../data/rpc';
+import { MAX_BUSINESSES_PER_TEAM } from '../../../domain/economy';
 
 export interface TeamCardProps {
   team: AdminRoomSnapshot['teams'][0];
@@ -92,10 +93,19 @@ export const TeamCard: React.FC<TeamCardProps> = ({
         </span>
       </div>
 
+      {team.debt > 0 && (
+        <div className="flex items-baseline gap-1.5">
+          <span className="font-pixel text-[9px] text-brand-red uppercase font-bold">Debt</span>
+          <span className="font-mono text-xs sm:text-sm font-bold text-brand-red tabular-nums">
+            ₹{team.debt.toLocaleString('en-IN')}
+          </span>
+        </div>
+      )}
+
       {/* 6. Business Portfolio (Max 2 businesses) */}
       <div className="col-span-2 md:col-span-1 flex items-center gap-1.5 flex-wrap">
         <span className="font-pixel text-[9px] text-brand-navy font-bold">
-          BIZ {team.businesses.length}/3
+          BIZ {team.businesses.length}/{MAX_BUSINESSES_PER_TEAM}
         </span>
         {team.businesses.map((biz) => (
           <span

@@ -57,13 +57,35 @@ describe('quickActions domain calculations', () => {
       expect(preview.changes[1].cashDelta).toBe(400);
     });
 
-    it('detects shortfall when rent exceeds payer cash', () => {
-      const poorPayer: TeamState = { ...mockPayer, cash: 100 };
+    it('requires a forced sale when a payer who still owns a business cannot cover the rent', () => {
+      const poorPayer: TeamState = {
+        ...mockPayer,
+        cash: 100,
+        businesses: [{ business_key: 'devtools', name: 'DevTools', level: 0, cost: 300 }],
+      };
       // FinTech rent is 400 -> shortfall is 300
       const preview = computeRent(poorPayer, 'fintech', mockOwner);
       expect(preview.hasShortfall).toBe(true);
       expect(preview.shortfallTeam?.shortfall).toBe(300);
       expect(preview.changes[0].shortfall).toBe(300);
+      expect(preview.changes[0].debtAfter).toBe(0);
+    });
+
+    it('turns the unpaid rent into debt for a payer with nothing left to sell', () => {
+      const poorPayer: TeamState = { ...mockPayer, cash: 100 };
+      const preview = computeRent(poorPayer, 'fintech', mockOwner);
+      expect(preview.hasShortfall).toBe(false);
+      expect(preview.changes[0].cashAfter).toBe(0);
+      expect(preview.changes[0].debtAfter).toBe(300);
+      // the owner is paid in full
+      expect(preview.changes[1].cashDelta).toBe(400);
+    });
+
+    it('applies incoming rent to the owner debt first', () => {
+      const indebtedOwner: TeamState = { ...mockOwner, cash: 0, debt: 100 };
+      const preview = computeRent(mockPayer, 'saas', indebtedOwner);
+      expect(preview.changes[1].debtAfter).toBe(0);
+      expect(preview.changes[1].cashAfter).toBe(50);
     });
   });
 
@@ -108,19 +130,18 @@ describe('quickActions domain calculations', () => {
       expect(res.changes[0].cashDelta).toBe(200);
     });
 
-    it('computes Card #4: purchase cost of most expensive owned business', () => {
-      // mockOwner owns SaaS (300), EdTech (200), FinTech (400) -> max is 400
-      const res = computeBonus(mockOwner, 4);
-      expect(res.changes[0].cashDelta).toBe(400);
-
-      // Team with no businesses gets 0
-      const resZero = computeBonus(mockPayer, 4);
-      expect(resZero.changes[0].cashDelta).toBe(0);
+    it('computes Card #4: 50% of the most expensive owned business, ₹100 if none', () => {
+      // mockOwner owns SaaS (300), EdTech (200), FinTech (400) -> 50% of 400
+      expect(computeBonus(mockOwner, 4).changes[0].cashDelta).toBe(200);
+      expect(computeBonus(mockPayer, 4).changes[0].cashDelta).toBe(100);
     });
 
-    it('computes Card #5: ₹100 × businesses owned', () => {
-      const res = computeBonus(mockOwner, 5); // 3 businesses
-      expect(res.changes[0].cashDelta).toBe(300);
+    it('computes Card #5: ₹50 / ₹100 / ₹200 by portfolio size (0 / 1 / 2 businesses)', () => {
+      const one: TeamState = { ...mockPayer, businesses: [mockOwner.businesses[0]] };
+      const two: TeamState = { ...mockPayer, businesses: mockOwner.businesses.slice(0, 2) };
+      expect(computeBonus(mockPayer, 5).changes[0].cashDelta).toBe(50);
+      expect(computeBonus(one, 5).changes[0].cashDelta).toBe(100);
+      expect(computeBonus(two, 5).changes[0].cashDelta).toBe(200);
     });
 
     it('computes Card #6 Lucky Break: ₹100 × reward roll', () => {
@@ -156,12 +177,12 @@ describe('quickActions domain calculations', () => {
       expect(res.changes[0].cashDelta).toBe(-100);
     });
 
-    it('computes Card #6: −₹500 cash with shortfall detection', () => {
-      const poorTeam: TeamState = { ...mockPayer, cash: 200 };
-      const res = computeCrisis(poorTeam, 6); // needs 500, has 200 -> shortfall 300
-      expect(res.changes[0].cashDelta).toBe(-500);
+    it('computes Card #6: −₹400 cash with shortfall detection', () => {
+      const poorTeam: TeamState = { ...mockPayer, cash: 200, businesses: [mockOwner.businesses[0]] };
+      const res = computeCrisis(poorTeam, 6); // needs 400, has 200 -> shortfall 200
+      expect(res.changes[0].cashDelta).toBe(-400);
       expect(res.hasShortfall).toBe(true);
-      expect(res.shortfallTeam?.shortfall).toBe(300);
+      expect(res.shortfallTeam?.shortfall).toBe(200);
     });
   });
 
@@ -173,10 +194,17 @@ describe('quickActions domain calculations', () => {
       expect(res.hasShortfall).toBe(false);
     });
 
-    it('reports a shortfall when the team cannot pay', () => {
-      const res = computeLoseFeature({ ...mockPayer, cash: 150 });
+    it('reports a shortfall when a team that still owns a business cannot pay', () => {
+      const res = computeLoseFeature({ ...mockPayer, cash: 150, businesses: [mockOwner.businesses[0]] });
       expect(res.hasShortfall).toBe(true);
       expect(res.shortfallTeam?.shortfall).toBe(50);
+    });
+
+    it('puts the unpaid part into debt when nothing is left to sell', () => {
+      const res = computeLoseFeature({ ...mockPayer, cash: 150 });
+      expect(res.hasShortfall).toBe(false);
+      expect(res.changes[0].debtAfter).toBe(50);
+      expect(res.changes[0].cashAfter).toBe(0);
     });
   });
 });

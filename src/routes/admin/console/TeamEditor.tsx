@@ -68,6 +68,11 @@ export const TeamEditor: React.FC<TeamEditorProps> = ({
               ☠ BANKRUPT
             </span>
           )}
+          {team.debt > 0 && (
+            <span className="bg-brand-red text-brand-white font-pixel text-[10px] px-2 py-1 border-2 border-white shadow-pixel-sm font-bold">
+              ⚠ IN DEBT ₹{team.debt.toLocaleString('en-IN')}
+            </span>
+          )}
         </div>
       </div>
 

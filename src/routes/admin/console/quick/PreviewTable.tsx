@@ -91,6 +91,13 @@ export const PreviewTable: React.FC<PreviewTableProps> = ({
                       </span>
                     </div>
 
+                    {ch.debtAfter !== ch.debtBefore && (
+                      <div className="mt-1 font-pixel text-[10px] font-bold text-brand-red">
+                        DEBT ₹{ch.debtBefore.toLocaleString('en-IN')} → ₹{ch.debtAfter.toLocaleString('en-IN')}
+                        {ch.debtAfter > ch.debtBefore ? ' (nothing left to sell: the unpaid part becomes debt)' : ' (incoming cash pays debt first)'}
+                      </div>
+                    )}
+
                     {/* Manual override input if adjustment toggle open */}
                     {isAdjusting && onAdjustAmount && (
                       <div className="mt-1 flex items-center gap-1">

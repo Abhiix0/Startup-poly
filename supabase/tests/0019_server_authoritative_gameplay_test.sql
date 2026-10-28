@@ -1,7 +1,7 @@
 -- Migration 0030: START credit inside admin_move_team, purchases tied to the board space, server-computed rent.
 BEGIN;
 CREATE EXTENSION IF NOT EXISTS pgtap;
-SELECT plan(33);
+SELECT plan(34);
 
 SELECT set_config('app.env', 'test', true);
 SELECT set_config('app.test_now', '2026-03-01 10:00:00+00', true);
@@ -113,16 +113,18 @@ SELECT throws_ok(
     (SELECT version FROM public.teams WHERE slot = 4), 0, gen_random_uuid(), NULL)$$,
   'P0001', 'BUSINESS_NOT_OWNED', 'no rent on an unowned business');
 
-RESET ROLE; UPDATE public.teams SET board_position = 3, cash = 50 WHERE slot = 4; SET LOCAL ROLE authenticated;
-SELECT throws_ok(
+RESET ROLE; UPDATE public.teams SET board_position = 3, cash = 50 WHERE slot = 4; UPDATE public.teams SET cash = 1000 WHERE slot = 3; SET LOCAL ROLE authenticated;
+-- Slot 4 owns no business, so the unpaid part of the rent becomes debt instead of being refused.
+SELECT lives_ok(
   $$SELECT public.admin_charge_rent((SELECT id FROM public.teams WHERE slot = 4), 'saas',
     (SELECT version FROM public.teams WHERE slot = 4), (SELECT version FROM public.teams WHERE slot = 3), gen_random_uuid(), NULL)$$,
-  'P0001', 'INSUFFICIENT_CASH', 'a payer who cannot afford the rent gets INSUFFICIENT_CASH and nothing moves');
-SELECT is((SELECT cash FROM public.teams WHERE slot = 4), 50, 'a refused rent charge leaves the payer unchanged');
+  'a payer with nothing left to sell goes into debt for the unpaid rent');
+SELECT is((SELECT cash || '/' || debt FROM public.teams WHERE slot = 4), '0/175', 'the payer pays what it has and owes the rest (225 - 50)');
+SELECT is((SELECT cash FROM public.teams WHERE slot = 3), 1225, 'the owner still receives the full rent');
 
--- Forced sale credits exactly the original cost of a business the seller owns.
+-- A forced sale pays half the original purchase cost of a business the seller owns.
 SELECT public.admin_remove_business((SELECT id FROM public.teams WHERE slot = 3), 'saas', 'FORCED_SALE', true, (SELECT version FROM public.teams WHERE slot = 3), gen_random_uuid(), 'sold');
-SELECT is((SELECT cash FROM public.teams WHERE slot = 3), 1200, 'forced sale credits the original cost (300): 900 + 300, not the upgraded value');
+SELECT is((SELECT cash FROM public.teams WHERE slot = 3), 1375, 'forced sale pays 50% of the original cost (150), not the upgraded value');
 SELECT throws_ok(
   $$SELECT public.admin_remove_business((SELECT id FROM public.teams WHERE slot = 3), 'saas', 'FORCED_SALE', true, (SELECT version FROM public.teams WHERE slot = 3), gen_random_uuid(), 'again')$$,
   'P0001', 'BUSINESS_NOT_OWNED', 'a forced sale needs a business the seller owns');

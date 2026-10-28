@@ -176,7 +176,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const selectedTeam = snapshot.teams.find((t) => t.id === selectedTeamId) || snapshot.teams[0];
   const activeTeams = snapshot.teams.filter((t) => !t.is_bankrupt);
   const leader = snapshot.teams.reduce<(typeof snapshot.teams)[0] | undefined>(
-    (best, t) => (!best || t.cash > best.cash ? t : best),
+    (best, t) => (t.debt > 0 || t.is_bankrupt ? best : !best || t.cash > best.cash ? t : best),
     undefined
   );
   const totalCash = snapshot.teams.reduce((n, t) => n + t.cash, 0);

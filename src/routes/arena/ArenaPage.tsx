@@ -34,8 +34,11 @@ export const ArenaPage: React.FC = () => {
 
   // Live ranking: cash, then total original cost of owned businesses, then total upgrades
   const rankedTeams = [...snapshot.teams].sort((a, b) => {
-    if (a.is_bankrupt !== b.is_bankrupt) {
-      return a.is_bankrupt ? 1 : -1;
+    // A team that is eliminated or still in debt is ineligible to win: it ranks below every eligible team.
+    const outA = a.is_bankrupt || a.debt > 0;
+    const outB = b.is_bankrupt || b.debt > 0;
+    if (outA !== outB) {
+      return outA ? 1 : -1;
     }
     if (b.cash !== a.cash) return b.cash - a.cash;
     const cost = (t: typeof a) => t.businesses.reduce((n, x) => n + x.cost, 0);
@@ -106,7 +109,7 @@ export const ArenaPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {rankedTeams.map((team, idx) => {
             const rank = idx + 1;
-            const isFirst = rank === 1 && !team.is_bankrupt;
+            const isFirst = rank === 1 && !team.is_bankrupt && team.debt === 0;
 
             return (
               <div
@@ -140,6 +143,10 @@ export const ArenaPage: React.FC = () => {
                   {team.is_bankrupt ? (
                     <span className="font-pixel text-[10px] bg-brand-red text-white px-2 py-0.5 border border-white/20">
                       ELIMINATED
+                    </span>
+                  ) : team.debt > 0 ? (
+                    <span className="font-pixel text-[10px] bg-brand-red text-white px-2 py-0.5 border border-white/20">
+                      IN DEBT ₹{team.debt.toLocaleString('en-IN')}
                     </span>
                   ) : isFirst ? (
                     <span className="font-pixel text-[10px] bg-brand-gold text-brand-navy px-2 py-0.5 font-bold border border-brand-navy animate-pulse">

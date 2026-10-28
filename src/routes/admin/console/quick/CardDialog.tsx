@@ -29,8 +29,8 @@ const BONUS_CARD_DESCRIPTIONS: Record<number, string> = {
   1: 'Bonus #1: +₹300 Cash',
   2: 'Bonus #2: +₹300 Cash',
   3: 'Bonus #3: +₹200 Cash',
-  4: 'Bonus #4: Cash equal to most expensive business owned',
-  5: 'Bonus #5: +₹100 Cash per business owned',
+  4: 'Bonus #4: 50% of the most expensive business owned in Cash (₹100 if none)',
+  5: 'Bonus #5: Cash by portfolio size (0 = ₹50, 1 = ₹100, 2 = ₹200)',
   6: 'Bonus #6 (Lucky Break): Roll a die, get ₹100 × roll',
 };
 
@@ -40,7 +40,7 @@ const CRISIS_CARD_DESCRIPTIONS: Record<number, string> = {
   3: 'Crisis #3: −₹200 Cash',
   4: 'Crisis #4: −₹100 Cash per business owned',
   5: 'Crisis #5: −₹100 Cash',
-  6: 'Crisis #6: −₹500 Cash',
+  6: 'Crisis #6: −₹400 Cash',
 };
 
 export const CardDialog: React.FC<CardDialogProps> = ({

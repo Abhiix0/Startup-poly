@@ -84,6 +84,22 @@ run('money RPCs under concurrency and random sequences (L4, L8)', () => {
     expect((await svc.from('teams').select('cash').eq('id', t5.id).single()).data!.cash).toBe(1400);
   });
 
+  it('debt-first START: a retried move clears the debt once and never pays twice', async () => {
+    const [, , , t4] = await teamIds(a, roomId);
+    // Direct setup bypasses the audit log, so put the audited cash back afterwards (the invariant test below replays events).
+    const auditedCash = (await svc.from('teams').select('cash').eq('id', t4.id).single()).data!.cash;
+    await svc.from('teams').update({ board_position: 22, cash: 0, debt: 300 }).eq('id', t4.id);
+    const cur = (await svc.from('teams').select('version').eq('id', t4.id).single()).data!.version;
+    const rid = uuid();
+    const args = { team_id: t4.id, steps: 4, expected_version: cur, request_id: rid };
+    const [x, y] = await Promise.all([a.rpc('admin_move_team', args), a.rpc('admin_move_team', args)]);
+    expect(x.error).toBeNull();
+    expect(y.error).toBeNull();
+    expect(await eventCount(rid)).toBe(1);
+    expect((await svc.from('teams').select('cash,debt').eq('id', t4.id).single()).data).toEqual({ cash: 0, debt: 100 });
+    await svc.from('teams').update({ cash: auditedCash, debt: 0 }).eq('id', t4.id);
+  });
+
   it('two teams buying the same business at once: one wins, the loser gets BUSINESS_OWNED', async () => {
     const [, , , , t5, t6] = await teamIds(a, roomId);
     await placeOn(t5.id, 'ecommerce');

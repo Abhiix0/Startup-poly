@@ -218,8 +218,8 @@ export const REAL_BONUS_CARDS: CardOption[] = [
   { id: 1, title: 'Startup Grant', effectText: '+₹300 Cash', cashDelta: 300 },
   { id: 2, title: 'Viral Growth', effectText: '+₹300 Cash', cashDelta: 300 },
   { id: 3, title: 'Government Incentive', effectText: '+₹200 Cash', cashDelta: 200 },
-  { id: 4, title: 'Premium Deal', effectText: 'Cash equal to purchase cost of most expensive owned business', cashDelta: 0 },
-  { id: 5, title: 'Founder Bonus', effectText: '₹100 × number of businesses owned', cashDelta: 0 },
+  { id: 4, title: 'Premium Deal', effectText: '50% of the purchase cost of your most expensive business in Cash (₹100 if none)', cashDelta: 0 },
+  { id: 5, title: 'Founder Bonus', effectText: 'Cash by portfolio size: 0 = ₹50, 1 = ₹100, 2 = ₹200', cashDelta: 0 },
   { id: 6, title: 'Lucky Break', effectText: '+₹100 × Roll value in cash (reward roll)', cashDelta: 0 },
 ];
 
@@ -229,7 +229,7 @@ export const REAL_CRISIS_CARDS: CardOption[] = [
   { id: 3, title: 'Legal Trouble', effectText: '−₹200 Cash', cashDelta: -200 },
   { id: 4, title: 'Burn Rate Spike', effectText: '−₹100 Cash for every Business owned', cashDelta: 0 },
   { id: 5, title: 'Bad PR', effectText: '−₹100 Cash', cashDelta: -100 },
-  { id: 6, title: 'Investor Pullout', effectText: '−₹500 Cash', cashDelta: -500 },
+  { id: 6, title: 'Investor Pullout', effectText: '−₹400 Cash', cashDelta: -400 },
 ];
 
 export const WILDCARD_CHALLENGES: string[] = [

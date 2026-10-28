@@ -5,6 +5,7 @@ import {
   rentFor,
   startReward,
   resaleValue,
+  forcedSaleValue,
   canAddBusiness,
   RENT_TABLE,
   UPGRADE_COST_TABLE,
@@ -87,9 +88,10 @@ describe('Official Rulebook Economy Domain Logic', () => {
       expect(canAddBusiness(3)).toBe(false);
     });
 
-    it('calculates resale value equal to purchase cost', () => {
+    it('pays 50% of the purchase cost on a forced sale, whatever the upgrade level', () => {
       const fintech = OFFICIAL_BUSINESSES.find((b) => b.key === 'fintech')!;
-      expect(resaleValue(fintech)).toBe(400);
+      expect(resaleValue(fintech)).toBe(200);
+      expect([200, 300, 400, 500].map(forcedSaleValue)).toEqual([100, 150, 200, 250]);
     });
   });
 

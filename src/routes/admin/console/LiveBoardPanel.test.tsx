@@ -4,11 +4,11 @@ import { LiveBoardPanel } from './LiveBoardPanel';
 
 const teams = [
   {
-    id: 'team-1', slot: 1, name: 'Alpha Rockets', color: '#E52521', cash: 1200,
+    id: 'team-1', slot: 1, name: 'Alpha Rockets', color: '#E52521', cash: 1200, debt: 0,
     board_position: 3, is_bankrupt: false, version: 4, tiebreak_order: null, claimed: true, businesses: [],
   },
   {
-    id: 'team-2', slot: 2, name: 'Beta Builders', color: '#22B14C', cash: 1000,
+    id: 'team-2', slot: 2, name: 'Beta Builders', color: '#22B14C', cash: 1000, debt: 0,
     board_position: 0, is_bankrupt: false, version: 2, tiebreak_order: null, claimed: true, businesses: [],
   },
 ];

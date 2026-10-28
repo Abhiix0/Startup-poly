@@ -105,6 +105,7 @@ export interface Database {
           name: string;
           color: string;
           cash: number;
+          debt: number;
           board_position: number;
           is_bankrupt: boolean;
           tiebreak_order: number | null;
@@ -118,6 +119,7 @@ export interface Database {
           name: string;
           color: string;
           cash?: number;
+          debt?: number;
           board_position?: number;
           is_bankrupt?: boolean;
           tiebreak_order?: number | null;
@@ -131,6 +133,7 @@ export interface Database {
           name?: string;
           color?: string;
           cash?: number;
+          debt?: number;
           board_position?: number;
           is_bankrupt?: boolean;
           tiebreak_order?: number | null;
@@ -550,6 +553,7 @@ export interface Database {
           name: string;
           rank: number;
           is_bankrupt: boolean;
+          debt: number;
           cash: number;
           business_count: number;
           business_cost: number;

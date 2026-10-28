@@ -37,8 +37,13 @@ export function startReward(): StartReward {
   return { cash: START_REWARD };
 }
 
+/** A forced sale pays 50% of the original purchase cost; upgrades add nothing. */
+export function forcedSaleValue(cost: number): number {
+  return cost / 2;
+}
+
 export function resaleValue(b: Business): number {
-  return b.cost;
+  return forcedSaleValue(b.cost);
 }
 
 export function canAddBusiness(count: number): boolean {

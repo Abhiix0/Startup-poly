@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, PixelButton } from '../../../../ui';
 import { TeamState } from '../../../../domain/quickActions';
+import { MAX_BUSINESSES_PER_TEAM, forcedSaleValue } from '../../../../domain/economy';
 
 export interface ForcedSaleDialogProps {
   isOpen: boolean;
@@ -110,7 +111,7 @@ export const ForcedSaleDialog: React.FC<ForcedSaleDialogProps> = ({
           </div>
           <p className="font-sans text-xs text-brand-navy">
             When a team cannot pay rent, fees, or crisis debts, they must surrender businesses back to the Bank.
-            The bank credits the base purchase cost of the business to the team's cash.
+            The bank pays 50% of the business's original purchase cost (upgrades add nothing); the proceeds clear any debt first.
           </p>
           {team && (
             <div className="font-mono text-xs pt-1 border-t border-neutral-300 flex items-center justify-between">
@@ -151,7 +152,7 @@ export const ForcedSaleDialog: React.FC<ForcedSaleDialogProps> = ({
         {team && (
           <div className="flex flex-col gap-2">
             <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
-              Owned Businesses ({team.businesses.length} / 3)
+              Owned Businesses ({team.businesses.length} / {MAX_BUSINESSES_PER_TEAM})
             </label>
 
             {team.businesses.length === 0 ? (
@@ -193,7 +194,7 @@ export const ForcedSaleDialog: React.FC<ForcedSaleDialogProps> = ({
                           </span>
                         </div>
                         <span className="font-mono text-xs text-neutral-500">
-                          Base cost: ₹{biz.cost.toLocaleString('en-IN')} → Resale payout: +₹{biz.cost.toLocaleString('en-IN')}
+                          Base cost: ₹{biz.cost.toLocaleString('en-IN')} → Forced-sale payout: +₹{forcedSaleValue(biz.cost).toLocaleString('en-IN')}
                         </span>
                       </div>
 
@@ -204,7 +205,7 @@ export const ForcedSaleDialog: React.FC<ForcedSaleDialogProps> = ({
                         disabled={sellingKey !== null || (isTimeExpired && !note.trim())}
                         onClick={() => handleSell(biz.business_key)}
                       >
-                        SELL (+₹{biz.cost.toLocaleString('en-IN')})
+                        SELL (+₹{forcedSaleValue(biz.cost).toLocaleString('en-IN')})
                       </PixelButton>
                     </div>
                   );

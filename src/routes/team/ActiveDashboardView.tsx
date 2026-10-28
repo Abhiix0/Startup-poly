@@ -87,6 +87,22 @@ export const ActiveDashboardView: React.FC<ActiveDashboardViewProps> = ({
         />
       </section>
 
+      {team.debt > 0 && (
+        <section aria-label="Debt recovery">
+          <Metric
+            label="Outstanding debt"
+            value={formatINR(team.debt)}
+            valueClass="text-status-danger-dark"
+            className="bg-status-danger-bg border-brand-red"
+            badge={<span aria-hidden="true">⚠</span>}
+          />
+          <p className="mt-2 text-center font-mono text-xs font-bold text-status-danger-dark">
+            Debt Recovery: all incoming cash pays the debt first. You cannot buy or upgrade until it is cleared, and a team
+            still in debt when time ends cannot win.
+          </p>
+        </section>
+      )}
+
       <TeamBusinessList
         businesses={businesses}
         emptyText="Your portfolio is empty. Businesses you acquire on the physical board will appear here."

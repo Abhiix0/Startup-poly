@@ -1,5 +1,6 @@
 import React from 'react';
 import { StandingsRow, AdminRoomSnapshot } from '../../../data/rpc';
+import { MAX_BUSINESSES_PER_TEAM } from '../../../domain/economy';
 
 export interface StandingsTableProps {
   standings: StandingsRow[];
@@ -63,7 +64,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 
                 {/* Businesses */}
                 <td className="p-2 text-center font-mono">
-                  {row.business_count} / 3
+                  {row.business_count} / {MAX_BUSINESSES_PER_TEAM}
                 </td>
 
                 <td className="p-2 text-right font-tabular font-bold text-brand-navy">
@@ -76,6 +77,10 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                   {row.is_bankrupt ? (
                     <span className="font-pixel text-[9px] bg-brand-red text-brand-white px-1.5 py-0.5 border border-brand-navy uppercase">
                       ELIMINATED
+                    </span>
+                  ) : row.debt > 0 ? (
+                    <span className="font-pixel text-[9px] bg-status-danger-bg text-brand-red px-1.5 py-0.5 border border-brand-red uppercase">
+                      IN DEBT ₹{row.debt.toLocaleString('en-IN')}
                     </span>
                   ) : (
                     <span className="font-pixel text-[9px] bg-status-success-bg text-brand-green px-1.5 py-0.5 border border-brand-green uppercase">
