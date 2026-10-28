@@ -36,20 +36,20 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
   disabled = false,
 }) => {
   return (
-    <div className="bg-brand-navy border-4 border-brand-navy p-3 shadow-pixel flex flex-col gap-2.5 select-none">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-white/20 pb-2">
+    <div className="bg-brand-navy border-4 border-brand-navy p-3 sm:p-4 shadow-pixel flex flex-col gap-3 select-none">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b-2 border-white/20 pb-3">
         <div className="flex items-center gap-2">
           <span className="text-sm">⚡</span>
           <span className="font-pixel text-[11px] text-brand-gold uppercase tracking-wider font-bold">
-            RAPID ACTION PAD (SINGLE-ADMIN COCKPIT)
+            RAPID ACTIONS
           </span>
         </div>
         <span className="hidden md:inline font-mono text-[10px] text-neutral-300">
-          Press highlighted letter key on laptop keyboard
+          Keyboard shortcuts shown in brackets
         </span>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-2.5 [&>button]:min-h-11 [&>button]:justify-center [&>button]:text-center [&>button]:leading-tight">
         {/* BOARD OPERATIONS */}
         <button
           type="button"
@@ -88,7 +88,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
           onClick={onOpenBuy}
           title="Acquire an unowned business from catalog (Hotkey: B)"
           className="
-            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-brand-cream text-brand-navy font-bold
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-white text-brand-navy font-bold
             border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
             hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
             transition-all flex items-center gap-1
@@ -103,7 +103,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
           onClick={onOpenUpgrade}
           title="Upgrade owned business level (Hotkey: U)"
           className="
-            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-brand-cream text-brand-navy font-bold
+            font-pixel text-[10px] sm:text-xs uppercase px-2.5 py-2 bg-white text-brand-navy font-bold
             border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
             hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
             transition-all flex items-center gap-1
@@ -227,7 +227,7 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
               font-pixel text-[10px] sm:text-xs uppercase px-3.5 py-2 bg-brand-red text-white font-bold
               border-2 border-brand-gold shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
               hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer transition-all
-              flex items-center gap-1.5 animate-pulse ml-auto
+              flex items-center gap-1.5 animate-pulse
             "
           >
             <span>↩️</span> UNDO ({lastUndoLabel || 'LAST'}) [Ctrl+Z]

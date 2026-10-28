@@ -18,7 +18,6 @@ export const TeamDashboardPage: React.FC = () => {
     isStale,
     staleAgeSeconds,
     cashFlash,
-    cvFlash,
     wasClaimReleased,
     isSessionLost,
   } = useMyTeam();
@@ -140,7 +139,6 @@ export const TeamDashboardPage: React.FC = () => {
             state={state}
             onExpire={() => refetch()}
             cashFlash={cashFlash}
-            cvFlash={cvFlash}
           />
         )}
 

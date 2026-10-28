@@ -130,7 +130,10 @@
     box-sizing: border-box;
   }
 
+  html,
   body {
+    max-width: 100%;
+    overflow-x: clip;
     background-color: var(--color-brand-sky);
     color: var(--color-brand-navy);
     font-family: var(--font-sans);
@@ -138,6 +141,12 @@
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
     min-height: 100vh;
+  }
+
+  #root {
+    min-height: 100%;
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   .font-pixel {

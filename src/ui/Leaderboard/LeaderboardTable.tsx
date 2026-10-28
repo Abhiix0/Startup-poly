@@ -19,8 +19,6 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
           <tr className="bg-brand-navy text-brand-white font-pixel text-[10px] sm:text-xs uppercase border-b-2 border-brand-navy">
             <th className="p-2.5 sm:p-3 text-center w-16">RANK</th>
             <th className="p-2.5 sm:p-3">TEAM</th>
-            <th className="p-2.5 sm:p-3 text-right bg-brand-gold/20 text-brand-gold">TOTAL VALUE</th>
-            <th className="p-2.5 sm:p-3 text-right">CV</th>
             <th className="p-2.5 sm:p-3 text-right">CASH</th>
             <th className="p-2.5 sm:p-3 text-center">BUSINESSES</th>
             <th className="p-2.5 sm:p-3 text-center">STATUS</th>
@@ -30,8 +28,6 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
           {standings.map((entry) => {
             const isHighlighted = highlightTeamName && entry.name === highlightTeamName;
             const isBankrupt = entry.is_bankrupt;
-            const totalValue = entry.cash + entry.cv;
-
             return (
               <tr
                 key={entry.rank}
@@ -72,16 +68,6 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                       </span>
                     )}
                   </div>
-                </td>
-
-                {/* Total Company Value */}
-                <td className="p-2.5 sm:p-3 text-right font-tabular font-black text-sm sm:text-base text-brand-navy bg-brand-gold/10">
-                  ₹{totalValue.toLocaleString('en-IN')}
-                </td>
-
-                {/* Company Value */}
-                <td className="p-2.5 sm:p-3 text-right font-tabular font-bold text-xs sm:text-sm text-status-info-dark">
-                  ₹{entry.cv.toLocaleString('en-IN')}
                 </td>
 
                 {/* Cash */}

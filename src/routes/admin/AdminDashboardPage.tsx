@@ -90,17 +90,17 @@ export const AdminDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-nes-sky flex flex-col justify-between">
+    <div className="min-h-screen bg-nes-sky overflow-x-clip flex flex-col justify-between">
       {/* Admin Top Navigation */}
-      <header className="bg-nes-navy text-white border-b-4 border-nes-navy px-4 py-3 flex items-center justify-between shadow-[0_4px_0px_var(--color-brand-navy)]">
-        <div className="flex items-center gap-3">
+      <header className="bg-nes-navy text-white border-b-4 border-nes-navy px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-[0_4px_0px_var(--color-brand-navy)]">
+        <div className="min-w-0 flex items-center gap-3">
           <span className="font-pixel text-sm text-nes-gold">STARTUPOLY</span>
           <span className="hidden sm:inline font-mono text-xs text-neutral-200 border-l-2 border-white/20 pl-3">
             ADMIN CONSOLE
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-end gap-3">
           <span className="hidden md:inline font-mono text-xs text-neutral-400">
             {user?.email}
           </span>
@@ -121,7 +121,7 @@ export const AdminDashboardPage: React.FC = () => {
       </header>
 
       {/* Main Container: Either Active Match Panel or Create Room Form */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+      <main className="flex-1 max-w-5xl min-w-0 w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
         {roomCheckError ? (
           <ErrorBanner
             message={roomCheckError}
@@ -152,7 +152,7 @@ export const AdminDashboardPage: React.FC = () => {
               <p className="font-mono text-sm text-neutral-700 max-w-2xl leading-relaxed">
                 Room <strong>{activeRoom.code}</strong> is currently in{' '}
                 <span className="font-bold underline">{activeRoom.status}</span> stage with {activeRoom.team_count} teams.
-                You can resume managing this match, open the arena projector view, or discard it to start a new game.
+                You can resume managing this match or discard it to start a new game.
               </p>
             </div>
 
@@ -162,15 +162,6 @@ export const AdminDashboardPage: React.FC = () => {
                   RESUME MATCH CONSOLE →
                 </PixelButton>
               </Link>
-              <a
-                href={`/arena/${activeRoom.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <PixelButton variant="secondary" size="lg" className="font-pixel text-xs flex items-center gap-1.5">
-                  <span>📺</span> ARENA PROJECTOR
-                </PixelButton>
-              </a>
               <PixelButton
                 variant="danger"
                 size="lg"
@@ -187,7 +178,7 @@ export const AdminDashboardPage: React.FC = () => {
       </main>
 
       {/* Mascot Mario Patrols Ground */}
-      <div className="w-full relative h-14 overflow-visible pointer-events-none select-none anim-mario-land">
+      <div className="w-full relative h-14 overflow-x-clip pointer-events-none select-none anim-mario-land">
         <div className="absolute inset-x-0 bottom-0 pointer-events-none">
           <RoamingCharacter size={46} variant="admin" />
         </div>

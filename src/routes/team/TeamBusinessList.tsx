@@ -49,12 +49,6 @@ export const TeamBusinessList: React.FC<TeamBusinessListProps> = ({ businesses, 
                 <dt>Initial cost</dt>
                 <dd className="font-bold text-brand-navy tabular-nums">{formatINR(biz.cost)}</dd>
               </div>
-              <div className="flex justify-between gap-2">
-                <dt>CV contribution</dt>
-                <dd className="font-bold text-status-info-dark tabular-nums">
-                  +{biz.cv_contribution.toLocaleString('en-IN')} CV
-                </dd>
-              </div>
               <div className="flex justify-between gap-2 border-t border-neutral-200 pt-1 mt-1">
                 <dt className="text-brand-green font-bold">Rent visitors pay</dt>
                 <dd className="font-bold text-brand-green tabular-nums">

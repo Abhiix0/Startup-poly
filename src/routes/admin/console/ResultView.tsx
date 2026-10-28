@@ -38,7 +38,6 @@ export const ResultView: React.FC<ResultViewProps> = ({
     tiebreak_order: s.tiebreak_order,
   }));
 
-  const maxCv = Math.max(0, ...leaderboardEntries.map((e) => e.cv));
   const maxCash = Math.max(0, ...leaderboardEntries.map((e) => e.cash));
 
   const handleCopyText = async () => {
@@ -129,7 +128,7 @@ export const ResultView: React.FC<ResultViewProps> = ({
             allowPresentationMode={true}
           />
 
-          {/* Team performance: bars scale to the best team's backend value */}
+          {/* Team performance: bars scale to the best team's cash balance. */}
           {leaderboardEntries.length > 0 && (
             <section aria-labelledby="team-performance-heading" className="w-full max-w-5xl mx-auto bg-brand-white border-4 border-brand-navy shadow-pixel p-4">
               <h2 id="team-performance-heading" className="font-pixel text-xs sm:text-sm uppercase tracking-wider mb-3">
@@ -143,18 +142,16 @@ export const ResultView: React.FC<ResultViewProps> = ({
                       <span className="font-pixel text-xs font-bold truncate">#{e.rank} {e.name}</span>
                       <span className="font-mono text-[11px] ml-auto">{e.business_count}/3 businesses</span>
                     </div>
-                    {([['Company value', e.cv, maxCv], ['Cash', e.cash, maxCash]] as const).map(([label, v, max]) => (
-                      <div key={label} className="flex items-center gap-2 text-[11px] font-mono">
-                        <span className="w-24 shrink-0">{label}</span>
-                        <div className="flex-1 h-2.5 bg-neutral-200 border border-brand-navy">
-                          <div
-                            className={label === 'Cash' ? 'h-full bg-brand-green' : 'h-full bg-brand-navy'}
-                            style={{ width: `${max > 0 ? Math.max(0, (v / max) * 100) : 0}%` }}
-                          />
-                        </div>
-                        <span className="w-28 text-right font-bold">₹{v.toLocaleString('en-IN')}</span>
+                    <div className="flex items-center gap-2 text-[11px] font-mono">
+                      <span className="w-24 shrink-0">Cash</span>
+                      <div className="flex-1 h-2.5 bg-neutral-200 border border-brand-navy">
+                        <div
+                          className="h-full bg-brand-green"
+                          style={{ width: `${maxCash > 0 ? Math.max(0, (e.cash / maxCash) * 100) : 0}%` }}
+                        />
                       </div>
-                    ))}
+                      <span className="w-28 text-right font-bold">₹{e.cash.toLocaleString('en-IN')}</span>
+                    </div>
                   </li>
                 ))}
               </ul>

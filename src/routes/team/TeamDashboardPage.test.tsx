@@ -121,7 +121,7 @@ describe('TeamDashboardPage', () => {
     expect(screen.queryByText('JOIN PAGE REDIRECT')).not.toBeInTheDocument();
   });
 
-  it('renders ActiveDashboardView with cash, CV, and business list when ACTIVE', () => {
+  it('renders ActiveDashboardView with cash and business list when ACTIVE', () => {
     vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
       ...defaultMockResult,
       state: baseState as any,
@@ -132,10 +132,10 @@ describe('TeamDashboardPage', () => {
     expect(screen.getByText('Alpha Rockets')).toBeInTheDocument();
     expect(screen.getByText('GAME TIME LEFT')).toBeInTheDocument();
     expect(screen.getByText('₹1,450')).toBeInTheDocument();
-    expect(screen.getByText(/1,850/)).toBeInTheDocument();
     expect(screen.getByText('HyperDrive Labs')).toBeInTheDocument();
-    expect(screen.getByText('+750 CV')).toBeInTheDocument();
     expect(screen.getByText('1/3 businesses')).toBeInTheDocument();
+    expect(screen.queryByText(/TOTAL COMPANY VALUE/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Company value \(CV\)/i)).not.toBeInTheDocument();
   });
 
   it('renders ELIMINATED banner when team is bankrupt', () => {
@@ -152,6 +152,18 @@ describe('TeamDashboardPage', () => {
     renderWithRouter();
 
     expect(screen.getByText(/ELIMINATED • TEAM IS BANKRUPT/i)).toBeInTheDocument();
+  });
+
+  it('shows only the initial cash allocation while waiting in the lobby', () => {
+    vi.mocked(teamHookModule.useMyTeam).mockReturnValue({
+      ...defaultMockResult,
+      state: { ...baseState, room: { ...baseState.room, status: 'LOBBY' } } as any,
+    });
+
+    renderWithRouter();
+
+    expect(screen.getByText(/INITIAL CASH/i)).toBeInTheDocument();
+    expect(screen.queryByText(/INITIAL COMPANY VALUE/i)).not.toBeInTheDocument();
   });
 
   it('renders GameOverView with Final scores pending when TIME_EXPIRED', () => {
@@ -194,7 +206,8 @@ describe('TeamDashboardPage', () => {
     expect(screen.getByText(/STARTUPOLY CHAMPION/i)).toBeInTheDocument();
     expect(screen.getByText('OFFICIAL FINAL RESULT')).toBeInTheDocument();
     expect(screen.getByText('YOU')).toBeInTheDocument();
-    expect(screen.getByText(/YOUR FINAL METRICS/i)).toBeInTheDocument();
+    expect(screen.getByText(/FINAL CASH/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /BACK TO HOME/i })).toHaveAttribute('href', '/');
   });
 
   it('does not invent a rank when FINALIZED but final_result is missing', () => {

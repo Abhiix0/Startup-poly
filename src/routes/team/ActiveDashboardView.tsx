@@ -11,7 +11,6 @@ interface ActiveDashboardViewProps {
   state: TeamStateResponse;
   onExpire: () => void;
   cashFlash: FlashDirection;
-  cvFlash: FlashDirection;
 }
 
 const flashSurface = (dir: FlashDirection, upClass: string) =>
@@ -36,7 +35,6 @@ export const ActiveDashboardView: React.FC<ActiveDashboardViewProps> = ({
   state,
   onExpire,
   cashFlash,
-  cvFlash,
 }) => {
   const { team, room, businesses } = state;
 
@@ -74,17 +72,7 @@ export const ActiveDashboardView: React.FC<ActiveDashboardViewProps> = ({
         />
       </Panel>
 
-      {/* Primary Winning Metric: Total Valuation */}
-      <div className="bg-brand-gold/20 border-4 border-brand-navy shadow-pixel p-4 text-center rounded-lg">
-        <span className="font-pixel text-[11px] text-brand-navy font-bold uppercase tracking-wider block">
-          TOTAL COMPANY VALUE (CASH + CV)
-        </span>
-        <span className="font-pixel text-3xl sm:text-4xl text-brand-navy font-black tabular-nums block mt-1 drop-shadow-[1px_1px_0px_var(--color-brand-white)]">
-          {formatINR(team.cash + team.cv)}
-        </span>
-      </div>
-
-      <section aria-label="Financial summary" className="grid gap-4 md:grid-cols-2">
+      <section aria-label="Financial summary">
         <Metric
           label="Available cash"
           value={formatINR(team.cash)}
@@ -96,17 +84,6 @@ export const ActiveDashboardView: React.FC<ActiveDashboardViewProps> = ({
               <PixelCoin size={22} />
             </span>
           }
-        />
-        <Metric
-          label="Company value (CV)"
-          value={
-            <>
-              {team.cv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
-            </>
-          }
-          valueClass="text-status-info-dark"
-          className={flashSurface(cvFlash, 'bg-status-info-bg border-status-info-dark ring-status-info')}
-          badge={<FlashBadge dir={cvFlash} />}
         />
       </section>
 

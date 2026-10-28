@@ -27,23 +27,13 @@ export const GameOverView: React.FC<GameOverViewProps> = ({ state }) => {
         </p>
       </Panel>
 
-      <section aria-label="Latest balances" className="grid gap-4 sm:grid-cols-2">
+      <section aria-label="Latest balance">
         <Metric
           label="Latest cash"
           value={formatINR(team.cash)}
           valueClass="text-status-success-dark"
           className="bg-white"
           badge={<PixelCoin size={22} />}
-        />
-        <Metric
-          label="Latest company value"
-          value={
-            <>
-              {team.cv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
-            </>
-          }
-          valueClass="text-status-info-dark"
-          className="bg-white"
         />
       </section>
 

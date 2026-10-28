@@ -195,6 +195,20 @@ export function formatActivityEvent(
       };
     }
 
+    case 'TEAM_MOVED': {
+      const from = event.prev?.board_position ?? 0;
+      const to = event.new?.board_position ?? 0;
+      const steps = event.new?.steps ?? 0;
+      return {
+        sentence: `${teamName || 'Team'} moved ${steps} space${steps === 1 ? '' : 's'}: #${from} → #${to}`,
+        teamName,
+        teamColor,
+        note,
+        isCorrection,
+        category: 'system',
+      };
+    }
+
     case 'GAME_STARTED':
       return {
         sentence: 'Game started (50-minute match)',

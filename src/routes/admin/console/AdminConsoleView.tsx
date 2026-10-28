@@ -23,6 +23,7 @@ import {
   rpcAdminSetBankrupt,
   rpcAdminAbortGame,
   rpcAdminExtendGame,
+  rpcAdminMoveTeam,
   rpcRoomStatus,
 } from '../../../data/rpc';
 import {
@@ -42,6 +43,8 @@ import { sounds } from '../../../lib/sound';
 import { safeRandomUUID } from '../../../lib/uuid';
 import { FinalizePanel } from './FinalizePanel';
 import { ResultView } from './ResultView';
+import { LiveBoardPanel } from './LiveBoardPanel';
+import { BoardSpace } from '../../../domain/board';
 
 export interface AdminConsoleViewProps {
   snapshot: AdminRoomSnapshot;
@@ -632,6 +635,39 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     }
   };
 
+  const handleBoardMove = async (team: AdminRoomSnapshot['teams'][number], steps: number) => {
+    try {
+      await rpcAdminMoveTeam({
+        team_id: team.id,
+        steps,
+        expected_version: team.version,
+      });
+      successToast(`${team.name} moved ${steps} space${steps === 1 ? '' : 's'}.`);
+      setSelectedTeamId(team.id);
+      await onRefetch();
+    } catch (err: any) {
+      if (err?.code === 'PGRST202') {
+        errorToast('Live Board is not installed on this game server yet. Apply the latest database migration, then reload.');
+        return;
+      }
+      handleError(err, team.version, 'Move token');
+      throw err;
+    }
+  };
+
+  const handleResolveBoardSpace = (space: BoardSpace) => {
+    switch (space.type) {
+      case 'START': setIsStartLapOpen(true); break;
+      case 'BUSINESS': setIsAddOpen(true); break;
+      case 'BONUS': setCardMode('BONUS'); setIsCardOpen(true); break;
+      case 'CRISIS': setCardMode('CRISIS'); setIsCardOpen(true); break;
+      case 'WILDCARD': setIsWildcardOpen(true); break;
+      case 'ACTION_B': setIsPitchTimerOpen(true); break;
+      case 'ACTION_C': setIsLoseFeatureOpen(true); break;
+      case 'ACTION_D': setIsStealOpen(true); break;
+    }
+  };
+
   if (snapshot.room.status === 'FINALIZED') {
     return (
       <ResultView
@@ -661,19 +697,9 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         isExtendingTime={isExtendingTime}
       />
 
-      {/* ARENA & QUICK COMMAND STRIP */}
+      {/* QUICK COMMAND STRIP */}
       <div className="bg-brand-navy border-b-2 border-brand-gold px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-white shadow-pixel-sm">
         <div className="flex items-center gap-2 flex-wrap">
-          <a
-            href={`/arena/${snapshot.room.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Launch Arena Projector view in a separate window"
-            className="font-pixel text-[10px] bg-brand-gold text-brand-navy px-3 py-1.5 border-2 border-brand-navy shadow-pixel-sm hover:bg-white active:translate-y-0.5 transition-colors uppercase font-bold flex items-center gap-1.5"
-          >
-            <span>📺</span> ARENA SCREEN (PROJECTOR)
-          </a>
-
           <button
             type="button"
             onClick={() => setIsPitchTimerOpen(true)}
@@ -917,6 +943,47 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
             </div>
           </section>
 
+          <QuickActionsBar
+            disabled={isEditDisabled}
+            onOpenRent={() => setIsRentOpen(true)}
+            onOpenStartLap={() => setIsStartLapOpen(true)}
+            onOpenBuy={() => setIsAddOpen(true)}
+            onOpenUpgrade={() => {
+              if (selectedTeam.businesses.length > 0) {
+                setUpgradeBizKey(selectedTeam.businesses[0].business_key);
+              } else {
+                errorToast(`${selectedTeam.name} has no businesses to upgrade.`);
+              }
+            }}
+            onOpenForcedSale={() => {
+              setForcedSaleTeamId(selectedTeam.id);
+              setForcedSaleShortfall(undefined);
+              setIsForcedSaleOpen(true);
+            }}
+            onOpenSteal={() => setIsStealOpen(true)}
+            onOpenBonusCard={() => { setCardMode('BONUS'); setIsCardOpen(true); }}
+            onOpenCrisisCard={() => { setCardMode('CRISIS'); setIsCardOpen(true); }}
+            onOpenLoseFeature={() => setIsLoseFeatureOpen(true)}
+            onOpenPitchTimer={() => setIsPitchTimerOpen(true)}
+            onOpenWildcard={() => setIsWildcardOpen(true)}
+            onUndo={handleUndo}
+            canUndo={Boolean(lastUndoableAction)}
+            lastUndoLabel={lastUndoableAction?.label}
+          />
+
+          <LiveBoardPanel
+            teams={snapshot.teams}
+            events={snapshot.events}
+            selectedTeamId={selectedTeam.id}
+            disabled={isEditDisabled || !isActive}
+            onSelectTeam={(id) => {
+              setSelectedTeamId(id);
+              setInsufficientCashShortfall(null);
+            }}
+            onMoveTeam={handleBoardMove}
+            onResolveSpace={handleResolveBoardSpace}
+          />
+
           {/* Mobile Operations Tab Switcher (< md) */}
           <div className="flex md:hidden items-center border-2 border-brand-navy bg-brand-white p-1 shadow-pixel-sm">
             <button
@@ -952,40 +1019,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 setInsufficientCashShortfall(null);
               }}
               flashes={flashes}
-            />
-
-            <QuickActionsBar
-              disabled={isEditDisabled}
-              onOpenRent={() => setIsRentOpen(true)}
-              onOpenStartLap={() => setIsStartLapOpen(true)}
-              onOpenBuy={() => setIsAddOpen(true)}
-              onOpenUpgrade={() => {
-                if (selectedTeam.businesses.length > 0) {
-                  setUpgradeBizKey(selectedTeam.businesses[0].business_key);
-                } else {
-                  errorToast(`${selectedTeam.name} has no businesses to upgrade.`);
-                }
-              }}
-              onOpenForcedSale={() => {
-                setForcedSaleTeamId(selectedTeam.id);
-                setForcedSaleShortfall(undefined);
-                setIsForcedSaleOpen(true);
-              }}
-              onOpenSteal={() => setIsStealOpen(true)}
-              onOpenBonusCard={() => {
-                setCardMode('BONUS');
-                setIsCardOpen(true);
-              }}
-              onOpenCrisisCard={() => {
-                setCardMode('CRISIS');
-                setIsCardOpen(true);
-              }}
-              onOpenLoseFeature={() => setIsLoseFeatureOpen(true)}
-              onOpenPitchTimer={() => setIsPitchTimerOpen(true)}
-              onOpenWildcard={() => setIsWildcardOpen(true)}
-              onUndo={handleUndo}
-              canUndo={Boolean(lastUndoableAction)}
-              lastUndoLabel={lastUndoableAction?.label}
             />
 
             <TeamEditor

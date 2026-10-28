@@ -93,6 +93,9 @@ describe('LeaderboardView', () => {
 
     // Won on pitch badge
     expect(screen.getByText(/★ won on pitch/i)).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'CASH' })).toBeInTheDocument();
+    expect(screen.queryByRole('columnheader', { name: /TOTAL VALUE/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('columnheader', { name: 'CV' })).not.toBeInTheDocument();
   });
 
   it('highlights viewer team when highlightTeamName is provided', () => {
@@ -134,8 +137,8 @@ describe('exportHelpers', () => {
     const text = formatStandingsAsText('ROOM42', mockStandings, '2026-09-21T12:00:00Z');
     expect(text).toContain('★ STARTUPOLY TOURNAMENT RESULTS ★');
     expect(text).toContain('Room Code: ROOM42');
-    expect(text).toContain('#1 Alpha Rockets — ₹1,500 CV | ₹500 Cash | 3/3 Businesses');
-    expect(text).toContain('#5 Epsilon Enterprises — ₹300 CV | ₹0 Cash | 0/3 Businesses [ELIMINATED]');
+    expect(text).toContain('#1 Alpha Rockets — ₹500 Cash | 3/3 Businesses');
+    expect(text).toContain('#5 Epsilon Enterprises — ₹0 Cash | 0/3 Businesses [ELIMINATED]');
   });
 
   it('exports standings to CSV', () => {

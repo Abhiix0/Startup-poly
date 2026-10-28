@@ -26,6 +26,7 @@ export type ActivityEventType =
   | 'TIME_EXPIRED'
   | 'GAME_FINALIZED'
   | 'GAME_EXTENDED'
+  | 'TEAM_MOVED'
   | 'GAME_ABORTED';
 
 export interface Database {
@@ -105,6 +106,7 @@ export interface Database {
           color: string;
           cash: number;
           cv: number;
+          board_position: number;
           is_bankrupt: boolean;
           tiebreak_order: number | null;
           version: number;
@@ -118,6 +120,7 @@ export interface Database {
           color: string;
           cash?: number;
           cv?: number;
+          board_position?: number;
           is_bankrupt?: boolean;
           tiebreak_order?: number | null;
           version?: number;
@@ -131,6 +134,7 @@ export interface Database {
           color?: string;
           cash?: number;
           cv?: number;
+          board_position?: number;
           is_bankrupt?: boolean;
           tiebreak_order?: number | null;
           version?: number;
@@ -518,6 +522,10 @@ export interface Database {
           ordered_team_ids: string[];
           note?: string | null;
         };
+        Returns: Json;
+      };
+      admin_move_team: {
+        Args: { team_id: string; steps: number; expected_version: number; request_id?: string | null };
         Returns: Json;
       };
       get_admin_snapshot: {

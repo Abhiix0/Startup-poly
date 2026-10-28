@@ -201,7 +201,7 @@ export const RoamingCharacter: React.FC<RoamingCharacterProps> = ({
     >
       {/* Motion Track (Paces smoothly back and forth along ground, jumps ONLY at obstacle) */}
       <div
-        className={`founder-motion-track relative flex flex-col items-center will-change-transform ${
+        className={`founder-motion-track relative w-max flex flex-col items-center will-change-transform ${
           isCheering ? 'anim-poly-hop' : ''
         }`}
         style={{

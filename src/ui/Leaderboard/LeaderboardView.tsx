@@ -72,7 +72,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
             {winner.name}
           </h1>
           <p className="font-mono text-xs sm:text-sm text-brand-navy font-bold mt-2">
-            Final Valuation: ₹{winner.cv.toLocaleString('en-IN')} Company Value • ₹{winner.cash.toLocaleString('en-IN')} Cash
+            Final Cash: ₹{winner.cash.toLocaleString('en-IN')}
           </p>
         </div>
       )}

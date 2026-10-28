@@ -14,7 +14,7 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   return (
     <div
       key={locationKey}
-      className={`anim-scene-transition min-h-screen w-full flex flex-col ${className}`}
+      className={`anim-scene-transition min-h-screen w-full min-w-0 overflow-x-clip flex flex-col ${className}`}
     >
       {children}
     </div>

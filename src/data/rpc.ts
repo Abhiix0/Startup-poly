@@ -234,6 +234,15 @@ export async function rpcAdminSetTiebreak(room_id: string, ordered_team_ids: str
   return callRpc<any>('admin_set_tiebreak', { room_id, ordered_team_ids, note });
 }
 
+export async function rpcAdminMoveTeam(params: {
+  team_id: string;
+  steps: number;
+  expected_version: number;
+  request_id?: string;
+}) {
+  return mutate<any>('admin_move_team', params);
+}
+
 export interface AdminRoomSnapshot {
   room: {
     id: string;
@@ -256,6 +265,7 @@ export interface AdminRoomSnapshot {
     color: string;
     cash: number;
     cv: number;
+    board_position?: number;
     is_bankrupt: boolean;
     version: number;
     tiebreak_order: number | null;

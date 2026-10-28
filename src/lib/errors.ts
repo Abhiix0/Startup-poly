@@ -243,6 +243,7 @@ export const CODE_CLASS: Record<string, RpcFailureClass> = {
   ROOM_FINALIZED: 'ROOM_NOT_ACTIVE',
   OUTCOME_UNKNOWN: 'OUTCOME_UNKNOWN',
   PGRST301: 'SESSION_EXPIRED', // PostgREST: JWT expired
+  PGRST202: 'DEFINITELY_FAILED', // PostgREST: requested RPC is not present in the schema cache
 };
 
 export function classifyRpcError(err: unknown): RpcFailureClass {

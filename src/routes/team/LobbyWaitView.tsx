@@ -95,23 +95,13 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
           <span>💼</span>
           <span>Starting Allocation (Unlocks on Match Start)</span>
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div>
           <Metric
             label="Initial Cash"
             value={formatINR(team.cash)}
             valueClass="text-status-success-dark font-extrabold"
             className="bg-neutral-50"
             badge={<PixelCoin size={22} />}
-          />
-          <Metric
-            label="Initial Company Value"
-            value={
-              <>
-                {team.cv.toLocaleString('en-IN')} <span className="text-xl text-neutral-600 font-bold">CV</span>
-              </>
-            }
-            valueClass="text-status-info-dark font-extrabold"
-            className="bg-neutral-50"
           />
         </div>
       </div>

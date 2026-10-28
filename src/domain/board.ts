@@ -38,10 +38,10 @@ export const BOARD_SPACES: BoardSpace[] = [
   // Quadrant 1 (Spaces 1–5)
   {
     index: 1,
-    name: 'EdTech',
+    name: 'AI / DeepTech',
     type: 'BUSINESS',
-    businessKey: 'edtech',
-    description: 'Cost: ₹200 | Initial CV: 150 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
+    businessKey: 'ai_deeptech',
+    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
   },
   {
     index: 2,
@@ -64,10 +64,10 @@ export const BOARD_SPACES: BoardSpace[] = [
   },
   {
     index: 5,
-    name: 'E-Commerce',
+    name: 'FinTech',
     type: 'BUSINESS',
-    businessKey: 'ecommerce',
-    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    businessKey: 'fintech',
+    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
   },
   // Corner 2
   {
@@ -79,9 +79,9 @@ export const BOARD_SPACES: BoardSpace[] = [
   // Quadrant 2 (Spaces 7–11)
   {
     index: 7,
-    name: 'FinTech',
+    name: 'HealthTech',
     type: 'BUSINESS',
-    businessKey: 'fintech',
+    businessKey: 'healthtech',
     description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
   },
   {
@@ -92,22 +92,22 @@ export const BOARD_SPACES: BoardSpace[] = [
   },
   {
     index: 9,
-    name: 'HealthTech',
-    type: 'BUSINESS',
-    businessKey: 'healthtech',
-    description: 'Cost: ₹400 | Initial CV: 200 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
-  },
-  {
-    index: 10,
-    name: 'Crisis Card',
-    type: 'CRISIS',
-    description: 'Draw Crisis Card (Cards 1–6 based on movement roll).',
-  },
-  {
-    index: 11,
     name: 'Wildcard',
     type: 'WILDCARD',
     description: 'Draw Wildcard Chit: perform mandatory quick physical/social challenge.',
+  },
+  {
+    index: 10,
+    name: 'EdTech',
+    type: 'BUSINESS',
+    businessKey: 'edtech',
+    description: 'Cost: ₹200 | Initial CV: 150 | U1: ₹150 (+300 CV) | U2: ₹200 (+400 CV)',
+  },
+  {
+    index: 11,
+    name: 'Crisis Card',
+    type: 'CRISIS',
+    description: 'Draw Crisis Card (Cards 1–6 based on movement roll).',
   },
   // Corner 3
   {
@@ -119,10 +119,10 @@ export const BOARD_SPACES: BoardSpace[] = [
   // Quadrant 3 (Spaces 13–17)
   {
     index: 13,
-    name: 'AI / DeepTech',
+    name: 'DevTools / Infrastructure',
     type: 'BUSINESS',
-    businessKey: 'ai_deeptech',
-    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
+    businessKey: 'devtools',
+    description: 'Cost: ₹300 | Initial CV: 190 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
   },
   {
     index: 14,
@@ -132,10 +132,10 @@ export const BOARD_SPACES: BoardSpace[] = [
   },
   {
     index: 15,
-    name: 'DevTools / Infrastructure',
+    name: 'Cybersecurity',
     type: 'BUSINESS',
-    businessKey: 'devtools',
-    description: 'Cost: ₹300 | Initial CV: 190 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
+    businessKey: 'cybersecurity',
+    description: 'Cost: ₹400 | Initial CV: 220 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
   },
   {
     index: 16,
@@ -145,10 +145,10 @@ export const BOARD_SPACES: BoardSpace[] = [
   },
   {
     index: 17,
-    name: 'Cybersecurity',
+    name: 'CleanTech / Energy',
     type: 'BUSINESS',
-    businessKey: 'cybersecurity',
-    description: 'Cost: ₹400 | Initial CV: 220 | U1: ₹250 (+300 CV) | U2: ₹300 (+400 CV)',
+    businessKey: 'cleantech',
+    description: 'Cost: ₹500 | Initial CV: 240 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
   },
   // Corner 4
   {
@@ -160,10 +160,10 @@ export const BOARD_SPACES: BoardSpace[] = [
   // Quadrant 4 (Spaces 19–23)
   {
     index: 19,
-    name: 'CleanTech / Energy',
+    name: 'Robotics & IoT',
     type: 'BUSINESS',
-    businessKey: 'cleantech',
-    description: 'Cost: ₹500 | Initial CV: 240 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
+    businessKey: 'robotics',
+    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
   },
   {
     index: 20,
@@ -173,10 +173,9 @@ export const BOARD_SPACES: BoardSpace[] = [
   },
   {
     index: 21,
-    name: 'Robotics & IoT',
-    type: 'BUSINESS',
-    businessKey: 'robotics',
-    description: 'Cost: ₹500 | Initial CV: 250 | U1: ₹300 (+300 CV) | U2: ₹350 (+400 CV)',
+    name: 'Wildcard',
+    type: 'WILDCARD',
+    description: 'Draw Wildcard Chit: perform mandatory quick physical/social challenge.',
   },
   {
     index: 22,
@@ -186,9 +185,10 @@ export const BOARD_SPACES: BoardSpace[] = [
   },
   {
     index: 23,
-    name: 'Wildcard',
-    type: 'WILDCARD',
-    description: 'Draw Wildcard Chit: perform mandatory quick physical/social challenge.',
+    name: 'E-Commerce',
+    type: 'BUSINESS',
+    businessKey: 'ecommerce',
+    description: 'Cost: ₹300 | Initial CV: 180 | U1: ₹200 (+300 CV) | U2: ₹250 (+400 CV)',
   },
 ];
 

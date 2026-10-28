@@ -1,0 +1,59 @@
+.live-board {
+  max-width: 760px;
+  padding: clamp(5px, 1.2%, 9px);
+  border: 5px solid #452012;
+  background-color: #b84418;
+  background-image: repeating-linear-gradient(0deg, transparent 0 17px, #542514 17px 20px), repeating-linear-gradient(90deg, transparent 0 30px, #542514 30px 33px);
+  box-shadow: inset 0 0 0 3px #e58949, 5px 5px 0 #102040;
+}
+
+.live-board__grid { gap: clamp(2px, .4vw, 4px); }
+.live-board__scene {
+  position: absolute;
+  inset: 13.5%;
+  overflow: hidden;
+  border: 3px solid #102040;
+  background: linear-gradient(#28a9f5 0%, #71d4ff 100%);
+  box-shadow: inset 0 0 0 3px #a2e9ff;
+}
+.live-board__logo { position: absolute; z-index: 2; width: 65%; left: 17.5%; top: 34%; animation: board-logo-float 4s ease-in-out infinite; }
+.live-board__logo > div { width: 100%; }
+.live-board__cloud, .live-board__hill, .live-board__pipe, .live-board__coin, .live-board__star { position: absolute; }
+.live-board__cloud { width: 18%; height: auto; animation: board-cloud-drift 8s ease-in-out infinite alternate; }
+.live-board__cloud--one { top: 10%; left: 8%; }
+.live-board__cloud--two { top: 18%; right: 7%; animation-delay: -3s; }
+.live-board__cloud--three { top: 49%; left: 5%; width: 12%; animation-delay: -5s; }
+.live-board__hill { width: 37%; height: auto; bottom: 7%; }
+.live-board__hill--one { left: -4%; }
+.live-board__hill--two { right: -3%; width: 30%; }
+.live-board__pipe { width: 13%; height: auto; bottom: 7%; right: 17%; }
+.live-board__coin { width: 7%; height: auto; bottom: 24%; right: 20%; animation: board-coin-bob 2s ease-in-out infinite; }
+.live-board__star { width: 6%; height: auto; top: 18%; left: 46%; animation: board-coin-bob 2.8s ease-in-out infinite; }
+.live-board__ground { position: absolute; bottom: 0; left: 0; right: 0; height: 8%; border-top: 4px solid #10583b; background: repeating-linear-gradient(90deg, #ce7838 0 25px, #763511 25px 28px); }
+.live-board__scene-caption { position: absolute; z-index: 2; top: 59%; width: 100%; text-align: center; color: #fff4c0; font-family: var(--font-pixel, monospace); font-weight: 900; font-size: clamp(7px, 1.1vw, 11px); letter-spacing: .13em; text-shadow: 2px 2px #102040; }
+
+.live-board__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  overflow: visible;
+  border: 3px solid #102040;
+  border-radius: 3px;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.28), transparent 38%, rgba(0,0,0,.18));
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,.5), inset -3px -3px 0 rgba(0,0,0,.22), 1px 2px 0 #102040;
+}
+.live-board__tile--selected { z-index: 20; outline: 3px solid #fff172; outline-offset: -2px; }
+.live-board__number { position: absolute; z-index: 2; top: 2px; right: 3px; color: #102040; font: bold clamp(6px, .8vw, 9px) monospace; opacity: .8; }
+.live-board__icon { display: flex; align-items: center; justify-content: center; width: 38%; height: 38%; min-height: 16px; filter: drop-shadow(1px 2px 0 rgba(16,32,64,.5)); }
+.live-board__icon svg { width: 100%; height: 100%; }
+.live-board__symbol { color: #fff; font: 900 clamp(20px, 3vw, 37px)/1 sans-serif; -webkit-text-stroke: 1.5px #102040; text-shadow: 2px 2px #102040; }
+.live-board__label { position: relative; z-index: 1; max-width: 100%; margin-top: 2px; color: white; font: 900 clamp(6px, .75vw, 10px)/1.08 var(--font-pixel, monospace); text-align: center; text-transform: uppercase; text-shadow: 1px 1px #102040, -1px -1px #102040, 1px -1px #102040, -1px 1px #102040; overflow-wrap: normal; word-break: normal; hyphens: none; }
+.live-board__tokens { position: absolute; z-index: 3; left: 2px; right: 2px; bottom: 1px; display: flex; flex-wrap: wrap; gap: 1px; justify-content: center; }
+.live-board__token { display: inline-flex; width: clamp(12px, 1.4vw, 18px); height: clamp(12px, 1.4vw, 18px); align-items: center; justify-content: center; border: 2px solid #102040; border-radius: 50%; color: white; font: 900 clamp(7px, .7vw, 9px)/1 sans-serif; text-shadow: 1px 1px #102040, -1px -1px #102040; box-shadow: 0 1px 0 white; }
+.live-board__token--selected { outline: 2px solid white; outline-offset: 0; }
+@keyframes board-cloud-drift { from { transform: translateX(-5px); } to { transform: translateX(8px); } }
+@keyframes board-logo-float { 50% { transform: translateY(-4px); } }
+@keyframes board-coin-bob { 50% { transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .live-board__cloud, .live-board__logo, .live-board__coin, .live-board__star { animation: none; } }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { TeamStateResponse } from '../../data/rpc';
 import { PixelCoin, PixelTrophy } from '../../ui/pixel';
 import { formatINR } from '../../lib/format';
@@ -21,7 +22,6 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
 
   const rank = final_result?.rank ?? null;
   const isWinner = rank === 1;
-  const finalCv = final_result?.cv ?? team.cv;
   const finalCash = final_result?.cash ?? team.cash;
   const isBankrupt = final_result?.is_bankrupt ?? team.is_bankrupt;
   const businessCount = final_result?.business_count ?? businesses.length;
@@ -67,18 +67,7 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
         </div>
       </Panel>
 
-      <section aria-label="Your final metrics" className="grid gap-4 sm:grid-cols-2">
-        <h2 className="sr-only">YOUR FINAL METRICS</h2>
-        <Metric
-          label="Final company value"
-          value={
-            <>
-              {finalCv.toLocaleString('en-IN')} <span className="text-2xl text-neutral-600">CV</span>
-            </>
-          }
-          valueClass="text-status-info-dark"
-          className="bg-white"
-        />
+      <section aria-label="Your final cash">
         <Metric
           label="Final cash"
           value={formatINR(finalCash)}
@@ -116,6 +105,13 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
       <p className="text-center font-mono text-xs text-neutral-700">
         Team results are private to your device. Full standings are shown on the organizer's console.
       </p>
+
+      <Link
+        to="/"
+        className="self-center inline-flex items-center justify-center font-pixel text-xs uppercase bg-brand-navy text-brand-gold border-2 border-brand-navy px-5 py-3 shadow-pixel-sm hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
+      >
+        ← BACK TO HOME
+      </Link>
     </div>
   );
 };

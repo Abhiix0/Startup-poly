@@ -102,7 +102,7 @@ export const AdminRoomPage: React.FC = () => {
       </main>
 
       {/* Mascot Mario Patrols Ground */}
-      <div className="w-full relative h-14 overflow-visible pointer-events-none select-none anim-mario-land">
+      <div className="w-full relative h-14 overflow-x-clip pointer-events-none select-none anim-mario-land">
         <div className="absolute inset-x-0 bottom-0 pointer-events-none">
           <RoamingCharacter size={46} variant="admin" />
         </div>
