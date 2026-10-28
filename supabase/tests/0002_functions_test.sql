@@ -228,11 +228,11 @@ SELECT lives_ok(
   'admin_set_business_level upgrades SaaS to Level 1'
 );
 
--- Cash = 1200 - 200 = 1000, CV = 380 + 300 = 680
+-- Cash = 1200 - 150 = 1050, CV = 380 + 300 = 680
 SELECT is(
   (SELECT cash FROM public.teams WHERE slot = 1),
-  1000,
-  'Team 1 cash decremented by SaaS U1 cost (200)'
+  1050,
+  'Team 1 cash decremented by SaaS U1 cost (150)'
 );
 SELECT is(
   (SELECT cv FROM public.teams WHERE slot = 1),
@@ -263,8 +263,8 @@ SELECT throws_ok(
 -- Team 1 cash unchanged after rollback
 SELECT is(
   (SELECT cash FROM public.teams WHERE slot = 1),
-  1000,
-  'Team 1 cash remains 1000 after atomic adjust aborted'
+  1050,
+  'Team 1 cash remains 1050 after atomic adjust aborted'
 );
 
 -- 18. Timer expiration derived automatically at +3000s

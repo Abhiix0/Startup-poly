@@ -18,7 +18,7 @@ SELECT public.admin_create_room(5, '[{"name":"Alpha","color":"#FF0000"},{"name":
 SELECT public.admin_open_lobby((SELECT id FROM public.rooms));
 SELECT public.admin_start_game((SELECT id FROM public.rooms), true);
 
--- Add business to slot 1 (edtech: cost=200, initial_cv=150, u1_cost=150, u1_cv=300)
+-- Add business to slot 1 (edtech: cost=200, initial_cv=150, u1_cost=100, u1_cv=300)
 SELECT public.admin_add_business((SELECT id FROM public.teams WHERE slot=1), 'edtech', true, 0, gen_random_uuid(), NULL);
 SELECT is((SELECT cv FROM public.teams WHERE slot=1), 150, 'Team 1 CV is 150 after buying EdTech');
 SELECT is((SELECT cash FROM public.teams WHERE slot=1), 800, 'Team 1 cash is 800 after buying EdTech');
@@ -26,12 +26,12 @@ SELECT is((SELECT cash FROM public.teams WHERE slot=1), 800, 'Team 1 cash is 800
 -- Upgrade business
 SELECT public.admin_set_business_level((SELECT id FROM public.teams WHERE slot=1), 'edtech', 1::smallint, true, 1, gen_random_uuid(), NULL);
 SELECT is((SELECT cv FROM public.teams WHERE slot=1), 450, 'Team 1 CV is 450 (150+300) after upgrading EdTech to level 1');
-SELECT is((SELECT cash FROM public.teams WHERE slot=1), 650, 'Team 1 cash is 650 after upgrading EdTech');
+SELECT is((SELECT cash FROM public.teams WHERE slot=1), 700, 'Team 1 cash is 700 after upgrading EdTech');
 
 -- Remove business with CORRECTION: CV should deduct 450 back to 0
 SELECT public.admin_remove_business((SELECT id FROM public.teams WHERE slot=1), 'edtech', 'CORRECTION', false, 2, gen_random_uuid(), 'Admin fix');
 SELECT is((SELECT cv FROM public.teams WHERE slot=1), 0, 'Team 1 CV deducted back to 0 on CORRECTION removal');
-SELECT is((SELECT cash FROM public.teams WHERE slot=1), 650, 'Team 1 cash unchanged on CORRECTION with credit_resale=false');
+SELECT is((SELECT cash FROM public.teams WHERE slot=1), 700, 'Team 1 cash unchanged on CORRECTION with credit_resale=false');
 
 -- Test Bankruptcy setting: cash zeroes out
 SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=2), 500, NULL, 0, gen_random_uuid(), NULL);

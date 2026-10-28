@@ -115,18 +115,16 @@ SELECT throws_ok(
   'Duplicate business ownership in the same room is rejected'
 );
 
--- Add 2nd and 3rd business for Team Alpha
+-- Add 2nd business for Team Alpha
 INSERT INTO public.team_businesses (room_id, team_id, business_key, level)
-VALUES 
-  ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'edtech', 0),
-  ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'fintech', 0);
+VALUES ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'edtech', 0);
 
--- 4th business for team rejected by trigger
+-- 3rd business for team rejected by trigger
 SELECT throws_ok(
-  $$INSERT INTO public.team_businesses (room_id, team_id, business_key, level) VALUES ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'ecommerce', 0)$$,
+  $$INSERT INTO public.team_businesses (room_id, team_id, business_key, level) VALUES ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'fintech', 0)$$,
   'P0001',
   'BUSINESS_CAP',
-  'Trigger blocks 4th business for a team with BUSINESS_CAP'
+  'Trigger blocks 3rd business for a team with BUSINESS_CAP'
 );
 
 -- 5. Lifecycle Transitions & Room Immutability
