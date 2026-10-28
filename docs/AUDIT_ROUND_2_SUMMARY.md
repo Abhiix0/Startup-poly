@@ -1,5 +1,7 @@
 # STARTUPOLY Repo Audit Round 2: Summary Report
 
+> **Historical document.** This describes the system as it was before Company Value (CV) was removed and before the rulebook alignment (business cap 2, new upgrade costs, Debt Recovery, server-side START/purchase/rent rules). It is kept as history and is not updated. Current rules: `docs/SCORING_RULES.md`, the Player Handbook in `src/routes/public/RulesPage.tsx`, and the migrations from `0028` on.
+
 This document records the complete findings, architectural resolutions, verification results, and before/after metrics from the second full-repo audit defined in `STARTUPOLY_Full_Repo_Audit.md`.
 
 All 6 phases were systematically executed, validated against the complete test matrix (`npm run typecheck`, `npm test`, `supabase test db`, `npm run build`), and committed phase-by-phase.

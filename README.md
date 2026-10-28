@@ -8,8 +8,8 @@ STARTUPOLY is a physical startup board game played live (one board, 5–6 teams,
 
 ## 👥 User Roles
 
-1. **Event Admin (Laptop)**: Authenticated dashboard used by Tech Runners / Game Master to configure teams, track the server-authoritative 50:00 timer, record cash and Company Value (CV) transactions, manage businesses and upgrades, and inspect the immutable activity log.
-2. **Teams (Mobile Phone)**: One anonymous mobile browser per team (PIN-gated). Strictly read-only display showing only the team's own cash, Company Value, owned businesses with levels, and the match countdown.
+1. **Event Admin (Laptop)**: Authenticated dashboard used by Tech Runners / Game Master to configure teams, track the server-authoritative 50:00 timer, record cash transactions, manage businesses and upgrades, and inspect the immutable activity log.
+2. **Teams (Mobile Phone)**: One anonymous mobile browser per team (PIN-gated). Strictly read-only display showing only the team's own cash (and debt, if any), owned businesses with levels, and the match countdown.
 
 ---
 

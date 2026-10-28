@@ -22,6 +22,15 @@ Nothing here is automated on purpose. A person runs each step and checks the res
 - [ ] Deploy the web build (Vercel). Only `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` may be set for the browser. `npm run check:bundle` passes on the build output.
 - [ ] Smoke test with a throwaway match: create room, open lobby, join one phone, start, one edit, abort. Then clear it.
 
+## Migrations 0028 to 0031 (rulebook alignment)
+
+- `0028`: new upgrade costs and a 2-business cap. A team that already holds 3 businesses keeps them but cannot add more. Upgrade prices change mid-game.
+- `0029`: removes Company Value. It **drops** `teams.cv`, `business_catalog.initial_cv/u1_cv/u2_cv`, `final_results.cv` and `final_result_businesses.initial_cv/u1_cv/u2_cv` (irreversible; the owner chose no archive or compensation) and changes RPC signatures and payloads: `admin_set_team_values` loses `cv`, `admin_adjust` rejects `cv_delta`, `admin_set_tiebreak` and the pitch tie-break are removed, ranking changes. Historical `activity_events` JSON keeps its old `cv` keys.
+- `0030`: START is credited by `admin_move_team`; purchases need the token on the business's space (`business_catalog.board_position`); `admin_charge_rent` computes rent on the server; free entries and manual level changes need a note.
+- `0031`: `teams.debt` and Debt Recovery; forced sales pay 50% of cost; teams in debt cannot buy, upgrade or win.
+
+Before pushing these: take a database backup; **deploy outside a live event**; deploy the web build and the database **together** and hard-refresh every admin and team device (old tabs call removed or changed RPCs); run `npm run test:upgrade` first. Rollback is forward-only (a new migration).
+
 ## Rollback
 
 There are no down-migrations. If a migration misbehaves:

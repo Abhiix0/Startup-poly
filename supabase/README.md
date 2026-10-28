@@ -110,10 +110,15 @@ All schema definitions, triggers, RLS policies, and seed data are version-contro
 - `0007_functions_core.sql`: Core functions (`server_time()`, `expire_if_due()`, and `raise_error()`).
 - `0008_functions_admin.sql`: Authenticated admin stored procedures with optimistic locking and idempotency.
 - `0009_functions_team.sql`: Team endpoints (`get_lobby()`, `join_team()` with rate limiting, `get_my_state()`).
-- `0010_standings_finalize.sql`: Standings calculation, tiebreak ordering, and finalization.
+- `0010_standings_finalize.sql`: Standings calculation and finalization (ranking later rewritten by 0029/0031).
 - `0011_perf_indexes.sql`: Performance indexes on hot foreign keys and query paths.
 - `0012_admin_abort_game.sql`: Admin game abort stored procedure.
 - `0013_fix_admin_abort_reset.sql`: Fix admin abort to reset team state, delete businesses, increment version, and require mandatory note.
+- `0014` to `0027`: join hardening, lock order, security lockdown, final snapshot, live board and related fixes (see the files).
+- `0028_rulebook_economy_alignment.sql`: Approved upgrade costs and the 2-business cap.
+- `0029_remove_company_value.sql`: Removes Company Value; new ranking (cash, owned business cost, upgrades; equal teams share a rank).
+- `0030_server_authoritative_gameplay.sql`: START credited on movement, purchases tied to the board space, server-computed rent.
+- `0031_debt_recovery.sql`: Persistent Debt Recovery and 50% forced sales.
 
 > [!IMPORTANT]
 > Ad-hoc SQL patches are not used going forward — every change goes through a numbered migration in `supabase/migrations/`, and any future hotfix must be added as a new numbered migration (and reflected in `all_migrations.sql`) rather than a standalone patch file.
@@ -128,7 +133,7 @@ All write mutations and authenticated team reads execute through `SECURITY DEFIN
 - `server_time()`: Current server timestamp based on DB clock.
 - `get_lobby(code)`: Returns lobby teams and claimed statuses. Does not leak PINs or IDs.
 - `join_team(code, slot, pin)`: Connects an anonymous session to a team. Throttled at 5 failed attempts per 60s.
-- `get_my_state()`: Team dashboard for `auth.uid()`. Isolated to the user's claimed team; includes `ends_at` and computes business `cv_contribution`.
+- `get_my_state()`: Team dashboard for `auth.uid()`. Isolated to the user's claimed team; includes `ends_at`, cash and debt.
 
 ### Admin Management RPCs (Guarded by `is_admin()`)
 - `admin_create_room(team_count, teams)`: Creates room with 5–6 teams, safe 6-char code, and unique 4-digit PINs.
@@ -136,16 +141,17 @@ All write mutations and authenticated team reads execute through `SECURITY DEFIN
 - `admin_open_lobby(room_id)`: Transitions room to `LOBBY`.
 - `admin_release_team(team_id)`: Frees a team slot by removing its claims.
 - `admin_start_game(room_id, force)`: Transitions to `ACTIVE`, sets 50:00 timer.
-- `admin_set_team_values(team_id, cash, cv, expected_version, request_id, note)`: Absolute set of cash/CV.
-- `admin_adjust(changes, label, note, request_id)`: Atomic multi-team balance adjustment with CV clamped to 0.
-- `admin_add_business(team_id, business_key, apply_purchase, expected_version, request_id, note)`: Adds catalog business.
-- `admin_set_business_level(team_id, business_key, new_level, apply_upgrade, expected_version, request_id, note)`: Upgrades level.
-- `admin_remove_business(team_id, business_key, reason, credit_resale, expected_version, request_id, note)`: Forced sales / liquidation.
+- `admin_set_team_values(team_id, cash, expected_version, request_id, note)`: Absolute set of cash (a correction; debt is untouched).
+- `admin_adjust(changes, label, note, request_id)`: Atomic multi-team cash adjustment. Incoming amounts clear debt first. A payment the team cannot cover is refused (`INSUFFICIENT_CASH`) while it owns a business; with none left the unpaid part becomes debt. `cv_delta` is rejected.
+- `admin_charge_rent(payer_team_id, business_key, payer_expected_version, owner_expected_version, request_id, note)`: Server-computed rent (50% / 75% / 100% of cost by level) from the payer standing on the business's space to its owner.
+- `admin_move_team(team_id, steps, expected_version, request_id)`: Moves a token 1 to 6 spaces and credits 200 per START crossing (debt first) in the same transaction.
+- `admin_add_business(team_id, business_key, apply_purchase, expected_version, request_id, note)`: Adds a catalog business (token must stand on its space; max 2 per team; not while in debt; free entries need a note).
+- `admin_set_business_level(team_id, business_key, new_level, apply_upgrade, expected_version, request_id, note)`: Upgrades level (not while in debt; manual changes need a note).
+- `admin_remove_business(team_id, business_key, reason, credit_resale, expected_version, request_id, note)`: Forced sales (50% of original cost, debt first) / liquidation.
 - `admin_set_bankrupt(team_id, value, expected_version, request_id, note)`: Marks bankrupt, returns businesses to bank.
-- `admin_set_tiebreak(room_id, ordered_team_ids, note)`: Sets 1-based order for tied teams during `TIME_EXPIRED`.
 - `get_admin_snapshot(room_id)`: Full state snapshot including PINs and latest 200 events.
-- `get_standings(room_id)`: Live leaderboard standings with unresolved tie detection.
-- `admin_finalize(room_id)`: Freezes room, writes immutable `final_results`, assigns winner.
+- `get_standings(room_id)`: Live leaderboard standings (cash, owned business cost, upgrades; equal teams share a rank; teams in debt rank last).
+- `admin_finalize(room_id)`: Freezes room, writes immutable `final_results`, assigns the winner (none when teams share first place).
 - `list_history()` / `get_history_detail(room_id)`: Browse past finalized matches.
 
 ### Standardized Error Codes
@@ -157,13 +163,14 @@ All write mutations and authenticated team reads execute through `SECURITY DEFIN
 - `VERSION_CONFLICT`: Optimistic lock failed; team was modified elsewhere.
 - `INVALID_VALUE`: Input value is out of permitted range or negative.
 - `INSUFFICIENT_CASH`: Team does not have enough cash to cover payment or purchase.
-- `BUSINESS_CAP`: Team already owns maximum permitted (3) businesses.
+- `BUSINESS_CAP`: Team already owns the maximum permitted (2) businesses.
+- `IN_DEBT`: A team in Debt Recovery cannot buy or upgrade.
+- `NOT_ON_BUSINESS_SPACE`: The team's token is not on that business's space.
 - `BUSINESS_OWNED`: Business is already owned by another team in the room.
 - `BUSINESS_NOT_OWNED`: Business is not owned by the specified team.
 - `TEAM_BANKRUPT`: Action cannot be performed on a bankrupt team.
 - `NOTE_REQUIRED`: Action requires a mandatory explanation note.
 - `TEAMS_NOT_JOINED`: Cannot start match without all teams joined unless `force=true`.
-- `UNRESOLVED_TIE`: Finalize blocked because tied teams lack judge pitch order.
 - `BAD_CODE_OR_PIN`: Invalid room code, slot, or 4-digit PIN.
 - `TOO_MANY_ATTEMPTS`: Join rate limit exceeded (5 failed attempts within 60s).
 - `NON_FINAL_ROOM_EXISTS`: Only one active match is permitted at any time.

@@ -1,48 +1,39 @@
-# Scoring and Tiebreak Rules
+# Scoring and Ranking Rules
 
-Single reference for how a match is ranked. Sources are quoted so a change to either can be diffed here.
+Single reference for how a match is ranked (owner decision D1, with the Debt Recovery rules of the player handbook).
 
 ## Sources
 
 | Source | Where |
 |--------|-------|
-| Public rules page | `src/routes/public/RulesSection.tsx` (`victory-tiebreak`, `forced-sale-bankrupt`) |
-| Operator runbook | `docs/RUNBOOK.md`, Step 9 (Tie-Break Entry) and the Tie-Break Hierarchy line |
-| Implementation | `public.room_standings` in `supabase/migrations/0010_standings_finalize.sql`, finalize in `0021_final_snapshot.sql` |
+| Public player handbook | `src/routes/public/RulesPage.tsx` and `src/routes/public/rules/GameRulesModal.tsx` |
+| Operator runbook | `docs/RUNBOOK.md`, Step 9 (Ranking and Ties) |
+| Implementation | `public.room_standings` (latest definition: `supabase/migrations/0031_debt_recovery.sql`), `admin_finalize` (0031) |
 
-## Rules as written
+## Rules
 
-**Winner (RulesSection.tsx, `victory-tiebreak`):** "Match Finalization (at 00:00): All dice movement stops immediately. The team with the Highest Company Value (CV) is crowned Champion."
+Teams are ranked by, in order:
 
-**Tiebreaker hierarchy (RulesSection.tsx):** "If two or more teams finish tied on Company Value:
-- Tiebreaker 1: Highest Cash balance.
-- Tiebreaker 2: Most Businesses Held in portfolio.
-- Tiebreaker 3: 30-Second Physical Pitch judged live by the Game Master."
+1. **Highest remaining Cash.**
+2. **Highest total original purchase cost** of the businesses the team still owns.
+3. **Highest total number of upgrades** across owned businesses.
+4. Teams equal on all three **share a rank**.
 
-**Runbook (Step 9):** "1. Highest Company Value (CV). 2. If CV is equal: Highest Cash. 3. If Cash is equal: Most Businesses Held. 4. If still tied: 30-Second Pitch judged by Game Master. ... Enter the Game Master's judged ranking order. Click SAVE TIE-BREAK ORDER."
+Company Value no longer exists: it is not used for ranking, tie-breaks or anything else. No judged pitch or Game Master order decides ranks.
 
-**Bankruptcy (RulesSection.tsx, `forced-sale-bankrupt`):** "If a team has 0 cash, has liquidated all 3 businesses, and still has unpaid debt: The team is declared BANKRUPT and eliminated from the tournament."
+**Ineligible teams.** A team that is eliminated (bankrupt flag) or still in debt at the end ranks below every eligible team and can never be the winner. Such a team is stored in `final_results` with `is_bankrupt = true` (it scores nothing). Debt-first rules: any incoming cash (START, rent, cards, sale proceeds) clears debt before it becomes cash.
+
+**Winner.** The winner is the eligible team at rank 1. If two or more eligible teams share rank 1 there is no single winner and `rooms.winner_team_id` stays NULL. It is also NULL when every team is ineligible.
 
 ## Implementation
 
-`room_standings` orders by, in this sequence:
+`room_standings` orders by `(is_bankrupt OR debt > 0) ASC, cash DESC, business_cost DESC, upgrade_count DESC` using `rank()`, so equal teams get the same rank and the next rank skips (1, 2, 2, 4). `slot` only keeps the row order stable.
 
-1. not bankrupt first (`is_bankrupt ASC`): an eliminated team ranks below every active team and can never be the winner
-2. `cv DESC`
-3. `cash DESC`
-4. `business_count DESC`
-5. `tiebreak_order ASC` (the Game Master's judged order, NULLs last)
-6. `slot ASC` (only to keep the row order stable; never decides a tie)
+## Open points
 
-`tie_unresolved` is true for a group of teams that share bankruptcy flag, CV, cash and business count unless **every** team in the group has a `tiebreak_order` and the orders are all different. `admin_finalize` refuses with `UNRESOLVED_TIE` while any team is unresolved, so a result is never decided by slot number.
-
-The winner is rank 1 among non-bankrupt teams; it is NULL when every team is bankrupt.
-
-## Behaviours worth knowing
-
-- Tied **bankrupt** teams are also "unresolved", so finalize asks for a tiebreak order for them even though they cannot win. This is existing behaviour and is covered by a test; whether eliminated teams should be exempt is an owner decision.
-- The rulebook says nothing about how two eliminated teams rank against each other, so the same CV, cash, business count, then judged order is used.
+- The rulebook says nothing about how two ineligible teams rank against each other; they use the same criteria (their cash is 0 while in debt).
+- Teams sharing rank 1 produce no winner name in the history list; a prize decision between them is left to the Game Master.
 
 ## Tests
 
-`supabase/tests/0012_final_integrity_test.sql` has one assertion per rule above: CV order, cash tiebreak, business-count tiebreak, three-way tie, partial order, duplicate orders, resolved order, bankrupt-last, all-bankrupt.
+`supabase/tests/0012_final_integrity_test.sql` (cash, purchase cost, upgrades, shared rank, bankrupt-last, all-bankrupt), `0014_standings_ranking_test.sql`, `0018_no_company_value_test.sql` (shared first place finalizes with no winner) and `0020_debt_recovery_test.sql` (a team in debt ranks last and cannot win).

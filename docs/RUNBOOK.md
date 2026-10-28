@@ -11,7 +11,7 @@
 STARTUPOLY is a **physical board game** featuring a real-time, server-authoritative live scoreboard. 
 
 - **Event Admin (Laptop)**: 1 operator per room operating on a laptop/desktop ($\ge 1024\text{ px}$). Authenticated with admin email/password. Records board transactions, controls the 50:00 match clock, resolves ties, and finalizes results.
-- **Team Scoreboards (Phones)**: 1 phone per team (5–6 teams per match). Anonymous, strictly read-only display showing authoritative cash, company value (CV), clock, and owned businesses.
+- **Team Scoreboards (Phones)**: 1 phone per team (5–6 teams per match). Anonymous, strictly read-only display showing authoritative cash, any outstanding debt, clock, and owned businesses.
 - **Open-ground operation**: No projector or shared screen is required. The admin laptop runs the control room, while each team uses its own phone for its private scoreboard.
 
 ---
@@ -73,12 +73,12 @@ During play, use the quick-action calculator dialogs at the bottom of the admin 
 
 | Event on Physical Board | Admin Action | Keyboard Shortcut / Flow |
 |---|---|---|
-| **Rent Payment** | Click `RENT (PAY)` | Select paying team, receiving team, and business. Auto-calculates rent based on business level. Click Confirm. |
-| **Pass START Lap** | Click `PASS START` | Select team. Pre-fills ₹200 cash (+ ₹0, ₹200, or ₹500 CV bonus depending on business portfolio). Click Confirm. |
-| **Acquire Business** | Click `BUY BIZ` | Select business (1 of 10) from catalog. Auto-charges initial cost and credits initial CV. |
-| **Upgrade Business** | Click `UPGRADE` | Select owned business. Level 0 → 1 or Level 1 → 2. Deducts upgrade fee and increments CV. |
+| **Rent Payment** | Click `RENT (PAY)` | Select the paying team and the landed business. The server finds the owner and charges 50% / 75% / 100% of the business's cost by level; the payer's token must be on that business's space. Click Confirm. |
+| **Pass START** | Move the token on the **Live Board** (1 to 6 steps) | Reaching or passing START credits ₹200 automatically in the same move, once per move (landing exactly on START counts). Debt is cleared first. There is no manual START action. |
+| **Acquire Business** | Click `BUY BIZ` | Select business (1 of 10) from catalog. The team's token must be on that business's space; the cost is charged. A team may own at most 2 businesses and cannot buy while in debt. A free manual entry needs a note and is logged as a correction. |
+| **Upgrade Business** | Click `UPGRADE` | Select owned business. Level 0 → 1 or Level 1 → 2. Charges the upgrade fee (cost 200: ₹100 then ₹150; 300: ₹150 / ₹200; 400: ₹200 / ₹250; 500: ₹250 / ₹300). Not allowed while the team is in debt. |
 | **Crisis / Bonus Card** | Click `CARD` | Select `BONUS` or `CRISIS`. Select preset card amount or enter custom amount. |
-| **Forced Sale** | Click `FORCED SALE` | Liquidates an owned business for 100% base cost resale credit when team owes debt. |
+| **Forced Sale** | Click `FORCED SALE` | Sells an owned business back to the Bank for 50% of its original cost (upgrades add nothing); the proceeds clear any debt first. Use it when a team cannot cover a required payment. |
 | **Steal Talent** | Click `STEAL TALENT` | Target team loses ₹100; active team gains ₹100. |
 
 *Team Selection Tip*: Press number keys `1`–`6` or Arrow keys on your laptop keyboard to immediately switch active teams without using the trackpad.
@@ -94,15 +94,14 @@ During play, use the quick-action calculator dialogs at the bottom of the admin 
 2. **Mandatory Audit Note**: Any edit made during this window requires a brief explanatory note (e.g., *"Reconcile final dice roll rent"*).
 3. If an edit is attempted without a note, the system prompts for one.
 
-### Step 9: Tie-Break Entry (If Applicable)
-The system automatically detects ties according to the official tournament tie-breaking sequence:
-1. Highest Company Value (CV).
-2. If CV is equal: Highest Cash.
-3. If Cash is equal: Most Businesses Held.
-4. If still tied: **30-Second Pitch** judged by Game Master.
-   - If an unresolved tie exists, the **Finalize Panel** displays an amber tie-break selector.
-   - Enter the Game Master's judged ranking order.
-   - Click **"SAVE TIE-BREAK ORDER"**.
+### Step 9: Ranking and Ties
+The standings rank teams in this order:
+1. Highest remaining Cash.
+2. If Cash is equal: highest total original purchase cost of the businesses still owned.
+3. If still equal: most upgrades across owned businesses.
+4. If all three are equal, the teams **share the rank**. There is no pitch or Game Master tie-break entry.
+
+A team still in debt when time expires is ineligible: it ranks below every eligible team and cannot win. If the top teams share rank 1 the match has no single winner (the history page shows no winner name).
 
 ### Step 10: Finalize & Display Podium
 1. Click **"FINALIZE MATCH"**.
@@ -111,7 +110,7 @@ The system automatically detects ties according to the official tournament tie-b
    - 🥇 **1st Place (Winner)** with golden animated trophy
    - 🥈 **2nd Place (Silver)**
    - 🥉 **3rd Place (Bronze)**
-   - Full standings table with CV, Cash, and owned business breakdown.
+   - Full standings table with Cash, owned business cost, upgrades, and debt status.
 4. The Game Master announces the podium from the admin laptop; teams can view their own final result on their phones.
 
 ### Step 11: Start Next Match
@@ -129,7 +128,7 @@ The system automatically detects ties according to the official tournament tie-b
 | **Phone captain closed browser or lost session** | Mobile Safari / Chrome auto-refreshed or closed tab. | Have captain reopen `/join`. Anonymous Supabase session persists in `localStorage`; captain re-enters code, slot, and PIN to re-link immediately. |
 | **Admin laptop battery died or crashed** | Hardware or power failure. | Plug laptop into AC power. Re-open browser and log in at `/admin`. The system automatically redirects to `/admin/room/[id]` because all room state lives in PostgreSQL. No data is lost. |
 | **Venue Wi-Fi drops completely** | Router/ISP failure. | 1. Admin turns on phone cellular hotspot.<br>2. Reconnect laptop to hotspot.<br>3. Admin console displays red `OFFLINE` banner until reconnected, then syncs live snapshot automatically. |
-| **Wrong transaction amount entered** | Scorer typo during rapid entry. | 1. Select the affected team.<br>2. In the Cash or CV editor, type the corrected balance.<br>3. Provide an audit note describing the correction.<br>4. Click **UPDATE**. |
+| **Wrong transaction amount entered** | Scorer typo during rapid entry. | 1. Select the affected team.<br>2. In the Cash editor, type the corrected balance.<br>3. Provide an audit note describing the correction.<br>4. Click **UPDATE**. |
 | **Version Mismatch / Conflict Dialog appears** | Two admins tried editing the same team simultaneously. | The Conflict Dialog shows: *"Server was modified by another operator"*. Click **"DISCARD MY CHANGES"** to inspect current values, then re-apply if appropriate. |
 | **Phone says "Too many tries — wait N seconds"** | The join throttle tripped: more than 5 wrong PINs from one phone, 10 for one team, or 30 for one room in a minute. | Wait for the countdown (60 s). Read the PIN again from the Admin Lobby grid before retrying. A team under attack rejects even the right PIN until the minute passes. |
 | **Phone says "This team is already connected"** | Another phone already holds the slot (or the captain's old session still does). | Click **RELEASE** on that team's card, then have the captain rejoin with the PIN. |
@@ -143,11 +142,11 @@ The system automatically detects ties according to the official tournament tie-b
 
 - [ ] Latest `main` deployed and `npm run verify:prod` is green (docs/DEPLOY_CHECKLIST.md). No deploys or migrations on event day.
 - [ ] Supabase dashboard: anonymous sign-ins on, per-IP hourly limit noted, backup taken that morning.
-- [ ] One rehearsal match end to end on the event laptop and Wi-Fi: create room, 6 phones join, start, a rent, a purchase, an upgrade, a bankruptcy, let the clock run out, tie-break, finalize, next match.
+- [ ] One rehearsal match end to end on the event laptop and Wi-Fi: create room, 6 phones join, start, a rent, a purchase, an upgrade, a team in debt, let the clock run out, finalize, next match.
 - [ ] Two admins logged in on separate laptops; both can open the room. Only one edits at a time (the second sees a conflict dialog, not a double edit).
 - [ ] Phone hotspot ready as the Wi-Fi fallback; paper scoreboard template printed (section 5).
 - [ ] Every captain knows: PIN is 4 digits, a wrong PIN five times locks that phone for a minute.
-- [ ] Rules in hand: highest CV wins; ties go to cash, then business count, then the 30-second pitch; a bankrupt team is eliminated (docs/SCORING_RULES.md).
+- [ ] Rules in hand: highest cash wins; ties go to owned business cost, then upgrades, then share the rank; a team still in debt at the end cannot win (docs/SCORING_RULES.md).
 
 ---
 
@@ -160,7 +159,7 @@ If a prolonged catastrophic power or network outage occurs, use this paper templ
                           STARTUPOLY OFFICIAL TOURNAMENT SCOREBOARD (PAPER)
 Match ID: ______________   Date: ______________   Game Master: _____________________________
 =============================================================================================
-Slot | Team Name       | Start Cash | Cash Edits (+ / −) | Final Cash | Businesses | Final CV
+Slot | Team Name       | Start Cash | Cash Edits (+ / −) | Final Cash | Businesses | Debt
 ---------------------------------------------------------------------------------------------
  #1  |                 |   ₹1,000   |                    |            |            |
 ---------------------------------------------------------------------------------------------
@@ -174,7 +173,7 @@ Slot | Team Name       | Start Cash | Cash Edits (+ / −) | Final Cash | Busine
 ---------------------------------------------------------------------------------------------
  #6  |                 |   ₹1,000   |                    |            |            |
 =============================================================================================
-Tie-Break Hierarchy: 1) Highest CV -> 2) Highest Cash -> 3) Most Businesses -> 4) 30s Pitch
+Ranking: 1) Highest Cash -> 2) Owned business cost -> 3) Upgrades -> 4) Shared rank
 Final Verified Winner: ___________________________   Signature: _____________________________
 ```
 
