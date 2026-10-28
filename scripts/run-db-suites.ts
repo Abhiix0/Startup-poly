@@ -47,7 +47,7 @@ function waitForRealtime() {
   execSync('node -e "setTimeout(()=>{},5000)"');
 }
 
-const suites = ['lockorder', 'lifecycle', 'money', 'abuse', 'finalize', 'security', 'contract'];
+const suites = ['lockorder', 'lifecycle', 'money', 'gameplayrules', 'abuse', 'finalize', 'security', 'contract'];
 const failed: string[] = [];
 
 for (const suite of suites) {
