@@ -109,10 +109,7 @@ export const TeamDashboardPage: React.FC = () => {
             className="w-4 h-4 rounded-sm border-2 border-white shrink-0"
             style={{ backgroundColor: team.color }}
           />
-          <div className="min-w-0 leading-tight">
-            <span className="font-pixel text-sm font-bold text-white block truncate">{team.name}</span>
-            <span className="font-mono text-[11px] text-neutral-300">Slot #{team.slot}</span>
-          </div>
+          <span className="font-pixel text-sm font-bold text-white truncate">{team.name}</span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">

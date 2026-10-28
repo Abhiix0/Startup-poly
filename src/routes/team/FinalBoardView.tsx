@@ -59,7 +59,7 @@ export const FinalBoardView: React.FC<FinalBoardViewProps> = ({ state }) => {
             style={{ backgroundColor: team.color }}
           />
           <span className="font-pixel text-sm font-bold text-brand-navy">
-            {team.name} · Slot #{team.slot}
+            {team.name}
           </span>
           <span className="rounded border border-brand-navy bg-brand-green px-1.5 py-0.5 font-pixel text-[10px] font-bold uppercase text-white">
             YOU

@@ -28,7 +28,7 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
       }
       successToast('Disconnected from team slot.');
       navigate('/join', {
-        state: { notice: `Disconnected from Slot #${team.slot} (${team.name}). You can now select a different team.` },
+        state: { notice: `Disconnected from ${team.name}. You can now select a different team.` },
         replace: true,
       });
     } catch (err: any) {
@@ -61,7 +61,7 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
         </h1>
 
         <p className="font-mono text-xs sm:text-sm text-neutral-700 max-w-md leading-relaxed px-2">
-          Your device is securely connected to <strong>Slot #{team.slot} ({team.name})</strong>.
+          Your device is securely connected to <strong>{team.name}</strong>.
           The 50-minute tournament clock will begin when the organizer launches the match.
         </p>
 
@@ -72,7 +72,7 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
             style={{ backgroundColor: team.color }}
           />
           <span className="font-pixel text-xs sm:text-sm font-bold text-brand-navy">
-            Slot #{team.slot} · {team.name}
+            {team.name}
           </span>
         </div>
 
@@ -134,10 +134,10 @@ export const LobbyWaitView: React.FC<LobbyWaitViewProps> = ({ state }) => {
       >
         <div className="flex flex-col gap-3">
           <p className="font-mono text-sm leading-relaxed text-brand-navy">
-            Are you sure you want to disconnect from <strong>Slot #{team.slot} ({team.name})</strong>?
+            Are you sure you want to disconnect from <strong>{team.name}</strong>?
           </p>
           <div className="bg-status-warning-bg border-2 border-brand-navy p-3 text-xs text-status-warning-text font-mono">
-            ⚠ Your slot will be freed up so another device can claim it. You will return to the join screen where you can pick a different team or enter another room.
+            ⚠ Your team will be freed up so another device can claim it. You will return to the join screen where you can pick a different team or enter another room.
           </div>
         </div>
       </Modal>

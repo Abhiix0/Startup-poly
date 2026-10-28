@@ -280,14 +280,9 @@ export const TeamJoinPage: React.FC = () => {
                                 className="w-4 h-4 border-2 border-nes-navy flex-shrink-0"
                                 style={{ backgroundColor: t.color }}
                               />
-                              <div className="truncate">
-                                <span className="font-pixel text-[10px] text-nes-navy block truncate font-bold">
-                                  {t.name}
-                                </span>
-                                <span className="font-mono text-[9px] text-neutral-500">
-                                  Slot #{t.slot}
-                                </span>
-                              </div>
+                              <span className="font-pixel text-[11px] text-nes-navy truncate font-bold">
+                                {t.name}
+                              </span>
                             </div>
 
                             {isSelected && (
