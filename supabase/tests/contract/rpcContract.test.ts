@@ -40,6 +40,7 @@ const WRAPPERS: Array<[string, () => Promise<unknown>]> = [
   ['admin_extend_game', () => rpc.rpcAdminExtendGame('r', 600)],
   ['admin_cancel_room', () => rpc.rpcAdminCancelRoom('r')],
   ['admin_cancel_room', () => rpc.rpcAdminCancelRoom('r', 'note')],
+  ['admin_charge_rent', () => rpc.rpcAdminChargeRent({ payer_team_id: 't', business_key: 'saas', payer_expected_version: 0, owner_expected_version: 0, request_id: 'x', note: 'n' })],
   ['admin_move_team', () => rpc.rpcAdminMoveTeam({ team_id: 't', steps: 1, expected_version: 0 })],
   ['admin_set_team_values', () => rpc.rpcAdminSetTeamValues({ team_id: 't', expected_version: 0 })],
   ['admin_set_team_values', () => rpc.rpcAdminSetTeamValues({ team_id: 't', cash: 1, expected_version: 0, request_id: 'x', note: 'n' })],

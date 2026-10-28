@@ -3,7 +3,6 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QuickActionsBar } from './QuickActionsBar';
 import { RentDialog } from './RentDialog';
-import { StartLapDialog } from './StartLapDialog';
 import { StealDialog } from './StealDialog';
 import { CardDialog } from './CardDialog';
 import { LoseFeatureDialog } from './LoseFeatureDialog';
@@ -73,7 +72,6 @@ const mockTeams: TeamState[] = [
 describe('QuickActionsBar', () => {
   it('renders all buttons and calls corresponding callbacks', () => {
     const onOpenRent = vi.fn();
-    const onOpenStartLap = vi.fn();
     const onOpenBuy = vi.fn();
     const onOpenUpgrade = vi.fn();
     const onOpenForcedSale = vi.fn();
@@ -85,7 +83,6 @@ describe('QuickActionsBar', () => {
     render(
       <QuickActionsBar
         onOpenRent={onOpenRent}
-        onOpenStartLap={onOpenStartLap}
         onOpenBuy={onOpenBuy}
         onOpenUpgrade={onOpenUpgrade}
         onOpenForcedSale={onOpenForcedSale}
@@ -99,8 +96,8 @@ describe('QuickActionsBar', () => {
     fireEvent.click(screen.getByText(/RENT \(R\)/i));
     expect(onOpenRent).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByText(/START LAP \(S\)/i));
-    expect(onOpenStartLap).toHaveBeenCalledTimes(1);
+    // START is paid by the server on movement: there is no manual START action.
+    expect(screen.queryByText(/START LAP/i)).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByText(/BUY \(B\)/i));
     expect(onOpenBuy).toHaveBeenCalledTimes(1);
@@ -129,7 +126,6 @@ describe('QuickActionsBar', () => {
       <QuickActionsBar
         disabled={true}
         onOpenRent={vi.fn()}
-        onOpenStartLap={vi.fn()}
         onOpenBuy={vi.fn()}
         onOpenUpgrade={vi.fn()}
         onOpenForcedSale={vi.fn()}
@@ -141,13 +137,12 @@ describe('QuickActionsBar', () => {
     );
 
     expect(screen.getByText(/RENT \(R\)/i).closest('button')).toBeDisabled();
-    expect(screen.getByText(/START LAP \(S\)/i).closest('button')).toBeDisabled();
     expect(screen.getByText(/BUY \(B\)/i).closest('button')).toBeDisabled();
   });
 });
 
 describe('RentDialog', () => {
-  it('pre-fills correct rent and submits atomic changes', async () => {
+  it('previews the rent and sends no amount to the server', async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     const onClose = vi.fn();
 
@@ -173,20 +168,14 @@ describe('RentDialog', () => {
     fireEvent.click(confirmBtn);
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    const callArgs = onSubmit.mock.calls[0][0];
-    expect(callArgs.label).toBe('RENT');
-    expect(callArgs.changes).toHaveLength(2);
-    // Payer: team-1 pays 100
-    expect(callArgs.changes[0]).toEqual({
-      team_id: 'team-1',
-      cash_delta: -100,
-      expected_version: 3,
-    });
-    // Owner: team-2 receives 100 cash
-    expect(callArgs.changes[1]).toEqual({
-      team_id: 'team-2',
-      cash_delta: 100,
-      expected_version: 2,
+    // Only identities and versions are sent: the server derives the owner and the rent.
+    expect(onSubmit).toHaveBeenCalledWith({
+      payerTeamId: 'team-1',
+      businessKey: 'edtech',
+      payerExpectedVersion: 3,
+      ownerExpectedVersion: 2,
+      note: undefined,
+      requestId: expect.any(String),
     });
   });
 
@@ -218,39 +207,6 @@ describe('RentDialog', () => {
     // Click Forced Sale button
     fireEvent.click(screen.getByText(/DO FORCED SALE FIRST/i));
     expect(onDoForcedSale).toHaveBeenCalledWith('team-2', 175);
-  });
-});
-
-describe('StartLapDialog', () => {
-  it('calculates start lap reward (+₹200 cash) and submits', () => {
-    const onSubmit = vi.fn().mockResolvedValue(undefined);
-
-    render(
-      <StartLapDialog
-        isOpen={true}
-        onClose={vi.fn()}
-        teams={mockTeams}
-        defaultTeamId="team-1"
-        isTimeExpired={false}
-        onSubmit={onSubmit}
-      />
-    );
-
-        expect(screen.getByText(/START lap: \+₹200 cash/i)).toBeInTheDocument();
-
-    fireEvent.click(screen.getByText(/CONFIRM START LAP/i));
-    expect(onSubmit).toHaveBeenCalledWith({
-      changes: [
-        {
-          team_id: 'team-1',
-          cash_delta: 200,
-          expected_version: 3,
-        },
-      ],
-      label: 'START_LAP',
-      note: undefined,
-      requestId: expect.any(String),
-    });
   });
 });
 
@@ -520,32 +476,5 @@ describe('AdminConsoleView Keyboard Shortcuts', () => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     });
     expect(screen.queryByText(/RECORD RENT PAYMENT/i)).not.toBeInTheDocument();
-  });
-
-  it('opens start lap dialog on S and closes on Escape', () => {
-    render(
-      <MemoryRouter>
-        <ToastProvider>
-          <AdminConsoleView
-            snapshot={mockSnapshot}
-            onRefetch={vi.fn().mockResolvedValue(undefined)}
-            connection="LIVE"
-            lastUpdated="Just now"
-          />
-        </ToastProvider>
-      </MemoryRouter>
-    );
-
-    // Press 's'
-    act(() => {
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 's' }));
-    });
-    expect(screen.getByText(/RECORD START LAP/i)).toBeInTheDocument();
-
-    // Press 'Escape'
-    act(() => {
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-    });
-    expect(screen.queryByText(/RECORD START LAP/i)).not.toBeInTheDocument();
   });
 });

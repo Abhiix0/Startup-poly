@@ -227,6 +227,7 @@ export interface Database {
           cost: number;
           u1_cost: number;
           u2_cost: number;
+          board_position: number;
           is_provisional: boolean;
           sort_order: number;
         };
@@ -236,6 +237,7 @@ export interface Database {
           cost: number;
           u1_cost: number;
           u2_cost: number;
+          board_position: number;
           is_provisional?: boolean;
           sort_order: number;
         };
@@ -245,6 +247,7 @@ export interface Database {
           cost?: number;
           u1_cost?: number;
           u2_cost?: number;
+          board_position?: number;
           is_provisional?: boolean;
           sort_order?: number;
         };
@@ -495,6 +498,17 @@ export interface Database {
           team_id: string;
           value: boolean;
           expected_version?: number;
+          request_id?: string | null;
+          note?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_charge_rent: {
+        Args: {
+          payer_team_id: string;
+          business_key: string;
+          payer_expected_version: number;
+          owner_expected_version: number;
           request_id?: string | null;
           note?: string | null;
         };

@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   computeRent,
-  computeStart,
   computeSteal,
   computeBonus,
   computeCrisis,
@@ -65,20 +64,6 @@ describe('quickActions domain calculations', () => {
       expect(preview.hasShortfall).toBe(true);
       expect(preview.shortfallTeam?.shortfall).toBe(300);
       expect(preview.changes[0].shortfall).toBe(300);
-    });
-
-    it('allows custom override amounts', () => {
-      const preview = computeRent(mockPayer, 'saas', mockOwner, 120);
-      expect(preview.changes[0].cashDelta).toBe(-120);
-      expect(preview.changes[1].cashDelta).toBe(120);
-    });
-  });
-
-  describe('computeStart', () => {
-    it('awards +200 cash regardless of businesses owned', () => {
-      expect(computeStart({ ...mockPayer, businesses: [] }).changes[0].cashDelta).toBe(200);
-      expect(computeStart(mockOwner).changes[0].cashDelta).toBe(200);
-      expect(computeStart(mockOwner).ruleExplanation).not.toMatch(/CV/);
     });
   });
 

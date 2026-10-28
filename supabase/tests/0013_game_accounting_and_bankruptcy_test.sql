@@ -19,6 +19,7 @@ SELECT public.admin_open_lobby((SELECT id FROM public.rooms));
 SELECT public.admin_start_game((SELECT id FROM public.rooms), true);
 
 -- Add business to slot 1 (edtech: cost=200, u1_cost=100)
+RESET ROLE; UPDATE public.teams SET board_position = 10 WHERE slot = 1; SET LOCAL ROLE authenticated;
 SELECT public.admin_add_business((SELECT id FROM public.teams WHERE slot=1), 'edtech', true, 0, gen_random_uuid(), NULL);
 SELECT is((SELECT cash FROM public.teams WHERE slot=1), 800, 'Team 1 cash is 800 after buying EdTech');
 

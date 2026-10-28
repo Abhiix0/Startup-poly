@@ -21,6 +21,7 @@ SELECT set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000
 SELECT public.admin_create_room(5, '[{"name":"Alpha","color":"#FF0000"},{"name":"Beta","color":"#00FF00"},{"name":"Gamma","color":"#0000FF"},{"name":"Delta","color":"#FFFF00"},{"name":"Epsilon","color":"#FF00FF"}]'::jsonb);
 SELECT public.admin_open_lobby((SELECT id FROM public.rooms));
 SELECT public.admin_start_game((SELECT id FROM public.rooms), true);
+RESET ROLE; UPDATE public.teams SET board_position = 3 WHERE slot = 1; SET LOCAL ROLE authenticated;
 SELECT ok(public.admin_add_business((SELECT id FROM public.teams WHERE slot = 1), 'saas', true, 0, gen_random_uuid(), NULL)::text !~* '"[a-z_]*cv[a-z_]*"', 'team snapshot returned by a money RPC has no cv key');
 
 SELECT ok(public.get_admin_snapshot((SELECT id FROM public.rooms))::text !~* '"[a-z_]*cv[a-z_]*"', 'admin snapshot has no cv key');

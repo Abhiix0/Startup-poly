@@ -187,7 +187,8 @@ SELECT throws_ok(
   'Stale expected_version rejected with VERSION_CONFLICT'
 );
 
--- 15. Buy business: cash -= cost
+-- 15. Buy business: cash -= cost (the token must stand on the business's space)
+RESET ROLE; UPDATE public.teams SET board_position = 3 WHERE slot = 1; SET LOCAL ROLE authenticated;
 SELECT lives_ok(
   $$
   SELECT public.admin_add_business(t.id, 'saas', true, t.version, gen_random_uuid(), 'bought saas')

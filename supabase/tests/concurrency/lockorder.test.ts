@@ -2,7 +2,7 @@
 //   supabase db reset && LOCAL_SUPABASE_URL=… LOCAL_ANON_KEY=… LOCAL_SERVICE_KEY=… LOCAL_JWT_SECRET=… npm run test:concurrency
 import { describe, it, expect, beforeAll } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { harnessEnabled, newAdmin, createLobbyRoom, teamIds, serviceClient, isDeadlock } from './harness';
+import { harnessEnabled, newAdmin, createLobbyRoom, teamIds, serviceClient, isDeadlock, placeOn } from './harness';
 
 const run = harnessEnabled ? describe : describe.skip;
 const ITERATIONS = 50;
@@ -42,6 +42,7 @@ run('lock order: no deadlocks (L1, L7)', () => {
     const r = await race(async (i) => {
       await freshGame();
       const [t1] = await teamIds(a, roomId);
+      await placeOn(t1.id, 'edtech');
       return () => Promise.all([
         a.rpc('admin_add_business', { team_id: t1.id, business_key: 'edtech', apply_purchase: true, expected_version: t1.version, request_id: uuid() }),
         b.rpc('admin_abort_game', { p_room_id: roomId, note: `race ${i}` }),
@@ -98,6 +99,7 @@ run('lock order: no deadlocks (L1, L7)', () => {
       if (i === 0) await freshGame();
       else expect((await a.rpc('admin_start_game', { room_id: id, force: true })).error).toBeNull();
       const ts = await teamIds(a, id);
+      await placeOn(ts[0].id, 'saas');
       await a.rpc('admin_add_business', { team_id: ts[0].id, business_key: 'saas', apply_purchase: true, expected_version: ts[0].version, request_id: uuid() });
       await svc.from('rooms').update({ ends_at: new Date(Date.now() - 1000).toISOString() }).eq('id', id);
       await a.rpc('expire_if_due', { p_room_id: id });

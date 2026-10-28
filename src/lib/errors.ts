@@ -107,6 +107,10 @@ export const ERROR_MAP: Record<string, ErrorMeta> = {
     message: 'Business must be owned before upgrading.',
     retryable: false,
   },
+  NOT_ON_BUSINESS_SPACE: {
+    message: "The team's token is not on that business's space, so it cannot be bought or charged rent here.",
+    retryable: false,
+  },
   TEAM_BANKRUPT: {
     message: 'Action rejected: Team is bankrupt.',
     retryable: false,
@@ -233,6 +237,7 @@ export const CODE_CLASS: Record<string, RpcFailureClass> = {
   TEAM_BANKRUPT: 'DEFINITELY_FAILED',
   TEAMS_NOT_JOINED: 'DEFINITELY_FAILED',
   TOO_MANY_ATTEMPTS: 'DEFINITELY_FAILED',
+  NOT_ON_BUSINESS_SPACE: 'DEFINITELY_FAILED',
   UNRESOLVED_TIE: 'DEFINITELY_FAILED', // retired: still raised by migrations before 0029
   VERSION_CONFLICT: 'CONFLICT',
   IMMUTABLE: 'ROOM_NOT_ACTIVE',

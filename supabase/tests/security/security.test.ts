@@ -11,7 +11,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createHmac } from 'node:crypto';
-import { harnessEnabled, newAdmin, newPlayer, anonClient, createLobbyRoom, teamIds, serviceClient, tokenOf, localUrl } from '../concurrency/harness';
+import { harnessEnabled, newAdmin, newPlayer, anonClient, createLobbyRoom, teamIds, serviceClient, tokenOf, localUrl, placeOn } from '../concurrency/harness';
 
 const run = harnessEnabled ? describe : describe.skip;
 const uuid = () => crypto.randomUUID();
@@ -19,6 +19,7 @@ const uuid = () => crypto.randomUUID();
 const ADMIN_RPC_PARAMS: Record<string, string[]> = {
   admin_abort_game: ['p_room_id', 'note', 'request_id'],
   admin_cancel_room: ['p_room_id', 'note', 'request_id'],
+  admin_charge_rent: ['payer_team_id', 'business_key', 'payer_expected_version', 'owner_expected_version', 'request_id', 'note'],
   admin_add_business: ['team_id', 'business_key', 'apply_purchase', 'expected_version', 'request_id', 'note'],
   admin_adjust: ['changes', 'label', 'note', 'request_id'],
   admin_create_room: ['team_count', 'teams'],
@@ -64,6 +65,7 @@ run('security matrix over HTTP', () => {
     expect((await playerB.rpc('join_team', { code, slot: 2, pin: await pin(teamB) })).data.team_id).toBe(teamB);
     expect((await admin.rpc('admin_start_game', { room_id: roomId, force: true })).error).toBeNull();
     expect((await admin.rpc('admin_set_team_values', { team_id: teamB, cash: 5000, expected_version: 0, request_id: uuid(), note: null })).error).toBeNull();
+    await placeOn(teamB, 'saas');
     expect((await admin.rpc('admin_add_business', { team_id: teamB, business_key: 'saas', apply_purchase: true, expected_version: 1, request_id: uuid() })).error).toBeNull();
   });
 

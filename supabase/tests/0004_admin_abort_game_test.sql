@@ -60,6 +60,7 @@ SELECT lives_ok(
   'Update Team 1 cash to 1500'
 );
 
+RESET ROLE; UPDATE public.teams SET board_position = 3 WHERE slot = 1; SET LOCAL ROLE authenticated;
 SELECT lives_ok(
   $$
   SELECT public.admin_add_business(t.id, 'saas', true, t.version, gen_random_uuid(), NULL)

@@ -27,6 +27,8 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const noteRef = useRef<HTMLInputElement>(null);
+  // A free (manual) entry bypasses the purchase rules, so it is explained and audited like a post-game correction.
+  const needsNote = isTimeExpired || !applyPurchase;
 
   const isCapReached = team.businesses.length >= 3;
 
@@ -59,8 +61,8 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
       setError('Please choose a business to acquire.');
       return;
     }
-    if (isTimeExpired && !note.trim()) {
-      setError('Note is required for post-game adjustments.');
+    if (needsNote && !note.trim()) {
+      setError(applyPurchase ? 'Note is required for post-game adjustments.' : 'A note is required for a manual business entry.');
       return;
     }
 
@@ -180,10 +182,10 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         )}
 
         {/* Note requirement for post-match adjustments */}
-        {isTimeExpired && (
+        {needsNote && (
           <div className="flex flex-col gap-1">
             <label className="font-pixel text-[10px] uppercase text-brand-red font-bold">
-              ⚠ NOTE REQUIRED (GAME OVER ADJUSTMENT)
+              ⚠ NOTE REQUIRED ({isTimeExpired ? 'GAME OVER ADJUSTMENT' : 'MANUAL ENTRY'})
             </label>
             <input
               ref={noteRef}
@@ -224,7 +226,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
             type="submit"
             variant="primary"
             size="md"
-            disabled={!selectedKey || isCapReached || isSubmitting || (isTimeExpired && !note.trim())}
+            disabled={!selectedKey || isCapReached || isSubmitting || (needsNote && !note.trim())}
             isLoading={isSubmitting}
           >
             CONFIRM ACQUISITION

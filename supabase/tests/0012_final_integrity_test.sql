@@ -17,7 +17,9 @@ SELECT public.admin_create_room(5, '[{"name":"A","color":"#FF0000"},{"name":"B",
 SELECT public.admin_open_lobby((SELECT id FROM public.rooms));
 SELECT public.admin_start_game((SELECT id FROM public.rooms), true);
 -- Two businesses for team 1 so the snapshot has content
+RESET ROLE; UPDATE public.teams SET board_position = 3 WHERE slot = 1; SET LOCAL ROLE authenticated;
 SELECT public.admin_add_business((SELECT id FROM public.teams WHERE slot = 1), 'saas', true, 0, gen_random_uuid(), NULL);
+RESET ROLE; UPDATE public.teams SET board_position = 10 WHERE slot = 1; SET LOCAL ROLE authenticated;
 SELECT public.admin_add_business((SELECT id FROM public.teams WHERE slot = 1), 'edtech', true, 1, gen_random_uuid(), NULL);
 
 -- Ranking is evaluated as the table owner on controlled team values (the live RPCs are tested elsewhere).

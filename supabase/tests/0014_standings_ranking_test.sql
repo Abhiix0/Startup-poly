@@ -24,6 +24,7 @@ SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=1), 
 SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=2), 600, 0, gen_random_uuid(), NULL);
 SELECT public.admin_set_team_values((SELECT id FROM public.teams WHERE slot=3), 600, 0, gen_random_uuid(), NULL);
 -- Gamma buys EdTech (200) and Beta stays business-free: cash 400 vs 600 -> Beta leads Gamma on cash
+RESET ROLE; UPDATE public.teams SET board_position = 10 WHERE slot = 3; SET LOCAL ROLE authenticated;
 SELECT public.admin_add_business((SELECT id FROM public.teams WHERE slot=3), 'edtech', true, 1, gen_random_uuid(), NULL);
 
 RESET ROLE;

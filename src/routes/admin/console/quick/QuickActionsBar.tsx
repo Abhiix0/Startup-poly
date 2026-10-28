@@ -2,7 +2,6 @@ import React from 'react';
 
 export interface QuickActionsBarProps {
   onOpenRent: () => void;
-  onOpenStartLap: () => void;
   onOpenBuy: () => void;
   onOpenUpgrade: () => void;
   onOpenForcedSale: () => void;
@@ -20,7 +19,6 @@ export interface QuickActionsBarProps {
 
 export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
   onOpenRent,
-  onOpenStartLap,
   onOpenBuy,
   onOpenUpgrade,
   onOpenForcedSale,
@@ -64,21 +62,6 @@ export const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
           "
         >
           <span>🏠</span> RENT (R)
-        </button>
-
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={onOpenStartLap}
-          title="Pass or land on START: +₹200 cash (Hotkey: S)"
-          className="
-            font-pixel text-[10px] sm:text-xs uppercase px-3 py-2 bg-brand-green text-white font-bold
-            border-2 border-brand-navy shadow-[0_3px_0_var(--color-brand-navy)] hover:shadow-[0_4px_0_var(--color-brand-navy)]
-            hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
-            transition-all flex items-center gap-1
-          "
-        >
-          <span>🏁</span> START LAP (S)
         </button>
 
         {/* BUSINESS OPERATIONS */}

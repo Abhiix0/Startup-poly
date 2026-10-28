@@ -181,6 +181,17 @@ export async function rpcAdminAdjust(params: {
   });
 }
 
+export async function rpcAdminChargeRent(params: {
+  payer_team_id: string;
+  business_key: string;
+  payer_expected_version: number;
+  owner_expected_version: number;
+  request_id?: string;
+  note?: string;
+}) {
+  return mutate<any>('admin_charge_rent', params);
+}
+
 export async function rpcAdminAddBusiness(params: {
   team_id: string;
   business_key: string;

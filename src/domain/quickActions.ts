@@ -1,4 +1,4 @@
-import { OFFICIAL_BUSINESSES, rentFor, startReward } from './economy';
+import { OFFICIAL_BUSINESSES, rentFor } from './economy';
 import { Level } from './types';
 
 export interface TeamState {
@@ -63,8 +63,7 @@ function buildChange(
 export function computeRent(
   payer: TeamState,
   businessKey: string,
-  owner: TeamState,
-  customRent?: number
+  owner: TeamState
 ): QuickActionPreview {
   const ownedBiz = owner.businesses.find((b) => b.business_key === businessKey);
   const catalogBiz = OFFICIAL_BUSINESSES.find((b) => b.key === businessKey);
@@ -74,7 +73,7 @@ export function computeRent(
 
   const defaultRent = catalogBiz ? rentFor(catalogBiz, level) : Math.round(cost * (level === 0 ? 0.5 : level === 1 ? 0.75 : 1));
 
-  const rent = customRent !== undefined ? customRent : defaultRent;
+  const rent = defaultRent;
 
   const pct = level === 0 ? '50%' : level === 1 ? '75%' : '100%';
   const ruleExplanation = `Rent = ${pct} of ₹${cost} = ₹${rent}`;
@@ -93,25 +92,6 @@ export function computeRent(
     shortfallTeam: hasShortfall
       ? { id: payer.id, name: payer.name, shortfall: payerChange.shortfall }
       : undefined,
-  };
-}
-
-// 2. START LAP: Team passes or lands on START
-export function computeStart(
-  team: TeamState,
-  customCash?: number
-): QuickActionPreview {
-  const reward = startReward();
-  const cashDelta = customCash !== undefined ? customCash : reward.cash;
-
-  const ruleExplanation = `START lap: +₹${cashDelta} cash`;
-  const teamChange = buildChange(team, cashDelta);
-
-  return {
-    label: 'START_LAP',
-    ruleExplanation,
-    changes: [teamChange],
-    hasShortfall: false,
   };
 }
 

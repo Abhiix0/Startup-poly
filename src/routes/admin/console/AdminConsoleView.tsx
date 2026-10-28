@@ -24,12 +24,12 @@ import {
   rpcAdminAbortGame,
   rpcAdminExtendGame,
   rpcAdminMoveTeam,
+  rpcAdminChargeRent,
   rpcRoomStatus,
 } from '../../../data/rpc';
 import {
   QuickActionsBar,
   RentDialog,
-  StartLapDialog,
   StealDialog,
   CardDialog,
   LoseFeatureDialog,
@@ -92,7 +92,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
   // Quick actions modal state
   const [isRentOpen, setIsRentOpen] = useState<boolean>(false);
-  const [isStartLapOpen, setIsStartLapOpen] = useState<boolean>(false);
   const [isStealOpen, setIsStealOpen] = useState<boolean>(false);
   const [isCardOpen, setIsCardOpen] = useState<boolean>(false);
   const [cardMode, setCardMode] = useState<'BONUS' | 'CRISIS'>('BONUS');
@@ -258,7 +257,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
       if (e.key === 'Escape') {
         setIsRentOpen(false);
-        setIsStartLapOpen(false);
         setIsStealOpen(false);
         setIsCardOpen(false);
         setIsLoseFeatureOpen(false);
@@ -282,9 +280,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       if (key === 'r') {
         e.preventDefault();
         setIsRentOpen(true);
-      } else if (key === 's') {
-        e.preventDefault();
-        setIsStartLapOpen(true);
       } else if (key === 'b') {
         e.preventDefault();
         setIsAddOpen(true);
@@ -390,6 +385,44 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       params.changes.forEach((ch) => {
         triggerFlash(ch.team_id, ch.cash_delta >= 0 ? 'up' : 'down');
       });
+      setInsufficientCashShortfall(null);
+      await onRefetch();
+    } catch (err: any) {
+      handleError(err);
+      throw err;
+    }
+  };
+
+  const handleChargeRent = async (params: {
+    payerTeamId: string;
+    businessKey: string;
+    payerExpectedVersion: number;
+    ownerExpectedVersion: number;
+    note?: string;
+    requestId: string;
+  }) => {
+    const cashBefore = new Map(snapshot.teams.map((t) => [t.id, t.cash]));
+    try {
+      const result = await rpcAdminChargeRent({
+        payer_team_id: params.payerTeamId,
+        business_key: params.businessKey,
+        payer_expected_version: params.payerExpectedVersion,
+        owner_expected_version: params.ownerExpectedVersion,
+        note: params.note,
+        request_id: params.requestId,
+      });
+      // The server chose the amount: derive the undo and the flash from what it actually applied.
+      const applied = (Array.isArray(result) ? result : []).map((r: { team: { id: string; cash: number } }) => ({
+        team_id: r.team.id,
+        cash_delta: r.team.cash - (cashBefore.get(r.team.id) ?? r.team.cash),
+      }));
+      sounds.playCoin();
+      setLastUndoableAction({
+        label: 'RENT',
+        reversalChanges: applied.map((c) => ({ team_id: c.team_id, cash_delta: -c.cash_delta })),
+      });
+      successToast('Action RENT recorded.');
+      applied.forEach((c) => triggerFlash(c.team_id, c.cash_delta >= 0 ? 'up' : 'down'));
       setInsufficientCashShortfall(null);
       await onRefetch();
     } catch (err: any) {
@@ -632,7 +665,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
   const handleResolveBoardSpace = (space: BoardSpace) => {
     switch (space.type) {
-      case 'START': setIsStartLapOpen(true); break;
+      case 'START': infoToast('START is paid automatically when a token reaches or passes it.'); break;
       case 'BUSINESS': setIsAddOpen(true); break;
       case 'BONUS': setCardMode('BONUS'); setIsCardOpen(true); break;
       case 'CRISIS': setCardMode('CRISIS'); setIsCardOpen(true); break;
@@ -921,7 +954,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           <QuickActionsBar
             disabled={isEditDisabled}
             onOpenRent={() => setIsRentOpen(true)}
-            onOpenStartLap={() => setIsStartLapOpen(true)}
             onOpenBuy={() => setIsAddOpen(true)}
             onOpenUpgrade={() => {
               if (selectedTeam.businesses.length > 0) {
@@ -1100,18 +1132,9 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         teams={snapshot.teams}
         defaultPayerId={selectedTeam.id}
         isTimeExpired={isTimeExpired}
-        onSubmit={handleQuickAdjust}
+        onSubmit={handleChargeRent}
         onDoForcedSale={handleDoForcedSale}
         onDeclareBankrupt={handleDeclareBankrupt}
-      />
-
-      <StartLapDialog
-        isOpen={isStartLapOpen}
-        onClose={() => setIsStartLapOpen(false)}
-        teams={snapshot.teams}
-        defaultTeamId={selectedTeam.id}
-        isTimeExpired={isTimeExpired}
-        onSubmit={handleQuickAdjust}
       />
 
       <StealDialog
