@@ -17,11 +17,11 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
       {/* ======================================================================= */}
       {/* LAYER 1: Distant Background Hills (Matching Landing Page Panorama)       */}
       {/* ======================================================================= */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
         {/* Layered Mountain Panorama Aligned to Ground Baseline */}
         <svg
           viewBox="0 0 1440 280"
-          className="absolute inset-x-0 bottom-7 sm:bottom-8 w-full h-44 sm:h-64 object-cover object-bottom"
+          className="absolute inset-x-0 bottom-7 sm:bottom-8 w-full h-52 sm:h-64 object-cover object-bottom"
           preserveAspectRatio="none"
           shapeRendering="crispEdges"
           style={{ imageRendering: 'pixelated' }}
@@ -39,7 +39,7 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
           {/* 1. Distant Alpine Peaks (Color 1: Royal Blue) */}
           <g>
             <path
-              d="M 0,280 V 160 H 12 V 156 H 24 V 152 H 36 V 148 H 48 V 144 H 54 V 140 H 60 V 136 H 72 V 132 H 78 V 128 H 84 V 124 H 96 V 120 H 102 V 116 H 108 V 112 H 120 V 108 H 126 V 104 H 132 V 100 H 144 V 96 H 156 V 92 H 162 V 88 H 180 V 84 H 192 V 80 H 210 V 76 H 288 V 80 H 306 V 84 H 318 V 88 H 336 V 92 H 342 V 96 H 354 V 100 H 366 V 104 H 378 V 108 H 390 V 112 H 402 V 116 H 408 V 120 H 426 V 124 H 438 V 128 H 456 V 132 H 480 V 136 H 516 V 132 H 540 V 128 H 552 V 124 H 564 V 120 H 576 V 116 H 588 V 112 H 600 V 108 H 606 V 104 H 618 V 100 H 630 V 96 H 636 V 92 H 648 V 88 H 660 V 84 H 672 V 80 H 684 V 76 H 696 V 72 H 714 V 68 H 738 V 64 H 786 V 68 H 816 V 72 H 834 V 76 H 852 V 80 H 864 V 84 H 876 V 88 H 888 V 92 H 900 V 96 H 912 V 100 H 924 V 104 H 936 V 108 H 948 V 112 H 960 V 116 H 972 V 120 H 996 V 124 H 1068 V 120 H 1092 V 116 H 1110 V 112 H 1122 V 108 H 1134 V 104 H 1146 V 100 H 1158 V 96 H 1170 V 92 H 1188 V 88 H 1200 V 84 H 1212 V 80 H 1236 V 76 H 1302 V 80 H 1320 V 84 H 1332 V 88 H 1344 V 92 H 1350 V 96 H 1362 V 100 H 1368 V 104 H 1374 V 108 H 1386 V 112 H 1392 V 116 H 1398 V 120 H 1404 V 124 H 1410 V 128 H 1422 V 132 H 1428 V 136 H 1434 V 140 H 1440 V 280 Z"
+              d="M 0,280 V 148 H 12 V 144 H 24 V 136 H 36 V 132 H 48 V 128 H 60 V 120 H 72 V 116 H 84 V 112 H 96 V 104 H 108 V 100 H 120 V 96 H 132 V 88 H 144 V 84 H 156 V 80 H 168 V 72 H 180 V 68 H 192 V 64 H 204 V 56 H 216 V 52 H 228 V 48 H 240 V 40 H 252 V 44 H 264 V 48 H 276 V 52 H 288 V 56 H 300 V 60 H 312 V 64 H 324 V 68 H 336 V 72 H 348 V 76 H 360 V 80 H 372 V 84 H 384 V 88 H 396 V 92 H 408 V 100 H 420 V 104 H 432 V 108 H 444 V 112 H 456 V 116 H 468 V 120 H 480 V 124 H 492 V 120 H 504 V 116 H 516 V 112 H 528 V 108 H 540 V 100 H 552 V 96 H 564 V 92 H 576 V 88 H 588 V 84 H 600 V 76 H 612 V 72 H 624 V 68 H 636 V 64 H 648 V 56 H 660 V 52 H 672 V 48 H 684 V 44 H 696 V 36 H 708 V 32 H 720 V 28 H 732 V 24 H 756 V 32 H 768 V 36 H 780 V 40 H 792 V 44 H 804 V 48 H 816 V 52 H 828 V 56 H 840 V 60 H 852 V 68 H 864 V 72 H 876 V 76 H 888 V 80 H 900 V 84 H 912 V 88 H 924 V 92 H 936 V 100 H 948 V 104 H 960 V 108 H 972 V 112 H 984 V 116 H 996 V 120 H 1008 V 116 H 1020 V 112 H 1032 V 108 H 1044 V 104 H 1056 V 100 H 1080 V 96 H 1092 V 92 H 1104 V 88 H 1116 V 84 H 1128 V 80 H 1140 V 76 H 1152 V 72 H 1164 V 68 H 1188 V 64 H 1200 V 60 H 1212 V 56 H 1224 V 52 H 1236 V 48 H 1248 V 44 H 1260 V 40 H 1272 V 44 H 1284 V 52 H 1296 V 60 H 1308 V 64 H 1320 V 72 H 1332 V 80 H 1344 V 88 H 1356 V 96 H 1368 V 100 H 1380 V 108 H 1392 V 116 H 1404 V 124 H 1416 V 128 H 1428 V 136 H 1440 V 280 Z"
               fill="#1765BE"
               stroke="#102040"
               strokeWidth="2"
@@ -49,7 +49,7 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
           {/* 2. Mid-range Mountains (Color 2: Deep Navy Blue) */}
           <g>
             <path
-              d="M 0,280 V 184 H 24 V 180 H 36 V 176 H 48 V 172 H 54 V 168 H 60 V 164 H 72 V 160 H 78 V 156 H 84 V 152 H 90 V 148 H 102 V 144 H 108 V 140 H 114 V 136 H 126 V 132 H 138 V 128 H 150 V 124 H 168 V 120 H 222 V 124 H 246 V 128 H 258 V 132 H 276 V 136 H 288 V 140 H 300 V 144 H 312 V 148 H 324 V 152 H 336 V 156 H 348 V 160 H 360 V 164 H 372 V 168 H 390 V 172 H 420 V 176 H 462 V 172 H 486 V 168 H 504 V 164 H 516 V 160 H 528 V 156 H 540 V 152 H 552 V 148 H 564 V 144 H 576 V 140 H 582 V 136 H 594 V 132 H 606 V 128 H 618 V 124 H 636 V 120 H 654 V 116 H 732 V 120 H 750 V 124 H 768 V 128 H 780 V 132 H 798 V 136 H 810 V 140 H 822 V 144 H 834 V 148 H 846 V 152 H 864 V 156 H 882 V 160 H 900 V 164 H 978 V 160 H 1002 V 156 H 1020 V 152 H 1038 V 148 H 1050 V 144 H 1068 V 140 H 1080 V 136 H 1098 V 132 H 1116 V 128 H 1146 V 124 H 1194 V 128 H 1224 V 132 H 1248 V 136 H 1266 V 140 H 1290 V 144 H 1308 V 148 H 1332 V 152 H 1356 V 156 H 1392 V 160 H 1440 V 280 Z"
+              d="M 0,280 V 172 H 12 V 164 H 24 V 160 H 36 V 152 H 48 V 148 H 60 V 140 H 72 V 136 H 84 V 128 H 96 V 124 H 108 V 116 H 120 V 112 H 132 V 104 H 144 V 100 H 156 V 92 H 168 V 88 H 180 V 92 H 192 V 96 H 204 V 100 H 216 V 104 H 228 V 108 H 240 V 112 H 252 V 116 H 264 V 120 H 276 V 124 H 288 V 128 H 312 V 132 H 324 V 136 H 336 V 140 H 348 V 144 H 360 V 148 H 372 V 152 H 384 V 156 H 396 V 160 H 408 V 164 H 420 V 168 H 432 V 164 H 444 V 160 H 456 V 156 H 468 V 152 H 480 V 148 H 492 V 144 H 504 V 140 H 516 V 136 H 528 V 132 H 540 V 128 H 552 V 124 H 564 V 120 H 576 V 116 H 588 V 112 H 600 V 108 H 612 V 104 H 624 V 100 H 636 V 96 H 648 V 92 H 660 V 88 H 672 V 84 H 684 V 80 H 696 V 84 H 708 V 88 H 720 V 92 H 732 V 96 H 744 V 100 H 756 V 104 H 768 V 108 H 780 V 112 H 792 V 116 H 804 V 120 H 816 V 124 H 828 V 128 H 852 V 132 H 864 V 136 H 876 V 140 H 888 V 144 H 900 V 148 H 912 V 152 H 924 V 156 H 936 V 160 H 948 V 156 H 960 V 152 H 972 V 148 H 984 V 144 H 996 V 140 H 1008 V 136 H 1020 V 132 H 1032 V 128 H 1044 V 124 H 1056 V 120 H 1068 V 116 H 1080 V 112 H 1092 V 108 H 1104 V 104 H 1128 V 100 H 1140 V 96 H 1152 V 92 H 1176 V 96 H 1200 V 100 H 1212 V 104 H 1224 V 108 H 1248 V 112 H 1260 V 116 H 1284 V 120 H 1296 V 124 H 1320 V 128 H 1332 V 132 H 1344 V 136 H 1368 V 140 H 1380 V 144 H 1404 V 148 H 1416 V 152 H 1440 V 280 Z"
               fill="#085599"
               stroke="#102040"
               strokeWidth="2"
@@ -91,11 +91,11 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
         </svg>
 
         {/* Animated Background How-To-Play & Encouraging Words Banner */}
-        <div className="absolute top-14 sm:top-16 inset-x-0 flex justify-center pointer-events-none z-10 px-4">
-          <div className="anim-retro-banner inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[#102040]/85 backdrop-blur-xs border-2 border-[#FFCC00] shadow-[2px_2px_0px_#B84418] rounded-xs max-w-xl text-center">
+        <div className="absolute top-16 sm:top-[72px] inset-x-0 flex justify-center pointer-events-none z-10 pl-3 pr-14 sm:px-4">
+          <div className="anim-retro-banner inline-flex items-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-[#102040] border-2 border-[#FFCC00] shadow-[2px_2px_0px_#B84418] rounded-xs max-w-xl text-center">
             <span className="text-[10px] sm:text-xs text-[#FFCC00] animate-pulse">💡</span>
-            <p className="font-pixel text-[8px] sm:text-[9.5px] text-[#FFFBEB] tracking-wide leading-relaxed">
-              <span className="text-[#FFCC00] font-bold">TUTORIAL:</span> 1. ENTER 6-DIGIT CODE &nbsp;•&nbsp; 2. PICK SQUAD &nbsp;•&nbsp; 3. SCALE UP &amp; WIN!
+            <p className="font-pixel text-[10px] sm:text-xs text-[#FFFBEB] tracking-wide leading-relaxed">
+              <span className="text-[#FFCC00] font-bold">TUTORIAL:</span> 1. ENTER CODE &nbsp;•&nbsp; 2. PICK TEAM &nbsp;•&nbsp; 3. WIN!
             </p>
             <span className="text-[10px] sm:text-xs text-[#22C55E] hidden sm:inline">★</span>
           </div>
@@ -242,7 +242,7 @@ export const PlainsBackground: React.FC<PlainsBackgroundProps> = ({ children }) 
         </div>
 
         {/* Mobile-only ? block upper right */}
-        <div className="sm:hidden absolute top-20 right-4 anim-block-cycle">
+        <div className="sm:hidden absolute top-[66px] right-4 anim-block-cycle">
           <PixelQuestionBlock size={28} />
         </div>
       </div>
