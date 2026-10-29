@@ -349,21 +349,63 @@ export interface HistoryDetailResponse {
   events: AdminRoomSnapshot['events'];
 }
 
+// Payload boundary. A database that has not received the latest migrations returns the old shape (no debt,
+// business_cost, ...). Missing NEW fields fail loudly with one admin-readable error; any other number that is
+// absent or null becomes 0 so components never format undefined.
+const OUTDATED_DB = 'Database is out of date. Apply the latest migrations.';
+const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+
+function requireFields(rows: Array<Record<string, unknown>>, fields: string[]) {
+  if (rows.some((r) => fields.some((f) => !(f in r)))) throw new AppError('SCHEMA_OUTDATED', OUTDATED_DB);
+}
+
+// `strict` is for reads only: a finalize that already committed must not report failure because of its payload shape.
+export function normalizeStandings(rows: StandingsRow[] | null | undefined, strict = false): StandingsRow[] {
+  const list = rows ?? [];
+  if (strict) requireFields(list as unknown as Array<Record<string, unknown>>, ['debt', 'business_cost', 'upgrade_count']);
+  return list.map((r) => ({
+    ...r,
+    rank: num(r.rank),
+    cash: num(r.cash),
+    debt: num(r.debt),
+    business_count: num(r.business_count),
+    business_cost: num(r.business_cost),
+    upgrade_count: num(r.upgrade_count),
+  }));
+}
+
+export function normalizeSnapshot(snap: AdminRoomSnapshot): AdminRoomSnapshot {
+  requireFields(snap.teams as unknown as Array<Record<string, unknown>>, ['debt']);
+  return {
+    ...snap,
+    teams: snap.teams.map((t) => ({
+      ...t,
+      cash: num(t.cash),
+      debt: num(t.debt),
+      version: num(t.version),
+      board_position: num(t.board_position),
+      businesses: (t.businesses ?? []).map((b) => ({ ...b, level: num(b.level), cost: num(b.cost) })),
+    })),
+  };
+}
+
 // 5. Admin Inspection, Standings & History
 export async function rpcGetAdminSnapshot(room_id: string): Promise<AdminRoomSnapshot> {
-  return callRpc<AdminRoomSnapshot>('get_admin_snapshot', { room_id });
+  return normalizeSnapshot(await callRpc<AdminRoomSnapshot>('get_admin_snapshot', { room_id }));
 }
 
 export async function rpcGetStandings(room_id: string): Promise<StandingsResponse> {
-  return callRpc<StandingsResponse>('get_standings', { p_room_id: room_id });
+  const res = await callRpc<StandingsResponse>('get_standings', { p_room_id: room_id });
+  return { ...res, standings: normalizeStandings(res?.standings, true) };
 }
 
 export async function rpcAdminFinalize(room_id: string) {
-  return mutate<{
+  const res = await mutate<{
     room_id: string;
     winner_team_id: string | null;
     standings: StandingsRow[];
   }>('admin_finalize', { p_room_id: room_id });
+  return { ...res, standings: normalizeStandings(res?.standings) };
 }
 
 /** Current room status straight from the server (used to settle lifecycle calls whose outcome is unclear). */

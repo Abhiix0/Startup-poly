@@ -7,6 +7,8 @@
 class SoundEngine {
   private ctx: AudioContext | null = null;
   private enabled: boolean = true;
+  // Browsers refuse to start an AudioContext before a user gesture; timer-driven sounds (buzzer) stay silent until then.
+  private unlocked: boolean = false;
 
   constructor() {
     // Sound enabled by default; can be toggled by user/admin
@@ -15,11 +17,18 @@ class SoundEngine {
       if (stored !== null) {
         this.enabled = stored === 'true';
       }
+      const unlock = () => {
+        this.unlocked = true;
+        window.removeEventListener('pointerdown', unlock);
+        window.removeEventListener('keydown', unlock);
+      };
+      window.addEventListener('pointerdown', unlock);
+      window.addEventListener('keydown', unlock);
     }
   }
 
   private initContext(): AudioContext | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === 'undefined' || !this.unlocked) return null;
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioCtx) {

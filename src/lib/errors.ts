@@ -75,6 +75,10 @@ export const ERROR_MAP: Record<string, ErrorMeta> = {
     message: 'Team values were modified elsewhere. Please refresh and retry.',
     retryable: true,
   },
+  SCHEMA_OUTDATED: {
+    message: 'Database is out of date. Apply the latest migrations.',
+    retryable: false,
+  },
   INVALID_VALUE: {
     message: 'Invalid input value provided.',
     retryable: false,
