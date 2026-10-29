@@ -48,12 +48,12 @@ SELECT throws_ok(
 INSERT INTO public.rooms (id, code, status, team_count)
 VALUES ('11111111-1111-1111-1111-111111111111', 'ABC234', 'CREATED', 6);
 
--- Second active room rejected (only one non-finalized room allowed)
+-- Duplicate code among non-finalized rooms rejected (one-room-at-a-time index dropped in 0032)
 SELECT throws_ok(
-  $$INSERT INTO public.rooms (code, team_count) VALUES ('XYZ567', 6)$$,
+  $$INSERT INTO public.rooms (code, team_count) VALUES ('ABC234', 6)$$,
   '23505',
   NULL,
-  'Second active/non-finalized room is rejected by partial unique index'
+  'Duplicate code among non-finalized rooms is rejected by partial unique index'
 );
 
 -- 3. Team Constraints

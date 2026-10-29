@@ -163,6 +163,10 @@ export function parseRpcError(err: unknown): AppError {
       return new AppError(rawMsg, ERROR_MAP[rawMsg].message, detail);
     }
 
+    if (pgErr.code === '23505' && rawMsg.includes('idx_rooms_')) {
+      return new AppError('ROOM_CONFLICT', 'Could not create the room because of a conflict with another match. Please try again.', detail);
+    }
+
     return new AppError(
       pgErr.code || 'UNKNOWN_ERROR',
       rawMsg || 'An unexpected error occurred. Please try again.',

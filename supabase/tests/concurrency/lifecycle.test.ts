@@ -57,3 +57,25 @@ run('lifecycle under concurrency (L2, L3, L15)', () => {
     expect(await events(roomId, 'GAME_FINALIZED')).toBe(1);
   });
 });
+
+run('multi-admin room creation (migration 0032)', () => {
+  const teams = ['A', 'B', 'C', 'D', 'E'].map((name, i) => ({ name, color: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'][i] }));
+  const create = (c: SupabaseClient) => c.rpc('admin_create_room', { team_count: 5, teams });
+  const codeOf = (d: any) => (d.room ?? d).code as string;
+
+  it('concurrent creates by different admins both succeed with different codes; same admin is still refused', async () => {
+    const [x, y] = await Promise.all([newAdmin('multi-x'), newAdmin('multi-y')]);
+    const [rx, ry] = await Promise.all([create(x), create(y)]);
+    expect(rx.error).toBeNull();
+    expect(ry.error).toBeNull();
+    expect(codeOf(rx.data)).not.toBe(codeOf(ry.data));
+    expect((await create(x)).error?.message).toBe('NON_FINAL_ROOM_EXISTS');
+  });
+
+  it('a non-final room with created_by NULL does not block an admin', async () => {
+    const orphan = await serviceClient().from('rooms').insert({ code: 'KLMNPQ', status: 'CREATED', team_count: 5, created_by: null });
+    expect(orphan.error).toBeNull();
+    expect((await create(await newAdmin('multi-z'))).error).toBeNull();
+    await serviceClient().from('rooms').delete().eq('code', 'KLMNPQ');
+  });
+});
