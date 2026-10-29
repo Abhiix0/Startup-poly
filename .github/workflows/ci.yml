@@ -48,3 +48,6 @@ jobs:
 
       - name: Upgrade path (live 0015 game to latest)
         run: npm run test:upgrade
+
+      - name: Upgrade path (live 0027 game to latest)
+        run: npm run test:upgrade-live
