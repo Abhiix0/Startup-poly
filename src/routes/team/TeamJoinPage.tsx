@@ -9,7 +9,8 @@ import {
   PixelCoin,
 } from '../../ui/pixel';
 import { ErrorBanner, useToast, Skeleton } from '../../ui';
-import { rpcGetLobby, rpcJoinTeam } from '../../data/rpc';
+import { rpcGetLobby, rpcJoinTeam, rpcGetMyState } from '../../data/rpc';
+import { STORAGE_KEY_TEAM_STATE } from '../../data/useMyTeam';
 import { ensureAnonymousSession } from '../../data/client';
 import { isNetworkError } from '../../lib/errors';
 
@@ -136,6 +137,18 @@ export const TeamJoinPage: React.FC = () => {
             pin,
           }));
         } catch {}
+      }
+
+      // Pre-warm the dashboard cache so /team renders the lobby immediately instead of racing the new claim.
+      for (let attempt = 0; attempt < 5; attempt++) {
+        try {
+          const mine = await rpcGetMyState();
+          if (mine) {
+            localStorage.setItem(STORAGE_KEY_TEAM_STATE, JSON.stringify(mine));
+            break;
+          }
+        } catch {}
+        await new Promise((resolve) => setTimeout(resolve, 300));
       }
 
       // Trigger game-like celebration

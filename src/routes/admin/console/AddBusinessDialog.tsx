@@ -10,6 +10,8 @@ export interface AddBusinessDialogProps {
   allTeams: AdminRoomSnapshot['teams'];
   onSubmit: (params: { businessKey: string; applyPurchase: boolean; note?: string }) => Promise<void>;
   isTimeExpired: boolean;
+  /** Board-landing flow: show and preselect only this business. */
+  lockedBusinessKey?: string | null;
 }
 
 export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
@@ -19,6 +21,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
   allTeams,
   onSubmit,
   isTimeExpired,
+  lockedBusinessKey = null,
 }) => {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [applyPurchase, setApplyPurchase] = useState<boolean>(true);
@@ -42,7 +45,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedKey(null);
+      setSelectedKey(lockedBusinessKey);
       setApplyPurchase(true);
       setNote('');
       setError(null);
@@ -51,7 +54,7 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         setTimeout(() => noteRef.current?.focus(), 50);
       }
     }
-  }, [isOpen, isTimeExpired]);
+  }, [isOpen, isTimeExpired, lockedBusinessKey]);
 
   const selectedBiz = OFFICIAL_BUSINESSES.find((b) => b.key === selectedKey);
 
@@ -105,11 +108,11 @@ export const AddBusinessDialog: React.FC<AddBusinessDialogProps> = ({
         {/* 10 Catalog Businesses Picker */}
         <div className="flex flex-col gap-2">
           <label className="font-pixel text-[11px] uppercase tracking-wider text-brand-navy">
-            Select Catalog Business ({team.businesses.length}/{MAX_BUSINESSES_PER_TEAM} Owned)
+            {lockedBusinessKey ? 'Landed on' : 'Select Catalog Business'} ({team.businesses.length}/{MAX_BUSINESSES_PER_TEAM} Owned)
           </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-1">
-            {OFFICIAL_BUSINESSES.map((b) => {
+            {OFFICIAL_BUSINESSES.filter((b) => !lockedBusinessKey || b.key === lockedBusinessKey).map((b) => {
               const ownerName = ownerMap.get(b.key);
               const isOwned = Boolean(ownerName);
               const isSelected = selectedKey === b.key;

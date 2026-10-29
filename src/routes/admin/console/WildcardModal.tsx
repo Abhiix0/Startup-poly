@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Modal, PixelButton } from '../../../ui';
-import { sounds } from '../../../lib/sound';
 
 export interface WildcardModalProps {
   isOpen: boolean;
@@ -36,7 +35,6 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
 
   const handleDraw = () => {
     setIsDrawing(true);
-    sounds.playCoin();
     let count = 0;
     const interval = setInterval(() => {
       const rand = Math.floor(Math.random() * WILDCARD_TASKS.length);
@@ -45,7 +43,6 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
       if (count >= 8) {
         clearInterval(interval);
         setIsDrawing(false);
-        sounds.playUpgrade();
       }
     }, 80);
   };

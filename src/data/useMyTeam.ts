@@ -10,6 +10,9 @@ export type FlashDirection = 'up' | 'down' | null;
 export const STORAGE_KEY_TEAM_STATE = 'startupoly_active_team_state';
 export const STORAGE_KEY_TEAM_CLAIM = 'startupoly_active_team_claim';
 
+const FIRST_LOAD_MAX_RETRIES = 6;
+const FIRST_LOAD_RETRY_MS = 500;
+
 export interface UseMyTeamResult {
   state: TeamStateResponse | null;
   status: 'loading' | 'ready' | 'error';
@@ -64,6 +67,24 @@ export function useMyTeam(): UseMyTeamResult {
   const cashFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestRequestIdRef = useRef<number>(0);
 
+  const firstLoadRetriesRef = useRef<number>(0);
+  const fetchRef = useRef<() => Promise<void>>(async () => {});
+
+  // Only while no state was ever loaded and this device holds a fresh claim (set by the join page).
+  const shouldRetryFirstLoad = useCallback((): boolean => {
+    if (hadStateRef.current || firstLoadRetriesRef.current >= FIRST_LOAD_MAX_RETRIES) return false;
+    try {
+      if (typeof window === 'undefined' || !localStorage.getItem(STORAGE_KEY_TEAM_CLAIM)) return false;
+    } catch {
+      return false;
+    }
+    firstLoadRetriesRef.current += 1;
+    setTimeout(() => {
+      if (isMountedRef.current) void fetchRef.current();
+    }, FIRST_LOAD_RETRY_MS);
+    return true;
+  }, []);
+
   // Monotonic request counter to ignore out-of-order responses
   const fetchMyState = useCallback(async () => {
     const requestId = ++latestRequestIdRef.current;
@@ -78,6 +99,8 @@ export function useMyTeam(): UseMyTeamResult {
       }
 
       if (!data) {
+        // Right after join the claim may not be visible yet: retry briefly instead of bouncing to /join.
+        if (shouldRetryFirstLoad()) return;
         // If we previously had state and now receive null, admin released our claim!
         if (hadStateRef.current) {
           logger.warn('useMyTeam', 'Team claim was released by event admin.');
@@ -132,6 +155,7 @@ export function useMyTeam(): UseMyTeamResult {
       if (requestId < latestRequestIdRef.current) return;
 
       logger.warn('useMyTeam', 'Failed to fetch team state:', err);
+      if (shouldRetryFirstLoad()) return;
       if (err instanceof AppError && err.code === 'NOT_AUTHENTICATED') {
         setIsSessionLost(true);
       }
@@ -140,7 +164,8 @@ export function useMyTeam(): UseMyTeamResult {
       // Retain last good state on failure; NEVER blank existing values
       setStatus((prev) => (prev === 'ready' ? 'ready' : 'error'));
     }
-  }, []);
+  }, [shouldRetryFirstLoad]);
+  fetchRef.current = fetchMyState;
 
   // Burst coalescing: 150ms debounce with 1000ms maxWait
   const triggerDebouncedRefetch = useCallback(() => {

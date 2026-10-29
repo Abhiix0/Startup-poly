@@ -11,7 +11,6 @@ import {
   PixelFlower,
   StartupolyLogo,
 } from '../../ui/pixel';
-import { sounds } from '../../lib/sound';
 import { usePageVisibility } from '../../lib/usePageVisibility';
 import { useFirstVisit } from '../../lib/useFirstVisit';
 import { PixelWorld } from './PixelWorld';
@@ -43,7 +42,6 @@ export const LandingPage: React.FC = () => {
       navigate(target === 'join' ? '/join' : '/admin');
       return;
     }
-    sounds.playJump();
     setLaunchTarget(target);
     setTimeout(() => {
       setWarpTransition(target);

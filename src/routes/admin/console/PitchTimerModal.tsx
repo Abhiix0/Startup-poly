@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, PixelButton } from '../../../ui';
-import { sounds } from '../../../lib/sound';
 
 export interface PitchTimerModalProps {
   isOpen: boolean;
@@ -23,7 +22,6 @@ export const PitchTimerModal: React.FC<PitchTimerModalProps> = ({
     if (isOpen) {
       setSecondsLeft(defaultSeconds);
       setIsRunning(true);
-      sounds.playWhistle();
     } else {
       setIsRunning(false);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -37,11 +35,7 @@ export const PitchTimerModal: React.FC<PitchTimerModalProps> = ({
           if (prev <= 1) {
             clearInterval(timerRef.current!);
             setIsRunning(false);
-            sounds.playGong();
             return 0;
-          }
-          if (prev === 6) {
-            sounds.playDamage(); // countdown warning
           }
           return prev - 1;
         });

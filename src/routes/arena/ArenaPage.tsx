@@ -1,27 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAdminRoom } from '../../data/useAdminRoom';
 import { PixelLoader, ConnectionPill } from '../../ui';
-import { sounds } from '../../lib/sound';
 
 export const ArenaPage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { snapshot, status, connection, lastUpdated } = useAdminRoom(roomId);
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(sounds.isEnabled());
-
-  const handleToggleSound = () => {
-    const next = sounds.toggle();
-    setSoundEnabled(next);
-  };
-
-  // Play buzzer sound on match expiry
-  useEffect(() => {
-    if (snapshot?.room.status === 'TIME_EXPIRED') {
-      sounds.playBuzzer();
-    } else if (snapshot?.room.status === 'FINALIZED') {
-      sounds.playVictory();
-    }
-  }, [snapshot?.room.status]);
 
   if (status === 'loading' || !snapshot) {
     return (
@@ -82,14 +66,6 @@ export const ArenaPage: React.FC = () => {
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleToggleSound}
-            title="Toggle Arena Sound FX"
-            className="bg-neutral-800 border-2 border-neutral-600 px-3 py-2 font-pixel text-xs hover:border-brand-gold transition-colors"
-          >
-            {soundEnabled ? '🔊 SOUND ON' : '🔇 MUTED'}
-          </button>
         </div>
       </header>
 

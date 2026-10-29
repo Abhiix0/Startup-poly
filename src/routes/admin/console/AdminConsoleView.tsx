@@ -39,7 +39,6 @@ import { PitchTimerModal } from './PitchTimerModal';
 import { WildcardModal } from './WildcardModal';
 import { TimeOverModal } from './TimeOverModal';
 import { useStandings } from '../../../data/useStandings';
-import { sounds } from '../../../lib/sound';
 import { safeRandomUUID } from '../../../lib/uuid';
 import { FinalizePanel } from './FinalizePanel';
 import { ResultView } from './ResultView';
@@ -68,7 +67,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   );
   const [isRefetching, setIsRefetching] = useState<boolean>(false);
   const [flashes, setFlashes] = useState<Record<string, 'up' | 'down' | null>>({});
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(sounds.isEnabled());
   const [lastUndoableAction, setLastUndoableAction] = useState<{
     label: string;
     reversalChanges: Array<{
@@ -85,6 +83,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
   // Modals state
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
+  const [landedBizKey, setLandedBizKey] = useState<string | null>(null);
   const [upgradeBizKey, setUpgradeBizKey] = useState<string | null>(null);
   const [editBizKey, setEditBizKey] = useState<string | null>(null);
   const [removeBizKey, setRemoveBizKey] = useState<string | null>(null);
@@ -137,7 +136,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     if (isTimeExpired && !hasTriggeredTimeOverPopupRef.current) {
       hasTriggeredTimeOverPopupRef.current = true;
       setIsTimeOverModalOpen(true);
-      sounds.playBuzzer();
     } else if (!isTimeExpired) {
       hasTriggeredTimeOverPopupRef.current = false;
     }
@@ -147,7 +145,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
     try {
       setIsExtendingTime(true);
       await rpcAdminExtendGame(snapshot.room.id, 600);
-      sounds.playWhistle();
       successToast('⚡ Extra time active! Added 10 minutes to match clock.');
       setIsTimeOverModalOpen(false);
       await onRefetch();
@@ -338,7 +335,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         request_id: safeRandomUUID(),
       });
 
-      sounds.playDamage();
       successToast(`Reversed: ${lastUndoableAction.label}`);
       setLastUndoableAction(null);
       await onRefetch();
@@ -364,13 +360,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         note: params.note,
         request_id: params.requestId,
       });
-
-      // Play contextual audio feedback
-      if (params.changes.some((c) => c.cash_delta > 0)) {
-        sounds.playCoin();
-      } else {
-        sounds.playDamage();
-      }
 
       // Record for 1-click Undo
       setLastUndoableAction({
@@ -416,7 +405,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         team_id: r.team.id,
         cash_delta: r.team.cash - (cashBefore.get(r.team.id) ?? r.team.cash),
       }));
-      sounds.playCoin();
       setLastUndoableAction({
         label: 'RENT',
         reversalChanges: applied.map((c) => ({ team_id: c.team_id, cash_delta: -c.cash_delta })),
@@ -666,7 +654,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
   const handleResolveBoardSpace = (space: BoardSpace) => {
     switch (space.type) {
       case 'START': infoToast('START is paid automatically when a token reaches or passes it.'); break;
-      case 'BUSINESS': setIsAddOpen(true); break;
+      case 'BUSINESS': setLandedBizKey(space.businessKey ?? null); setIsAddOpen(true); break;
       case 'BONUS': setCardMode('BONUS'); setIsCardOpen(true); break;
       case 'CRISIS': setCardMode('CRISIS'); setIsCardOpen(true); break;
       case 'WILDCARD': setIsWildcardOpen(true); break;
@@ -742,14 +730,6 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           <span className="hidden xl:inline font-mono text-[10px] text-brand-gold/80">
             Keys: [1-6] Team • [S] Start • [R] Rent • [B] Buy • [U] Upgrade • [T] Steal • [C] Bonus • [X] Crisis • [P] Pitch
           </span>
-          <button
-            type="button"
-            onClick={() => setSoundEnabled(sounds.toggle())}
-            title="Toggle Sound FX"
-            className="font-pixel text-[10px] bg-neutral-800 text-neutral-300 px-2.5 py-1 border border-neutral-600 hover:text-white cursor-pointer"
-          >
-            {soundEnabled ? '🔊 SOUND ON' : '🔇 MUTED'}
-          </button>
         </div>
       </div>
 
@@ -1076,7 +1056,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       {/* 4. MODALS & DIALOGS */}
       <AddBusinessDialog
         isOpen={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
+        onClose={() => { setIsAddOpen(false); setLandedBizKey(null); }}
+        lockedBusinessKey={landedBizKey}
         team={selectedTeam}
         allTeams={snapshot.teams}
         onSubmit={handleAddBusiness}

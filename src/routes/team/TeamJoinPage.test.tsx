@@ -18,6 +18,7 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../data/rpc', () => ({
   rpcGetLobby: vi.fn(),
   rpcJoinTeam: vi.fn(),
+  rpcGetMyState: vi.fn(),
 }));
 
 vi.mock('../../data/client', () => ({
@@ -76,6 +77,10 @@ describe('TeamJoinPage', () => {
     vi.mocked(rpcModule.rpcGetLobby).mockResolvedValue(mockLobby as any);
     vi.mocked(rpcModule.rpcJoinTeam).mockResolvedValue({ team_id: 't-1', room_id: 'r-1' } as any);
     vi.mocked(clientModule.ensureAnonymousSession).mockResolvedValue({} as any);
+    // First read races the new claim (null); second sees it.
+    vi.mocked(rpcModule.rpcGetMyState)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValue({ room: { status: 'LOBBY' }, team: { slot: 2 } } as any);
 
     renderComponent();
 
@@ -102,7 +107,9 @@ describe('TeamJoinPage', () => {
       expect(clientModule.ensureAnonymousSession).toHaveBeenCalledTimes(1);
       expect(rpcModule.rpcJoinTeam).toHaveBeenCalledWith('ABC892', 2, '9876');
       expect(mockNavigate).toHaveBeenCalledWith('/team');
-    });
+    }, { timeout: 3000 });
+    expect(rpcModule.rpcGetMyState).toHaveBeenCalledTimes(2);
+    expect(localStorage.getItem('startupoly_active_team_state')).toContain('LOBBY');
   });
 
   it('displays neutral error message on wrong PIN or mismatch', async () => {

@@ -29,6 +29,14 @@ describe('AddBusinessDialog', () => {
     expect(screen.getByRole('button', { name: /CONFIRM ACQUISITION/i })).not.toBeDisabled();
   });
 
+  it('shows only the landed business, preselected, when locked', () => {
+    const t = team();
+    render(<AddBusinessDialog isOpen onClose={vi.fn()} team={t} allTeams={[t]} onSubmit={vi.fn()} isTimeExpired={false} lockedBusinessKey="edtech" />);
+    expect(screen.getByText('EdTech')).toBeInTheDocument();
+    expect(screen.queryByText('SaaS')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /CONFIRM ACQUISITION/i })).not.toBeDisabled();
+  });
+
   it('blocks a third business: the cap is 2', () => {
     const t = team({ businesses: [owned('edtech', 'EdTech'), owned('saas', 'SaaS')] });
     render(<AddBusinessDialog isOpen onClose={vi.fn()} team={t} allTeams={[t]} onSubmit={vi.fn()} isTimeExpired={false} />);
