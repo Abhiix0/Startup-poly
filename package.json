@@ -20,6 +20,7 @@
     "test:contract": "vitest run --config supabase/tests/concurrency/vitest.config.ts contract",
     "check:bundle": "tsx scripts/check-bundle.ts",
     "test:upgrade": "tsx scripts/test-upgrade-path.ts",
+    "test:upgrade-live": "tsx scripts/test-upgrade-live-game.ts",
     "test:db-suites": "tsx scripts/run-db-suites.ts",
     "verify:prod": "tsx scripts/verify-prod.ts",
     "build:migrations": "tsx scripts/build-all-migrations.ts"

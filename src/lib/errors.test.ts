@@ -2,6 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { parseRpcError, AppError, ERROR_MAP } from './errors';
 
 describe('parseRpcError', () => {
+  it('maps a rooms unique violation to a friendly message', () => {
+    const e = parseRpcError({ code: '23505', message: 'duplicate key value violates unique constraint "idx_rooms_single_active"' });
+    expect(e.code).toBe('ROOM_CONFLICT');
+    expect(e.message).not.toMatch(/duplicate key|idx_rooms_/);
+  });
+
   it('parses known Postgres error codes properly', () => {
     const error = { message: 'INSUFFICIENT_CASH' };
     const appError = parseRpcError(error);

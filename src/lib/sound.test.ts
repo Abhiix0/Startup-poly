@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { sounds } from './sound';
 
 describe('SoundEngine', () => {
@@ -28,5 +28,20 @@ describe('SoundEngine', () => {
     expect(() => sounds.playBuzzer()).not.toThrow();
     expect(() => sounds.playGong()).not.toThrow();
     expect(() => sounds.playVictory()).not.toThrow();
+  });
+});
+
+describe('SoundEngine audio unlock', () => {
+  it('creates no AudioContext before a user gesture', async () => {
+    const ctor = vi.fn();
+    vi.stubGlobal('AudioContext', ctor);
+    (window as any).AudioContext = ctor;
+    vi.resetModules();
+    const { sounds: fresh } = await import('./sound');
+    fresh.playBuzzer();
+    expect(ctor).not.toHaveBeenCalled();
+    window.dispatchEvent(new Event('pointerdown'));
+    fresh.playBuzzer();
+    expect(ctor).toHaveBeenCalledTimes(1);
   });
 });

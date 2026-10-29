@@ -75,6 +75,10 @@ export const ERROR_MAP: Record<string, ErrorMeta> = {
     message: 'Team values were modified elsewhere. Please refresh and retry.',
     retryable: true,
   },
+  SCHEMA_OUTDATED: {
+    message: 'Database is out of date. Apply the latest migrations.',
+    retryable: false,
+  },
   INVALID_VALUE: {
     message: 'Invalid input value provided.',
     retryable: false,
@@ -161,6 +165,10 @@ export function parseRpcError(err: unknown): AppError {
 
     if (rawMsg in ERROR_MAP) {
       return new AppError(rawMsg, ERROR_MAP[rawMsg].message, detail);
+    }
+
+    if (pgErr.code === '23505' && rawMsg.includes('idx_rooms_')) {
+      return new AppError('ROOM_CONFLICT', 'Could not create the room because of a conflict with another match. Please try again.', detail);
     }
 
     return new AppError(
